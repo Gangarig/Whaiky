@@ -1,0 +1,34 @@
+.formContainer {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .formWrapper {
+        width: 500px;
+        height: 500px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+    }
+}
+.profileImg{
+    display: none;
+}
+.avatarUpload {
+    width: 20px;
+    height: 20px;
+}
+.avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 3px;
+}
