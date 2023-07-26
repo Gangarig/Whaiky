@@ -5,14 +5,15 @@ import { getStorage } from "firebase/storage";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB8PHlBy4ied1kY7IM7dm-bpDwQKfz5lC8",
-  authDomain: "whaiky-538ca.firebaseapp.com",
-  projectId: "whaiky-538ca",
-  storageBucket: "whaiky-538ca.appspot.com",
-  messagingSenderId: "454465463090",
-  appId: "1:454465463090:web:b6192fba0a10b285e22d2b",
-  measurementId: "G-8ZBDEQJNQJ"
+  apiKey: "AIzaSyCI27hyITwFfFLtZYupjVnYjdVxu_gvZkg",
+  authDomain: "whaiky-f9e40.firebaseapp.com",
+  projectId: "whaiky-f9e40",
+  storageBucket: "whaiky-f9e40.appspot.com",
+  messagingSenderId: "1082121859527",
+  appId: "1:1082121859527:web:db8000790f646699d469e2",
+  measurementId: "G-DQ73XHBNJK"
 };
+
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth();

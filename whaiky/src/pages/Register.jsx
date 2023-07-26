@@ -1,19 +1,21 @@
-
 import React, { useState } from 'react'
 import Add from '../assets/icons/Add.png'
 import { createUserWithEmailAndPassword , updateProfile } from "firebase/auth";
 import { auth , storage , db}  from '../firebase'
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore"; 
+import { useNavigate , Link } from 'react-router-dom';
 
 
-export const Register = () => {
+const Register = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [err,setErr ] = useState(false);
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsRegistering(true); 
-    
+
+
     const displayName = e.target[0].value;
     const email = e.target[1].value;
     const password = e.target[2].value;
@@ -41,6 +43,11 @@ export const Register = () => {
             email,
             photoURL:downloadURL,
           });
+
+          await setDoc (doc(db, "userChats",res.user.uid),{});
+          
+          navigate('/');
+
         });
         }
       );
@@ -72,8 +79,11 @@ export const Register = () => {
           <button type="submit" disabled={isRegistering}>
           {isRegistering ? "Signing up..." : "Sign up"}
           </button>
+          <p>If you have an account <Link to="/login"> Sign In</Link></p>
         </form>
       </div>
     </div>
   )
 }
+ 
+export default Register
