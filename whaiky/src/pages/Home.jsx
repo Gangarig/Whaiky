@@ -1,10 +1,13 @@
 import React from 'react'
-import Navbar from '../components/navbar'
-
+import Navbar from '../components/Navbar'
+import Search from '../components/Search'
  const Home = () => {
   return (
-    <div className='formContainer'>
+    <div className='homeContainer'>
+      <div className='navWrapper'>
+      <Search/>
       <Navbar />
+      </div>
     </div>
   )
 }
