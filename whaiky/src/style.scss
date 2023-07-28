@@ -40,7 +40,11 @@
     }
 }
 .profileImg{
-    display: none;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: beige;
+    margin: 10px;
 }
 .avatarUpload {
     width: 20px;
@@ -58,7 +62,12 @@
     justify-content: space-between;
     align-items: center;
 }
-.homeWrapper {
+.navWrapper {
     display: flex;
     flex-direction: column;
+}
+.avatarImg {
+    height: 30px;
+    width: 30px;
+    background-color: beige;
 }
