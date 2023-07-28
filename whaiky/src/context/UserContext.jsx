@@ -1,6 +1,6 @@
 import React from 'react'
 
- const UserContext = () => {
+const UserContext = () => {
   return (
     <div>UserContext</div>
   )
