@@ -36,7 +36,7 @@ const Chats = () => {
 
   return (
     <div>
-      <h1>Chats</h1>
+
       {Object.entries(chats)?.map((chat) => (
         <div className='userChat' key={chat[0]} onClick={() => handleSelect(chat[1].userInfo)} >
           {/* Safely access properties using optional chaining */}

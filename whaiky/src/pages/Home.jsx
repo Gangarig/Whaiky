@@ -1,14 +1,16 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import Search from '../components/Search'
-import Chats from '../components/Chats'
- const Home = () => {
+import Chat from '../components/Chat'
+import Sidebar from '../components/Sidebar'
+
+
+const Home = () => {
   return (
-    <div className='homeContainer'>
-      <div className='navWrapper'>
-      <Navbar />
-      <Search/>
-      <Chats/>
+    <div className='home'>
+      <div className="container">
+        <Sidebar/>
+        <Chat/>
       </div>
     </div>
   )
