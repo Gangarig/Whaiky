@@ -13,7 +13,7 @@
       @content;
     }
   }
-  
+
   .formContainer {
     background-color: gray;
     height: 100vh;
@@ -53,13 +53,13 @@
           width: 250px;
           border-bottom: 1px solid gray;
           &::placeholder {
-            color: rgb(175, 175, 175);
+            color: black;
           }
         }
   
         button {
           background-color: gray;
-          color: white;
+          color: black;
           padding: 10px;
           font-weight: bold;
           border: none;
@@ -70,7 +70,7 @@
           display: flex;
           align-items: center;
           gap: 10px;
-          color: #8da4f1;
+          color: black;
           font-size: 12px;
           cursor: pointer;
   
@@ -117,7 +117,7 @@
           height: 50px;
           padding: 10px;
           justify-content: space-between;
-          color: #ddddf7;
+          color: black;
   
           .logo {
             font-weight: bold;
@@ -129,9 +129,9 @@
           .user {
             display: flex;
             gap: 10px;
-  
+            color: black;
             img {
-              background-color: #ddddf7;
+              background-color: gray;
               height: 24px;
               width: 24px;
               border-radius: 50%;
@@ -140,7 +140,7 @@
   
             button {
               background-color: black;
-              color: #ddddf7;
+              color: white;
               font-size: 10px;
               border: none;
               cursor: pointer;
@@ -160,7 +160,7 @@
             input {
               background-color: transparent;
               border: none;
-              color: white;
+              color: black;
               outline: none;
   
               &::placeholder {
@@ -175,11 +175,11 @@
           display: flex;
           align-items: center;
           gap: 10px;
-          color: white;
+          color: black;
           cursor: pointer;
   
           &:hover {
-            background-color: #2f2d52;
+            background-color: lightgray;
           }
   
           img {
@@ -196,7 +196,7 @@
             }
             p {
               font-size: 14px;
-              color: lightgray;
+              color: black;
             }
           }
         }
@@ -211,7 +211,7 @@
           align-items: center;
           justify-content: space-between;
           padding: 10px;
-          color: lightgray;
+          color: white;
         }
   
         .chatIcons {
@@ -255,7 +255,7 @@
               gap: 10px;
   
               p {
-                background-color: white;
+                background-color: beige;
                 padding: 10px 20px;
                 border-radius: 0px 10px 10px 10px;
                 max-width: max-content;
@@ -272,8 +272,8 @@
               .messageContent {
                 align-items: flex-end;
                 p {
-                  background-color: #8da4f1;
-                  color: white;
+                  background-color: beige;
+                  color: black;
                   border-radius: 10px 0px 10px 10px;
                 }
               }
@@ -293,7 +293,7 @@
             width: 100%;
             border: none;
             outline: none;
-            color: #2f2d52;
+            color: black;
             font-size: 18px;
   
             &::placeholder {
@@ -314,7 +314,7 @@
             button {
               border: none;
               padding: 10px 15px;
-              color: white;
+              color: black;
               background-color: gray;
               cursor: pointer;
             }
@@ -323,4 +323,3 @@
       }
     }
   }
-  
