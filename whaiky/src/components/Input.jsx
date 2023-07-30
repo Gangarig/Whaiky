@@ -86,8 +86,7 @@ const Input = () => {
           onChange={(e) => setImg(e.target.files[0])}
         />
         <label htmlFor="file">
-        <img src={img ? URL.createObjectURL(img) : ""} alt="" />
-
+          <img src={img ? URL.createObjectURL(img) : ""} alt="" />
         </label>
         <button onClick={handleSend}>Send</button>
       </div>
