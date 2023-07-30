@@ -11,7 +11,6 @@ import {
 import { db, storage } from "../firebase";
 import { v4 as uuid } from "uuid";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-
 const Input = () => {
   const [text, setText] = useState("");
   const [img, setImg] = useState(null);
@@ -87,7 +86,8 @@ const Input = () => {
           onChange={(e) => setImg(e.target.files[0])}
         />
         <label htmlFor="file">
-          <img src={Img} alt="" />
+        <img src={img ? URL.createObjectURL(img) : ""} alt="" />
+
         </label>
         <button onClick={handleSend}>Send</button>
       </div>
