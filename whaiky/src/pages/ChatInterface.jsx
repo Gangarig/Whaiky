@@ -1,9 +1,6 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import Search from '../components/Search'
-import Chat from '../components/Chat'
 import Sidebar from '../components/Sidebar'
-
+import Chat from '../components/chat/Chat'
 
 const ChatInterface = () => {
   return (

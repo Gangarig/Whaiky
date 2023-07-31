@@ -1,3 +1,133 @@
+
+// Imports
+
+
+// Colors 
+:root {
+
+
+  --font--primary: Inter;
+  --font--secondary: ;
+  --font--tertiary: ;
+  --font--quaternary: ;
+  --font--quinary: ;
+  --font--senary: ;
+  --font--septenary: ;
+  --font--octonary: ;
+  --font--nonary: ;
+  --font--denary: ;
+  --font--eleventh: ;
+  --font--twelfth: ;
+
+
+  --text--primary:black ;
+  --text--secondary: white;
+
+
+  --primary: ;
+  --secondary: ;
+  --tertiary: ;
+  --quaternary: ;
+  --quinary: ;
+  --senary: ;
+  --septenary: ;
+  --octonary: ;
+  --nonary: ;
+  --denary: ;
+  --eleventh: ;
+  --twelfth: ;
+
+
+
+
+  --background--primary:#3d3d3d ;
+  --background--secondary:#9E42F0 ;
+  --background--tertiary: linear-gradient(107.31deg, #9E42F0 16.46%, #02AD94 115.96%);
+  --background--quaternary: ;
+  --background--quinary: ;
+  --background--senary: ;
+  --background--septenary: ;
+  --background--octonary: ;
+  --background--nonary: ;
+  --background--denary: ;
+  --background--eleventh: ;
+  --background--twelfth: ;
+  
+
+}
+
+// Fonts
+
+
+// partials
+@import './partials/navbar.scss';
+@import './partials/profile.scss';
+
+
+
+//global styles
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+.homePage {
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background--primary);
+  color: var(--text--primary);
+  font-family: var(--font--primary);
+  flex-direction: column;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @mixin mobile {
     @media screen and (max-width: 480px) {
       @content;
@@ -109,48 +239,6 @@
         flex: 1;
         background-color: darkgray;
         position: relative;
-  
-        .navbar {
-          display: flex;
-          align-items: center;
-          background-color: gray;
-          height: 50px;
-          padding: 10px;
-          justify-content: space-between;
-          color: black;
-  
-          .logo {
-            font-weight: bold;
-            @include tablet {
-              display: none;
-            }
-          }
-  
-          .user {
-            display: flex;
-            gap: 10px;
-            color: black;
-            img {
-              background-color: gray;
-              height: 24px;
-              width: 24px;
-              border-radius: 50%;
-              object-fit: cover;
-            }
-  
-            button {
-              background-color: black;
-              color: white;
-              font-size: 10px;
-              border: none;
-              cursor: pointer;
-              @include tablet {
-                position: absolute;
-                bottom: 10px;
-              }
-            }
-          }
-        }
         .search {
           border-bottom: 1px solid gray;
   
