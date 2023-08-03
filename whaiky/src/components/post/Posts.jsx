@@ -1,57 +1,97 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import { collection, getDocs, doc, deleteDoc, getDoc , setDoc ,updateDoc} from 'firebase/firestore';
 import { db } from '../../firebase';
-import { collection, addDoc } from 'firebase/firestore';
 import { AuthContext } from '../../context/AuthContext';
-import { toast } from 'react-toastify';
-const Posts = () => {
-  const { currentUser } = useContext(AuthContext);
-  const [text, setText] = useState('');
-  const [error, setError] = useState('');
+import { useNavigate , Link  } from 'react-router-dom';
 
-  const handlePost = async (e) => {
-    e.preventDefault();
-  
-    // Validate the input field
-    if (!text.trim()) {
-      setError('Please enter a post before submitting.');
-      return;
+const Posts = () => {
+  const navigate = useNavigate();
+  const { currentUser } = useContext(AuthContext);
+  const [posts, setPosts] = useState([]);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
+
+  useEffect(() => {
+    // Check if user is logged in before fetching data
+    if (!currentUser) {
+      return; // If not logged in, no need to fetch data
     }
-  
-    try {
-      const postData = {
-        text: text,
-        posterId: currentUser.uid,
-        date: new Date(),
-        image: '',
-      };
-      const docRef = await addDoc(collection(db, 'posts'), postData);
-      toast.success('Post added successfully');
-      setText('');
-      setError(''); 
-    } catch (e) {
-      toast.error(e.message);
+
+    // Create a reference to the "posts" collection
+    const postsRef = collection(db, 'posts');
+
+    // Fetch the data from the "posts" collection
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await getDocs(postsRef);
+        const fetchedPosts = [];
+
+        querySnapshot.forEach((doc) => {
+          // Get data from each document and push it to the array
+          const post = { id: doc.id, ...doc.data() };
+          fetchedPosts.push(post);
+        });
+
+        // Update the state with fetched posts
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+
+    fetchData();
+  }, [currentUser]); // Run this effect whenever currentUser changes
+
+  const handleDeleteConfirmation = (post) => {
+    setPostToDelete(post);
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleDelete = async () => {
+    if (postToDelete) {
+      try {
+        await deleteDoc(doc(db, 'posts', postToDelete.id));
+        // Fetch updated data after deletion
+        const updatedPosts = posts.filter((post) => post.id !== postToDelete.id);
+        setPosts(updatedPosts);
+      } catch (error) {
+        console.error('Error deleting post:', error);
+      }
+      setShowDeleteConfirmation(false);
+      setPostToDelete(null);
     }
   };
-  
 
-  // Conditionally render the form based on the user's authentication status
-  return (
-    <div>
-      {currentUser ? (
-        <form action="">
-          <input
-            type="text"
-            id="post"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-          <button onClick={handlePost}>POST</button>
-        </form>
-      ) : (
-        <p>Please log in to create a post.</p>
+  const createConnection = async () => {};
+
+  // Render the posts only if the user is logged in
+  return currentUser ? (
+    <div className='postContainer'>
+      {posts.map((post) => (
+        <div key={post.id}>
+          <h2>{post.title}</h2>
+          <p>Category: {post.category}</p>
+          <p>Description: {post.description}</p>
+          <p>Price: {post.price}</p>
+          <p>ownerID: {post.ownerId}</p>
+          <Link to="/chat"><button onClick={createConnection}> contact to {post.ownerName}</button></Link>
+          <p>postID: {post.id}</p>
+          <img src={post.imageURL} alt={`Post: ${post.title}`} />
+
+          {post.ownerId === currentUser.uid && (
+            <button onClick={() => handleDeleteConfirmation(post)}>Delete</button>
+          )}
+        </div>
+      ))}
+      {showDeleteConfirmation && (
+        <div className='deleteConfirmation'>
+          <p>Are you sure you want to delete this post?</p>
+          <button onClick={handleDelete}>Yes</button>
+          <button onClick={() => setShowDeleteConfirmation(false)}>No</button>
+        </div>
       )}
     </div>
-  );
+  ) : null; // If not logged in, render nothing
 };
 
 export default Posts;

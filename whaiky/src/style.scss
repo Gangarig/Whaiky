@@ -5,12 +5,11 @@
 // Colors 
 :root {
 
-
-  --font--primary: Inter;
-  --font--secondary: ;
-  --font--tertiary: ;
-  --font--quaternary: ;
-  --font--quinary: ;
+  --font--inter: Inter;
+  --font--arial: Arial Rounded MT Bold;
+  --font--sourceLight: "Source Sans Pro-Light", Helvetica;
+  --font--sourceSemiBold:"Source Sans Pro-SemiBold", Helvetica; ;
+  --font--interBold: "Inter-Bold", Helvetica ;
   --font--senary: ;
   --font--septenary: ;
   --font--octonary: ;
@@ -41,8 +40,8 @@
 
 
   --background--primary:#3d3d3d ;
-  --background--secondary:#9E42F0 ;
-  --background--tertiary: linear-gradient(107.31deg, #9E42F0 16.46%, #02AD94 115.96%);
+  --background--secondary:rgba(242, 230, 253, 1) ;
+  --background--tertiary: #FFF;
   --background--quaternary: ;
   --background--quinary: ;
   --background--senary: ;
@@ -54,14 +53,27 @@
   --background--twelfth: ;
   
 
+  --gradient--primary:  linear-gradient(107.31deg, #9E42F0 16.46%, #02AD94 115.96%);
+  --gradient--secondary:  hsba(272, 72%, 94%, 1), hsba(216, 60%, 75%, 1) ;
+  --gradient--tertiary: linear-gradient(180deg, rgb(158, 66, 240) 0%, rgb(2, 173, 148) 100%);;
+  --gradient--quaternary: ;
+  --gradient--quinary: ;
+  --gradient--senary: ;
+  --gradient--septenary: ;
+
 }
 
+
 // Fonts
+// Arial Rounded MT Bold;
+// Source Sans Pro;
 
 
 // partials
 @import './partials/navbar.scss';
 @import './partials/profile.scss';
+@import './partials/postForm.scss';
+@import './partials/post.scss';
 
 
 
@@ -75,17 +87,16 @@
 
 
 .homePage {
-  width: 100vw;
   margin: 0;
   padding: 0;
-  background-color: var(--background--primary);
+  background-color: var(--background--secondary);
   color: var(--text--primary);
   font-family: var(--font--primary);
   flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-
-
 
 
 

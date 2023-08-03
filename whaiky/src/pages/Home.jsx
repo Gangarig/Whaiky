@@ -1,7 +1,8 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import Posts from '../components/post/Posts'
 import Profile from '../components/user/profile';
+import Posts from '../components/post/Posts';
+import AddPost from '../components/post/AddPost';
 
 import '../style.scss';
 
@@ -11,9 +12,10 @@ import '../style.scss';
 const Home = () => {
   return (
     <div className='homePage'>
-    {/* <Navbar/> */}
-    <Profile/>
     <Posts/>
+    {/* <AddPost/> */}
+    <Navbar/>
+    <Profile/>
     </div>
   )
 }
