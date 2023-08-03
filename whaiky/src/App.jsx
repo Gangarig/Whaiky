@@ -8,6 +8,12 @@ import { AuthContext } from './context/AuthContext.jsx';
 import ChatInterface from './pages/ChatInterface';
 import AddPost from './components/post/AddPost';
 import Posts from './components/post/Posts';
+import AddPostPage from './pages/AddPostPage';
+import CatagoriesPage from './pages/CatagoriesPage';
+import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
+import WalletPage from './pages/WalletPage';
+import MarklistPage from './pages/MarklistPage';
 
 
 function App() {
@@ -28,8 +34,12 @@ function App() {
           <Route path="chat" element={<ProtectedRoute><ChatInterface /></ProtectedRoute>} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="addpost" element={<AddPost />} />
-          <Route path="posts" element={<Posts />} />
+          <Route path="addpost" element={<AddPostPage />} />
+          <Route path="categories" element={<CatagoriesPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="wallet" element={<WalletPage />} />
+          <Route path="marklist" element={<MarklistPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

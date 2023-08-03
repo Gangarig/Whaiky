@@ -12,10 +12,9 @@ import '../style.scss';
 const Home = () => {
   return (
     <div className='homePage'>
-    <Posts/>
-    {/* <AddPost/> */}
-    <Navbar/>
-    <Profile/>
+      <Navbar/>
+      <Profile/>
+      <Posts/>
     </div>
   )
 }

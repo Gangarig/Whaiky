@@ -13,17 +13,14 @@ const Navbar = () => {
       <div className='navWrapper'>
         <div className="logo">LOGO</div>
         <ul className='navItems'>
-          <li className='navItem'>
-            HOME
-          </li>
-          <li className='navItem'>CATAGORIES</li>
-          <li className='navItem'><Link to='/addpost'> ADD POST</Link></li>
-          <li className='navItem'><Link to='/posts'> POST</Link></li>
-          <li  className='navItem'>MESSAGES</li>
-          <li className='navItem'>MY PROFILE</li>
-          <li className='navItem'>Wallet</li>
-          <li className='navItem'>Marklist</li>
-          <li className='navItem'>Settings</li>
+          <li onClick={() => navigate('/')} className='navItem'>HOME</li>
+          <li className='navItem' onClick={() => navigate('/categories')}>CATAGORIES</li>
+          <li onClick={() => navigate('/addpost')} className='navItem'>ADD POST</li>
+          <li  onClick={() => navigate('/chat')} className='navItem'>MESSAGES</li>
+          <li onClick={() => navigate('/profile')} className='navItem'>MY PROFILE</li>
+          <li onClick={() => navigate('/wallet')} className='navItem'>Wallet</li>
+          <li onClick={() => navigate('/marklist')} className='navItem'>Marklist</li>
+          <li onClick={() => navigate('/settings')} className='navItem'>Settings</li>
         </ul>
         <div className='navFooter'> 
           <div className='navFooterBox'>
