@@ -1,8 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { collection, getDocs, doc, deleteDoc, getDoc , setDoc ,updateDoc} from 'firebase/firestore';
-import { db } from '../../firebase';
+import {
+  collection,
+  getDocs,
+  doc,
+  deleteDoc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
+import { db, storage } from '../../firebase';
 import { AuthContext } from '../../context/AuthContext';
-import { useNavigate , Link  } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Posts = () => {
   const navigate = useNavigate();
@@ -62,7 +71,58 @@ const Posts = () => {
     }
   };
 
-  const createConnection = async () => {};
+  const createConnection = async (post) => {
+    try {
+      // Check if the user is the post owner
+      if (post.ownerId === currentUser.uid) {
+        console.log("You cannot create a connection with yourself.");
+        return;
+      }
+
+      // Proceed with creating connections
+      const combinedId =
+        currentUser.uid > post.ownerId
+          ? currentUser.uid + post.ownerId
+          : post.ownerId + currentUser.uid;
+
+      try {
+        const res = await getDoc(doc(db, 'chats', combinedId));
+
+        if (!res.exists()) {
+          // Create a chat in chats collection
+          await setDoc(doc(db, 'chats', combinedId), { messages: [] });
+
+          // Create user chats for the current user
+          await updateDoc(doc(db, 'userChats', currentUser.uid), {
+            [combinedId + '.userInfo']: {
+              uid: post.ownerId,
+              displayName: post.ownerName,
+              // Assuming you have ownerName in the post
+              // You might need to fetch this information from Firestore if it's not in the post
+            },
+            [combinedId + '.date']: serverTimestamp(),
+          });
+          // Create user chats for the post owner user
+          await updateDoc(doc(db, 'userChats', currentUser.uid), {
+            [combinedId + '.userInfo']: {
+              uid: currentUser.uid,
+              displayName: currentUser.displayName,
+              
+              // Assuming you have ownerName in the post
+              // You might need to fetch this information from Firestore if it's not in the post
+            },
+            [combinedId + '.date']: serverTimestamp(),
+          });
+
+          
+        }
+      } catch (err) {
+        console.error('Error creating chat:', err);
+      }
+    } catch (err) {
+      console.error('Error:', err);
+    }
+  };
 
   // Render the posts only if the user is logged in
   return currentUser ? (
@@ -74,7 +134,7 @@ const Posts = () => {
           <p>Description: {post.description}</p>
           <p>Price: {post.price}</p>
           <p>ownerID: {post.ownerId}</p>
-          <Link to="/chat"><button onClick={createConnection}> contact to {post.ownerName}</button></Link>
+          <button onClick={() => createConnection(post)}>Contact {post.ownerName}</button>
           <p>postID: {post.id}</p>
           <img src={post.imageURL} alt={`Post: ${post.title}`} />
 
