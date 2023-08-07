@@ -53,6 +53,7 @@ const AddPost = () => {
               postId, 
               ownerId: currentUser.uid,
               ownerName: currentUser.displayName,
+              
               title: postTitle,
               category: selectedCategory,
               description: postDesc,

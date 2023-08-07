@@ -11,9 +11,9 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { db, storage } from '../../firebase';
+import { db } from '../../firebase'; // Update with your Firebase import path
 import { AuthContext } from '../../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Posts = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
-  const [user , setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [err, setErr] = useState(false);
 
   useEffect(() => {
@@ -75,56 +75,63 @@ const Posts = () => {
     }
   };
 
-  const createConnection = async (post) => {
-    const q = query(
-      collection(db, "users"),
-      where("uid", "==", post.ownerId)
-    );
-    try {
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        setUser(doc.data());
-
-      });
-    } catch (err) {
-      setErr(true);
-      console.log(err);
-    }
-
+  const handleSelect = async (user) => {
+    // Check whether the group (chats in Firestore) exists, if not create
     const combinedId =
       currentUser.uid > user.uid
         ? currentUser.uid + user.uid
         : user.uid + currentUser.uid;
     try {
-      const res = await getDoc(doc(db, "chats", combinedId));
+      const res = await getDoc(doc(db, 'chats', combinedId));
 
       if (!res.exists()) {
-        //create a chat in chats collection
-        await setDoc(doc(db, "chats", combinedId), { messages: [] });
-
-        //create user chats
-        await updateDoc(doc(db, "userChats", currentUser.uid), {
-          [combinedId + ".userInfo"]: {
+        // Create a chat in chats collection
+        await setDoc(doc(db, 'chats', combinedId), { messages: [] });
+  
+        // Create user chats
+        await updateDoc(doc(db, 'userChats', currentUser.uid), {
+          [combinedId + '.userInfo']: {
             uid: user.uid,
             displayName: user.displayName,
             photoURL: user.photoURL,
           },
-          [combinedId + ".date"]: serverTimestamp(),
+          [combinedId + '.date']: serverTimestamp(),
         });
 
-        await updateDoc(doc(db, "userChats", user.uid), {
-          [combinedId + ".userInfo"]: {
+        await updateDoc(doc(db, 'userChats', user.uid), {
+          [combinedId + '.userInfo']: {
             uid: currentUser.uid,
             displayName: currentUser.displayName,
             photoURL: currentUser.photoURL,
           },
-          [combinedId + ".date"]: serverTimestamp(),
+          [combinedId + '.date']: serverTimestamp(),
         });
       }
     } catch (err) {}
-    
+
+    // Clear the user data after use
+    navigate('/chat');
+    setUser(null);
   };
-  
+
+  const createConnection = async (post) => {
+    const q = query(
+      collection(db, 'users'),
+      where('uid', '==', post.ownerId)
+    );
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        const user = doc.data();
+        handleSelect(user); // Pass the user data directly to handleSelect
+      });
+    } catch (err) {
+      setErr(true);
+      console.log(err);
+    }
+  };
+
+ 
   // Render the posts only if the user is logged in
   return currentUser ? (
     <div className='postContainer'>
@@ -135,6 +142,7 @@ const Posts = () => {
           <p>Description: {post.description}</p>
           <p>Price: {post.price}</p>
           <p>ownerID: {post.ownerId}</p>
+          
           <button onClick={() => createConnection(post)}>Contact {post.ownerName}</button>
           <p>postID: {post.id}</p>
           <img src={post.imageURL} alt={`Post: ${post.title}`} />

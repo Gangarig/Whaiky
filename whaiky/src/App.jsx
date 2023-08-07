@@ -1,48 +1,46 @@
 import React, { useContext } from 'react';
-import Register from './pages/Register';
-import Home from './pages/Home';
-import Login from './pages/Login';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './style.scss';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import 'react-phone-input-2/lib/style.css';
 import { AuthContext } from './context/AuthContext.jsx';
 import ChatInterface from './pages/ChatInterface';
-import AddPost from './components/post/AddPost';
-import Posts from './components/post/Posts';
 import AddPostPage from './pages/AddPostPage';
 import CatagoriesPage from './pages/CatagoriesPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 import WalletPage from './pages/WalletPage';
 import MarklistPage from './pages/MarklistPage';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
-
-function App() {
+const ProtectedRoute = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
 
-  const ProtectedRoute = ({ children }) => {
-    if (!currentUser) {
-      return <Navigate to="/login" />;
-    }
-    return children;
-  };
+  if (!currentUser) {
+    return <Navigate to="/login" />;
+  }
+  return children;
+};
 
+function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/">
           <Route index element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path="chat" element={<ProtectedRoute><ChatInterface /></ProtectedRoute>} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="addpost" element={<AddPostPage />} />
-          <Route path="categories" element={<CatagoriesPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="wallet" element={<WalletPage />} />
-          <Route path="marklist" element={<MarklistPage />} />
-          <Route path="settings" element={<SettingsPage />} />
+          <Route path="addpost" element={<ProtectedRoute><AddPostPage /></ProtectedRoute>} />
+          <Route path="categories" element={<ProtectedRoute><CatagoriesPage /></ProtectedRoute>} />
+          <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
+          <Route path="marklist" element={<ProtectedRoute><MarklistPage /></ProtectedRoute>} />
+          <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 

@@ -5,10 +5,13 @@ import { auth, db, storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate, Link } from "react-router-dom";
+import PasswordChecklist from "react-password-checklist";
 
 const Register = () => {
   const [err, setErr] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState(""); // Declare password state
+  const [passwordAgain, setPasswordAgain] = useState(""); // Declare passwordAgain state
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -16,26 +19,25 @@ const Register = () => {
     e.preventDefault();
     const displayName = e.target[0].value;
     const email = e.target[1].value;
-    const password = e.target[2].value;
-    const file = e.target[3].files[0];
+    const file = e.target[4].files[0];
 
     try {
-      //Create user
+      // Create user
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
-      //Create a unique image name
+      // Create a unique image name
       const date = new Date().getTime();
       const storageRef = ref(storage, `${displayName + date}`);
 
       await uploadBytesResumable(storageRef, file).then(() => {
         getDownloadURL(storageRef).then(async (downloadURL) => {
           try {
-            //Update profile
+            // Update profile
             await updateProfile(res.user, {
               displayName,
               photoURL: downloadURL,
             });
-            //create user on firestore
+            // Create user on firestore
             await setDoc(doc(db, "users", res.user.uid), {
               uid: res.user.uid,
               displayName,
@@ -43,7 +45,7 @@ const Register = () => {
               photoURL: downloadURL,
             });
 
-            //create empty user chats on firestore
+            // Create empty user chats on firestore
             await setDoc(doc(db, "userChats", res.user.uid), {});
             navigate("/");
           } catch (err) {
@@ -67,7 +69,25 @@ const Register = () => {
         <form onSubmit={handleSubmit}>
           <input required type="text" placeholder="display name" />
           <input required type="email" placeholder="email" />
-          <input required type="password" placeholder="password" />
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <label>Password Again:</label>
+          <input
+            type="password"
+            value={passwordAgain}
+            onChange={(e) => setPasswordAgain(e.target.value)}
+          />
+          <PasswordChecklist
+            rules={["minLength", "specialChar", "number", "capital", "match"]}
+            minLength={5}
+            value={password}
+            valueAgain={passwordAgain}
+            onChange={(isValid) => {}}
+          />
           <input required style={{ display: "none" }} type="file" id="file" />
           <label htmlFor="file">
             <img src={Add} alt="" />
