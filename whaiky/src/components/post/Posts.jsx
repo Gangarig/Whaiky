@@ -8,6 +8,8 @@ import {
   setDoc,
   updateDoc,
   serverTimestamp,
+  query,
+  where,
 } from 'firebase/firestore';
 import { db, storage } from '../../firebase';
 import { AuthContext } from '../../context/AuthContext';
@@ -19,6 +21,8 @@ const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  const [user , setUser] = useState(null);
+  const [err, setErr] = useState(false);
 
   useEffect(() => {
     // Check if user is logged in before fetching data
@@ -72,58 +76,55 @@ const Posts = () => {
   };
 
   const createConnection = async (post) => {
+    const q = query(
+      collection(db, "users"),
+      where("uid", "==", post.ownerId)
+    );
     try {
-      // Check if the user is the post owner
-      if (post.ownerId === currentUser.uid) {
-        console.log("You cannot create a connection with yourself.");
-        return;
-      }
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        setUser(doc.data());
 
-      // Proceed with creating connections
-      const combinedId =
-        currentUser.uid > post.ownerId
-          ? currentUser.uid + post.ownerId
-          : post.ownerId + currentUser.uid;
-
-      try {
-        const res = await getDoc(doc(db, 'chats', combinedId));
-
-        if (!res.exists()) {
-          // Create a chat in chats collection
-          await setDoc(doc(db, 'chats', combinedId), { messages: [] });
-
-          // Create user chats for the current user
-          await updateDoc(doc(db, 'userChats', currentUser.uid), {
-            [combinedId + '.userInfo']: {
-              uid: post.ownerId,
-              displayName: post.ownerName,
-              // Assuming you have ownerName in the post
-              // You might need to fetch this information from Firestore if it's not in the post
-            },
-            [combinedId + '.date']: serverTimestamp(),
-          });
-          // Create user chats for the post owner user
-          await updateDoc(doc(db, 'userChats', currentUser.uid), {
-            [combinedId + '.userInfo']: {
-              uid: currentUser.uid,
-              displayName: currentUser.displayName,
-              
-              // Assuming you have ownerName in the post
-              // You might need to fetch this information from Firestore if it's not in the post
-            },
-            [combinedId + '.date']: serverTimestamp(),
-          });
-
-          
-        }
-      } catch (err) {
-        console.error('Error creating chat:', err);
-      }
+      });
     } catch (err) {
-      console.error('Error:', err);
+      setErr(true);
+      console.log(err);
     }
-  };
 
+    const combinedId =
+      currentUser.uid > user.uid
+        ? currentUser.uid + user.uid
+        : user.uid + currentUser.uid;
+    try {
+      const res = await getDoc(doc(db, "chats", combinedId));
+
+      if (!res.exists()) {
+        //create a chat in chats collection
+        await setDoc(doc(db, "chats", combinedId), { messages: [] });
+
+        //create user chats
+        await updateDoc(doc(db, "userChats", currentUser.uid), {
+          [combinedId + ".userInfo"]: {
+            uid: user.uid,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          },
+          [combinedId + ".date"]: serverTimestamp(),
+        });
+
+        await updateDoc(doc(db, "userChats", user.uid), {
+          [combinedId + ".userInfo"]: {
+            uid: currentUser.uid,
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL,
+          },
+          [combinedId + ".date"]: serverTimestamp(),
+        });
+      }
+    } catch (err) {}
+    
+  };
+  
   // Render the posts only if the user is logged in
   return currentUser ? (
     <div className='postContainer'>
