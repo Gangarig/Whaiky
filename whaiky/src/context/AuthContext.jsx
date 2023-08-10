@@ -13,6 +13,7 @@ export const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState({});
   const [userData, setUserData] = useState(null);
+  const [userType, setUserType] = useState(null); // Add userType state
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -47,8 +48,15 @@ export const AuthContextProvider = ({ children }) => {
     fetchUserData();
   }, [currentUser]);
 
+  // Function to update userType
+  const updateUserType = (newUserType) => {
+    setUserType(newUserType);
+  };
+
   return (
-    <AuthContext.Provider value={{ currentUser, userData }}>
+    <AuthContext.Provider
+      value={{ currentUser, userData, userType, updateUserType }} // Include userType and updateUserType
+    >
       {children}
     </AuthContext.Provider>
   );

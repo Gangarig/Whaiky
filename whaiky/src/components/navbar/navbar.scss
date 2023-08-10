@@ -1,0 +1,175 @@
+
+nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 294px; /* Fixed width */
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--background--tertiary);
+    background-color: var(--background--secondary);
+    align-items: center;
+    padding: 20px;
+    font-family: var(--font--sourceSemiBold);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+
+    .navWrapper {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+                justify-content: space-between;
+        width: 100%;
+        min-height: 100vh;
+        position: relative;
+        .logo {
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent;
+            background: var(--gradient--tertiary);
+            background-clip: text;
+            color: transparent;
+            font-family: var(--font--arialBold);
+            font-size: 36px;
+            font-weight: 600;
+            letter-spacing: 0;
+            line-height: normal;
+            text-fill-color: transparent;
+            white-space: nowrap;
+            width: 126px;
+        }
+        .navItems {
+            list-style: none;
+            position: absolute;
+            top: 10%;
+            width: 100%;
+            padding: 0;
+            height: 100%;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: column;
+                    flex-direction: column;
+            -webkit-box-align: center;
+                -ms-flex-align: center;
+                    align-items: center;
+            .navItem{
+                width: 95%;
+                height: 36px;
+                -ms-flex-negative: 0;
+                    flex-shrink: 0;
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-align: center;
+                    -ms-flex-align: center;
+                        align-items: center;               
+                padding: 0 20px;
+                cursor: pointer; 
+                border-radius: 7px;
+                gap: 30px;
+            }
+            .svg {
+                padding-left: 30px;
+            }
+            .navItem:focus , .navItem:hover {
+                background-color: var(--background--quaternary);
+                outline: 0.5px solid var(--background--tertiary);
+                -webkit-box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.40);
+                        box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.40);
+
+            }
+        }
+        .navFooter {
+            padding-bottom: 100px;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: column;
+                    flex-direction: column;
+            -webkit-box-align: center;
+                -ms-flex-align: center;
+                    align-items: center;
+            -webkit-box-pack: center;
+                -ms-flex-pack: center;
+                    justify-content: center;
+            width: 100%;
+            color: var(--text--primary);
+            font-family: var(--font--source);
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 300;
+            line-height: normal;
+            .navFooterBox {
+                width: 100%;
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-pack: distribute;
+                    justify-content: space-around;
+                .logOut {
+                    border: none;
+                    background-color: transparent;
+                    cursor: pointer;
+                    color: var(--text--primary);
+                    font-family: var(--font--sourceLight);
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: 300;
+                    line-height: normal;
+                    cursor: pointer;
+
+                }
+                .logOut:focus , .logOut:hover {
+                    outline: none;
+                    border: none;
+                }
+                .navFooterSupport {
+                    color: var(--text--primary);
+                    font-family: var(--font--sourceLight);
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: 300;
+                    line-height: normal;
+                }
+            }
+            .navFooterItem{
+                -webkit-background-clip: text !important;
+                -webkit-text-fill-color: transparent;
+                background: var(--gradient--tertiary);
+                background-clip: text;
+                color: transparent;
+                font-family: var(--font--interBold);
+                font-size: 20px;
+                font-weight: 700;
+                height: 24px;
+                left: 0;
+                letter-spacing: 0;
+                line-height: normal;
+                text-decoration: underline;
+                text-fill-color: transparent;
+                white-space: nowrap;
+            }
+        }
+        .user {
+            .userAvatar {
+                height: 100px;
+            }
+        }
+    }
+
+}

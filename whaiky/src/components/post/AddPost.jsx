@@ -5,6 +5,7 @@ import { v4 as uuid } from "uuid";
 import { AuthContext } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import './addPost.scss';
 
 const AddPost = () => {
   const { currentUser } = useContext(AuthContext);

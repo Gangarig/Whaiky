@@ -1,6 +1,6 @@
 import React from 'react'
-import AddPost from '../components/post/AddPost'
-import Navbar from '../components/Navbar'
+import Navbar from '../../components/navbar/Navbar'
+import AddPost from '../../components/post/AddPost'
 const AddPostPage = () => {
   return (
     <>

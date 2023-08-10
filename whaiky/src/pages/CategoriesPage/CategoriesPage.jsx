@@ -1,8 +1,7 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
+import Navbar from '../../components/navbar/Navbar'
 
-
-const CatagoriesPage = () => {
+const CategoriesPage = () => {
   return (
     <>
     <Navbar/>
@@ -13,4 +12,4 @@ const CatagoriesPage = () => {
   )
 }
 
-export default CatagoriesPage
+export default CategoriesPage

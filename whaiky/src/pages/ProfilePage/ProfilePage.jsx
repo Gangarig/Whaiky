@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import { AuthContext } from '../context/AuthContext';
+import Navbar from '../../components/navbar/Navbar';
+import { AuthContext } from '../../context/AuthContext';
 import {
   collection,
   query,
@@ -12,7 +12,7 @@ import {
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { toast } from 'react-toastify';
 
 const ProfilePage = () => {

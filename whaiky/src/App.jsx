@@ -3,16 +3,18 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import './style.scss';
 import 'react-phone-input-2/lib/style.css';
 import { AuthContext } from './context/AuthContext.jsx';
-import ChatInterface from './pages/ChatInterface';
-import AddPostPage from './pages/AddPostPage';
-import CatagoriesPage from './pages/CatagoriesPage';
-import ProfilePage from './pages/ProfilePage';
-import SettingsPage from './pages/SettingsPage';
-import WalletPage from './pages/WalletPage';
-import MarklistPage from './pages/MarklistPage';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Home from './pages/Home/Home.jsx';
+import Login from './pages/Login/Login.jsx';
+import Register from './pages/Register/Register.jsx';
+import AddPostPage from './pages/AddPostPage/AddPostPage.jsx';
+import CategoriesPage from './pages/CategoriesPage/CategoriesPage.jsx';
+import ProfilePage from './pages/ProfilePage/ProfilePage.jsx';
+import WalletPage from './pages/WalletPage/WalletPage.jsx';
+import MarklistPage from './pages/MarklistPage/MarklistPage.jsx';
+import SettingsPage from './pages/SettingsPage/SettingsPage.jsx';
+import TransitionPage from './pages/TransitionPage/TransitionPage.jsx';
+import ChatInterface from './pages/ChatInterface/ChatInterface.jsx';
+
 
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
@@ -28,16 +30,17 @@ function App() {
     <Router>
       <Routes>
         <Route path="/">
-          <Route index element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path='home' element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path="chat" element={<ProtectedRoute><ChatInterface /></ProtectedRoute>} />
-          <Route path="login" element={<Login />} />
+          <Route index element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="addpost" element={<ProtectedRoute><AddPostPage /></ProtectedRoute>} />
-          <Route path="categories" element={<ProtectedRoute><CatagoriesPage /></ProtectedRoute>} />
+          <Route path="categories" element={<ProtectedRoute><CategoriesPage /></ProtectedRoute>} />
           <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
           <Route path="marklist" element={<ProtectedRoute><MarklistPage /></ProtectedRoute>} />
           <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+          <Route path="transition" element={<ProtectedRoute><TransitionPage /></ProtectedRoute>} />
         </Route>
       </Routes>
     </Router>

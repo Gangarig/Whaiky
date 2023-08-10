@@ -1,6 +1,6 @@
 import React, {useContext} from 'react'
 import { AuthContext } from '../../context/AuthContext'
-
+import './profile.scss'
 const Profile = () => {
   const {currentUser} = useContext(AuthContext)
   return (
