@@ -13,15 +13,22 @@ import './Home.scss';
 const Home = () => {
   const {currentUser} = useContext(AuthContext)
   return (
-    <>
-    <Navbar />
-    <Profile/>
-      <div className='home-container'>
-        <div className='home-wrapper'>
-          <Posts/>
-        </div>
+    <div className='page-container'>
+      <div className='page-wrapper'>
+      <Profile className="profile"/>
+      <Navbar  className="navbar"/>
+      <div className='search-post-wrapper'>
+        <input type="text" placeholder='Search' className='search-post' />
       </div>
-    </>
+        <div className="post-grid-container">
+          <div className='post-grid-wrapper'>
+            <div className='post-grid'>
+              <Posts/>
+            </div>
+          </div>
+      </div>
+      </div>
+    </div>
   )
 }
 

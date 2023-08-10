@@ -1,9 +1,6 @@
 
 nav {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 294px; /* Fixed width */
+    min-width: 294px; /* Fixed width */
     height: 100vh; /* Full viewport height */
     display: flex;
     flex-direction: column;

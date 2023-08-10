@@ -146,7 +146,7 @@ const Posts = () => {
           
           <button onClick={() => createConnection(post)}>Contact {post.ownerName}</button>
           <p>postID: {post.id}</p>
-          <img src={post.imageURL} alt={`Post: ${post.title}`} />
+          <img className='post-img' src={post.imageURL} alt={`Post: ${post.title}`} />
 
           {post.ownerId === currentUser.uid && (
             <button onClick={() => handleDeleteConfirmation(post)}>Delete</button>

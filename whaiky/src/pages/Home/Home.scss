@@ -1,5 +1,40 @@
-.home-container {
-    padding-left: 294px;
-    position: absolute;
+.page-container {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.page-wrapper{
+    width: 100vw;
+    display: flex;
+}
+.navbar {
+    position: fixed;
     top: 0;
+    left: 0;
+    min-height: 100vh;
+}
+.profile {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+}
+.post-grid-container {
+   
+}
+.search-post-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    position: fixed;
+    top: 30px;
+}
+.search-post {
+    width: 440px;
+    height: 33px; 
+    border: 1px solid var(--background--tertiary);
+    border-radius: 10px;
+    padding-left: 30px;
 }
