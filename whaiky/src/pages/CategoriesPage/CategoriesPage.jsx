@@ -1,14 +1,18 @@
 import React from 'react'
 import Navbar from '../../components/navbar/Navbar'
+import './CategoriesPage.scss'
+import Profile from '../../components/user/profile';
 
 const CategoriesPage = () => {
   return (
-    <>
-    <Navbar/>
-    <div className='paddingFromNav'>
-
+    <div className='page-container'>
+      <div className='page-wrapper'>
+      <Profile className="profile"/>
+      <Navbar  className="navbar"/>
+      <div className="post-flex-container">
+      </div>
+      </div>
     </div>
-    </>
   )
 }
 

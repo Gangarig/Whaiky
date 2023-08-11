@@ -170,3 +170,27 @@ nav {
     }
 
 }
+@media screen and (max-width: 1024px) {
+
+    nav {
+        min-width: 200px; /* Fixed width */
+    .navWrapper {
+        .logo {
+            width: 126px;
+            }
+            .navItems {
+                .navItem{             
+                    padding: 0 5px;
+                    gap: 10px;
+                }
+                .svg {
+                    padding-left: 10px;
+                }
+            }
+        }
+        }
+
+}
+@media screen and (max-width: 768px) {
+    
+}

@@ -20,9 +20,9 @@ const Home = () => {
       <div className='search-post-wrapper'>
         <input type="text" placeholder='Search' className='search-post' />
       </div>
-        <div className="post-grid-container">
-          <div className='post-grid-wrapper'>
-            <div className='post-grid'>
+      <div className="post-flex-container">
+          <div className='post-flex-wrapper'>
+            <div className='post-flexbox'>
               <Posts/>
             </div>
           </div>

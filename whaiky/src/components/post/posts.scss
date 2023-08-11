@@ -1,10 +1,47 @@
-.postContainer {
-    width: 1000px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    img{
-        width: 200px;
-    }
+
+.post-card {
+    width: 214.054px;
+    height: 218px;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    background: var(--gradient--quaternary);
+    border-radius: 7px;
+    box-shadow: inset 0 -3em 3em rgba(0,0,0,0.1),
+             0 0  0 2px rgb(190, 190, 190),
+             0.3em 0.3em 1em rgba(0,0,0,0.3);
+    z-index: 0;
+}
+.post-card:hover , .post-card:focus {
+    scale: 1.02;
+    transition: 0.1s;
+
+}
+.post-img{
+    width: 214.054px;
+    height: 170px;
+    flex-shrink: 0;
+    object-fit: cover;
+    position: absolute;
+    top: 0; 
+    z-index: 1;
+    border-radius: 7px;
+}
+.post-title-wrapper{
+    position: absolute;
+    bottom: 25px;
+    left: 10px;
+}
+.post-title-text , .post-price-text{
+    color: var(--text--secondary);
+    font-family: var(--font--inter);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+.post-price-wrapper{
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
 }

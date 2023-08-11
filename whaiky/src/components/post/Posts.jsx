@@ -135,32 +135,19 @@ const Posts = () => {
  
   // Render the posts only if the user is logged in
   return currentUser ? (
-    <div className='postContainer'>
+    <>
       {posts.map((post) => (
-        <div key={post.id}>
-          <h2>{post.title}</h2>
-          <p>Category: {post.category}</p>
-          <p>Description: {post.description}</p>
-          <p>Price: {post.price}</p>
-          <p>ownerID: {post.ownerId}</p>
-          
-          <button onClick={() => createConnection(post)}>Contact {post.ownerName}</button>
-          <p>postID: {post.id}</p>
+        <div key={post.id} className='post-card'>
+          <div className="post-title-wrapper">
+            <span className='post-title-text'>{post.title}</span>
+          </div>
+          <div className="post-price-wrapper">
+            <span className='post-price-text'>Price: {post.price}</span>
+          </div>
           <img className='post-img' src={post.imageURL} alt={`Post: ${post.title}`} />
-
-          {post.ownerId === currentUser.uid && (
-            <button onClick={() => handleDeleteConfirmation(post)}>Delete</button>
-          )}
         </div>
       ))}
-      {showDeleteConfirmation && (
-        <div className='deleteConfirmation'>
-          <p>Are you sure you want to delete this post?</p>
-          <button onClick={handleDelete}>Yes</button>
-          <button onClick={() => setShowDeleteConfirmation(false)}>No</button>
-        </div>
-      )}
-    </div>
+      </>
   ) : null; // If not logged in, render nothing
 };
 
