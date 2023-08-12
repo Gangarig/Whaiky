@@ -12,6 +12,7 @@
     width: 100vw;
     position: fixed;
     top: 30px;
+    z-index: 99999;
 }
 .search-post {
     width: 400px;
@@ -19,4 +20,23 @@
     border: 1px solid var(--background--tertiary);
     border-radius: 10px;
     padding-left: 30px;
+}
+
+@media  (max-width: 1024px) {
+    .search-post{
+        width: 300px;
+    }
+}
+@media (max-width:768px) {
+    .search-post-wrapper {
+        -webkit-box-pack: end;
+            -ms-flex-pack: end;
+                justify-content: flex-end;
+        right: 10px;
+        top: 100px;
+    }
+    .search-post{
+        width: 200px;
+    }
+    
 }

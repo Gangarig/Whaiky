@@ -14,20 +14,10 @@ import './Home.scss';
 const Home = () => {
   const {currentUser} = useContext(AuthContext)
   return (
-    <div className='page-container'>
-      <div className='page-wrapper'>
-      <Profile className="profile"/>
-      <Navbar  className="navbar"/>
-      <Search/>
-      <div className="post-flex-container">
-          <div className='post-flex-wrapper'>
+
             <div className='post-flexbox'>
               <Posts/>
             </div>
-          </div>
-      </div>
-      </div>
-    </div>
   )
 }
 

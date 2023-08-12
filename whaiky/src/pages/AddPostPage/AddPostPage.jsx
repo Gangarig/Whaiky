@@ -4,10 +4,7 @@ import AddPost from '../../components/post/AddPost'
 const AddPostPage = () => {
   return (
     <>
-    <Navbar/>
-    <div className='paddingFromNav'>
       <AddPost/>
-    </div>
     </>
   )
 }

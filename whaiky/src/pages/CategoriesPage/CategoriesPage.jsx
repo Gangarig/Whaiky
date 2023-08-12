@@ -6,7 +6,7 @@ import './CategoriesPage.scss';
 import Profile from '../../components/user/profile';
 import { categoriesData } from './categoriesData'; // Import the categoriesData
 import { AuthContext } from '../../context/AuthContext';
-
+import Ellipse from '../../assets/svg/ellipse.svg';
 const CategoriesPage = () => {
   const { currentUser } = useContext(AuthContext);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -25,13 +25,6 @@ const CategoriesPage = () => {
   };
 
   return (
-    <div className='page-container'>
-      <div className='page-wrapper'>
-        <Profile className='profile' />
-        <Navbar className='navbar' />
-        <Search />
-        <div className='flex-container'>
-          <div className='flex-box-wrapper'>
             <div className='flexbox'>
               {categoriesData.map((category) => (
                 <div
@@ -50,6 +43,7 @@ const CategoriesPage = () => {
                       <ul className='options-list'>
                         {category.options.map((option) => (
                           <Link to={`/posts/${encodeURIComponent(category)}`} className='option' key={option}>
+                            <img src= {Ellipse} alt="Ellipse.svg" />
                             {option}
                           </Link>
 
@@ -60,10 +54,6 @@ const CategoriesPage = () => {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 };
 

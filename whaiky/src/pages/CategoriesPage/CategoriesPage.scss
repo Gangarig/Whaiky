@@ -60,7 +60,6 @@
 }
 
 .dropdown.open .options-container {
-    display: block;
     width: 350px;
     height: 150px;
     flex-shrink: 0;
@@ -81,11 +80,14 @@
     flex-direction: column;
     justify-content: center;
     justify-content: space-around;
-    padding-top: 15px;
+    margin: 0;
+    padding: 0;
   }
   
   .options-container {
-    display: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
     top: 100%;
     left: 0;
@@ -104,6 +106,11 @@
     text-align: left;
     width: 100%;
     height: 100%;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    width: 90%;
+    gap: 10px;
 
 
 }
@@ -150,6 +157,13 @@
     display: flex;
 }
 
+.dropdown.open .options-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 240px;
+    height: 150px;
+  }
 .dropdown {
     width: 250px;
     .category-img-wrapper{

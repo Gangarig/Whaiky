@@ -16,6 +16,8 @@ import TransitionPage from './pages/TransitionPage/TransitionPage.jsx';
 import ChatInterface from './pages/ChatInterface/ChatInterface.jsx';
 import PostsPage from './pages/PostsPage/PostsPage.jsx';
 import Navbar from './components/navbar/Navbar';
+import Profile from './components/user/profile';
+import Search from './components/search/Search';
 
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
@@ -29,22 +31,35 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/">
-          <Route path='home' element={<ProtectedRoute><Home /></ProtectedRoute>} />
-          <Route path="chat" element={<ProtectedRoute><ChatInterface /></ProtectedRoute>} />
-          <Route index element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="addpost" element={<ProtectedRoute><AddPostPage /></ProtectedRoute>} />
-          <Route path="categories" element={<ProtectedRoute><CategoriesPage /></ProtectedRoute>} />
-          <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-          <Route path="wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
-          <Route path="marklist" element={<ProtectedRoute><MarklistPage /></ProtectedRoute>} />
-          <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-          <Route path="transition" element={<ProtectedRoute><TransitionPage /></ProtectedRoute>} />
-          <Route path="posts/:category" element={<ProtectedRoute><PostsPage /></ProtectedRoute>} />
-        </Route>
-      </Routes>
+      <div className='page-container'>
+      <div className='page-wrapper'>
+      <Navbar/>
+      <Profile/>
+      <Search/>
+      <div className="global-component-background"></div>
+
+      <div className='page-content-container'>
+        <div className='page-content-wrapper'>
+          <Routes>
+            <Route path="/">
+              <Route path='home' element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route path="chat" element={<ProtectedRoute><ChatInterface /></ProtectedRoute>} />
+              <Route index element={<Login />} />
+              <Route path="register" element={<Register />} />
+              <Route path="addpost" element={<ProtectedRoute><AddPostPage /></ProtectedRoute>} />
+              <Route path="categories" element={<ProtectedRoute><CategoriesPage /></ProtectedRoute>} />
+              <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
+              <Route path="marklist" element={<ProtectedRoute><MarklistPage /></ProtectedRoute>} />
+              <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+              <Route path="transition" element={<ProtectedRoute><TransitionPage /></ProtectedRoute>} />
+              <Route path="posts/:category" element={<ProtectedRoute><PostsPage /></ProtectedRoute>} />
+            </Route>
+          </Routes>
+          </div>
+        </div>
+      </div>
+    </div>
     </Router>
   );
 }

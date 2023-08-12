@@ -7,6 +7,7 @@
     right: 10px;
     border-radius: 10px;
     background: var(--gradient--primary);
+    z-index: 99999;
     .user {
         display: -webkit-box;
         display: -ms-flexbox;

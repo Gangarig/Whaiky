@@ -14,6 +14,7 @@ import 'react-phone-input-2/lib/style.css';
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import { db } from '../../firebase';
 import { toast } from 'react-toastify';
+import './ProfilePage.scss';
 
 const ProfilePage = () => {
   const { currentUser, userData } = useContext(AuthContext);
@@ -52,8 +53,7 @@ const ProfilePage = () => {
 
   return (
     <>
-      <Navbar />
-      <div className='paddingFromNav'>
+      <div className='profile-wrapper'>
         <button onClick={updateUserProfile}>Save Changes</button>
         <h1>Profile Page</h1>
         <input

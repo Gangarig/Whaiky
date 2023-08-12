@@ -42,11 +42,7 @@ const PostsPage = () => {
   }, [currentUser, category]); // Include category as a dependency
 
   return (
-    <div className='page-container'>
-      <div className='page-wrapper'>
-        <Profile className='profile' />
-        <Navbar className='navbar' />
-        <Search />
+      <>
         <div className='posts-container'>
           {posts.map((post) => (
             <div key={post.id} className='post-card'>
@@ -66,8 +62,7 @@ const PostsPage = () => {
         >
           Back to Categories
         </Link>
-      </div>
-    </div>
+        </>
   );
 };
 
