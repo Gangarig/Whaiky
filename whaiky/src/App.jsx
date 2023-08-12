@@ -14,7 +14,7 @@ import MarklistPage from './pages/MarklistPage/MarklistPage.jsx';
 import SettingsPage from './pages/SettingsPage/SettingsPage.jsx';
 import TransitionPage from './pages/TransitionPage/TransitionPage.jsx';
 import ChatInterface from './pages/ChatInterface/ChatInterface.jsx';
-
+import Navbar from './components/navbar/Navbar';
 
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
