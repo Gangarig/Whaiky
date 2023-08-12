@@ -14,6 +14,7 @@ import MarklistPage from './pages/MarklistPage/MarklistPage.jsx';
 import SettingsPage from './pages/SettingsPage/SettingsPage.jsx';
 import TransitionPage from './pages/TransitionPage/TransitionPage.jsx';
 import ChatInterface from './pages/ChatInterface/ChatInterface.jsx';
+import PostsPage from './pages/PostsPage/PostsPage.jsx';
 import Navbar from './components/navbar/Navbar';
 
 const ProtectedRoute = ({ children }) => {
@@ -41,6 +42,7 @@ function App() {
           <Route path="marklist" element={<ProtectedRoute><MarklistPage /></ProtectedRoute>} />
           <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
           <Route path="transition" element={<ProtectedRoute><TransitionPage /></ProtectedRoute>} />
+          <Route path="posts/:category" element={<ProtectedRoute><PostsPage /></ProtectedRoute>} />
         </Route>
       </Routes>
     </Router>

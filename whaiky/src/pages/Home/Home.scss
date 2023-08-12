@@ -1,12 +1,22 @@
+
+
 .page-container {
     width: 100vw;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     overflow: hidden;
 }
 .page-wrapper{
     width: 100vw;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
 }
 .navbar {
@@ -26,20 +36,33 @@
 }
 .post-flex-wrapper {
     width: calc(100vw - 294px);
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     padding: 100px 50px;
 }
 .post-flexbox{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
     width: 100%;
     gap: 30px;
 }
 .search-post-wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     width: 100vw;
     position: fixed;
     top: 30px;
@@ -54,6 +77,8 @@
 @media  (max-width: 1024px) {
     .post-flex-wrapper {
         width: calc(100vw - 200px);
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
         padding: 100px 50px;
     }
@@ -63,7 +88,9 @@
 }
 @media (max-width:768px) {
     .search-post-wrapper {
-        justify-content: flex-end;
+        -webkit-box-pack: end;
+            -ms-flex-pack: end;
+                justify-content: flex-end;
         right: 10px;
         top: 100px;
     }

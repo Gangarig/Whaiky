@@ -1,15 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import Search from '../../components/search/Search';
 import Navbar from '../../components/navbar/Navbar';
 import './CategoriesPage.scss';
 import Profile from '../../components/user/profile';
-import house from '../../assets/svg/house.svg';
-
+import { categoriesData } from './categoriesData'; // Import the categoriesData
+import { AuthContext } from '../../context/AuthContext';
 
 const CategoriesPage = () => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { currentUser } = useContext(AuthContext);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+  const toggleDropdown = (categoryId) => {
+    if (activeDropdown === categoryId) {
+      setActiveDropdown(null);
+    } else {
+      setActiveDropdown(categoryId);
+    }
+  };
+
+  const handleOptionClick = (category, option) => {
+    // Navigate to PostsPage with selected category value
+    window.location.href = `/posts?category=${category}&option=${option}`;
   };
 
   return (
@@ -17,70 +29,37 @@ const CategoriesPage = () => {
       <div className='page-wrapper'>
         <Profile className='profile' />
         <Navbar className='navbar' />
+        <Search />
         <div className='flex-container'>
           <div className='flex-box-wrapper'>
             <div className='flexbox'>
+              {categoriesData.map((category) => (
+                <div
+                  className={`dropdown ${activeDropdown === category.id ? 'open' : ''}`}
+                  key={category.id}
+                  onClick={() => toggleDropdown(category.id)}
+                >
+                  <div className='category-img-wrapper'>
+                    <img className='category-img' src={category.icon} alt={category.text} />
+                  </div>
+                  <div className='category-text'>
+                    {category.text}
+                  </div>
+                  {activeDropdown === category.id && (
+                    <div className='options-container'>
+                      <ul className='options-list'>
+                        {category.options.map((option) => (
+                          <Link to={`/posts/${encodeURIComponent(category)}`} className='option' key={option}>
+                            {option}
+                          </Link>
 
-
-              <div className='dropdown'>
-                <dir className="category-img-wrapper"> 
-                 <img className='category-img' src={house} alt="house.svg" />
-                </dir>  
-                <div className='category-text'>Home Improvement</div>
-              </div>
-
-              <div className='dropdown'>
-                <dir className="category-img-wrapper"> 
-                 <img className='category-img' src={house} alt="house.svg" />
-                </dir>  
-                <div className='category-text'>Home Improvement</div>
-              </div>
-
-              <div className='dropdown'>
-                <dir className="category-img-wrapper"> 
-                 <img className='category-img' src={house} alt="house.svg" />
-                </dir>  
-                <div className='category-text'>Home Improvement</div>
-              </div>
-
-              <div className='dropdown'>
-                <dir className="category-img-wrapper"> 
-                 <img className='category-img' src={house} alt="house.svg" />
-                </dir>  
-                <div className='category-text'>Home Improvement</div>
-              </div>
-
-              <div className='dropdown'>
-                <dir className="category-img-wrapper"> 
-                 <img className='category-img' src={house} alt="house.svg" />
-                </dir>  
-                <div className='category-text'>Home Improvement</div>
-              </div>
-
-              <div className='dropdown'>
-                <dir className="category-img-wrapper"> 
-                 <img className='category-img' src={house} alt="house.svg" />
-                </dir>  
-                <div className='category-text'>Home Improvement</div>
-              </div>
-
-              <div className='dropdown'>
-                <dir className="category-img-wrapper"> 
-                 <img className='category-img' src={house} alt="house.svg" />
-                </dir>  
-                <div className='category-text'>Home Improvement</div>
-              </div>
-
-              <div className='dropdown'>
-                <dir className="category-img-wrapper"> 
-                 <img className='category-img' src={house} alt="house.svg" />
-                </dir>  
-                <div className='category-text'>Home Improvement</div>
-              </div>
-              
-              
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-            <div className='flexbox'>{/* Your content here */}</div>
           </div>
         </div>
       </div>
