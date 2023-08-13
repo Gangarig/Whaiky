@@ -5,9 +5,7 @@ import Navbar from '../../components/navbar/Navbar'
 const MarklistPage = () => {
   return (
     <>
-      <div className='paddingFromNav'>
-
-      </div>
+      
     </>
   )
 }

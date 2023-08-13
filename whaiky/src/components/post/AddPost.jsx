@@ -22,6 +22,12 @@ const AddPost = () => {
   const handleImageChange = (event) => {
     setPostImg(event.target.files[0]);
   };
+  const handleDivClick = (e) => {
+    const fileInput = document.getElementById('postImgInput');
+    if (e.target !== fileInput) {
+        fileInput.click();
+    }
+};
 
   const handlePost = async (e) => {
     e.preventDefault();
@@ -88,61 +94,84 @@ const AddPost = () => {
       <div className='postFormWrapper'>
         {currentUser && ( // Only render the form if the user is logged in
           <form className='postForm' onSubmit={handlePost}>
+
             <div className='postTitle'>
-              <label htmlFor='postTitle'>Title</label>
+              
+              <label htmlFor='postTitleText'>Title</label>
+              <div className='gradient-title-border-wrapper'>
               <input
-                className='postTitleInput'
+                className='postTitleInput gradient-input'
                 type='text'
                 name='postTitle'
                 id='postTitle'
                 value={postTitle}
                 onChange={(e) => setPostTitle(e.target.value)}
               />
+              </div>
             </div>
             <div className='postCategory'>
               <label htmlFor='postCategory'>Choose category</label>
+              <div className='border-category-wrapper'>
               <select
                 id='categorySelect'
                 value={selectedCategory}
                 onChange={handleCategoryChange}
+                className='categorySelectBox border-category'
               >
-                <option value="Home Improvement">Home Improvement</option>
-                <option value="Cleaning Services">Cleaning Services</option>
-                <option value="HVAC Services">HVAC Services</option>
-                <option value="Painting Services">Painting Services</option>
-                <option value="Electrical Services">Electrical Services</option>
-                <option value="Water Heater Services">Water Heater Services</option>
-                <option value="Plumbing Services">Plumbing Services</option>
-                <option value="Moving Services">Moving Services</option>
-                <option value="category9">Landscaping Services</option>
-                <option value="category10">General Services</option>
+                <option className='categoryOption' value="Home Improvement">Home Improvement</option>
+                <option className='categoryOption' value="Cleaning Services">Cleaning Services</option>
+                <option className='categoryOption' value="HVAC Services">HVAC Services</option>
+                <option className='categoryOption' value="Painting Services">Painting Services</option>
+                <option className='categoryOption' value="Electrical Services">Electrical Services</option>
+                <option className='categoryOption' value="Water Heater Services">Water Heater Services</option>
+                <option className='categoryOption' value="Plumbing Services">Plumbing Services</option>
+                <option className='categoryOption' value="Moving Services">Moving Services</option>
+                <option className='categoryOption' value="category9">Landscaping Services</option>
+                <option className='categoryOption' value="category10">General Services</option>
               </select>
+              </div>
             </div>
             <div className='postDesc'>
               <label htmlFor='postDesc'>Description</label>
+              <div className='border-desc-wrapper'>
               <textarea
                 name='postDesc'
+                className='postDescInput border-desc'
                 id='postDesc'
                 cols='30'
                 rows='10'
                 value={postDesc}
                 onChange={(e) => setPostDesc(e.target.value)}
               ></textarea>
+              </div>
             </div>
             <div className='postPrice'>
               <label htmlFor='postPrice'>Price</label>
+              <div className='border-postPrice-wrapper'>
               <input
                 type='number'
                 name='postPrice'
                 id='postPrice'
+                className='postPriceInput border-postPrice'
                 value={postPrice}
                 onChange={(e) => setPostPrice(e.target.value)}
               />
+              </div>
             </div>
-            <div className='postImg'>
-              <label htmlFor='postImg'>Please Upload photos</label>
-              <input type='file' name='postImg' id='postImg' onChange={handleImageChange} />
+            <div className='gradient-border-img-wrapper'>
+              <div className='postImgwrapper' onClick={handleDivClick}>
+                <label className='postImgLabel' htmlFor='postImgInput'>
+                  Upload Photos
+                </label>
+                <input className='fileInput' type='file' name='postImg' id='postImgInput' onChange={handleImageChange} />
+              </div>
             </div>
+
+
+
+
+
+
             <button className='postBtn' type='submit'>
               Post
             </button>

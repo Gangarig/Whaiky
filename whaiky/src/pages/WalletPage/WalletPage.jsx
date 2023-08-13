@@ -4,7 +4,7 @@ import Navbar from '../../components/navbar/Navbar'
 const Wallet = () => {
   return (
     <>
-      <Navbar/>
+      
       <div className='paddingFromNav'>
 
       </div>
