@@ -1,6 +1,7 @@
 import React from 'react'
 import Sidebar from '../../components/sidebar/Sidebar'
 import Chat from '../../components/chat/Chat'
+import './ChatInterFace.scss';
 
 const ChatInterface = () => {
   return (
@@ -8,8 +9,8 @@ const ChatInterface = () => {
       <div className="container">
         <Sidebar/>
         <Chat/>
-      </div>
-    </div>
+      </div> 
+    </div>  
   )
 }
 
