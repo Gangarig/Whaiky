@@ -14,10 +14,13 @@ export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState({});
   const [userData, setUserData] = useState(null);
   const [userType, setUserType] = useState(null); // Add userType state
+  const [loading, setLoading] = useState(true); // Add loading state
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      setLoading(false);
     });
     return () => {
       unsubscribe();
@@ -55,7 +58,7 @@ export const AuthContextProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ currentUser, userData, userType, updateUserType }} // Include userType and updateUserType
+      value={{ currentUser, userData, loading , userType, updateUserType }} // Include userType and updateUserType
     >
       {children}
     </AuthContext.Provider>

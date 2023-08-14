@@ -143,13 +143,71 @@
     width: 70%;
 }
 
+//post styles
+
+.post-card {
+    width: 214.054px;
+    height: 218px;
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    background: var(--gradient--quaternary);
+    border-radius: 7px;
+    -webkit-box-shadow: inset 0 -3em 3em rgba(0,0,0,0.1),
+             0 0  0 2px rgb(190, 190, 190),
+             0.3em 0.3em 1em rgba(0,0,0,0.3);
+            box-shadow: inset 0 -3em 3em rgba(0,0,0,0.1),
+             0 0  0 2px rgb(190, 190, 190),
+             0.3em 0.3em 1em rgba(0,0,0,0.3);
+    z-index: 0;
+}
+.post-card:hover , .post-card:focus {
+    scale: 1.02;
+    -webkit-transition: 0.1s;
+    -o-transition: 0.1s;
+    transition: 0.1s;
+
+}
+.post-img{
+    width: 214.054px;
+    height: 170px;
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
+    -o-object-fit: cover;
+       object-fit: cover;
+    position: absolute;
+    top: 0; 
+    z-index: 1;
+    border-radius: 7px;
+}
+.post-title-wrapper{
+    position: absolute;
+    bottom: 25px;
+    left: 10px;
+}
+.post-title-text , .post-price-text{
+    color: var(--text--secondary);
+    font-family: var(--font--inter);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+.post-price-wrapper{
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
+
+
   
 
 
 
 
 
-
+// media queries
 
 @media  (max-width: 1024px) {
 .flex-container{

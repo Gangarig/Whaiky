@@ -90,6 +90,7 @@ const AddPost = () => {
     }
   };
   return (
+    <div className="page-content-wrapper">
     <div className='postFormContainer'>
       <div className='postFormWrapper'>
         {currentUser && ( // Only render the form if the user is logged in
@@ -166,18 +167,13 @@ const AddPost = () => {
                 <input className='fileInput' type='file' name='postImg' id='postImgInput' onChange={handleImageChange} />
               </div>
             </div>
-
-
-
-
-
-
             <button className='postBtn' type='submit'>
               Post
             </button>
           </form>
         )}
       </div>
+    </div>
     </div>
   );
 };

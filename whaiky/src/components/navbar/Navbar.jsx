@@ -24,6 +24,17 @@ const Navbar = () => {
   const handleLogoClick = () => {
     navigate('/home');
   };
+  const handleLogout = async () => {
+    try {
+      // Sign out the user
+      await signOut(auth);
+
+      // Navigate to the login page after successful sign out
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
   return (
 
     <nav className='navbar '>
@@ -82,7 +93,7 @@ const Navbar = () => {
         <div className='navFooter'> 
           <div className='navFooterBox'>
               <span className='navFooterSupport'>Support</span>
-              <button className='logOut' onClick={()=>signOut(auth)}>Log out</button>
+              <button className='logOut' onClick={handleLogout}>Log out</button>
           </div>
           <div className='navFooterItem'>Become a contractor</div>
         </div>
