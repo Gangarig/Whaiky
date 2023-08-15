@@ -46,7 +46,14 @@
         }
     }
 }
-
+.fade-in {
+    opacity: 1;
+    transition: opacity 0.8s;
+}
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s;
+}
 .vertical-Line {
     width: 5px;
     height: 800px;

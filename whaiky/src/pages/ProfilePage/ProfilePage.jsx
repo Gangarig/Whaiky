@@ -9,6 +9,7 @@ import 'react-phone-input-2/lib/style.css';
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import { db } from '../../firebase';
 import { toast } from 'react-toastify';
+import { getMetadata } from 'firebase/storage';
 import { deleteObject } from 'firebase/storage';
 import './ProfilePage.scss';
 
@@ -25,7 +26,6 @@ const ProfilePage = () => {
   const [photoURL, setImgUrl] = useState(userData?.photoURL || '');
   const [selectedImage, setSelectedImage] = useState(null);
 
-  console.log(photoURL);
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -49,90 +49,102 @@ const ProfilePage = () => {
           console.error("Error fetching user data from Firestore:", error);
       }
   };
-  
 
     fetchUserData();
 }, [currentUser.uid, db]);
 
 
-  const handleImageSelection = (e) => {
-    const file = e.target.files[0];
-    if (file) setSelectedImage(file);
-  };
+const handleImageSelection = (e) => {
+  const file = e.target.files[0];
+  if (file) setSelectedImage(file);
+};
 
-  const uploadImage = async () => {
-    if (!selectedImage) return null;
 
-    const imageRef = ref(storage, `profile_images/${currentUser.uid}_${selectedImage.name}`);
+
+const handleAvatarChange = async () => {
+  if (!selectedImage) return;
+
+  try {
+    if (photoURL) {
+      await deleteExistingImage();
+    }
+
+    const imageRef = ref(
+      storage,
+      `profile_images/${currentUser.uid}_${selectedImage.name}`
+    );
     const uploadTask = uploadBytesResumable(imageRef, selectedImage);
 
-    return new Promise((resolve, reject) => {
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          // Handle progress here if needed
-        },
-        (error) => {
-          reject(error);
-        },
-        async () => {
-          try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(downloadURL);
-          } catch (error) {
-            reject(error);
-          }
-        }
-      );
+    await uploadTask; // Wait for the upload to complete
+
+    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+
+    // Update user's photoURL in Firebase Authentication
+    await updateProfile(currentUser, {
+      photoURL: downloadURL,
     });
-  };
-  const deleteExistingImage = async (url) => {
+
+    // Update userType in the context
+    updateUserType('newUserTypeHere'); // Replace with the actual new user type
+
+    setImgUrl(downloadURL); // Update photoURL state to re-render the avatar
+
+    toast.success('Avatar updated successfully!');
+  } catch (error) {
+    toast.error('Error updating avatar.');
+  }
+};
+
+
+const deleteExistingImage = async () => {
+  if (!photoURL) return;
+
+  try {
+    const imageRef = ref(storage, photoURL);
+
+    // Check if the image exists before attempting to delete it
     try {
-      const imageRef = ref(storage, url); // Create a reference from a gs:// or https:// URL
-      await deleteObject(imageRef);
-    } catch (error) {
-      console.error('Error deleting old image:', error);
-    }
-  };
-
-  const updateUserProfile = async () => {
-    try {
-      let updatedImageURL = photoURL;
-
-      if (selectedImage) {
-        // Delete old image from storage if it exists
-        if (photoURL) {
-          await deleteExistingImage(photoURL);
-        }
-
-        // Upload new image
-        updatedImageURL = await uploadImage();
-        if (updatedImageURL) setImgUrl(updatedImageURL);
+      const imageMetadata = await getMetadata(imageRef);
+      if (imageMetadata) {
+        await deleteObject(imageRef);
+        console.log('Old image deleted successfully:', photoURL);
+      } else {
+        console.log('Old image not found. Skipping deletion.');
       }
-
-      const updatedData = {
-        country,
-        region,
-        firstName,
-        lastName,
-        displayName,
-        phone,
-        email,
-        photoURL: updatedImageURL,
-      };
-
-      const userDocRef = doc(db, 'users', userData.uid);
-      await updateDoc(userDocRef, updatedData);
-
-      toast.success('Profile updated successfully!');
     } catch (error) {
-      toast.error('Error updating profile');
+      console.error('Error getting image metadata:', error);
     }
-  };
+  } catch (error) {
+    console.error('Error deleting old image:', error);
+    throw error;
+  }
+};
 
 
-  return (
-    <>
+
+const updateUserProfile = async () => {
+  try {
+    const updatedData = {
+      country,
+      region,
+      firstName,
+      lastName,
+      displayName,
+      phone,
+      email,
+      photoURL,
+    };
+
+    const userDocRef = doc(db, 'users', currentUser.uid); // Use currentUser.uid
+    await updateDoc(userDocRef, updatedData);
+    toast.success('Profile updated successfully!');
+  } catch (error) {
+    toast.error('Error updating profile.');
+  }
+};
+
+return (
+      <>
       <div className='profile-wrapper'>
         <button onClick={updateUserProfile}>Save Changes</button>
         <h1>Profile Page</h1>
@@ -142,22 +154,21 @@ const ProfilePage = () => {
         <RegionDropdown country={country} value={region} onChange={(val) => setRegion(val)} />
         <input type='text' placeholder='Username' value={displayName} onChange={(e) => setUsername(e.target.value)} />
         <input type='text' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
-                {/* Displaying the Avatar */}
-                {photoURL ? (
-          <>
-            <img src={photoURL} alt="User Avatar" className="user-avatar" />
-            <label htmlFor="avatar-input">Change Avatar</label>
-          </>
-        ) : (
-          <label htmlFor="avatar-input">Upload Avatar</label>
+        {photoURL && (
+          <img src={photoURL} alt="User Avatar" className="user-avatar" />
         )}
-        
+
+        <label htmlFor="avatar-input">
+          {photoURL ? 'Change Avatar' : 'Upload Avatar'}
+        </label>
         <input 
           type='file' 
           id="avatar-input"
           onChange={handleImageSelection}
-          style={{ display: photoURL ? 'none' : 'block' }} 
         />
+        {selectedImage && (
+          <button onClick={handleAvatarChange}>Update Avatar</button>
+        )}
         <PhoneInput country={'us'} value={phone} onChange={(phone) => setPhone(phone)} />
       </div>
     </>

@@ -11,9 +11,10 @@ import img3 from '../../assets/img/ad/img3.png';
 import './Login.scss';
 
 const Login = () => {
-  const [err,setErr ] = useState(false);
+  const [err, setErr] = useState(false);
   const navigate = useNavigate();
   const [contentIndex, setContentIndex] = useState(0);
+  const [fadeIn, setFadeIn] = useState(true);
   const contents = [
     (
       <div className='logo-box'>
@@ -66,7 +67,13 @@ const Login = () => {
   ];
   useEffect(() => {
     const interval = setInterval(() => {
-      setContentIndex((prevIndex) => (prevIndex + 1) % contents.length);
+      setFadeIn(false); // Fade out
+
+      setTimeout(() => {
+        setContentIndex((prevIndex) => (prevIndex + 1) % contents.length);
+        setFadeIn(true); // Fade in after content change
+      }, 1000); // adjust this to the duration of the fade effect
+
     }, 5000); // Change content every 5 seconds
 
     return () => {
@@ -74,51 +81,43 @@ const Login = () => {
     };
   }, [contents.length]);
 
-
-
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const email = e.target[0].value;
-    const password = e.target[1].value;
-    try {
-     await signInWithEmailAndPassword(auth, email, password);
-     toast.success('Logged in successfully');
-     navigate('/transition');
-    } catch (err) {
-      toast.error(err.message);
-    }
+      e.preventDefault();
+      const email = e.target[0].value;
+      const password = e.target[1].value;
 
-  };
-  useEffect(() => {
-    const handleWindowResize = () => {
-      const loginForm = document.getElementById('viewAdjust');
-      if (loginForm) {
-        loginForm.style.height = 700 > window.innerHeight ? 'auto' : '564px';
+      try {
+          await signInWithEmailAndPassword(auth, email, password);
+          toast.success('Logged in successfully');
+          navigate('/transition');
+      } catch (err) {
+          toast.error(err.message);
       }
-    };
-    window.addEventListener('resize', handleWindowResize);
-    handleWindowResize();
-    return () => {
-      window.removeEventListener('resize', handleWindowResize);
-    };
-  }, []);
+  };
 
+  useEffect(() => {
+      const handleWindowResize = () => {
+          const loginForm = document.getElementById('viewAdjust');
+          if (loginForm) {
+              loginForm.style.height = 700 > window.innerHeight ? 'auto' : '564px';
+          }
+      };
+
+      window.addEventListener('resize', handleWindowResize);
+      handleWindowResize();
+
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, []);
   return (
     <div className="form-Container">
-      <div className="form-Wrapper">
-          {/* Logo Box  */}
-          <motion.div
-          id='motionBox'
-          className='sub-Wrapper ad-content box' 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{
-            duration: 0.8,
-            delay: 0.5,
-            ease: [0, 0.71, 0.2, 1.01]
-          }}>
-          {contents[contentIndex]}
-          </motion.div>
+    <div className="form-Wrapper">
+        <div 
+            id='motionBox' 
+            className={`sub-Wrapper ad-content box ${fadeIn ? 'fade-in' : 'fade-out'}`}>
+            {contents[contentIndex]}
+        </div>
           {/* Vertical Line */}
           <div className='vertical-Line'></div>
           {/* Login Form */}

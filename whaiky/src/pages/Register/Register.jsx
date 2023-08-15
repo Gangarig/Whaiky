@@ -11,8 +11,8 @@ const Register = () => {
   const [err, setErr] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
-  const [password, setPassword] = useState(""); // Declare password state
-  const [passwordAgain, setPasswordAgain] = useState(""); // Declare passwordAgain state
+  const [password, setPassword] = useState("");
+  const [passwordAgain, setPasswordAgain] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -23,30 +23,26 @@ const Register = () => {
     const file = e.target[4].files[0];
 
     try {
-      // Create user
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
-      // Create a unique image name
-      const date = new Date().getTime();
-      const storageRef = ref(storage, `profile_images/${displayName + date}`);
+      // Create an image name using the displayName
+      const imageName = `${displayName}_${file.name}`;
+      const storageRef = ref(storage, `profile_images/${imageName}`);
       
       await uploadBytesResumable(storageRef, file).then(() => {
         getDownloadURL(storageRef).then(async (downloadURL) => {
           try {
-            // Update profile
             await updateProfile(res.user, {
               displayName,
               photoURL: downloadURL,
             });
-            // Create user on firestore
             await setDoc(doc(db, "users", res.user.uid), {
               uid: res.user.uid,
               displayName,
               email,
+              createdAt: new Date().getTime(),
               photoURL: downloadURL,
             });
-
-            // Create empty user chats on firestore
             await setDoc(doc(db, "userChats", res.user.uid), {});
             navigate("/");
           } catch (err) {
@@ -60,6 +56,7 @@ const Register = () => {
       setErr(true);
       setLoading(false);
     }
+  
   };
 
   return (
@@ -99,7 +96,7 @@ const Register = () => {
           {err && <span>Something went wrong</span>}
         </form>
         <p>
-          You do have an account? <Link to="/login">Login</Link>
+          You do have an account? <Link to="/">Login</Link>
         </p>
       </div>
     </div>

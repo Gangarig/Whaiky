@@ -20,7 +20,7 @@ import Profile from './components/user/profile';
 import Search from './components/search/Search';
 import PostsByCategory from './pages/CategoriesPage/PostsByCategory';
 import { useLocation } from 'react-router-dom';
-import PostDetail from './components/post/PostDetail'
+import PostDetail from './components/post/PostDetail';
 
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
@@ -31,51 +31,47 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-
 function MainContent() {
   const { currentUser } = useContext(AuthContext);
   const location = useLocation();
 
   const pathsWithoutContainerClass = ["/", "/register", "/transition"];
 
-  // If the current path is in the pathsWithoutContainerClass array, directly render Routes
   if (pathsWithoutContainerClass.includes(location.pathname)) {
     return (
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={currentUser ? <Navigate to="/home" /> : <Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/transition" element={<TransitionPage />} />
+        <Route path="*" element={currentUser ? <Navigate to="/home" /> : <Navigate to="/" />} />
       </Routes>
     );
   }
 
   return (
     <>
-    <div className="app-wrapper">
-    <div className='page-content-container'>
-      <div className="page-content-wrapper">
-        <div className='global-component-background'></div>
-      <Routes>
-        {/* Protected Routes */}
-        <Route path='/home' element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path='/addpost' element={<ProtectedRoute><AddPostPage /></ProtectedRoute>} />
-        <Route path='/categories' element={<ProtectedRoute><CategoriesPage /></ProtectedRoute>} />
-        <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-        <Route path='/wallet' element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
-        <Route path='/marklist' element={<ProtectedRoute><MarklistPage /></ProtectedRoute>} />
-        <Route path='/settings' element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-        <Route path='/chat' element={<ProtectedRoute><ChatInterface /></ProtectedRoute>} />
-        <Route path='/posts' element={<ProtectedRoute><PostsPage /></ProtectedRoute>} />
-        <Route path="/posts-by-category/:optionId" element={<ProtectedRoute><PostsByCategory /></ProtectedRoute>} />
-        <Route path="/post-detail/:postId" element={<ProtectedRoute><PostDetail /></ProtectedRoute>} />
-
-      </Routes>
-      </div>
-      </div>
+      <div className="app-wrapper">
+        <div className='page-content-container'>
+          <div className="page-content-wrapper">
+            <div className='global-component-background'></div>
+            <Routes>
+              <Route path='/home' element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route path='/addpost' element={<ProtectedRoute><AddPostPage /></ProtectedRoute>} />
+              <Route path='/categories' element={<ProtectedRoute><CategoriesPage /></ProtectedRoute>} />
+              <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path='/wallet' element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
+              <Route path='/marklist' element={<ProtectedRoute><MarklistPage /></ProtectedRoute>} />
+              <Route path='/settings' element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+              <Route path='/chat' element={<ProtectedRoute><ChatInterface /></ProtectedRoute>} />
+              <Route path='/posts' element={<ProtectedRoute><PostsPage /></ProtectedRoute>} />
+              <Route path="/posts-by-category/:optionId" element={<ProtectedRoute><PostsByCategory /></ProtectedRoute>} />
+              <Route path="/post-detail/:postId" element={<ProtectedRoute><PostDetail /></ProtectedRoute>} />
+              <Route path="*" element={<Navigate to="/home" />} />
+            </Routes>
+          </div>
+        </div>
       </div>
     </>
-
   );
 }
 
@@ -83,10 +79,8 @@ function GlobalComponents() {
   const { currentUser } = useContext(AuthContext);
   const location = useLocation();
 
-  // Check paths where global components shouldn't be rendered
   const hideGlobalComponentsOn = ["/login", "/register", "/transition"];
   
-  // Determine if global components should be displayed
   const shouldShowGlobalComponents = currentUser && !hideGlobalComponentsOn.includes(location.pathname);
 
   if (!shouldShowGlobalComponents) return null;
@@ -100,9 +94,6 @@ function GlobalComponents() {
   );
 }
 
-
-
-// Your App component remains mostly unchanged
 function App() {
   const { currentUser, loading } = useContext(AuthContext);
 
@@ -113,12 +104,11 @@ function App() {
   return (
     <Router>
       <div className='app-container'>
-          <GlobalComponents />
-              <MainContent />      
+        <GlobalComponents />
+        <MainContent />      
       </div>
     </Router>
   );
 }
 
-export default App
-
+export default App;
