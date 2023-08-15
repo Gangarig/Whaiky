@@ -41,7 +41,7 @@ const PostsByCategory = () => {
 
   return (
       <>
-      <div className='page-content-wrapper'>
+     
         <div className='posts-container'>
           {posts.length > 0 ? (
             posts.map((post) => (
@@ -65,8 +65,8 @@ const PostsByCategory = () => {
         >
           Back to Categories
         </Link>
-        </div>
-        </>
+        
+      </>
   );
 };
 

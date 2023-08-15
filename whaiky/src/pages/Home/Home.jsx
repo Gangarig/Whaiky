@@ -14,11 +14,9 @@ import './Home.scss';
 const Home = () => {
   const {currentUser} = useContext(AuthContext)
   return (
-    <div className='page-content-wrapper'>
             <div className='post-flexbox'>
               <Posts/>
             </div>
-    </div>
   )
 }
 

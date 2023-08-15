@@ -12,8 +12,9 @@
   --font--sourceSemiBold:"Source Sans Pro-SemiBold", Helvetica; ;
   --font--interBold: "Inter-Bold", Helvetica ;
   --font--interLight: "Inter-Light", Helvetica;
-  --font--interSemiBold: "Inter-SemiBold", Helvetica;
   --font--interRegular: "Inter-Regular", Helvetica;
+  --font--interSemiBold: "Inter-SemiBold", Helvetica;
+  --font--interMedium: "Inter-Medium", Helvetica;
   --font--montserratBold: "Montserrat-Bold", Helvetica;
   --font--montserratSemiBold:"Montserrat-SemiBold", Helvetica; ;
   --font--nonary: ;
@@ -26,9 +27,9 @@
   --text--secondary: white;
   --text--tertiary: #383838;
   --text--quaternary:#7b7b7b ;
-  --text--quinary: ;
-  --text--senary: ;
-  --text--septenary: ;
+  --text--quinary:#413ee6 ;
+  --text--senary:#413ee680 ;
+  --text--septenary: #7b7b7b;;
 
 
 
@@ -75,7 +76,7 @@
 
 //global styles
 #root{
-    background-color: #3d3d3d;
+    // background-color: #3d3d3d;
 }
 *{
   margin: 0;
@@ -95,6 +96,7 @@
       -ms-flex-align: center;
           align-items: center;
   overflow: hidden;
+
 }
 .app-wrapper{
   width: 100vw;
@@ -102,19 +104,22 @@
   display: -ms-flexbox;
   display: flex;
   position: relative;
+  justify-content: center;
+  height: 100vh;
+  border-right: 1px solid var(--background--quaternary);
 }
 .page-content-container {
     max-height: 100vh;
     overflow: auto;
+    width: 100%;
 }
 .page-content-wrapper {
   width: calc(100vw - 294px);
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  padding: 100px 50px;
+  padding: 100px 10px;
   justify-content: center;
-  align-content: center;
 }
 .global-component-background {
   z-index: 999;
@@ -173,18 +178,18 @@
   }
   
  
-<<<<<<< HEAD
+
 }
 
-@media (min-width: 1500px) {
+@media (min-width: 1800px) {
   .app-wrapper{
-    width: 1500px;
+    width: 1800px;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
   }
   .page-content-wrapper {
-    width: calc(1500px - 294px);
+    width: calc(1800px);
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -515,6 +520,3 @@
       }
     }
   }
-=======
-}
->>>>>>> a06b046bc2f7828e9572fd816b460cac63764bf8

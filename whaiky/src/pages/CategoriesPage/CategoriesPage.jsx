@@ -21,7 +21,7 @@ const CategoriesPage = () => {
   };
 
   return (
-    <div className="page-content-wrapper">
+    
       <div className='flexbox'>
         {categoriesData.map((category) => (
           <div
@@ -54,7 +54,7 @@ const CategoriesPage = () => {
           </div>
         ))}
       </div>
-    </div>
+    
   );
 };
 

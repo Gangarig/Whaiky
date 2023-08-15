@@ -19,6 +19,8 @@ import Navbar from './components/navbar/Navbar';
 import Profile from './components/user/profile';
 import Search from './components/search/Search';
 import PostsByCategory from './pages/CategoriesPage/PostsByCategory';
+import { useLocation } from 'react-router-dom';
+import PostDetail from './components/post/PostDetail'
 
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
@@ -29,18 +31,31 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-import { useLocation } from 'react-router-dom';
 
 function MainContent() {
   const { currentUser } = useContext(AuthContext);
-  return (
-    <>
+  const location = useLocation();
+
+  const pathsWithoutContainerClass = ["/", "/register", "/transition"];
+
+  // If the current path is in the pathsWithoutContainerClass array, directly render Routes
+  if (pathsWithoutContainerClass.includes(location.pathname)) {
+    return (
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={currentUser ? <Navigate to="/home" /> : <Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/transition" element={<TransitionPage />} />
+      </Routes>
+    );
+  }
 
+  return (
+    <>
+    <div className="app-wrapper">
+    <div className='page-content-container'>
+      <div className="page-content-wrapper">
+      <Routes>
         {/* Protected Routes */}
         <Route path='/home' element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path='/addpost' element={<ProtectedRoute><AddPostPage /></ProtectedRoute>} />
@@ -52,8 +67,12 @@ function MainContent() {
         <Route path='/chat' element={<ProtectedRoute><ChatInterface /></ProtectedRoute>} />
         <Route path='/posts' element={<ProtectedRoute><PostsPage /></ProtectedRoute>} />
         <Route path="/posts-by-category/:optionId" element={<ProtectedRoute><PostsByCategory /></ProtectedRoute>} />
+        <Route path="/post-detail/:postId" element={<ProtectedRoute><PostDetail /></ProtectedRoute>} />
 
       </Routes>
+      </div>
+      </div>
+      </div>
     </>
 
   );
@@ -82,27 +101,23 @@ function GlobalComponents() {
 
 
 
+// Your App component remains mostly unchanged
 function App() {
   const { currentUser, loading } = useContext(AuthContext);
 
   if (loading) {
     return null; // Or a loading spinner or any other placeholder component
   }
-  
 
   return (
     <Router>
       <div className='app-container'>
-        <div className="app-wrapper">
           <GlobalComponents />
-          <div className='page-content-container'>
-              <MainContent />
-          </div>
-        </div>
+              <MainContent />      
       </div>
     </Router>
   );
 }
 
-export default App;
+export default App
 
