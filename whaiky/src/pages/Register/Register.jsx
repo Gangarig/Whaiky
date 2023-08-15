@@ -10,6 +10,7 @@ import PasswordChecklist from "react-password-checklist";
 const Register = () => {
   const [err, setErr] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [password, setPassword] = useState(""); // Declare password state
   const [passwordAgain, setPasswordAgain] = useState(""); // Declare passwordAgain state
   const navigate = useNavigate();
@@ -27,8 +28,8 @@ const Register = () => {
 
       // Create a unique image name
       const date = new Date().getTime();
-      const storageRef = ref(storage, `${displayName + date}`);
-
+      const storageRef = ref(storage, `profile_images/${displayName + date}`);
+      
       await uploadBytesResumable(storageRef, file).then(() => {
         getDownloadURL(storageRef).then(async (downloadURL) => {
           try {

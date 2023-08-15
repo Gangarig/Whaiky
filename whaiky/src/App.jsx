@@ -55,6 +55,7 @@ function MainContent() {
     <div className="app-wrapper">
     <div className='page-content-container'>
       <div className="page-content-wrapper">
+        <div className='global-component-background'></div>
       <Routes>
         {/* Protected Routes */}
         <Route path='/home' element={<ProtectedRoute><Home /></ProtectedRoute>} />

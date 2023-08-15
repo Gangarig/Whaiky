@@ -1,4 +1,8 @@
-
+.add-post-wrapper {
+    width: 1146px;
+    display: flex;
+    justify-content: flex-start;
+}
 .add-post-form{
     display: -webkit-box;
     display: -ms-flexbox;
@@ -13,7 +17,13 @@
     text-align: left;
     gap: 10px;
     label {
-
+        color: #464646;
+        font-family: "Inter-Medium", Helvetica;
+        font-size: 20px;
+        font-weight: 500;
+        letter-spacing: 0;
+        line-height: normal;
+        white-space: nowrap;
     }
     input{
         border-radius: 10px;
@@ -21,9 +31,16 @@
         height: 40px;
         padding-left: 10px;
     }
+    input:active{
+        border: none;
+        outline: none;
+    }
     textarea{
         border-radius: 10px;
         border: 1px solid var(--background--tertiary);
+        padding-left: 10px;
+        padding-top: 5px;
+        height: 130px;
     }
     select {
         border-radius: 10px;
@@ -33,4 +50,58 @@
         border: 1px solid var(--background--tertiary);
         background-color: white;
     }
+    
+}
+
+.info-text {
+    color: #464646;
+    font-family: "Inter-Light", Helvetica;
+    font-size: 16px;
+    font-weight: 300;
+    height: 19px;
+    letter-spacing: 0;
+    line-height: normal;
+    white-space: nowrap;
+}
+.info-text-2{
+    color: var(--text--primary);
+    font-family: "Source Sans Pro-SemiBold", Helvetica;
+    font-size: 16px;
+    font-weight: 600;
+    height: 20px;
+    letter-spacing: 0;
+    line-height: normal;
+}
+.file-upload {
+    width: 360px;
+    height: 343px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--background--tertiary); 
+    border-radius: 10px;
+}
+.uploaded-image-preview{
+    width: 360px;
+    height: 343px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.file-upload-text{
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(180deg, rgb(158, 65, 240) 0%, rgb(2, 173, 148) 100%);
+    background-clip: text;
+    color: transparent;
+    font-family: "Inter-Regular", Helvetica;
+    font-size: 36px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: normal;
+    text-fill-color: transparent;
+    width: 126px;
+}
+.file-upload-button{
+        visibility: hidden;
+        position: absolute; 
 }

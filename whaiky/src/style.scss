@@ -181,17 +181,20 @@
 
 @media (min-width: 1800px) {
   .app-wrapper{
-    width: 1800px;
+    width: 1700px;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
   }
   .page-content-wrapper {
-    width: calc(1800px);
+    width: 1700px;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     padding: 100px 50px;
+  }
+  .global-component-background {
+    width: 1699px;
   }
 
 }
