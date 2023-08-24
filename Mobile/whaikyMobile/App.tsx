@@ -2,6 +2,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { UserProvider } from './app/context/UserContext';
+import { useCurrentUser } from './app/context/UserContext';
 
 import { useState,useEffect } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
@@ -10,9 +12,11 @@ import { FIREBASE_AUTH } from './FirebaseConfig';
 import LoginScreen from './app/screens/AuthStackScreens/LoginScreen';
 import RegisterScreen from './app/screens/AuthStackScreens/RegisterScreen';
 import WelcomeScreen from './app/screens/AuthStackScreens/WelcomeScreen';
+import CompleteRegisterScreen from './app/screens/AuthStackScreens/CompleteRegisterScreen';
 //app Screens
 import ProfileScreen from './app/screens/AppStackScreens/ProfileScreen';
 import SettingsScreen from './app/screens/AppStackScreens/SettingsScreen';
+import TransitionScreen from './app/screens/AuthStackScreens/TransitionScreen';
 
 
 const stack = createNativeStackNavigator();
@@ -24,6 +28,7 @@ function AuthStackScreens() {
     <authStack.Navigator>
       <authStack.Screen name="login" component={LoginScreen} options={ {}}/>
       <authStack.Screen name="register" component={RegisterScreen} options={ {}}/>
+      <authStack.Screen name="complete" component={CompleteRegisterScreen} options={ {}}/>
       <authStack.Screen name="welcome" component={WelcomeScreen} options={ {}}/>
     </authStack.Navigator>
   )
@@ -33,19 +38,16 @@ function AppStackScreens() {
     <appStack.Navigator>
       <appStack.Screen name="profile" component={ProfileScreen} options={ {}}/>
       <appStack.Screen name="settings" component={SettingsScreen} options={ {}}/>
+      <appStack.Screen name="transition" component={TransitionScreen} options={ {}}/>
     </appStack.Navigator>
   )
 }
 
 export default function App() {
-  const [user, setUser] = useState< User | null> (null)
-  useEffect (() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      console.log('user', user);
-      setUser(user);
-  })}
-  , [])
+  const user = useCurrentUser();
+
   return (
+    <UserProvider>
       <NavigationContainer>
         <stack.Navigator>
           {user ? (
@@ -55,6 +57,6 @@ export default function App() {
           )}
         </stack.Navigator>
       </NavigationContainer>
+    </UserProvider>
   );
 }
-

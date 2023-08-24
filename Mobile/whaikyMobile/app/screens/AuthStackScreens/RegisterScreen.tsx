@@ -5,7 +5,13 @@ import { useState } from 'react'
 import { FIREBASE_AUTH } from '../../../FirebaseConfig'
 import { signInWithEmailAndPassword , createUserWithEmailAndPassword} from 'firebase/auth'
 import { set } from 'firebase/database'
-const RegisterScreen = () => {
+import { NavigationProp } from '@react-navigation/native'
+
+interface RouterProps {
+    navigation: NavigationProp<any, any>;
+    }
+
+const RegisterScreen = ({navigation}:RouterProps) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
@@ -17,7 +23,8 @@ const RegisterScreen = () => {
         setLoading(true)
         try {
             const response = await createUserWithEmailAndPassword(auth, email, password)
-            console.log(response);
+            navigation.navigate('complete');
+            
         } catch (error) {
            console.log(error)
         } finally {
