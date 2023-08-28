@@ -6,6 +6,8 @@ import { FIREBASE_AUTH } from '../../../FirebaseConfig'
 import { signInWithEmailAndPassword , createUserWithEmailAndPassword} from 'firebase/auth'
 import { set } from 'firebase/database'
 import { NavigationProp } from '@react-navigation/native'
+import { doc, setDoc } from 'firebase/firestore'
+import { FIREBASE_DB } from '../../../FirebaseConfig'
 
 interface RouterProps {
     navigation: NavigationProp<any, any>;
@@ -23,7 +25,12 @@ const RegisterScreen = ({navigation}:RouterProps) => {
         setLoading(true)
         try {
             const response = await createUserWithEmailAndPassword(auth, email, password)
-            navigation.navigate('complete');
+            await setDoc(doc(FIREBASE_DB, "users", response.user.uid), {
+                email: email,
+                uid: response.user.uid,
+                registrationStage: 1 
+            })
+            navigation.navigate('stage1');
             
         } catch (error) {
            console.log(error)

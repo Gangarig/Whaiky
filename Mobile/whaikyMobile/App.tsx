@@ -5,14 +5,16 @@ import { StyleSheet, Text, View } from 'react-native';
 import { UserProvider } from './app/context/UserContext';
 import { useCurrentUser } from './app/context/UserContext';
 
-import { useState,useEffect } from 'react';
-import { User, onAuthStateChanged } from 'firebase/auth';
-import { FIREBASE_AUTH } from './FirebaseConfig';
 //auth Screens
 import LoginScreen from './app/screens/AuthStackScreens/LoginScreen';
 import RegisterScreen from './app/screens/AuthStackScreens/RegisterScreen';
 import WelcomeScreen from './app/screens/AuthStackScreens/WelcomeScreen';
-import CompleteRegisterScreen from './app/screens/AuthStackScreens/CompleteRegisterScreen';
+import CompleteRegisterScreen from './app/screens/AuthStackScreens/StageScreens/CompleteRegisterScreen';
+import StageScreen1 from './app/screens/AuthStackScreens/StageScreens/StageScreen1';
+import StageScreen2 from './app/screens/AuthStackScreens/StageScreens/StageScreen2';
+import StageScreen3 from './app/screens/AuthStackScreens/StageScreens/StageScreen3';
+import StageScreen4 from './app/screens/AuthStackScreens/StageScreens/StageScreen4';
+
 //app Screens
 import ProfileScreen from './app/screens/AppStackScreens/ProfileScreen';
 import SettingsScreen from './app/screens/AppStackScreens/SettingsScreen';
@@ -30,6 +32,10 @@ function AuthStackScreens() {
       <authStack.Screen name="register" component={RegisterScreen} options={ {}}/>
       <authStack.Screen name="complete" component={CompleteRegisterScreen} options={ {}}/>
       <authStack.Screen name="welcome" component={WelcomeScreen} options={ {}}/>
+      <authStack.Screen name="stage1" component={StageScreen1} options={ {}}/>
+      <authStack.Screen name="stage2" component={StageScreen2} options={ {}}/>
+      <authStack.Screen name="stage3" component={StageScreen3} options={ {}}/>
+      <authStack.Screen name="stage4" component={StageScreen4} options={ {}}/>
     </authStack.Navigator>
   )
 }
@@ -44,13 +50,13 @@ function AppStackScreens() {
 }
 
 export default function App() {
-  const user = useCurrentUser();
+  const currentUser = useCurrentUser();
 
   return (
     <UserProvider>
       <NavigationContainer>
         <stack.Navigator>
-          {user ? (
+          {currentUser ? (
                 <stack.Screen name="Login" component={AppStackScreens} options={{headerShown:false}}/>
           ) : (
                 <stack.Screen name="Login" component={AuthStackScreens} options={{headerShown:false}}/>

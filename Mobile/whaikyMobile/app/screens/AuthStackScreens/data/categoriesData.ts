@@ -1,9 +1,3 @@
-// Assuming you want to convert to tsx because there's JSX content or you might have some in the future.
-// If not, this can be a .ts file.
-
-import React from 'react';
-import houseIcon from '../../../../assets/icons/house-icon.png';
-
 type OptionType = {
   optionId: number;
   text: string;
@@ -11,7 +5,6 @@ type OptionType = {
 
 type CategoryType = {
   id: number;
-  icon: string; // assuming these icons are paths, but replace 'string' with appropriate type if not
   text: string;
   options: OptionType[];
 };
@@ -19,7 +12,6 @@ type CategoryType = {
 export const categoriesData: CategoryType[] = [
   {
     id: 1,
-    icon: houseIcon,
     text: 'Home Improvement',
     options: [
       { optionId: 1, text: 'Flooring installation and repair' },
@@ -30,7 +22,6 @@ export const categoriesData: CategoryType[] = [
   },
   {
     id: 2,
-    icon: cosmeticBrush,
     text: 'Cleaning Services',
     options: [
       { optionId: 5, text: 'Residential and commercial cleaning' },
@@ -41,7 +32,6 @@ export const categoriesData: CategoryType[] = [
   },
   {
     id: 3,
-    icon: fireTwo,
     text: 'HVAC Services',
     options: [
       { optionId: 9, text: 'Heating and cooling preparation' },
@@ -52,7 +42,6 @@ export const categoriesData: CategoryType[] = [
   },
   {
     id: 4,
-    icon: formatBrush,
     text: 'Painting Services',
     options: [
       { optionId: 13, text: 'Interior and exterior painting' },
@@ -63,18 +52,16 @@ export const categoriesData: CategoryType[] = [
   },
   {
     id: 5,
-    icon: energySocket,
     text: 'Electrical Services',
     options: [
       { optionId: 17, text: 'Lighting installation and repair' },
-      { optionId: 18, text: 'Wiring and Rewriting' },
+      { optionId: 18, text: 'Wiring and Rewiring' },
       { optionId: 19, text: 'Electrical panel installation and upgrade' },
       { optionId: 20, text: 'Generator installation and repair' }
     ],
   },
   {
     id: 6,
-    icon: thermometer,
     text: 'Water Heater Services',
     options: [
       { optionId: 21, text: 'Residential and commercial cleaning' },
@@ -85,7 +72,6 @@ export const categoriesData: CategoryType[] = [
   },
   {
     id: 7,
-    icon: shaver,
     text: 'Plumbing Services',
     options: [
       { optionId: 25, text: 'Pipe repair and installation' },
@@ -96,7 +82,6 @@ export const categoriesData: CategoryType[] = [
   },
   {
     id: 8,
-    icon: truck,
     text: 'Moving Services',
     options: [
       { optionId: 29, text: 'Local and long-distance moving' },
@@ -107,7 +92,6 @@ export const categoriesData: CategoryType[] = [
   },
   {
     id: 9,
-    icon: sapling,
     text: 'Landscaping Services',
     options: [
       { optionId: 33, text: 'Lawn care and maintenance' },
@@ -118,7 +102,6 @@ export const categoriesData: CategoryType[] = [
   },
   {
     id: 10,
-    icon: tool,
     text: 'General Services',
     options: [
       { optionId: 37, text: 'General home repairs and maintenance' },
