@@ -1,52 +1,62 @@
-import { View, Text, StyleSheet, TextInput, Button,KeyboardAvoidingView } from 'react-native'
-import { ActivityIndicator } from 'react-native' 
-import React from 'react'
-import { useState } from 'react'
-import { FIREBASE_AUTH } from '../../../FirebaseConfig'
-import { signInWithEmailAndPassword , createUserWithEmailAndPassword} from 'firebase/auth'
-import { set } from 'firebase/database'
-import { NavigationProp } from '@react-navigation/native'
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
+import { auth } from '../../../FirebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useCurrentUser } from '../../context/UserContext';
 
-interface RouterProps {
-    navigation: NavigationProp<any, any>;
-  }
+const LoginScreen = ({ navigation }:any) => {
+    const userContext = useCurrentUser();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-const LoginScreen = ({navigation}:RouterProps) => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
-    const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(false)
-    const auth = FIREBASE_AUTH;
+
+
     const signIn = async () => {
+        setLoading(true);
         signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                console.log('logged in')
+            .then(() => {
+                console.log('logged in');
+                setLoading(false);
             })
             .catch((error) => {
-                console.log(error)
+                console.log(error);
+                setError(error.message);
+                setLoading(false);
             });
-    }
+    };
 
-  return (
-   
-    <View style={styles.container}>
-        <KeyboardAvoidingView behavior='padding'>
-            <Text>LoginScreen</Text>
-            <TextInput style={styles.input} placeholder="email" value={email} onChangeText={text => setEmail(text)} />
-            <TextInput style={styles.input} placeholder="password" secureTextEntry={true} value={password} onChangeText={text => setPassword(text)} />
-            <Text>{error}</Text>
-            { loading ? (<ActivityIndicator size='large' color="#0000ff" />
-            ): (<>
-                <Button title="Sign In" onPress={signIn} />
-                <Button title="Register" onPress={()=>navigation.navigate("register")} />
-            </>)}
-        </KeyboardAvoidingView>
-    </View>
-  )
-}
-
-export default LoginScreen
+    return (
+        <View style={styles.container}>
+            <KeyboardAvoidingView behavior='padding'>
+                <Text>LoginScreen</Text>
+                <TextInput
+                    style={styles.input}
+                    placeholder="email"
+                    value={email}
+                    onChangeText={text => setEmail(text)}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="password"
+                    secureTextEntry={true}
+                    value={password}
+                    onChangeText={text => setPassword(text)}
+                />
+                <Text>{error}</Text>
+                {loading ? (
+                    <ActivityIndicator size='large' color="#0000ff" />
+                ) : (
+                    <>
+                        <Button title="Sign In" onPress={signIn} />
+                        <Button title="Register" onPress={() => navigation.navigate('register')} />
+                    </>
+                )}
+            </KeyboardAvoidingView>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -60,4 +70,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'black'
     }
-})
+});
+
+export default LoginScreen;

@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import { auth } from '../../FirebaseConfig';
 
 type User = {
   uid: string;
   email: string | null;
-  // ... other properties
 } | null;
 
 interface UserProviderProps {
@@ -18,7 +17,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User>(null);
 
   useEffect(() => {
-    const unsubscribe = FIREBASE_AUTH.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setCurrentUser({
           uid: user.uid,
