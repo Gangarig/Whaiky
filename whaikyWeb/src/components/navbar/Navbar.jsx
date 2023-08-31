@@ -24,6 +24,9 @@ const Navbar = () => {
   const handleLogoClick = () => {
     navigate('/home');
   };
+  const addclass = () => {
+    
+  }
   const handleLogout = async () => {
     try {
       // Sign out the user

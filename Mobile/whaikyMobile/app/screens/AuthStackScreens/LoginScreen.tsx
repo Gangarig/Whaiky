@@ -2,22 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
 import { auth } from '../../../FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useCurrentUser } from '../../context/UserContext';
+import { useUser } from '../../context/UserContext';
 
-const LoginScreen = ({ navigation }:any) => {
-    const userContext = useCurrentUser();
+const LoginScreen = ({ navigation }: any) => {
+    const { setCurrentUser } = useUser();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-
-
     const signIn = async () => {
         setLoading(true);
         signInWithEmailAndPassword(auth, email, password)
-            .then(() => {
+            .then((userCredential) => {
                 console.log('logged in');
+                const user = userCredential.user;
+
+                setCurrentUser({
+                    email: user.email || '',  // Handle the potential null here
+                    uid: user.uid,
+                    avatarURL: user.photoURL || '',  // Handle the potential null here
+                });
+
                 setLoading(false);
             })
             .catch((error) => {
@@ -26,7 +32,6 @@ const LoginScreen = ({ navigation }:any) => {
                 setLoading(false);
             });
     };
-
     return (
         <View style={styles.container}>
             <KeyboardAvoidingView behavior='padding'>
