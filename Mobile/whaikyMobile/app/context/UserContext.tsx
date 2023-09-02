@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, Dispatch, SetStateAction } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import {auth} from '../../FirebaseConfig';
+import { auth } from '../../FirebaseConfig';
+
 export interface User {
   email?: string | null;
   uid?: string;
@@ -18,31 +19,42 @@ interface UserProviderProps {
   children: ReactNode;
 }
 
-const UserContext = createContext<{
+interface UserContextProps {
   currentUser: User | null;
-  setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
-}>({
+  setCurrentUser: Dispatch<SetStateAction<User | null>>;
+  menuOpen: boolean;
+  setMenuOpen: Dispatch<SetStateAction<boolean>>;
+  loading: boolean;
+}
+
+// Using UserContextProps for createContext
+const UserContext = createContext<UserContextProps>({
   currentUser: null,
   setCurrentUser: () => null,
+  menuOpen: false,
+  setMenuOpen: () => false,
+  loading: true,
 });
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(true);  
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       if (user) {
-        // User is signed in
         setCurrentUser({
           uid: user.uid,
           email: user.email,
           avatarURL: user.photoURL,
-          // ... You can add more fields here
+          // Add more fields as needed
         });
       } else {
-        // User is signed out
         setCurrentUser(null);
       }
+      setLoading(false); 
     });
 
     // Cleanup
@@ -52,7 +64,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ currentUser, setCurrentUser }}>
+    <UserContext.Provider value={{ currentUser, setCurrentUser, menuOpen, setMenuOpen, loading }}>
       {children}
     </UserContext.Provider>
   );

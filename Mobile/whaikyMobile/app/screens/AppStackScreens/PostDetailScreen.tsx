@@ -1,28 +1,28 @@
-// PostDetail.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, Button } from 'react-native';
-import { getDoc, doc, DocumentData } from 'firebase/firestore';
+import { View, Text, Image, Button, Alert , StyleSheet } from 'react-native'; 
+import { getDoc, doc, deleteDoc, DocumentData } from 'firebase/firestore';  
 import { firestore } from '../../../FirebaseConfig';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../services/RootStackParamList';
-
-
-interface PostDetailProps {
-    route: RouteProp<RootStackParamList, 'PostDetail'>;
-  }
-
-
-
+import { useUser } from '../../context/UserContext'; 
 interface Post {
   id: string;
   title: string;
+  description: string; 
   price: string;
   imageURL: string;
+  ownerId: string; 
+  ownerName: string; 
+  ownerAvatar: string; 
 }
 
-const PostDetailScreen: React.FC<PostDetailProps> = ({ route }) =>  {
+const PostDetailScreen = ({ route, navigation }: any) => {
+  const { currentUser } = useUser(); // from your user context
   const { id } = route.params;
   const [post, setPost] = useState<Post | null>(null);
+
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,18 +39,47 @@ const PostDetailScreen: React.FC<PostDetailProps> = ({ route }) =>  {
         console.error('Error fetching post:', error);
       }
     };
-
     fetchData();
   }, [id]);
 
+  const handleDelete = async () => {
+    Alert.alert(
+      'Delete Post',
+      'Are you sure you want to delete this post?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            try {
+              await deleteDoc(doc(firestore, 'posts', id));
+              navigation.goBack();
+            } catch (error) {
+              console.error('Error deleting document:', error);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+
   return (
-    <View>
+    <View >
       {post ? (
         <>
-          <Text style={{ fontSize: 24 }}>{post.title}</Text>
-          <Text style={{ fontSize: 18, color: '#777' }}>Price: {post.price}</Text>
+          <Text>Title: {post.title}</Text>
+          <Text>Description: {post.description}</Text>
+          <Text>Price: {post.price}</Text>
+          <Text>Owner ID: {post.ownerId}</Text>
+          <Text>Owner Name: {post.ownerName}</Text>
+          <Image source={{ uri: post.ownerAvatar }} style={{ width: 50, height: 50 }} />
           <Image source={{ uri: post.imageURL }} style={{ width: 100, height: 100 }} />
-          {/* You can add more fields if you have them */}
+          {currentUser?.uid === post.ownerId && <Button title="Delete" onPress={handleDelete} />}
+          <Button title="Go Back" onPress={handleGoBack} />
         </>
       ) : (
         <Text>Loading...</Text>
@@ -58,5 +87,6 @@ const PostDetailScreen: React.FC<PostDetailProps> = ({ route }) =>  {
     </View>
   );
 };
+
 
 export default PostDetailScreen;

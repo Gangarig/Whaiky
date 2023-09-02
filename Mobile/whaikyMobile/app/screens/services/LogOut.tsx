@@ -1,18 +1,21 @@
-import { View, Text,Button } from 'react-native'
-import React from 'react'
-import { auth } from '../../../FirebaseConfig'
-
+import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
+import { auth } from '../../../FirebaseConfig';
 
 const LogOut = () => {
-  const handleLogout = () => {
-    auth.signOut()
-    console.log('logged out')
-  }
+  useEffect(() => {
+    auth.signOut().then(() => {
+      console.log('Logged out');
+    }).catch((error) => {
+      console.error('Failed to log out', error);
+    });
+  }, []);
+
   return (
     <View>
-      <Button title='log Out' onPress={handleLogout}/>
+      <Text>Logging out...</Text>
     </View>
-  )
-}
+  );
+};
 
-export default LogOut
+export default LogOut;

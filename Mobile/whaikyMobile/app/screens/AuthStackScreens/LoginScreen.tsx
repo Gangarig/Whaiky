@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView, Activi
 import { auth } from '../../../FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useUser } from '../../context/UserContext';
+import { NavigationProp } from '@react-navigation/native';
 
 const LoginScreen = ({ navigation }: any) => {
     const { setCurrentUser } = useUser();
@@ -17,7 +18,6 @@ const LoginScreen = ({ navigation }: any) => {
             .then((userCredential) => {
                 console.log('logged in');
                 const user = userCredential.user;
-
                 setCurrentUser({
                     email: user.email || '',  // Handle the potential null here
                     uid: user.uid,
