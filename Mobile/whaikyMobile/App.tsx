@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { UserProvider, useUser } from './app/context/UserContext';
 import React from 'react';
-import { StackScreenProps } from '@react-navigation/stack';
+import LogOut from './app/screens/services/LogOut';
 
 // Auth Screens
 import LoginScreen from './app/screens/AuthStackScreens/LoginScreen';
@@ -52,6 +52,7 @@ export default function App() {
   return (
     <UserProvider>
       <AppNavigation />
+      
     </UserProvider>
   );
 }
