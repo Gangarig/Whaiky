@@ -7,10 +7,12 @@ import { SafeAreaProvider, useSafeAreaInsets, SafeAreaView } from 'react-native-
 import { UserProvider, useUser } from './app/context/UserContext';
 import { useAnimatedStyle } from 'react-native-reanimated';
 import { auth } from './FirebaseConfig';
+import { ChatContextProvider } from './app/context/ChatContext';
 // Components and Services
 import LogOut from './app/screens/services/LogOut';
 import Menu from './app/screens/AppStackScreens/components/Menu';
 import LoadingScreen from './app/screens/AppStackScreens/LoadingScreen';
+import CountryCityState from './app/screens/AppStackScreens/components/CountryStateCity';
 
 // Auth Screens
 import LoginScreen from './app/screens/AuthStackScreens/LoginScreen';
@@ -23,12 +25,30 @@ import SettingsScreen from './app/screens/AppStackScreens/SettingsScreen';
 import TransitionScreen from './app/screens/AppStackScreens/TransitionScreen';
 import HomeScreen from './app/screens/AppStackScreens/HomeScreen';
 import CompleteRegisterScreen from './app/screens/AppStackScreens/CompleteRegisterScreen';
+import CompleteRegisterScreen2 from './app/screens/AppStackScreens/CompleteRegisterScreen2';
 import PostDetailScreen from './app/screens/AppStackScreens/PostDetailScreen';
 import AddPostScreen from './app/screens/AppStackScreens/AddPostScreen';
+import CategoryScreen from './app/screens/AppStackScreens/CategoryScreen';
+import CategoryDetail from './app/screens/AppStackScreens/CategoryDetail';
+import ChatScreen from './app/screens/AppStackScreens/ChatScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const HomeStack = createNativeStackNavigator();
+const CategoryStack = createNativeStackNavigator();
+const ProfileStack = createNativeStackNavigator();
+const ChatStack = createNativeStackNavigator();
+
+const ProfileStackNavigator = () => {
+  return (
+    <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+      {/* <ProfileStack.Screen name="profile" component={ProfileScreen} /> */}
+      <ProfileStack.Screen name="complete" component={CompleteRegisterScreen} />
+      <ProfileStack.Screen name="complete2" component={CompleteRegisterScreen2} />
+    </ProfileStack.Navigator>
+  );
+};
+
 
 const HomeStackNavigator = () => {
   return (
@@ -38,6 +58,25 @@ const HomeStackNavigator = () => {
     </HomeStack.Navigator>
   );
 };
+
+
+const CategoryStackNavigator = () => {
+  return (
+    <CategoryStack.Navigator screenOptions={{ headerShown: false }}>
+      <CategoryStack.Screen name="category" component={CategoryScreen} />
+      <CategoryStack.Screen name="CategoryDetail" component={CategoryDetail} />
+    </CategoryStack.Navigator>
+  );
+};
+
+const ChatStackNavigator = () => {
+  return (
+    <ChatStack.Navigator screenOptions={{ headerShown: false }}>
+      <ChatStack.Screen name="Chat" component={ChatScreen} />
+    </ChatStack.Navigator>
+  );
+};
+
 const AppStack = () => {
   const { currentUser, loading } = useUser();
 
@@ -48,12 +87,13 @@ const AppStack = () => {
 
   const AppScreens = () => (
     <Drawer.Navigator initialRouteName="Whaiky">
-      <Drawer.Screen name="HomeStack" component={HomeStackNavigator}/>
-      <Drawer.Screen name="profile" component={ProfileScreen} />
-      <Drawer.Screen name="settings" component={SettingsScreen} />
-      <Drawer.Screen name="transition" component={TransitionScreen} />
+      <Drawer.Screen name="Home" component={HomeStackNavigator}/>
+      <Drawer.Screen name="Profile" component={ProfileStackNavigator} />
+      <Drawer.Screen name="Category" component={CategoryStackNavigator} />
+      <Drawer.Screen name="Chat" component={ChatStackNavigator} />
+      <Drawer.Screen name="Settings" component={SettingsScreen} />
       <Drawer.Screen name="addPost" component={AddPostScreen} />
-      <Drawer.Screen name="complete" component={CompleteRegisterScreen} />
+      <Drawer.Screen name="Country" component={CountryCityState} />
       <Drawer.Screen name="Log Out" component={LogOut} />
     </Drawer.Navigator>
   );
@@ -76,14 +116,17 @@ const AppStack = () => {
 };
 
 
+
 export default function App() {
   return (
-    <UserProvider>
-      <NavigationContainer>
-        <SafeAreaProvider>
-          <AppStack />
-        </SafeAreaProvider>
-      </NavigationContainer>
-    </UserProvider>
+      <UserProvider>
+        <ChatContextProvider>
+          <NavigationContainer>
+            <SafeAreaProvider>
+              <AppStack />
+            </SafeAreaProvider>
+          </NavigationContainer>
+        </ChatContextProvider>
+      </UserProvider>
   );
 }

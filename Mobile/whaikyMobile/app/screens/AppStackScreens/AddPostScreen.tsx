@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, Image, ActivityIndicator, StyleSheet } from 'react-native';
+import React, { useState , useEffect } from 'react';
+import { View, Text, TextInput, Button, Alert, Image, ActivityIndicator, StyleSheet, Switch } from 'react-native';
+
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
 import { db, firestore, storage } from '../../../FirebaseConfig';
@@ -25,14 +26,18 @@ const AddPostScreen = () => {
   const [postTitle, setPostTitle] = useState<string>('');
   const [postDesc, setPostDesc] = useState<string>('');
   const [postPrice, setPostPrice] = useState<string>('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-  const [selectedOptionId, setSelectedOptionId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null | string>(1);
+  const [selectedOptionId, setSelectedOptionId] = useState<number | null | string>(1);
   const [city, setCity] = useState<string>('');
   const [zipcode, setZipcode] = useState<string>('');
   const [postImg, setPostImg] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [imageUploading, setImageUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [postType, setPostType] = useState<string>('lookingForService'); // ['lookingForService', 'offeringService'
+
+  const isPersonalInfoComplete = currentUser?.personalInfo === 'completed';
+  const isLegalInfoComplete = currentUser?.legalInfo === 'completed';
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -42,9 +47,18 @@ const AddPostScreen = () => {
     });
 
     if (!result.canceled) {
-      setPostImg(result.uri);
+      setPostImg((result as any).uri);
     }
   };
+  useEffect(() => {
+    if (currentUser?.personalInfo === 'completed') {
+      setPostType('lookingForService');
+    } else if (currentUser?.legalInfo === 'completed') {
+      setPostType('offeringService');
+    } else {
+      Alert.alert('Error', 'Please complete your profile first If you are looking for Service. If you are offering Service, please apply your legal Documents first.');
+    }
+  }, [currentUser]);
 
   const handlePost = async () => {
     try {
@@ -54,7 +68,6 @@ const AddPostScreen = () => {
         Alert.alert('Error', 'User not authenticated.');
         return;
       }
-
       if (!postTitle || !postDesc || !postPrice || !postImg || !selectedCategoryId || !selectedOptionId || !city || !zipcode) {
         Alert.alert('Error', 'Please fill in all the fields.');
         return;
@@ -95,7 +108,7 @@ const AddPostScreen = () => {
               price: parseFloat(postPrice),
               categoryId: selectedCategoryId,
               optionId: selectedOptionId,
-              imageUrl: url,
+              imageURL: url,
               createdAt: Timestamp.now(),
               city: city,
               zipcode: zipcode,
@@ -103,6 +116,8 @@ const AddPostScreen = () => {
               ownerId: currentUser.uid,
               ownerAvatar: currentUser.avatarURL,
               postId: postId,
+              postType: postType,
+              imageName: imageName,
             };
             await setDoc(newPostRef, postData);
             Alert.alert('Success', 'Your post has been successfully created.');
@@ -120,10 +135,28 @@ const AddPostScreen = () => {
       setImageUploading(false);
     }
   };
-
+  useEffect(() => {
+    console.log("Current postType: ", postType);
+  }, [postType]);
+  
   return (
     <SafeAreaView>
       <View style={styles.container}>
+          {!isPersonalInfoComplete ? (
+              <Text>Please complete your personal info to enable these options.</Text>
+          ) : (
+          <>
+          <View style={styles.switchContainer}>
+          <Text>Looking for Service</Text>
+          <Switch
+                value={postType === 'offeringService'}
+                disabled={!isLegalInfoComplete}
+                onValueChange={(newValue) => {
+                  setPostType(newValue ? 'offeringService' : 'lookingForService');
+                }}
+                />
+          <Text>Offering Service</Text>
+                </View>
         <Text>Title</Text>
         <TextInput value={postTitle} onChangeText={(text) => setPostTitle(text)} />
         <Text>Category</Text>
@@ -155,6 +188,9 @@ const AddPostScreen = () => {
           </View>
         )}
         {loading && <ActivityIndicator size="large" color="#0000ff" />}
+
+      </>
+      )}
       </View>
     </SafeAreaView>
   );
@@ -176,6 +212,12 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: 'green',
     borderRadius: 5,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 10,
   },
 });
 

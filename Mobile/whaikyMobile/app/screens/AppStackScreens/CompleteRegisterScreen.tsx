@@ -1,44 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect, FC, useRef } from 'react';
+import {
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Image,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUser } from '../../context/UserContext';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { firestore, storage } from '../../../FirebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
-import { PhoneInput, ICountry } from 'react-native-international-phone-number';
+import PhoneInputComponent from './components/PhoneInputComponent';
+import CountryStateCity from './components/CountryStateCity';
 
-const CompleteRegisterScreen = () => {
+const CompleteRegisterScreen: FC = () => {
   const { currentUser, setCurrentUser } = useUser();
   const [email, setEmail] = useState<string>(currentUser?.email || '');
-  const [phone, setPhone] = useState<string>(currentUser?.phone || '');
-  const [country, setCountry] = useState<string>(currentUser?.country || '');
-  const [region, setRegion] = useState<string>(currentUser?.region || '');
+  const [city, setCity] = useState<string>(currentUser?.city || '');
+  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(currentUser?.country);
   const [firstName, setFirstName] = useState<string>(currentUser?.firstName || '');
   const [lastName, setLastName] = useState<string>(currentUser?.lastName || '');
   const [userName, setUserName] = useState<string>(currentUser?.userName || '');
-  const [avatarURL , setAvatarURL] = useState<string>(currentUser?.avatarURL || 'https://firebasestorage.googleapis.com/v0/b/whaiky-1.appspot.com/o/profile_images%2Fdefault_avatar.png?alt=media&token=3b5b5b1e-5b0a-4b0a-8b0a-5b0a4b0a8b0a');
-  const [selectedCountry, setSelectedCountry] = useState<undefined | ICountry>(undefined);
-  const [inputValue, setInputValue] = useState<string>('');
+  const [avatarURL, setAvatarURL] = useState<string>(currentUser?.avatarURL || '');
+  const [phones, setPhones] = useState<string[]>(currentUser?.phones || []);
+  const [locationVisible, setLocationVisible] = useState(false);
+  const phoneInputRef = useRef<{ getValue: () => string } | null>(null);
 
-  const handleInputValue = (phoneNumber: string) => {
-    setInputValue(phoneNumber);
+  const handleCountryChange = (newCountry: string) => {
+    setSelectedCountry(newCountry);
   };
 
-  const handleSelectedCountry = (country: ICountry) => {
-    setSelectedCountry(country);
-  };
+  const handleCityChange = (newCity: string) => {
+    setCity(newCity);
+  }
 
-  const handleDeletePhoneNumber = async () => {
-    if (currentUser?.uid) {
-      await setDoc(doc(firestore, 'users', currentUser.uid), {
-        phone: '',
-      }, { merge: true });
-      
-      setCurrentUser(prevUser => ({
-        ...prevUser!,
-        phone: '',
-      }));
+  const addPhoneNumber = () => {
+    const newPhone = phoneInputRef.current?.getValue();
+    if (newPhone && phones.length < 3) {
+      setPhones([...phones, newPhone]);
     }
+  };
+
+  const deletePhoneNumber = (index: number) => {
+    const updatedPhones = [...phones];
+    updatedPhones.splice(index, 1);
+    setPhones(updatedPhones);
   };
 
   useEffect(() => {
@@ -48,14 +52,14 @@ const CompleteRegisterScreen = () => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setEmail(userData?.email || '');
-          setPhone(userData?.phone || '');
-          setCountry(userData?.country || '');
-          setRegion(userData?.region || '');
+          setPhones(userData?.phones || []);
+          setSelectedCountry(userData?.country || '');
+          setCity(userData?.city || '');
           setFirstName(userData?.firstName || '');
           setLastName(userData?.lastName || '');
           setUserName(userData?.userName || '');
+
           setAvatarURL(userData?.photoURL || '');
-          setInputValue(userData?.phone?.substring(selectedCountry?.callingCode?.length || 0) || '');
         }
       }
     };
@@ -64,32 +68,38 @@ const CompleteRegisterScreen = () => {
   }, [currentUser]);
 
   const handleCompleteRegister = async () => {
-    const fullPhoneNumber = `${selectedCountry?.callingCode || ''}${inputValue}`;
     if (currentUser?.uid) {
-      await setDoc(doc(firestore, 'users', currentUser.uid), {
+      const updatedData = {
         email,
-        phone: fullPhoneNumber,
-        country,
-        region,
+        country: selectedCountry || '',
+        city,
         firstName,
         lastName,
         userName,
         photoURL: avatarURL,
-      }, { merge: true });
-      
-      setCurrentUser(prevUser => ({
-        ...prevUser!,
-        email,
-        phone: fullPhoneNumber,
-        country,
-        region,
-        firstName,
-        lastName,
-        userName,
-        avatarURL,
-      }));
+        phones,
+      };
+
+      try {
+        await setDoc(doc(firestore, 'users', currentUser.uid), updatedData, { merge: true });
+
+        const allFieldsFilled = Object.values(updatedData).every(value => Boolean(value));
+
+        const personalInfoStatus = allFieldsFilled ? 'completed' : 'incomplete';
+
+        await setDoc(doc(firestore, 'users', currentUser.uid), { personalInfo: personalInfoStatus }, { merge: true });
+
+        setCurrentUser(prevUser => ({
+          ...prevUser!,
+          ...updatedData,
+          personalInfo: personalInfoStatus,
+        }));
+      } catch (error) {
+        console.error("Failed to update user data in Firestore:", error);
+      }
     }
   };
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -136,63 +146,79 @@ const CompleteRegisterScreen = () => {
       });
     }
   };
-  return (
-<View style={styles.container}>
-      <Text>Complete Register Screen</Text>
-      <TextInput
-        style={styles.input}
-        value={email}
-        placeholder="Email"
-        onChangeText={text => setEmail(text)}
-      />
-      <View style={styles.phoneContainer}>
-        <Text>Current Phone Number: {phone}</Text>
-        {phone && <Button title="Delete" onPress={handleDeletePhoneNumber} />}
-      </View>
-      <PhoneInput
-        value={inputValue}
-        onChangePhoneNumber={handleInputValue}
-        selectedCountry={selectedCountry}
-        onChangeSelectedCountry={handleSelectedCountry}
-      />
-      <Text>Selected Country: {`${selectedCountry?.name} (${selectedCountry?.cca2})`}</Text>
-      <Text>New Phone Number: {`${selectedCountry?.callingCode} ${inputValue}`}</Text>
-      {/* ... (other Input components) */}
 
-      <TextInput
-        style={styles.input}
-        value={country}
-        placeholder="Country"
-        onChangeText={text => setCountry(text)}
-      />
-      <TextInput
-        style={styles.input}
-        value={region}
-        placeholder="Region"
-        onChangeText={text => setRegion(text)}
-      />
-      <TextInput
-        style={styles.input}
-        value={firstName}
-        placeholder="First Name"
-        onChangeText={text => setFirstName(text)}
-      />
-      <TextInput
-        style={styles.input}
-        value={lastName}
-        placeholder="Last Name"
-        onChangeText={text => setLastName(text)}
-      />
-      <TextInput
-        style={styles.input}
-        value={userName}
-        placeholder="User Name"
-        onChangeText={text => setUserName(text)}
-      />
-      {avatarURL ? <Image source={{ uri: avatarURL }} style={{ width: 100, height: 100 }} /> : null}
-      <Button title="Change Avatar" onPress={pickImage} />  
-      <Button title="Complete Register" onPress={handleCompleteRegister} />
-    </View>
+  return (
+    <SafeAreaView>
+      <View style={styles.container}>
+        <Text style={styles.title}>Complete Register Screen</Text>
+
+        <TextInput
+          style={styles.input}
+          value={email}
+          placeholder="Email"
+          onChangeText={(text) => setEmail(text)}
+        />
+
+        {locationVisible ? (
+          <CountryStateCity
+            onCountryChange={handleCountryChange} // Pass the function to handle country change
+          />
+        ) : (
+          <View>
+            <Text>Country: {selectedCountry}</Text>
+            {city ? <Text>City: {city}</Text> : null} {/* Display city if there is a value */}
+            <TouchableOpacity onPress={() => setLocationVisible(true)}>
+              <Text>Change Location</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <TextInput
+          style={styles.input}
+          value={firstName}
+          placeholder="First Name"
+          onChangeText={(text) => setFirstName(text)}
+        />
+        <TextInput
+          style={styles.input}
+          value={lastName}
+          placeholder="Last Name"
+          onChangeText={(text) => setLastName(text)}
+        />
+        <TextInput
+          style={styles.input}
+          value={userName}
+          placeholder="User Name"
+          onChangeText={(text) => setUserName(text)}
+        />
+
+        <View style={styles.phoneContainer}>
+          <PhoneInputComponent ref={phoneInputRef} />
+          <TouchableOpacity onPress={addPhoneNumber}>
+            <Text>Add Phone Number</Text>
+          </TouchableOpacity>
+        </View>
+
+        {phones.map((phone, index) => (
+          <View key={index} style={styles.phoneListContainer}>
+            <Text>{phone}</Text>
+            <TouchableOpacity onPress={() => deletePhoneNumber(index)}>
+              <Text style={{ color: 'red' }}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+
+        {avatarURL ? <Image source={{ uri: avatarURL }} style={styles.avatar} /> : null}
+
+        <TouchableOpacity style={styles.button} onPress={pickImage}>
+          <Text style={styles.buttonText}>Change Avatar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={handleCompleteRegister}>
+          <Text style={styles.buttonText}>Complete Register</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -201,20 +227,52 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#f9f9f9',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
   input: {
-    width: 300,
+    width: '90%',
     height: 40,
+    padding: 8,
     borderWidth: 1,
-    borderColor: 'grey',
-    marginBottom: 10,
-    paddingHorizontal: 8,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    marginBottom: 16,
   },
   phoneContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: 300,
+    width: '90%',
+    marginBottom: 16,
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#007BFF',
+    borderRadius: 4,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 16,
+  },
+  phoneListContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '90%',
+    marginBottom: 8,
   },
 });
 
