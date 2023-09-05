@@ -5,7 +5,7 @@ import {firestore} from '../../../../FirebaseConfig';
 import { useUser } from '../../../context/UserContext';
 
 const Search: React.FC = () => {
-  const [username, setUsername] = useState<string>("");
+  const [userName, setUsername] = useState<string>("");
   const [user, setUser] = useState<any>(null);
   const [err, setErr] = useState<boolean>(false);
 
@@ -14,7 +14,7 @@ const Search: React.FC = () => {
   const handleSearch = async () => {
     const q = query(
       collection(firestore, "users"),
-      where("userName", "==", username) // I've changed this to userName
+      where("userName", "==", userName) // I've changed this to userName
     );
 
     try {
@@ -79,7 +79,7 @@ const Search: React.FC = () => {
           placeholder="Find a user"
           onSubmitEditing={handleKey}
           onChangeText={(text) => setUsername(text)}
-          value={username}
+          value={userName}
         />
       </View>
       {err && <Text>User not found!</Text>}
