@@ -4,7 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 
 const yourhandle = require('countrycitystatejson');
 
-const CountryStateCity = ({ onCountryChange, onStateChange } : any)  => {
+const CountryStateCity = ({ onCountryChange, onStateChange, onCityChange }: any) => {
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [selectedState, setSelectedState] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
@@ -13,15 +13,18 @@ const CountryStateCity = ({ onCountryChange, onStateChange } : any)  => {
     setSelectedCountry(value);
     setSelectedState(''); // Clear state when changing country
     setSelectedCity(''); // Clear city when changing country
+    onCountryChange(value); // Add this line to update the parent component
   };
 
   const handleStateChange = (value: string) => {
     setSelectedState(value);
     setSelectedCity(''); // Clear city when changing state
+    onStateChange(value); // Add this line to update the parent component
   };
 
   const handleCityChange = (value: string) => {
     setSelectedCity(value);
+    onCityChange(value); // Add this line to update the parent component
   };
 
   return (

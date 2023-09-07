@@ -1,61 +1,61 @@
-import React, { createContext, useReducer, useContext, ReactNode } from 'react';
-import { useUser } from './UserContext'; // Import your UserContext
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { firestore } from '../../FirebaseConfig';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+
+export interface Message {
+  id: string;
+  text: string;
+  createdAt: Date;
+  userId: string;
+}
 
 interface ChatContextProps {
-  data: ChatState;
-  dispatch: React.Dispatch<ChatAction>;
+  messages: Message[];
+  sendMessage: (text: string, userId: string) => void;
 }
-interface ChatState {
-    chatId: string;
-    user: any; // Replace 'any' with the actual type of your user
-  }
-  
-  interface ChatAction {
-    type: 'CHANGE_USER';
-    payload: any; // Replace 'any' with the actual type of your user
-  }
-  
-
-// Initialize ChatContext with types
-export const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 
 interface ChatProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-export const ChatContextProvider: React.FC<ChatProviderProps> = ({ children }) => {
-  const { currentUser } = useUser(); // Use your UserContext
-  const INITIAL_STATE: ChatState = {
-    chatId: 'null',
-    user: {}, // Initialize as empty or however you see fit
+const ChatContext = createContext<ChatContextProps>({
+  messages: [],
+  sendMessage: () => {}
+});
+
+export const ChatProvider: React.FC<ChatProviderProps> = ({ children }:ChatProviderProps) => {
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    const messagesCollection = collection(firestore, 'messages');
+    const q = query(messagesCollection, orderBy('createdAt', 'desc'));
+
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const fetchedMessages: Message[] = [];
+      snapshot.forEach(doc => {
+        const { id, ...restData } = doc.data() as Message;
+        fetchedMessages.push({ id: doc.id, ...restData });
+    });
+    
+      setMessages(fetchedMessages);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const sendMessage = (text: string, userId: string) => {
+    // Add code to send a message to Firestore.
   };
 
-const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
-  let chatId = 'unknown';  // Default value
-
-  if (currentUser && currentUser.uid) {
-    chatId = currentUser.uid > action.payload.uid
-      ? `${currentUser.uid}${action.payload.uid}`
-      : `${action.payload.uid}${currentUser.uid}`;
-  }
-
-  switch (action.type) {
-    case 'CHANGE_USER':
-      return {
-        user: action.payload,
-        chatId: chatId
-      };
-    default:
-      return state;
-  }
-};
-
-
-  const [state, dispatch] = useReducer(chatReducer, INITIAL_STATE);
-
   return (
-    <ChatContext.Provider value={{ data: state, dispatch }}>
+    <ChatContext.Provider value={{ messages, sendMessage }}>
       {children}
     </ChatContext.Provider>
   );
+};
+
+export const useChat = () => {
+  return useContext(ChatContext);
 };

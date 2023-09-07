@@ -5,8 +5,8 @@ import { auth, firestore, storage } from '../../../FirebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+
 import {useUser} from '../../context/UserContext';
-import { set } from 'firebase/database';
 
 
 const RegisterScreen = ({ navigation }: any) => {

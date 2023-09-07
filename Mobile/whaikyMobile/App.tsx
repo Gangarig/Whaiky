@@ -7,7 +7,7 @@ import { SafeAreaProvider, useSafeAreaInsets, SafeAreaView } from 'react-native-
 import { UserProvider, useUser } from './app/context/UserContext';
 import { useAnimatedStyle } from 'react-native-reanimated';
 import { auth } from './FirebaseConfig';
-import { ChatContextProvider } from './app/context/ChatContext';
+import { ChatProvider ,useChat} from './app/context/ChatContext';
 // Components and Services
 import LogOut from './app/screens/services/LogOut';
 import Menu from './app/screens/AppStackScreens/components/Menu';
@@ -18,6 +18,7 @@ import CountryCityState from './app/screens/AppStackScreens/components/CountrySt
 import LoginScreen from './app/screens/AuthStackScreens/LoginScreen';
 import RegisterScreen from './app/screens/AuthStackScreens/RegisterScreen';
 import WelcomeScreen from './app/screens/AuthStackScreens/WelcomeScreen';
+import ForgotPasswordScreen from './app/screens/AuthStackScreens/ForgotPasswordScreen';
 
 // App Screens
 import ProfileScreen from './app/screens/AppStackScreens/ProfileScreen';
@@ -92,8 +93,6 @@ const AppStack = () => {
       <Drawer.Screen name="Category" component={CategoryStackNavigator} />
       <Drawer.Screen name="Chat" component={ChatStackNavigator} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
-      <Drawer.Screen name="addPost" component={AddPostScreen} />
-      <Drawer.Screen name="Country" component={CountryCityState} />
       <Drawer.Screen name="Log Out" component={LogOut} />
     </Drawer.Navigator>
   );
@@ -104,7 +103,7 @@ const AppStack = () => {
       <Stack.Screen name="login" component={LoginScreen} />
       <Stack.Screen name="register" component={RegisterScreen} />
       <Stack.Screen name="welcome" component={WelcomeScreen} />
-
+      <Stack.Screen name="forgotPassword" component={ForgotPasswordScreen} />
     </Stack.Navigator>
   );
 
@@ -120,13 +119,13 @@ const AppStack = () => {
 export default function App() {
   return (
       <UserProvider>
-        <ChatContextProvider>
+        <ChatProvider>
           <NavigationContainer>
             <SafeAreaProvider>
               <AppStack />
             </SafeAreaProvider>
           </NavigationContainer>
-        </ChatContextProvider>
+        </ChatProvider>
       </UserProvider>
   );
 }
