@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {Modal, View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { collection, query, where, getDocs, setDoc, doc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import {firestore} from '../../../../FirebaseConfig';
 import { useUser } from '../../../context/UserContext';
@@ -8,6 +8,7 @@ const Search: React.FC = () => {
   const [userName, setUsername] = useState<string>("");
   const [user, setUser] = useState<any>(null);
   const [err, setErr] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const { currentUser } = useUser();
 
@@ -74,24 +75,44 @@ const Search: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchForm}>
-        <TextInput
-          placeholder="Find a user"
-          onSubmitEditing={handleKey}
-          onChangeText={(text) => setUsername(text)}
-          value={userName}
-        />
-      </View>
-      {err && <Text>User not found!</Text>}
-      {user && (
-        <TouchableOpacity style={styles.userChat} onPress={handleSelect}>
-          {/* Replace with an Image component if you have the image */}
-          <Text>Profile Image Here</Text>
-          <View style={styles.userChatInfo}>
-            <Text>{user.userName}</Text>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <Text>Show Search</Text>
+      </TouchableOpacity>
+      
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TextInput
+              placeholder="Find a user"
+              // ... (other TextInput props)
+            />
+            {/* Search results and error handling here */}
+            {err && <Text>User not found!</Text>}
+            {user && (
+              <TouchableOpacity 
+                style={styles.userChat} 
+                onPress={() => { 
+                  handleSelect();
+                  setModalVisible(false);
+                }}
+              >
+                <Text>{user.userName}</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.textStyle}>Close</Text>
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
-      )}
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -100,6 +121,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    elevation: 5,
+  },
+  closeButton: {
+    backgroundColor: '#2196F3',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  }, 
   searchForm: {
     flexDirection: 'row',
     alignItems: 'center',

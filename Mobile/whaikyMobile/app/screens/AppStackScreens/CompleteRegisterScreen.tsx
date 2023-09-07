@@ -1,6 +1,6 @@
 import React, { useState, useEffect, FC, useRef } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, Image,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Image,Button
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUser } from '../../context/UserContext';
@@ -14,8 +14,9 @@ import CountryStateCity from './components/CountryStateCity';
 const CompleteRegisterScreen: FC = () => {
   const { currentUser, setCurrentUser } = useUser();
   const [email, setEmail] = useState<string>(currentUser?.email || '');
+  const [country, setCountry] = useState<string>(currentUser?.country || '');
+  const [state, setState] = useState<string>(currentUser?.state || '');
   const [city, setCity] = useState<string>(currentUser?.city || '');
-  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(currentUser?.country);
   const [firstName, setFirstName] = useState<string>(currentUser?.firstName || '');
   const [lastName, setLastName] = useState<string>(currentUser?.lastName || '');
   const [userName, setUserName] = useState<string>(currentUser?.userName || '');
@@ -25,8 +26,12 @@ const CompleteRegisterScreen: FC = () => {
   const phoneInputRef = useRef<{ getValue: () => string } | null>(null);
 
   const handleCountryChange = (newCountry: string) => {
-    setSelectedCountry(newCountry);
+    setCountry(newCountry);
   };
+
+  const handleStateChange = (newState: string) => {
+    setState(newState);
+  }
 
   const handleCityChange = (newCity: string) => {
     setCity(newCity);
@@ -53,7 +58,8 @@ const CompleteRegisterScreen: FC = () => {
           const userData = userDoc.data();
           setEmail(userData?.email || '');
           setPhones(userData?.phones || []);
-          setSelectedCountry(userData?.country || '');
+          setCountry(userData?.country || '');
+          setState(userData?.state || '');
           setCity(userData?.city || '');
           setFirstName(userData?.firstName || '');
           setLastName(userData?.lastName || '');
@@ -71,7 +77,8 @@ const CompleteRegisterScreen: FC = () => {
     if (currentUser?.uid) {
       const updatedData = {
         email,
-        country: selectedCountry || '',
+        country,
+        state,
         city,
         firstName,
         lastName,
@@ -161,15 +168,18 @@ const CompleteRegisterScreen: FC = () => {
 
         {locationVisible ? (
           <CountryStateCity
-            onCountryChange={handleCountryChange} // Pass the function to handle country change
+            onCountryChange={handleCountryChange}
+            onStateChange={handleStateChange}
+            onCityChange={handleCityChange}
           />
         ) : (
           <View>
-            <Text>Country: {selectedCountry}</Text>
-            {city ? <Text>City: {city}</Text> : null} {/* Display city if there is a value */}
-            <TouchableOpacity onPress={() => setLocationVisible(true)}>
-              <Text>Change Location</Text>
-            </TouchableOpacity>
+            <Text>Country: {country}</Text>
+            {state ? <Text>State: {state}</Text> : null}
+            {city ? <Text>City: {city}</Text> : null}
+            
+              <Button title="Change Location" onPress={()=>setLocationVisible(true)}/>
+            
           </View>
         )}
 

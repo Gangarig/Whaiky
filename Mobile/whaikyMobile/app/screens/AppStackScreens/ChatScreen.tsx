@@ -1,17 +1,36 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import Search from './chat/Search'
-import Chats from './chat/Chats'
-
-
-
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button } from 'react-native';
+import { useUser } from '../../context/UserContext';
+import { useChat } from '../../context/ChatContext';
+import Search from './chat/Search';
 const ChatScreen = () => {
-  return (
-    <View>
-      <Search />
-      <Chats />
-    </View>
-  )
-}
+  const [inputText, setInputText] = useState('');
+  const { messages, sendMessage } = useChat();
+  const { currentUser } = useUser();
 
-export default ChatScreen
+  return (
+    <View>  
+      <Search />
+      {messages.map((message) => (
+        <Text key={message.id}>{message.text}</Text>
+      ))}
+
+      <TextInput
+        value={inputText}
+        onChangeText={(text) => setInputText(text)}
+      />
+
+      <Button
+        title="Send"
+        onPress={() => {
+          if (currentUser && currentUser.uid) {
+            sendMessage(inputText, currentUser.uid);
+            setInputText('');
+          }
+        }}
+      />
+    </View>
+  );
+};
+
+export default ChatScreen;

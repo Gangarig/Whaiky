@@ -56,6 +56,7 @@ const LoginScreen = ({ navigation }: any) => {
                     <>
                         <Button title="Sign In" onPress={signIn} />
                         <Button title="Register" onPress={() => navigation.navigate('register')} />
+                        <Button title="Forgot Password" onPress={() => navigation.navigate('forgotPassword')} />
                     </>
                 )}
             </KeyboardAvoidingView>
