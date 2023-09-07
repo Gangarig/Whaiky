@@ -7,14 +7,14 @@ import { doc, getDoc } from 'firebase/firestore';
 export interface User {
   email?: string | null;
   uid?: string;
-  avatarURL?: string | null;
+  photoURL?: string | null;
   country?: string;
   state?: string;
   city?: string;
   phones?: string[];
   firstName?: string;
   lastName?: string;
-  userName?: string;
+  displayName?: string;
   createdAt?: Date | number;
   personalInfo?: string;
   legalInfo?: string;
@@ -60,8 +60,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           setCurrentUser({
             uid: user.uid,
             email: user.email,
-            avatarURL: user.photoURL,
-            userName: userData.userName,
+            photoURL: user.photoURL,
+            displayName: userData.displayName,
             personalInfo:userData.personalInfo,
             legalInfo:userData.legalInfo 
             

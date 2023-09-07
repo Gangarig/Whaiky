@@ -1,61 +1,92 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { firestore } from '../../FirebaseConfig';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import { useUser } from './UserContext';
 
-export interface Message {
-  id: string;
-  text: string;
-  createdAt: Date;
-  userId: string;
+export interface User {
+    email?: string | null;
+    uid?: string | null;
+    photoURL?: string | null;
+    country?: string;
+    state?: string;
+    city?: string;
+    phones?: string[];
+    firstName?: string;
+    lastName?: string;
+    userName?: string;
+    createdAt?: Date | number;
+    personalInfo?: string;
+    legalInfo?: string;
 }
 
-interface ChatContextProps {
-  messages: Message[];
-  sendMessage: (text: string, userId: string) => void;
+export interface ChatState {
+    chatId: string;
+    user: User;
 }
 
-interface ChatProviderProps {
-  children: React.ReactNode;
+type ActionTypes = "CHANGE_USER";
+
+interface ChangeUserPayload {
+    uid: string;
+    [key: string]: any;
 }
 
-const ChatContext = createContext<ChatContextProps>({
-  messages: [],
-  sendMessage: () => {}
-});
+interface ChatAction {
+    type: ActionTypes;
+    payload: ChangeUserPayload;
+}
 
-export const ChatProvider: React.FC<ChatProviderProps> = ({ children }:ChatProviderProps) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+interface ChatContextProviderProps {
+    children: ReactNode;
+}
 
-  useEffect(() => {
-    const messagesCollection = collection(firestore, 'messages');
-    const q = query(messagesCollection, orderBy('createdAt', 'desc'));
+export interface ChatContextValue {
+    data: ChatState;
+    dispatch: React.Dispatch<ChatAction>;
+}
 
-    const unsubscribe = onSnapshot(q, snapshot => {
-      const fetchedMessages: Message[] = [];
-      snapshot.forEach(doc => {
-        const { id, ...restData } = doc.data() as Message;
-        fetchedMessages.push({ id: doc.id, ...restData });
-    });
-    
-      setMessages(fetchedMessages);
-    });
+const ChatContext = createContext<ChatContextValue | undefined>(undefined);
 
-    return () => {
-      unsubscribe();
+export const ChatContextProvider: React.FC<ChatContextProviderProps> = ({ children }) => {
+    const { currentUser } = useUser() as { currentUser: User | null };
+
+    const INITIAL_STATE: ChatState = {
+        chatId: "null",
+        user: {} as User
     };
-  }, []);
 
-  const sendMessage = (text: string, userId: string) => {
-    // Add code to send a message to Firestore.
-  };
+    const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
+        switch (action.type) {
+            case "CHANGE_USER":
+                const currentUid = action.payload.uid;
+                const targetUid = action.payload.targetUid;
 
-  return (
-    <ChatContext.Provider value={{ messages, sendMessage }}>
-      {children}
-    </ChatContext.Provider>
-  );
+                if (currentUid && targetUid) {
+                    return {
+                        user: action.payload,
+                        chatId: currentUid > targetUid
+                            ? currentUid + targetUid
+                            : targetUid + currentUid
+                    };
+                } else {
+                    return state;
+                }
+            default:
+                return state;
+        }
+    };
+
+    const [state, dispatch] = useReducer(chatReducer, INITIAL_STATE);
+
+    return (
+        <ChatContext.Provider value={{ data: state, dispatch }}>
+            {children}
+        </ChatContext.Provider>
+    );
 };
 
-export const useChat = () => {
-  return useContext(ChatContext);
-};
+export function useChat() {
+    const context = useContext(ChatContext);
+    if (!context) {
+        throw new Error("useChat must be used within a ChatContextProvider");
+    }
+    return context;
+}

@@ -39,7 +39,7 @@ const ProfileScreen = ({ navigation }: RouterProps) => {
       {userData && (
         <View>
           <Image source={ userData.photoURL } style={{ width: 100, height: 100 }}/>
-          <Text>Username: {userData.userName || 'N/A'}</Text>
+          
           <Text>Email: {userData.email || 'N/A'}</Text>
           <Text>UID: {userData.uid || 'N/A'}</Text>
           <Text>Avatar URL: {userData.photoURL || 'N/A'}</Text>
@@ -48,7 +48,7 @@ const ProfileScreen = ({ navigation }: RouterProps) => {
           <Text>Phone: {userData.phone || 'N/A'}</Text>
           <Text>First Name: {userData.firstName || 'N/A'}</Text>
           <Text>Last Name: {userData.lastName || 'N/A'}</Text>
-          <Text>User Name: {userData.userName || 'N/A'}</Text>
+          <Text>User Name: {userData.displayName || 'N/A'}</Text>
           <Text>Created At: {userData.createdAt ? new Date(userData.createdAt).toLocaleString() : 'N/A'}</Text>
         </View>
       )}

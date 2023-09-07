@@ -7,7 +7,7 @@ import { SafeAreaProvider, useSafeAreaInsets, SafeAreaView } from 'react-native-
 import { UserProvider, useUser } from './app/context/UserContext';
 import { useAnimatedStyle } from 'react-native-reanimated';
 import { auth } from './FirebaseConfig';
-import { ChatProvider ,useChat} from './app/context/ChatContext';
+import { ChatContextProvider ,useChat} from './app/context/ChatContext';
 // Components and Services
 import LogOut from './app/screens/services/LogOut';
 import Menu from './app/screens/AppStackScreens/components/Menu';
@@ -91,7 +91,7 @@ const AppStack = () => {
       <Drawer.Screen name="Home" component={HomeStackNavigator}/>
       <Drawer.Screen name="Profile" component={ProfileStackNavigator} />
       <Drawer.Screen name="Category" component={CategoryStackNavigator} />
-      <Drawer.Screen name="Chat" component={ChatStackNavigator} />
+      <Drawer.Screen name="ChatStack" component={ChatStackNavigator} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
       <Drawer.Screen name="Log Out" component={LogOut} />
     </Drawer.Navigator>
@@ -119,13 +119,13 @@ const AppStack = () => {
 export default function App() {
   return (
       <UserProvider>
-        <ChatProvider>
+        <ChatContextProvider>
           <NavigationContainer>
             <SafeAreaProvider>
               <AppStack />
             </SafeAreaProvider>
           </NavigationContainer>
-        </ChatProvider>
+        </ChatContextProvider>
       </UserProvider>
   );
 }

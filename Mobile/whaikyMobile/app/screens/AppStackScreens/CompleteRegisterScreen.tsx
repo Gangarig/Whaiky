@@ -19,8 +19,8 @@ const CompleteRegisterScreen: FC = () => {
   const [city, setCity] = useState<string>(currentUser?.city || '');
   const [firstName, setFirstName] = useState<string>(currentUser?.firstName || '');
   const [lastName, setLastName] = useState<string>(currentUser?.lastName || '');
-  const [userName, setUserName] = useState<string>(currentUser?.userName || '');
-  const [avatarURL, setAvatarURL] = useState<string>(currentUser?.avatarURL || '');
+  const [displayName, setDisplayName] = useState<string>(currentUser?.displayName || '');
+  const [photoURL, setPhotoURL] = useState<string>(currentUser?.photoURL || '');
   const [phones, setPhones] = useState<string[]>(currentUser?.phones || []);
   const [locationVisible, setLocationVisible] = useState(false);
   const phoneInputRef = useRef<{ getValue: () => string } | null>(null);
@@ -63,9 +63,9 @@ const CompleteRegisterScreen: FC = () => {
           setCity(userData?.city || '');
           setFirstName(userData?.firstName || '');
           setLastName(userData?.lastName || '');
-          setUserName(userData?.userName || '');
+          setDisplayName(userData?.displayName || '');
 
-          setAvatarURL(userData?.photoURL || '');
+          setPhotoURL(userData?.photoURL || '');
         }
       }
     };
@@ -82,8 +82,8 @@ const CompleteRegisterScreen: FC = () => {
         city,
         firstName,
         lastName,
-        userName,
-        photoURL: avatarURL,
+        displayName,
+        photoURL: photoURL,
         phones,
       };
 
@@ -125,12 +125,12 @@ const CompleteRegisterScreen: FC = () => {
     const imageData = await fetch(uri);
     const blob = await imageData.blob();
 
-    if (currentUser?.uid && userName) {
-      const imageName = `${userName}_${new Date().toISOString()}`;
+    if (currentUser?.uid && displayName) {
+      const imageName = `${displayName}_${new Date().toISOString()}`;
       const newStorageRef = ref(storage, `profile_images/${imageName}`);
 
-      if (avatarURL && avatarURL !== 'your_default_avatar_url') {
-        const decodedUrl = decodeURIComponent(avatarURL);
+      if (photoURL && photoURL !== 'your_default_avatar_url') {
+        const decodedUrl = decodeURIComponent(photoURL);
         const oldImageName = decodedUrl.split('/').slice(-1)[0].split('?')[0];
         const oldStorageRef = ref(storage, `profile_images/${oldImageName}`);
         deleteObject(oldStorageRef).catch((error) => {
@@ -147,9 +147,9 @@ const CompleteRegisterScreen: FC = () => {
 
         setCurrentUser(prevUser => ({
           ...prevUser!,
-          photoURL: downloadURL,
+          photoURL: downloadURL as string,
         }));
-        setAvatarURL(downloadURL as string);
+        setPhotoURL(downloadURL as string);
       });
     }
   };
@@ -197,9 +197,9 @@ const CompleteRegisterScreen: FC = () => {
         />
         <TextInput
           style={styles.input}
-          value={userName}
+          value={displayName}
           placeholder="User Name"
-          onChangeText={(text) => setUserName(text)}
+          onChangeText={(text) => setDisplayName(text)}
         />
 
         <View style={styles.phoneContainer}>
@@ -218,7 +218,7 @@ const CompleteRegisterScreen: FC = () => {
           </View>
         ))}
 
-        {avatarURL ? <Image source={{ uri: avatarURL }} style={styles.avatar} /> : null}
+        {photoURL ? <Image source={{ uri: photoURL }} style={styles.avatar} /> : null}
 
         <TouchableOpacity style={styles.button} onPress={pickImage}>
           <Text style={styles.buttonText}>Change Avatar</Text>

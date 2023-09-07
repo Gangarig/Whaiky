@@ -21,7 +21,7 @@ const LoginScreen = ({ navigation }: any) => {
                 setCurrentUser({
                     email: user.email || '',  // Handle the potential null here
                     uid: user.uid,
-                    avatarURL: user.photoURL || '',  // Handle the potential null here
+                    photoURL: user.photoURL || '',  // Handle the potential null here
                 });
 
                 setLoading(false);

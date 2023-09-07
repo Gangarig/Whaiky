@@ -1,11 +1,15 @@
 import React, { useContext, useState } from 'react';
-import {Modal, View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { collection, query, where, getDocs, setDoc, doc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
-import {firestore} from '../../../../FirebaseConfig';
+import {
+  Modal, View, TextInput, Text, TouchableOpacity, StyleSheet, Button
+} from 'react-native';
+import {
+  collection, query, where, getDocs, setDoc, doc, updateDoc, serverTimestamp, getDoc
+} from 'firebase/firestore';
+import { firestore } from '../../../../FirebaseConfig';
 import { useUser } from '../../../context/UserContext';
 
 const Search: React.FC = () => {
-  const [userName, setUsername] = useState<string>("");
+  const [displayName, setDisplayName] = useState<string>('');
   const [user, setUser] = useState<any>(null);
   const [err, setErr] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -14,16 +18,18 @@ const Search: React.FC = () => {
 
   const handleSearch = async () => {
     const q = query(
-      collection(firestore, "users"),
-      where("userName", "==", userName) // I've changed this to userName
+      collection(firestore, 'users'),
+      where('displayName', '==', displayName)
     );
 
     try {
       const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        setUser(doc.data());
-      });
-    } catch (err) {
+      if (!querySnapshot.empty) {
+        setUser(querySnapshot.docs[0].data());
+      } else {
+        setErr(true);
+      }
+    } catch (error) {
       setErr(true);
     }
   };
@@ -35,13 +41,13 @@ const Search: React.FC = () => {
   };
 
   const handleSelect = async () => {
+    console.log(currentUser.uid, user.uid)
     if (!currentUser?.uid || !user?.uid) {
-      // Handle the case where either UID is undefined
       return;
     }
 
     const combinedId = currentUser.uid > user.uid ? currentUser.uid + user.uid : user.uid + currentUser.uid;
-
+    console.log(combinedId);
     try {
       const res = await getDoc(doc(firestore, 'chats', combinedId));
       if (!res.exists()) {
@@ -50,7 +56,7 @@ const Search: React.FC = () => {
         await updateDoc(doc(firestore, 'userChats', currentUser.uid), {
           [`${combinedId}.userInfo`]: {
             uid: user.uid,
-            userName: user.userName,
+            displayName: user.displayName,
             photoURL: user.photoURL,
           },
           [`${combinedId}.date`]: serverTimestamp(),
@@ -59,25 +65,23 @@ const Search: React.FC = () => {
         await updateDoc(doc(firestore, 'userChats', user.uid), {
           [`${combinedId}.userInfo`]: {
             uid: currentUser.uid,
-            userName: currentUser.userName,
-            photoURL: currentUser.avatarURL,
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL,
           },
           [`${combinedId}.date`]: serverTimestamp(),
         });
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
-
+    
     setUser(null);
-    setUsername("");
+    setDisplayName('');
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Text>Show Search</Text>
-      </TouchableOpacity>
+      <Button title="Search" onPress={() => setModalVisible(true)} />
       
       <Modal
         animationType="slide"
@@ -88,10 +92,12 @@ const Search: React.FC = () => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <TextInput
+              style={styles.textInput}
               placeholder="Find a user"
-              // ... (other TextInput props)
+              onChangeText={(text) => setDisplayName(text)}
+              onKeyPress={handleKey}
+              value={displayName}
             />
-            {/* Search results and error handling here */}
             {err && <Text>User not found!</Text>}
             {user && (
               <TouchableOpacity 
@@ -101,7 +107,7 @@ const Search: React.FC = () => {
                   setModalVisible(false);
                 }}
               >
-                <Text>{user.userName}</Text>
+                <Text>{user.displayName}</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity 
@@ -120,6 +126,7 @@ const Search: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
   },
   centeredView: {
     flex: 1,
@@ -133,6 +140,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
     elevation: 5,
   },
   closeButton: {
@@ -140,24 +154,25 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
+    marginTop: 10,
   },
   textStyle: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
   }, 
-  searchForm: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
+  textInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    width: 200,
   },
   userChat: {
-    flexDirection: 'row',
-    alignItems: 'center',
     padding: 10,
-  },
-  userChatInfo: {
-    marginLeft: 10,
+    backgroundColor: '#ebebeb',
+    borderRadius: 5,
+    marginBottom: 10,
   },
 });
 
