@@ -41,15 +41,16 @@ const Search: React.FC = () => {
   };
 
   const handleSelect = async () => {
-    console.log(currentUser.uid, user.uid)
+    
     if (!currentUser?.uid || !user?.uid) {
       return;
     }
 
     const combinedId = currentUser.uid > user.uid ? currentUser.uid + user.uid : user.uid + currentUser.uid;
-    console.log(combinedId);
+   
     try {
       const res = await getDoc(doc(firestore, 'chats', combinedId));
+      
       if (!res.exists()) {
         await setDoc(doc(firestore, 'chats', combinedId), { messages: [] });
 

@@ -11,15 +11,17 @@ export interface User {
     phones?: string[];
     firstName?: string;
     lastName?: string;
-    userName?: string;
+    displayName?: string;
     createdAt?: Date | number;
     personalInfo?: string;
     legalInfo?: string;
 }
 
 export interface ChatState {
+    [x: string]: any;
     chatId: string;
     user: User;
+    senderId?: string;
 }
 
 type ActionTypes = "CHANGE_USER";
@@ -35,7 +37,7 @@ interface ChatAction {
 }
 
 interface ChatContextProviderProps {
-    children: ReactNode;
+    children: ReactNode,
 }
 
 export interface ChatContextValue {
@@ -46,7 +48,9 @@ export interface ChatContextValue {
 const ChatContext = createContext<ChatContextValue | undefined>(undefined);
 
 export const ChatContextProvider: React.FC<ChatContextProviderProps> = ({ children }) => {
-    const { currentUser } = useUser() as { currentUser: User | null };
+    const { currentUser } = useUser() as { currentUser?: User | null };
+
+    console.log("Current User from UserContext:", currentUser);
 
     const INITIAL_STATE: ChatState = {
         chatId: "null",
@@ -54,25 +58,28 @@ export const ChatContextProvider: React.FC<ChatContextProviderProps> = ({ childr
     };
 
     const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
+        console.log("Dispatched action:", action.type, "with payload:", action.payload);
+      
         switch (action.type) {
-            case "CHANGE_USER":
-                const currentUid = action.payload.uid;
-                const targetUid = action.payload.targetUid;
-
-                if (currentUid && targetUid) {
-                    return {
-                        user: action.payload,
-                        chatId: currentUid > targetUid
-                            ? currentUid + targetUid
-                            : targetUid + currentUid
-                    };
-                } else {
-                    return state;
-                }
-            default:
-                return state;
+          case "CHANGE_USER":
+            const currentUid = currentUser && currentUser.uid;
+            const targetUid = action.payload && action.payload.uid;
+            
+            if (currentUid && targetUid) {
+              return {
+                user: action.payload,
+                chatId: currentUid > targetUid
+                  ? currentUid + targetUid
+                  : targetUid + currentUid
+              };
+            } else {
+              return state;
+            }
+          default:
+            return state;
         }
-    };
+      };
+      
 
     const [state, dispatch] = useReducer(chatReducer, INITIAL_STATE);
 

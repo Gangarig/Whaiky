@@ -8,11 +8,21 @@ import { UserProvider, useUser } from './app/context/UserContext';
 import { useAnimatedStyle } from 'react-native-reanimated';
 import { auth } from './FirebaseConfig';
 import { ChatContextProvider ,useChat} from './app/context/ChatContext';
+
+
 // Components and Services
 import LogOut from './app/screens/services/LogOut';
 import Menu from './app/screens/AppStackScreens/components/Menu';
 import LoadingScreen from './app/screens/AppStackScreens/LoadingScreen';
 import CountryCityState from './app/screens/AppStackScreens/components/CountryStateCity';
+import Chat from './app/screens/AppStackScreens/chat/Chat';
+import Chats from './app/screens/AppStackScreens/chat/Chats';
+import Messages from './app/screens/AppStackScreens/chat/Messages';
+import Message from './app/screens/AppStackScreens/chat/Message';
+import Input from './app/screens/AppStackScreens/chat/Input';
+import Search from './app/screens/AppStackScreens/chat/Search';
+
+
 
 // Auth Screens
 import LoginScreen from './app/screens/AuthStackScreens/LoginScreen';
@@ -43,7 +53,7 @@ const ChatStack = createNativeStackNavigator();
 const ProfileStackNavigator = () => {
   return (
     <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
-      {/* <ProfileStack.Screen name="profile" component={ProfileScreen} /> */}
+      <ProfileStack.Screen name="profile" component={ProfileScreen} />
       <ProfileStack.Screen name="complete" component={CompleteRegisterScreen} />
       <ProfileStack.Screen name="complete2" component={CompleteRegisterScreen2} />
     </ProfileStack.Navigator>
@@ -73,7 +83,8 @@ const CategoryStackNavigator = () => {
 const ChatStackNavigator = () => {
   return (
     <ChatStack.Navigator screenOptions={{ headerShown: false }}>
-      <ChatStack.Screen name="Chat" component={ChatScreen} />
+      <ChatStack.Screen name="ChatScreen" component={ChatScreen} />
+      <ChatStack.Screen name="Chat" component={Chat} />
     </ChatStack.Navigator>
   );
 };
@@ -91,9 +102,10 @@ const AppStack = () => {
       <Drawer.Screen name="Home" component={HomeStackNavigator}/>
       <Drawer.Screen name="Profile" component={ProfileStackNavigator} />
       <Drawer.Screen name="Category" component={CategoryStackNavigator} />
-      <Drawer.Screen name="ChatStack" component={ChatStackNavigator} />
+      <Drawer.Screen name="Messages" component={ChatStackNavigator} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
       <Drawer.Screen name="Log Out" component={LogOut} />
+      
     </Drawer.Navigator>
   );
 

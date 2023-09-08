@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView, Activi
 import { auth } from '../../../FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useUser } from '../../context/UserContext';
-import { NavigationProp } from '@react-navigation/native';
 
 const LoginScreen = ({ navigation }: any) => {
     const { setCurrentUser } = useUser();

@@ -48,7 +48,7 @@ const Input = () => {
           id: uuid(),
           text,
           senderId: currentUser.uid,
-          date: Timestamp.now(),
+          date: serverTimestamp(),
         }),
       });
     }
