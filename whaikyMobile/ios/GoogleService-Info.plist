@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1082121859527-nkss0dnd59u3icts4r711qbf3p5bhijs.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1082121859527-nkss0dnd59u3icts4r711qbf3p5bhijs</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1082121859527-256dlreh5mj2s3f2vss0c8ruqnmadmgu.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCyRWsBwfBwyDSx2oW8j_d9_TBKXfMNCl0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1082121859527</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.reactjs.native.example.whaikyMobile</string>
+	<key>PROJECT_ID</key>
+	<string>whaiky-f9e40</string>
+	<key>STORAGE_BUCKET</key>
+	<string>whaiky-f9e40.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1082121859527:ios:ececd8921f45ce06d469e2</string>
+	<key>DATABASE_URL</key>
+	<string>https://whaiky-f9e40-default-rtdb.europe-west1.firebasedatabase.app</string>
+</dict>
+</plist>
