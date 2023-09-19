@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1082121859527",
+    "firebase_url": "https://whaiky-f9e40-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "whaiky-f9e40",
+    "storage_bucket": "whaiky-f9e40.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1082121859527:android:360a0b4734d049d8d469e2",
+        "android_client_info": {
+          "package_name": "com.whaikyrn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1082121859527-cbd9l1b5qee9behuf357ragvro7ra8nr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.whaikyrn",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1082121859527-b9t7vui6gp4gj6871i2op86eoi6bt751.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDq2gHDZcfSBS38FcCKE1jNI5yNbnp4Gwc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1082121859527-b9t7vui6gp4gj6871i2op86eoi6bt751.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1082121859527-6nd41kauvfnur8sfvlq2iapak9rr4thq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
