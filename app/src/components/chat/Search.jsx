@@ -1,21 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Modal, View, TextInput, Text, TouchableOpacity, StyleSheet, Button
+  Modal,
+  View,
+  TextInput,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Button,
+  ActivityIndicator,
 } from 'react-native';
 import {
-  collection, query, where, getDocs, setDoc, doc, updateDoc, serverTimestamp, getDoc
-} from 'firebase/firestore';
-import { firestore } from '../../../../FirebaseConfig';
+  collection,
+  query,
+  where,
+  getDocs,
+  setDoc,
+  doc,
+  updateDoc,
+  serverTimestamp,
+  getDoc as getFirestoreDoc, // Rename to avoid conflict
+} from '@react-native-firebase/firestore';
 
 const Search = () => {
   const [displayName, setDisplayName] = useState('');
   const [user, setUser] = useState(null);
   const [err, setErr] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Clear user and error when the modal is closed
+    if (!modalVisible) {
+      setUser(null);
+      setDisplayName('');
+      setErr(false);
+    }
+  }, [modalVisible]);
 
   const handleSearch = async () => {
+    if (!displayName.trim()) {
+      // Input is empty, don't perform search
+      return;
+    }
+
+    setLoading(true);
+
     const q = query(
-      collection(firestore, 'users'),
+      collection('users'),
       where('displayName', '==', displayName)
     );
 
@@ -23,11 +54,16 @@ const Search = () => {
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
         setUser(querySnapshot.docs[0].data());
+        setErr(false);
       } else {
+        setUser(null);
         setErr(true);
       }
     } catch (error) {
+      console.error('Error while searching:', error.message);
       setErr(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,20 +74,25 @@ const Search = () => {
   };
 
   const handleSelect = async () => {
-    
+    // Replace with your Firebase authentication logic
+    const currentUser = { uid: '123' }; // Replace with actual user data
+
     if (!currentUser?.uid || !user?.uid) {
       return;
     }
 
-    const combinedId = currentUser.uid > user.uid ? currentUser.uid + user.uid : user.uid + currentUser.uid;
-   
-    try {
-      const res = await getDoc(doc(firestore, 'chats', combinedId));
-      
-      if (!res.exists()) {
-        await setDoc(doc(firestore, 'chats', combinedId), { messages: [] });
+    const combinedId =
+      currentUser.uid > user.uid
+        ? currentUser.uid + user.uid
+        : user.uid + currentUser.uid;
 
-        await updateDoc(doc(firestore, 'userChats', currentUser.uid), {
+    try {
+      const res = await getFirestoreDoc(doc('chats', combinedId));
+
+      if (!res.exists) {
+        await setDoc(doc('chats', combinedId), { messages: [] });
+
+        await updateDoc(doc('userChats', currentUser.uid), {
           [`${combinedId}.userInfo`]: {
             uid: user.uid,
             displayName: user.displayName,
@@ -60,7 +101,7 @@ const Search = () => {
           [`${combinedId}.date`]: serverTimestamp(),
         });
 
-        await updateDoc(doc(firestore, 'userChats', user.uid), {
+        await updateDoc(doc('userChats', user.uid), {
           [`${combinedId}.userInfo`]: {
             uid: currentUser.uid,
             displayName: currentUser.displayName,
@@ -72,15 +113,15 @@ const Search = () => {
     } catch (error) {
       console.error(error);
     }
-    
+
     setUser(null);
     setDisplayName('');
   };
 
   return (
-    <View style={styles.container}>
+    <>
       <Button title="Search" onPress={() => setModalVisible(true)} />
-      
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -98,9 +139,9 @@ const Search = () => {
             />
             {err && <Text>User not found!</Text>}
             {user && (
-              <TouchableOpacity 
-                style={styles.userChat} 
-                onPress={() => { 
+              <TouchableOpacity
+                style={styles.userChat}
+                onPress={() => {
                   handleSelect();
                   setModalVisible(false);
                 }}
@@ -108,7 +149,7 @@ const Search = () => {
                 <Text>{user.displayName}</Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.closeButton}
               onPress={() => setModalVisible(false)}
             >
@@ -117,7 +158,7 @@ const Search = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </>
   );
 };
 
@@ -158,7 +199,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-  }, 
+  },
   textInput: {
     height: 40,
     borderColor: 'gray',

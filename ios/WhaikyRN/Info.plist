@@ -4,6 +4,10 @@
 <dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow access to the photo library for selecting images</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow access to the camera for capturing images</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow access to the microphone for audio input</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>

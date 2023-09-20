@@ -26,8 +26,6 @@ const Profile = ({ navigation }) => {
   return (
     <SafeAreaView>
       <View>
-        <Button title='Complete Registration' onPress={() => navigation.navigate('complete')} />
-        <Button title='Become a Contractor' onPress={() => navigation.navigate('complete')} />
         {userData && (
           <View>
             <Image source={{ uri: userData.photoURL }} style={{ width: 100, height: 100 }} />
@@ -43,6 +41,8 @@ const Profile = ({ navigation }) => {
             <Text>Created At: {userData.createdAt ? new Date(userData.createdAt).toLocaleString() : 'N/A'}</Text>
           </View>
         )}
+                <Button title='Fill the personal Info forms' onPress={() => navigation.navigate('PersonalInfo')} />
+        <Button title='Become a Contractor' onPress={() => navigation.navigate('LegalInfo')} />
         <Button title='Log Out' onPress={() => auth().signOut()} />
       </View>
     </SafeAreaView>

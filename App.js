@@ -16,20 +16,23 @@ import CategoryDetail from './app/src/screens/AppStackScreens/CategoryDetail'
 import ChatScreen from './app/src/screens/AppStackScreens/ChatScreen'
 import Profile from './app/src/screens/AppStackScreens/Profile'
 import Settings from './app/src/screens/AppStackScreens/Settings'
+import Test from './app/src/screens/AppStackScreens/Test';
+import PostDetail from './app/src/screens/AppStackScreens/PostDetail';
 
 
+//profile screens
+import PersonalInfo from './app/src/screens/AppStackScreens/PersonalInfo'
+import LegalInfo from './app/src/screens/AppStackScreens/Legalinfo'
 
 // components
 import Loading from './app/src/components/Loading';
 import LogOut from './app/src/components/LogOut';
-import CountryStateCity from './app/src/components/CountryStateCity';
-import PhoneInputComponent from './app/src/components/PhoneInputComponent';
+import AddPost from './app/src/components/AddPost';
 
 //context 
 import { AuthProvider, useAuth } from './app/src/context/AuthContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-
+import { ChatContextProvider } from './app/src/context/ChatContext';
 const Stack = createStackNavigator();
 function CategoryStack() {
   return (
@@ -39,17 +42,37 @@ function CategoryStack() {
     </Stack.Navigator>
   );
 }
+const HomeStack = createStackNavigator();
+function HomeStackScreen() {
+  return (
+    <HomeStack.Navigator screenOptions={{headerShown:false}}>
+      <HomeStack.Screen name="HomeScreen" component={Home} />
+      <HomeStack.Screen name="AddPost" component={AddPost} />
+      <HomeStack.Screen name="PostDetail" component={PostDetail} />
+    </HomeStack.Navigator>
+  );
+}
+const ProfileStack = createStackNavigator();
+function ProfileStackScreen() {
+  return (
+    <ProfileStack.Navigator screenOptions={{headerShown:false}}>
+      <ProfileStack.Screen name="ProfileScreen" component={Profile} />
+      <ProfileStack.Screen name="PersonalInfo" component={PersonalInfo} />
+      <ProfileStack.Screen name="LegalInfo" component={LegalInfo} />
+    </ProfileStack.Navigator>
+  );
+}
 
 const Drawer = createDrawerNavigator();
 function DrawerNavigator() {
   return (
     <Drawer.Navigator initialRouteName="Home">
-      <Drawer.Screen name="Home" component={Home} />
+      <Drawer.Screen name="Home" component={HomeStackScreen} />
       <Drawer.Screen name="Category" component={CategoryStack} />
       <Drawer.Screen name="ChatScreen" component={ChatScreen} />
-      <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen name="Profile" component={ProfileStackScreen} />
       <Drawer.Screen name="Settings" component={Settings} />
-      <Drawer.Screen name="CountryStateCity" component={CountryStateCity}/>
+      <Drawer.Screen name="Test" component={Test} />
     </Drawer.Navigator>
   );
 }
@@ -84,6 +107,7 @@ function Main() {
 
 export default function App() {
   return (
+    <ChatContextProvider>
     <SafeAreaProvider>
     <NavigationContainer>
     <AuthProvider>
@@ -91,5 +115,6 @@ export default function App() {
     </AuthProvider>
     </NavigationContainer>
     </SafeAreaProvider>
+    </ChatContextProvider>
   );
 }

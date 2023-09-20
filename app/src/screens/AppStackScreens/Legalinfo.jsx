@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const Input = () => {
+const Legalinfo = () => {
   return (
     <View>
-      <Text>Input</Text>
+      <Text>Legalinfo</Text>
     </View>
   )
 }
 
-export default Input
+export default Legalinfo

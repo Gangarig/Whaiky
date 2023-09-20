@@ -1139,8 +1139,6 @@ PODS:
   - React-jsinspector (0.72.4)
   - React-logger (0.72.4):
     - glog
-  - react-native-image-picker (7.0.0):
-    - React-Core
   - react-native-safe-area-context (4.7.2):
     - React-Core
   - React-NativeModulesApple (0.72.4):
@@ -1256,7 +1254,7 @@ PODS:
   - RecaptchaInterop (100.0.0)
   - RNCMaskedView (0.2.9):
     - React-Core
-  - RNCPicker (2.5.0):
+  - RNCPicker (2.5.1):
     - React-Core
   - RNFBAnalytics (18.4.0):
     - Firebase/Analytics (= 10.14.0)
@@ -1284,6 +1282,15 @@ PODS:
     - RNFBApp
   - RNGestureHandler (2.13.0):
     - React-Core
+  - RNImageCropPicker (0.40.0):
+    - React-Core
+    - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.40.0)
+    - TOCropViewController
+  - RNImageCropPicker/QBImagePickerController (0.40.0):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController
   - RNReanimated (3.5.2):
     - DoubleConversion
     - FBLazyVector
@@ -1317,6 +1324,7 @@ PODS:
     - React-Core
     - React-RCTImage
   - SocketRocket (0.6.1)
+  - TOCropViewController (2.6.1)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -1343,7 +1351,6 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
-  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1371,6 +1378,7 @@ DEPENDENCIES:
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -1403,6 +1411,7 @@ SPEC REPOS:
     - PromisesObjC
     - RecaptchaInterop
     - SocketRocket
+    - TOCropViewController
 
 EXTERNAL SOURCES:
   boost:
@@ -1448,8 +1457,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
-  react-native-image-picker:
-    :path: "../node_modules/react-native-image-picker"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   React-NativeModulesApple:
@@ -1504,6 +1511,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -1557,7 +1566,6 @@ SPEC CHECKSUMS:
   React-jsiexecutor: c7f826e40fa9cab5d37cab6130b1af237332b594
   React-jsinspector: aaed4cf551c4a1c98092436518c2d267b13a673f
   React-logger: da1ebe05ae06eb6db4b162202faeafac4b435e77
-  react-native-image-picker: ddbbe4d226d9c82a82360f5de66bf71a657a42e6
   react-native-safe-area-context: 7aa8e6d9d0f3100a820efb1a98af68aa747f9284
   React-NativeModulesApple: b6c8d89744e07cb454e69c1c861f02f153505eb7
   React-perflogger: 496a1a3dc6737f964107cb3ddae7f9e265ddda58
@@ -1578,7 +1586,7 @@ SPEC CHECKSUMS:
   ReactCommon: bef32711b646c84c49acd0e82286cc913c645bd1
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RNCMaskedView: 949696f25ec596bfc697fc88e6f95cf0c79669b6
-  RNCPicker: 32ca102146bc7d34a8b93a998d9938d9f9ec7898
+  RNCPicker: 529d564911e93598cc399b56cc0769ce3675f8c8
   RNFBAnalytics: 603cfb43a7dd52053f1682cd9454927f526111da
   RNFBApp: af276a038f2e1488d59920697bba97b43f83164c
   RNFBAuth: 1131e53d88468b275af7e7253198d6b94d4c9c89
@@ -1586,9 +1594,11 @@ SPEC CHECKSUMS:
   RNFBFirestore: 5462679c91d0057b8b32ac6ab89c417db9eb4d3c
   RNFBStorage: e4639710736b2ac4c5ef6e3d6777d6e8789f3e69
   RNGestureHandler: 6e4dc6b7ab3a385386d4e36228bd065e5a611394
+  RNImageCropPicker: 486e2f7e2b0461ce24321f751410dce1b3b49e6d
   RNReanimated: 2491645f0883526f4470d8b5c761308709ba31f8
   RNScreens: 85d3880b52d34db7b8eeebe2f1a0e807c05e69fa
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
 
 PODFILE CHECKSUM: ea1dadb1bff6322f9cd3541d44c309f29dbbe3f9
