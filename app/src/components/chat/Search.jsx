@@ -20,6 +20,7 @@ import {
   serverTimestamp,
   getDoc as getFirestoreDoc, // Rename to avoid conflict
 } from '@react-native-firebase/firestore';
+import { useAuth } from '../../context/AuthContext';
 
 const Search = () => {
   const [displayName, setDisplayName] = useState('');
@@ -74,8 +75,7 @@ const Search = () => {
   };
 
   const handleSelect = async () => {
-    // Replace with your Firebase authentication logic
-    const currentUser = { uid: '123' }; // Replace with actual user data
+    const currentUser = useAuth(); 
 
     if (!currentUser?.uid || !user?.uid) {
       return;

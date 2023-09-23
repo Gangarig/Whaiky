@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, Button, Alert } from 'react-native';
+import { View, Text, Image, Button, StyleSheet } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
-
-const PostDetailScreen = ({ route, navigation }) => {
+const PostDetail = ({ route, navigation }) => {
+  const currentUser = useAuth(); // from your user context
   const { id } = route.params;
   const [post, setPost] = useState(null);
-  const { currentUser } = useAuth();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
+  const toggleConfirmModal = () => {
+    setShowConfirmModal(!showConfirmModal);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const docRef = firestore().collection('posts').doc(id);
-        const docSnap = await docRef.get();
+        const docSnap = await firestore().collection('posts').doc(id).get();
 
         if (docSnap.exists) {
           setPost({ id: docSnap.id, ...docSnap.data() });
@@ -29,13 +36,12 @@ const PostDetailScreen = ({ route, navigation }) => {
   }, [id]);
 
   const deleteDocument = async () => {
-    const docRef = firestore().collection('posts').doc(id);
-    await docRef.delete();
+    await firestore().collection('posts').doc(id).delete();
     navigation.goBack();
   };
 
-  const deleteImageFromStorage = async (imageName) => {
-    const imageRef = storage().ref(`post_images/${imageName}`);
+  const deleteImageFromStorage = async () => {
+    const imageRef = storage().ref(`post_images/${post?.imageName}`);
     try {
       await imageRef.delete();
       console.log("Deleted from Storage");
@@ -45,29 +51,28 @@ const PostDetailScreen = ({ route, navigation }) => {
   };
 
   const deleteDocumentAndImage = async () => {
-    // Delete from Firestore
     await deleteDocument();
-    // Delete from Storage
-    if (post && post.imageName) {
-      await deleteImageFromStorage(post.imageName);
-    }
+    await deleteImageFromStorage();
   };
 
   return (
     <SafeAreaView>
       <View>
-        <Button title="Go Back" onPress={() => navigation.goBack()} />
+        <Button title="Go Back" onPress={handleGoBack} />
         {post ? (
           <>
-            <Text>Title: {post.title}</Text>
-            <Text>Description: {post.description}</Text>
-            <Text>Price: {post.price}</Text>
-            <Image source={{ uri: post.imageURL }} style={{ width: 100, height: 100 }} />
-            {/* Additional fields as per your data structure */}
-            {post && currentUser && post.ownerId === currentUser.uid && (
-              <Button title="Delete" onPress={deleteDocumentAndImage} />
+            {/* ... (rest of your post display components) */}
+            {currentUser?.uid === post.ownerId && <Button title="Delete" onPress={toggleConfirmModal} />}
+            {showConfirmModal && (
+              <View style={styles.confirmModal}>
+                <Text>Are you sure you want to delete this post?</Text>
+                <Button title="Yes" onPress={async () => {
+                  await deleteDocumentAndImage();
+                  toggleConfirmModal();
+                }} />
+                <Button title="No" onPress={toggleConfirmModal} />
+              </View>
             )}
-
           </>
         ) : (
           <Text>Loading...</Text>
@@ -77,4 +82,17 @@ const PostDetailScreen = ({ route, navigation }) => {
   );
 };
 
-export default PostDetailScreen;
+const styles = StyleSheet.create({
+  confirmModal: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+export default PostDetail;

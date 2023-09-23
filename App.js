@@ -18,7 +18,7 @@ import Profile from './app/src/screens/AppStackScreens/Profile'
 import Settings from './app/src/screens/AppStackScreens/Settings'
 import Test from './app/src/screens/AppStackScreens/Test';
 import PostDetail from './app/src/screens/AppStackScreens/PostDetail';
-
+import LocationPicker from './app/service/LocationPicker';
 
 //profile screens
 import PersonalInfo from './app/src/screens/AppStackScreens/PersonalInfo'
@@ -28,6 +28,7 @@ import LegalInfo from './app/src/screens/AppStackScreens/Legalinfo'
 import Loading from './app/src/components/Loading';
 import LogOut from './app/src/components/LogOut';
 import AddPost from './app/src/components/AddPost';
+
 
 //context 
 import { AuthProvider, useAuth } from './app/src/context/AuthContext';
@@ -73,6 +74,8 @@ function DrawerNavigator() {
       <Drawer.Screen name="Profile" component={ProfileStackScreen} />
       <Drawer.Screen name="Settings" component={Settings} />
       <Drawer.Screen name="Test" component={Test} />
+      <Drawer.Screen name="LocationPicker" component={LocationPicker} />
+
     </Drawer.Navigator>
   );
 }
