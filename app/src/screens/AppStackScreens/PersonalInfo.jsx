@@ -1,15 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Image, SafeAreaView, TouchableOpacity, Alert, Modal } from 'react-native';
+import { View, Text, TextInput, Button, Image,StyleSheet ,SafeAreaView, TouchableOpacity, Alert, Modal } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import PhoneInput from 'react-native-phone-input';
+import LocationPicker from '../../../service/LocationPicker';
+import { ScrollView } from 'react-native';
+import { ChangeAvatar } from '../../../service/UpdateAvatar';
+import { UpdateAvatar } from '../../../service/UpdateAvatar';
 
 const PersonalInfo = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [userInfo, setUserInfo] = useState({});
   const [newPhoneNumber, setNewPhoneNumber] = useState(1);
   const [phoneInputModalVisible, setPhoneInputModalVisible] = useState(false);
-
+  const [locationPickerVisible, setLocationPickerVisible] = useState(false);
+  const [userLocation, setUserLocation] = useState({
+    country: '',
+    state: '',
+    city: ''
+  });
+  const ChangeAvatar = () => {
+    UpdateAvatar(currentUser, setUserInfo);
+  }
+  
   useEffect(() => {
     const fetchData = async () => {
       if (currentUser?.uid) {
@@ -24,6 +37,13 @@ const PersonalInfo = ({ navigation }) => {
 
     fetchData();
   }, [currentUser]);
+  const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
+    setUserLocation({
+      country: selectedCountry,
+      state: selectedState,
+      city: selectedCity
+    });
+  };
 
   const handleUpdate = async () => {
     if (currentUser?.uid) {
@@ -73,9 +93,14 @@ const PersonalInfo = ({ navigation }) => {
   return (
     <SafeAreaView>
       <View>
-        <Image source={{ uri: userInfo.photoURL || '' }} style={{ width: 100, height: 100 }} />
+        <Image 
+          source={userInfo.photoURL && userInfo.photoURL !== 'null' && userInfo.photoURL !== '' 
+            ? { uri: userInfo.photoURL } 
+            : require('../../../assets/images/avatar/avatar.png')} 
+          style={{ width: 100, height: 100 }} 
+        />
         <TouchableOpacity>
-          <Text>Change Avatar</Text>
+         <Button title="Change Avatar" onPress={ChangeAvatar} />
         </TouchableOpacity>
         <TextInput
           placeholder="First Name"
@@ -97,7 +122,21 @@ const PersonalInfo = ({ navigation }) => {
           value={userInfo.email || ''}
           editable={false} // Making the email field non-editable
         />
-        
+        <Button title="Pick Location" onPress={() => setLocationPickerVisible(true)} />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={locationPickerVisible}
+          onRequestClose={() => setLocationPickerVisible(false)}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContent}>
+              <LocationPicker onSave={handleLocationSave} onClose={() => setLocationPickerVisible(false)} />
+            </View>
+          </View>
+        </Modal>
+
+                
         {userInfo.phoneNumbers && userInfo.phoneNumbers.map((phoneNumber, index) => (
           <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
             <Text>{phoneNumber}</Text>
@@ -106,7 +145,9 @@ const PersonalInfo = ({ navigation }) => {
         ))}
 
         <Button title="Add Phone Number" onPress={() => setPhoneInputModalVisible(true)} />
+        
 
+        
         <Modal
           animationType="slide"
           transparent={true}
@@ -129,8 +170,33 @@ const PersonalInfo = ({ navigation }) => {
         <Button title="Update Info" onPress={handleUpdate} />
         <Button title="Go back" onPress={() => navigation.goBack()} />
       </View>
+
     </SafeAreaView>
   );
 };
+const styles = StyleSheet.create({
+  // ... other styles ...
+
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    flex: 0.6,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    elevation: 5, // Optional, for shadow on Android
+    shadowColor: '#000', // Optional, for shadow on iOS
+    shadowOffset: { width: 0, height: 2 }, // Optional, for shadow on iOS
+    shadowOpacity: 0.25, // Optional, for shadow on iOS
+    shadowRadius: 4, // Optional, for shadow on iOS
+  },
+});
 
 export default PersonalInfo;

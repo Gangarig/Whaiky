@@ -75,6 +75,7 @@ function DrawerNavigator() {
       <Drawer.Screen name="Settings" component={Settings} />
       <Drawer.Screen name="Test" component={Test} />
       <Drawer.Screen name="LocationPicker" component={LocationPicker} />
+      <Drawer.Screen name="LogOut" component={LogOut} />
 
     </Drawer.Navigator>
   );

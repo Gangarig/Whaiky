@@ -4,27 +4,28 @@ import auth, { firebase } from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import ImagePicker from 'react-native-image-crop-picker';
-import avatar from './avatar.png';
 import { selectImageFromGallery } from '../../../service/ImageService';
 import { AuthContext } from '../../context/AuthContext';
+
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
-  const [image, setImage] = useState(avatar);
+  const [image, setImage] = useState(require('./avatar.png'));
   const [loading, setLoading] = useState(false);
 
   const pickImage = async () => {
-    try {
-        const selectedImagePath = await selectImageFromGallery(4 * 100, 3 * 100); // I've set width and height according to the aspect ratio you provided, but you can adjust as needed.
-        setImage(selectedImagePath);
-    } catch (error) {
-        console.log(error);
-    }
-};
-
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true
+    }).then(image => {
+      setImage(image.path);
+    });
+  };
+  
 
   const handleSignUp = async () => {
     setLoading(true);
@@ -98,7 +99,13 @@ const SignUp = ({ navigation }) => {
       <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, padding: 10 }} />
       <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, padding: 10 }} />
       <Button title="Pick an avatar" onPress={pickImage} />
-      {image && <Image source={{ uri: image }} style={{ width: 100, height: 100, margin: 20 }} />}
+      {image && (
+      <Image 
+        source={typeof image === 'number' ? image : { uri: image }} 
+        style={{ width: 100, height: 100, margin: 20 }} 
+      />
+      )}
+
       {loading ? <ActivityIndicator size="large" /> : <Button title="Sign Up" onPress={handleSignUp} />}
       <Button title="Already have an account? Login" onPress={() => navigation.navigate('login')} />
     </View>
