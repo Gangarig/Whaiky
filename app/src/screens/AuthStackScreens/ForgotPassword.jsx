@@ -8,7 +8,19 @@ const ForgotPassword = ({ navigation }) => {
   const [message, setMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
+  const isEmailValid = (email) => {
+    // A simple email validation function
+    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    return emailPattern.test(email);
+  };
+
   const handlePasswordReset = () => {
+    if (!isEmailValid(email)) {
+      setErrorMessage('Please enter a valid email address.');
+      setMessage(null);
+      return;
+    }
+
     auth()
       .sendPasswordResetEmail(email)
       .then(() => {
@@ -40,6 +52,7 @@ const ForgotPassword = ({ navigation }) => {
           value={email}
           onChangeText={setEmail}
           style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, padding: 10 }}
+          autoCapitalize="none" // Prevent automatic capitalization
         />
         <Button title="Reset Password" onPress={handlePasswordReset} />
         <Button title="Back to Sign In" onPress={() => navigation.navigate('login')} />

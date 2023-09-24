@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Image,StyleSheet ,SafeAreaView, TouchableOpacity, Alert, Modal } from 'react-native';
+import { View, Text, TextInput, Button, Image, StyleSheet, SafeAreaView, TouchableOpacity, Alert, Modal } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import PhoneInput from 'react-native-phone-input';
 import LocationPicker from '../../../service/LocationPicker';
+import ImagePicker from 'react-native-image-crop-picker'; // Import ImagePicker
+import storage from '@react-native-firebase/storage';
 import { ScrollView } from 'react-native';
-import { ChangeAvatar } from '../../../service/UpdateAvatar';
-import { UpdateAvatar } from '../../../service/UpdateAvatar';
 
 const PersonalInfo = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [userInfo, setUserInfo] = useState({});
-  const [newPhoneNumber, setNewPhoneNumber] = useState(1);
+  const [newPhoneNumber, setNewPhoneNumber] = useState('');
   const [phoneInputModalVisible, setPhoneInputModalVisible] = useState(false);
   const [locationPickerVisible, setLocationPickerVisible] = useState(false);
   const [userLocation, setUserLocation] = useState({
@@ -19,25 +19,70 @@ const PersonalInfo = ({ navigation }) => {
     state: '',
     city: ''
   });
-  const ChangeAvatar = () => {
-    UpdateAvatar(currentUser, setUserInfo);
-  }
+  const [locationChanged, setLocationChanged] = useState(false); // Track if location is changed
   
-  useEffect(() => {
-    const fetchData = async () => {
-      if (currentUser?.uid) {
-        const userDocRef = firestore().collection('users').doc(currentUser.uid);
-        const userDoc = await userDocRef.get();
+  const fetchData = async () => {
+    if (currentUser?.uid) {
+      const userDocRef = firestore().collection('users').doc(currentUser.uid);
+      const userDoc = await userDocRef.get();
 
-        if (userDoc.exists) {
-          setUserInfo(userDoc.data());
-        }
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        // Update the state with the user data
+        setUserInfo(userData);
+        // Set the userLocation state
+        setUserLocation({
+          country: userData.country || '',
+          state: userData.state || '',
+          city: userData.city || ''
+        });
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, [currentUser]);
+
+  const handleAvatarChange = async () => {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true
+      });
+  
+      if (!image) {
+        return;
+      }
+  
+      const storageRef = storage().ref(`profile_images/${currentUser.uid}`);
+      await storageRef.putFile(image.path);
+      const downloadURL = await storageRef.getDownloadURL();
+  
+      await firestore().collection('users').doc(currentUser.uid).update({
+        photoURL: downloadURL
+      });
+  
+      setUserInfo(prevState => ({ ...prevState, photoURL: downloadURL }));
+  
+      alert('Avatar updated successfully!');
+    } catch (error) {
+      console.error("Error updating avatar:", error);
+      alert('Error updating avatar: ' + error.message);
+    }
+  };
+
   const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
+    // Check if the location has changed
+    if (
+      selectedCountry !== userLocation.country ||
+      selectedState !== userLocation.state ||
+      selectedCity !== userLocation.city
+    ) {
+      setLocationChanged(true);
+    }
+    
     setUserLocation({
       country: selectedCountry,
       state: selectedState,
@@ -48,10 +93,27 @@ const PersonalInfo = ({ navigation }) => {
   const handleUpdate = async () => {
     if (currentUser?.uid) {
       try {
-        await firestore().collection('users').doc(currentUser.uid).set(userInfo, { merge: true });
+        // Create a new user data object
+        const updatedUserData = {
+          firstName: userInfo.firstName || null,
+          lastName: userInfo.lastName || null,
+          displayName: userInfo.displayName || null,
+          phoneNumbers: userInfo.phoneNumbers || null,
+        };
+        
+        // Add location data if it has changed
+        if (locationChanged) {
+          updatedUserData.country = userLocation.country || null;
+          updatedUserData.state = userLocation.state || null;
+          updatedUserData.city = userLocation.city || null;
+        }
+
+        // Update the user document
+        await firestore().collection('users').doc(currentUser.uid).update(updatedUserData);
+
         alert('Information updated successfully!');
       } catch (error) {
-        alert('Error updating information: ', error.message);
+        alert('Error updating information: ' + error.message);
       }
     }
   };
@@ -62,7 +124,7 @@ const PersonalInfo = ({ navigation }) => {
         ...prevState,
         phoneNumbers: [...(prevState.phoneNumbers || []), newPhoneNumber]
       }));
-      setNewPhoneNumber('');  // Reset new phone number input
+      setNewPhoneNumber('');
       setPhoneInputModalVisible(false);
     }
   };
@@ -92,96 +154,129 @@ const PersonalInfo = ({ navigation }) => {
 
   return (
     <SafeAreaView>
-      <View>
-        <Image 
-          source={userInfo.photoURL && userInfo.photoURL !== 'null' && userInfo.photoURL !== '' 
-            ? { uri: userInfo.photoURL } 
-            : require('../../../assets/images/avatar/avatar.png')} 
-          style={{ width: 100, height: 100 }} 
-        />
-        <TouchableOpacity>
-         <Button title="Change Avatar" onPress={ChangeAvatar} />
-        </TouchableOpacity>
-        <TextInput
-          placeholder="First Name"
-          value={userInfo.firstName || ''}
-          onChangeText={(text) => setUserInfo({ ...userInfo, firstName: text })}
-        />
-        <TextInput
-          placeholder="Last Name"
-          value={userInfo.lastName || ''}
-          onChangeText={(text) => setUserInfo({ ...userInfo, lastName: text })}
-        />
-        <TextInput
-          placeholder="User Name"
-          value={userInfo.displayName || ''}
-          onChangeText={(text) => setUserInfo({ ...userInfo, displayName: text })}
-        />
-        <TextInput
-          placeholder="Email"
-          value={userInfo.email || ''}
-          editable={false} // Making the email field non-editable
-        />
-        <Button title="Pick Location" onPress={() => setLocationPickerVisible(true)} />
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={locationPickerVisible}
-          onRequestClose={() => setLocationPickerVisible(false)}
-        >
-          <View style={styles.modalBackground}>
-            <View style={styles.modalContent}>
-              <LocationPicker onSave={handleLocationSave} onClose={() => setLocationPickerVisible(false)} />
+      <ScrollView>
+        <View style={styles.container}>
+          <Image
+            source={userInfo.photoURL && userInfo.photoURL !== 'null' && userInfo.photoURL !== ''
+              ? { uri: userInfo.photoURL }
+              : require('../../../assets/images/avatar/avatar.png')}
+            style={styles.avatar}
+          />
+          <TouchableOpacity>
+            <Button title="Change Avatar" onPress={handleAvatarChange} />
+          </TouchableOpacity>
+          <TextInput
+            placeholder="First Name"
+            value={userInfo.firstName || ''}
+            onChangeText={(text) => setUserInfo({ ...userInfo, firstName: text })}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Last Name"
+            value={userInfo.lastName || ''}
+            onChangeText={(text) => setUserInfo({ ...userInfo, lastName: text })}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="User Name"
+            value={userInfo.displayName || ''}
+            onChangeText={(text) => setUserInfo({ ...userInfo, displayName: text })}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Email"
+            value={userInfo.email || ''}
+            editable={false}
+            style={styles.input}
+          />
+          <View style={styles.locationContainer}>
+            {locationChanged && (
+              <View>
+                <Text>Country: {userLocation.country}</Text>
+                <Text>State: {userLocation.state}</Text>
+                <Text>City: {userLocation.city}</Text>
+              </View>
+            )}
+            <Button title="Change Location" onPress={() => setLocationPickerVisible(true)} />
+          </View>
+          {userInfo.phoneNumbers && userInfo.phoneNumbers.map((phoneNumber, index) => (
+            <View key={index} style={styles.phoneNumberContainer}>
+              <Text>{phoneNumber}</Text>
+              <Button title="Delete" onPress={() => deletePhoneNumber(index)} color="red" />
             </View>
+          ))}
+          <Button title="Add Phone Number" onPress={() => setPhoneInputModalVisible(true)} />
+          <Button title="Update Info" onPress={handleUpdate} />
+          <Button title="Go back" onPress={() => navigation.goBack()} />
+        </View>
+      </ScrollView>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={phoneInputModalVisible}
+        onRequestClose={() => setPhoneInputModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <PhoneInput
+              value={newPhoneNumber}
+              default={newPhoneNumber}
+              onChangePhoneNumber={setNewPhoneNumber}
+            />
+            <Button title="Confirm" onPress={addPhoneNumber} />
+            <Button title="Cancel" onPress={() => setPhoneInputModalVisible(false)} color="red" />
           </View>
-        </Modal>
-
-                
-        {userInfo.phoneNumbers && userInfo.phoneNumbers.map((phoneNumber, index) => (
-          <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-            <Text>{phoneNumber}</Text>
-            <Button title="Delete" onPress={() => deletePhoneNumber(index)} color="red" />
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={locationPickerVisible}
+        onRequestClose={() => setLocationPickerVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <LocationPicker onSave={handleLocationSave} onClose={() => setLocationPickerVisible(false)} />
           </View>
-        ))}
-
-        <Button title="Add Phone Number" onPress={() => setPhoneInputModalVisible(true)} />
-        
-
-        
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={phoneInputModalVisible}
-          onRequestClose={() => setPhoneInputModalVisible(false)}
-        >
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <View style={{ width: '80%', padding: 20, backgroundColor: 'white', borderRadius: 10 }}>
-              <PhoneInput
-                value={newPhoneNumber}
-                default={newPhoneNumber}
-                onChangePhoneNumber={setNewPhoneNumber}
-              />
-              <Button title="Confirm" onPress={addPhoneNumber} />
-              <Button title="Cancel" onPress={() => setPhoneInputModalVisible(false)} color="red" />
-            </View>
-          </View>
-        </Modal>
-
-        <Button title="Update Info" onPress={handleUpdate} />
-        <Button title="Go back" onPress={() => navigation.goBack()} />
-      </View>
-
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
-const styles = StyleSheet.create({
-  // ... other styles ...
 
-  modalBackground: {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 16,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 16,
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingLeft: 8,
+  },
+  locationContainer: {
+    marginBottom: 16,
+  },
+  phoneNumberContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     width: '80%',
@@ -191,11 +286,11 @@ const styles = StyleSheet.create({
     flex: 0.6,
     flexDirection: 'column',
     justifyContent: 'center',
-    elevation: 5, // Optional, for shadow on Android
-    shadowColor: '#000', // Optional, for shadow on iOS
-    shadowOffset: { width: 0, height: 2 }, // Optional, for shadow on iOS
-    shadowOpacity: 0.25, // Optional, for shadow on iOS
-    shadowRadius: 4, // Optional, for shadow on iOS
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
 });
 

@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Image, ActivityIndicator } from 'react-native';
-import auth, { firebase } from '@react-native-firebase/auth';
+import React, { useState, useContext } from 'react';
+import { View, Text, TextInput, Button, Image, ActivityIndicator, StyleSheet } from 'react-native';
+import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import ImagePicker from 'react-native-image-crop-picker';
-import { selectImageFromGallery } from '../../../service/ImageService';
 import { AuthContext } from '../../context/AuthContext';
-
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -15,45 +13,50 @@ const SignUp = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [image, setImage] = useState(require('./avatar.png'));
   const [loading, setLoading] = useState(false);
+  const { setCurrentUser } = useContext(AuthContext);
+
+  const isFormValid = () => email && password && displayName;
+
+  const clearInputs = () => {
+    setEmail('');
+    setPassword('');
+    setDisplayName('');
+    setImage(require('./avatar.png'));
+  };
 
   const pickImage = async () => {
-    ImagePicker.openPicker({
-      width: 300,
-      height: 400,
-      cropping: true
-    }).then(image => {
-      setImage(image.path);
-    });
+    try {
+      const selectedImage = await ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true
+      });
+      setImage(selectedImage.path);
+    } catch (error) {
+      console.error('Image selection error:', error);
+    }
   };
-  
 
   const handleSignUp = async () => {
+    if (!isFormValid()) {
+      setErrorMessage('Please fill in all fields');
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // User creation
       const userCredential = await auth().createUserWithEmailAndPassword(email, password);
       const user = userCredential.user;
 
-      // Upload the avatar
-      const imageName = `${displayName}_${new Date().toISOString()}`;
-      const uploadUri = image ;
-      const uploadTask = storage().ref(`profile_images/${imageName}`).putFile(uploadUri);
-
-      uploadTask.on('state_changed', snapshot => {
-        // You can add an upload progress here if you want
-      });
-
-      await uploadTask;
-
+      // Avatar upload using user's UID as filename
+      const imageName = user.uid; // This line changed from the earlier dynamic naming
+      await storage().ref(`profile_images/${imageName}`).putFile(image);
       const downloadURL = await storage().ref(`profile_images/${imageName}`).getDownloadURL();
 
-      // Update user profile
-      await user.updateProfile({
-        displayName,
-        photoURL: downloadURL
-      });
-
-      // Save user data in Firestore
+      // User profile and Firestore update
+      await user.updateProfile({ displayName, photoURL: downloadURL });
       await firestore().collection('users').doc(user.uid).set({
         uid: user.uid,
         displayName,
@@ -61,20 +64,14 @@ const SignUp = ({ navigation }) => {
         createdAt: new Date().getTime(),
         photoURL: downloadURL
       });
-
-      // Initialize userChats collection
-      await firestore().collection('userChats').doc(user.uid).set({});
-
-      // Set user in context (if you have context set up)
-      setCurrentUser({
-        uid: user.uid,
-        displayName,
-        email,
-        createdAt: new Date().getTime(),
-        photoURL: downloadURL
-      });
+      
+      setCurrentUser({ uid: user.uid, displayName, email, photoURL: downloadURL });
 
       setErrorMessage(null);
+      clearInputs();
+
+      alert("Signed up successfully");
+      await auth().signInWithEmailAndPassword(email, password);
     } catch (error) {
       switch (error.code) {
         case 'auth/email-already-in-use':
@@ -87,29 +84,48 @@ const SignUp = ({ navigation }) => {
           setErrorMessage(error.message);
           break;
       }
+    } finally {
+      setLoading(false);
     }
+};
 
-    setLoading(false);
-  };
 
   return (
-    <View style={{ padding: 20 }}>
-      {errorMessage && <Text style={{ color: 'red' }}>{errorMessage}</Text>}
-      <TextInput placeholder="Username" value={displayName} onChangeText={setDisplayName} style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, padding: 10 }} />
-      <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, padding: 10 }} />
-      <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, padding: 10 }} />
+    <View style={styles.container}>
+      {errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
+      <TextInput placeholder="Username" value={displayName} onChangeText={setDisplayName} style={styles.input} />
+      <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={styles.input} />
+      <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.input} />
       <Button title="Pick an avatar" onPress={pickImage} />
-      {image && (
-      <Image 
-        source={typeof image === 'number' ? image : { uri: image }} 
-        style={{ width: 100, height: 100, margin: 20 }} 
-      />
-      )}
-
-      {loading ? <ActivityIndicator size="large" /> : <Button title="Sign Up" onPress={handleSignUp} />}
+      {image && <Image source={typeof image === 'number' ? image : { uri: image }} style={styles.avatar} />}
+      {loading ? <ActivityIndicator size="large" /> : <Button title="Sign Up" onPress={handleSignUp} disabled={!isFormValid()} />}
       <Button title="Already have an account? Login" onPress={() => navigation.navigate('login')} />
     </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20
+  },
+  errorMessage: {
+    color: 'red',
+    marginBottom: 10
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    padding: 10
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    margin: 20
+  }
+});
 
 export default SignUp;

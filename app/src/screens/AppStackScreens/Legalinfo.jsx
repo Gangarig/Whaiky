@@ -1,12 +1,18 @@
-import { View, Text , Button } from 'react-native'
+import { View, Text } from 'react-native'
 import React from 'react'
-
-const Legalinfo = ({navigation}) => {
+import { ScrollView  } from 'react-native-gesture-handler'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { categoriesData } from '../../dataStatic/categoriesData'
+const Legalinfo = () => {
   return (
+    <SafeAreaView>
+    <ScrollView>
     <View>
       <Text>Legalinfo</Text>
-      <Button title="Go back" onPress={() => navigation.goBack()} />
+
     </View>
+    </ScrollView>
+    </SafeAreaView>
   )
 }
 

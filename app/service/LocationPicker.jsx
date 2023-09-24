@@ -176,6 +176,18 @@ const LocationPicker = ({ onSave , onClose }) => {
             />
           </>
         )}
+        { country  && 
+        (<>
+        <Text>Selected Location</Text>
+        <Text>Country:{country}</Text>  
+        </>        
+        )}
+        { state  &&
+        (<Text>State:{state}</Text>
+        )}
+        { city  &&
+        (<Text>City:{city}</Text>
+        )}
 
       {showSaveButton && (
         <Button title="Save" onPress={handleSaveAndClose} />

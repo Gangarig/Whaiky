@@ -12,11 +12,18 @@ const Profile = ({ navigation }) => {
     const fetchData = async () => {
       if (currentUser?.uid) {
         const userDocRef = firestore().collection('users').doc(currentUser.uid);
-        const userDoc = await userDocRef.get();
 
-        if (userDoc.exists) {
-          setUserData(userDoc.data());
-        }
+        // Subscribe to real-time updates
+        const unsubscribe = userDocRef.onSnapshot((doc) => {
+          if (doc.exists) {
+            setUserData(doc.data());
+          }
+        });
+
+        return () => {
+          // Unsubscribe from the listener when the component unmounts
+          unsubscribe();
+        };
       }
     };
 
@@ -33,7 +40,8 @@ const Profile = ({ navigation }) => {
             <Text>UID: {userData.uid || 'N/A'}</Text>
             <Text>Avatar URL: {userData.photoURL || 'N/A'}</Text>
             <Text>Country: {userData.country || 'N/A'}</Text>
-            <Text>Region: {userData.region || 'N/A'}</Text>
+            <Text>state: {userData.state || 'N/A'}</Text>
+            <Text>City: {userData.city || 'N/A'}</Text>
             <Text>Phone: {userData.phone || 'N/A'}</Text>
             <Text>First Name: {userData.firstName || 'N/A'}</Text>
             <Text>Last Name: {userData.lastName || 'N/A'}</Text>
@@ -41,7 +49,7 @@ const Profile = ({ navigation }) => {
             <Text>Created At: {userData.createdAt ? new Date(userData.createdAt).toLocaleString() : 'N/A'}</Text>
           </View>
         )}
-                <Button title='Fill the personal Info forms' onPress={() => navigation.navigate('PersonalInfo')} />
+        <Button title='Fill the personal Info forms' onPress={() => navigation.navigate('PersonalInfo')} />
         <Button title='Become a Contractor' onPress={() => navigation.navigate('LegalInfo')} />
         <Button title='Log Out' onPress={() => auth().signOut()} />
       </View>

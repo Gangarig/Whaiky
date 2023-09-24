@@ -112,12 +112,14 @@ function Main() {
 export default function App() {
   return (
     <ChatContextProvider>
-    <SafeAreaProvider>
-    <NavigationContainer>
+    <SafeAreaProvider>    
     <AuthProvider>
+    <NavigationContainer>
+
     <Main />
-    </AuthProvider>
+
     </NavigationContainer>
+    </AuthProvider>
     </SafeAreaProvider>
     </ChatContextProvider>
   );

@@ -7,31 +7,50 @@ const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
+    const [attemptCount, setAttemptCount] = useState(0);
 
     const handleSignIn = () => {
+        if (!email || !password) {
+          setErrorMessage('Please fill in all fields.');
+          return;
+        }
+      
+        if (attemptCount >= 3) {
+          setErrorMessage('Too many failed attempts. Please wait and try again.');
+          return;
+        }
+      
         auth()
-            .signInWithEmailAndPassword(email, password)
-            .then(() => {
-                console.log('User signed in!');
-                setErrorMessage(null);
-            })
-            .catch(error => {
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        setErrorMessage('There is no user corresponding to the given email.');
-                        break;
-                    case 'auth/wrong-password':
-                        setErrorMessage('Wrong password.');
-                        break;
-                    case 'auth/invalid-email':
-                        setErrorMessage('That email address is invalid!');
-                        break;
-                    default:
-                        setErrorMessage(error.message);
-                        break;
-                }
-            });
-    };
+          .signInWithEmailAndPassword(email, password)
+          .then(() => {
+            console.log('User signed in!');
+            setErrorMessage(null);
+            setEmail('');
+            setPassword('');
+            setAttemptCount(0);
+          })
+          .catch(error => {
+            setEmail('');
+            setPassword('');
+            setAttemptCount(prevCount => prevCount + 1);
+      
+            switch (error.code) {
+              case 'auth/user-not-found':
+                setErrorMessage('There is no user corresponding to the given email.');
+                break;
+              case 'auth/wrong-password':
+                setErrorMessage('Wrong password.');
+                break;
+              case 'auth/invalid-email':
+                setErrorMessage('That email address is invalid!');
+                break;
+              default:
+                setErrorMessage(error.message);
+                break;
+            }
+          });
+      };
+      
 
     return (
         <SafeAreaView>

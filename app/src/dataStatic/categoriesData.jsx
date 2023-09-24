@@ -99,4 +99,11 @@ export const categoriesData = [
       { optionId: 40, text: 'Gutter cleaning and repair' },
     ],
   },
+  {
+    id: 11,
+    text: 'Other Services',
+    options: [
+      { optionId: 41, text: 'Other Services' },
+    ],
+  },
 ];
