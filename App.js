@@ -13,22 +13,26 @@ import ForgotPassword from './app/src/screens/AuthStackScreens/ForgotPassword'
 import Home from './app/src/screens/AppStackScreens/Home'
 import Category from './app/src/screens/AppStackScreens/Category'
 import CategoryDetail from './app/src/screens/AppStackScreens/CategoryDetail'
-import ChatScreen from './app/src/screens/AppStackScreens/ChatScreen'
 import Profile from './app/src/screens/AppStackScreens/Profile'
 import Settings from './app/src/screens/AppStackScreens/Settings'
-import Test from './app/src/screens/AppStackScreens/Test';
+import ServiceCategoryPicker from './app/service/ServiceCategoryPicker';
 import PostDetail from './app/src/screens/AppStackScreens/PostDetail';
 import LocationPicker from './app/service/LocationPicker';
+//chat screens
+import ChatScreen from './app/src/screens/AppStackScreens/ChatScreen'
+import Chat from './app/src/components/chat/Chat'
+
+
 
 //profile screens
 import PersonalInfo from './app/src/screens/AppStackScreens/PersonalInfo'
 import LegalInfo from './app/src/screens/AppStackScreens/Legalinfo'
+import DocumentUpload from './app/service/DocumentUpload';
 
 // components
 import Loading from './app/src/components/Loading';
 import LogOut from './app/src/components/LogOut';
 import AddPost from './app/src/components/AddPost';
-
 
 //context 
 import { AuthProvider, useAuth } from './app/src/context/AuthContext';
@@ -60,7 +64,17 @@ function ProfileStackScreen() {
       <ProfileStack.Screen name="ProfileScreen" component={Profile} />
       <ProfileStack.Screen name="PersonalInfo" component={PersonalInfo} />
       <ProfileStack.Screen name="LegalInfo" component={LegalInfo} />
+      <ProfileStack.Screen name="DocumentUpload" component={DocumentUpload} />
     </ProfileStack.Navigator>
+  );
+}
+const ChatStack = createStackNavigator();
+function ChatStackScreen() {
+  return (
+    <ChatStack.Navigator screenOptions={{headerShown:false}}>
+      <ChatStack.Screen name="ChatScreen" component={ChatScreen} />
+      <ChatStack.Screen name="Chat" component={Chat} />
+    </ChatStack.Navigator>
   );
 }
 
@@ -70,13 +84,10 @@ function DrawerNavigator() {
     <Drawer.Navigator initialRouteName="Home">
       <Drawer.Screen name="Home" component={HomeStackScreen} />
       <Drawer.Screen name="Category" component={CategoryStack} />
-      <Drawer.Screen name="ChatScreen" component={ChatScreen} />
+      <Drawer.Screen name="Messages" component={ChatStackScreen} />
       <Drawer.Screen name="Profile" component={ProfileStackScreen} />
       <Drawer.Screen name="Settings" component={Settings} />
-      <Drawer.Screen name="Test" component={Test} />
-      <Drawer.Screen name="LocationPicker" component={LocationPicker} />
       <Drawer.Screen name="LogOut" component={LogOut} />
-
     </Drawer.Navigator>
   );
 }
@@ -111,16 +122,16 @@ function Main() {
 
 export default function App() {
   return (
-    <ChatContextProvider>
+    
     <SafeAreaProvider>    
     <AuthProvider>
+    <ChatContextProvider>
     <NavigationContainer>
-
     <Main />
-
     </NavigationContainer>
+    </ChatContextProvider>
     </AuthProvider>
     </SafeAreaProvider>
-    </ChatContextProvider>
+   
   );
 }

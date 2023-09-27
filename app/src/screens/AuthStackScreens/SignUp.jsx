@@ -64,12 +64,10 @@ const SignUp = ({ navigation }) => {
         createdAt: new Date().getTime(),
         photoURL: downloadURL
       });
-      
+      await firestore().collection('userChats').doc(user.uid).set({});
       setCurrentUser({ uid: user.uid, displayName, email, photoURL: downloadURL });
-
       setErrorMessage(null);
       clearInputs();
-
       alert("Signed up successfully");
       await auth().signInWithEmailAndPassword(email, password);
     } catch (error) {

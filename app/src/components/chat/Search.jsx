@@ -8,154 +8,142 @@ import {
   StyleSheet,
   Button,
   ActivityIndicator,
+  ScrollView,
+  Alert,Image
 } from 'react-native';
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  setDoc,
-  doc,
-  updateDoc,
-  serverTimestamp,
-  getDoc as getFirestoreDoc, // Rename to avoid conflict
+import { query, getDocs, where, collection,
+getDoc, doc, setDoc, updateDoc, serverTimestamp
 } from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 
-const Search = () => {
-  const [displayName, setDisplayName] = useState('');
-  const [user, setUser] = useState(null);
-  const [err, setErr] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+const Search = ({ isVisible, onClose, navigation }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // Clear user and error when the modal is closed
-    if (!modalVisible) {
-      setUser(null);
-      setDisplayName('');
-      setErr(false);
-    }
-  }, [modalVisible]);
-
+  const { currentUser } = useAuth();
+  const [user, setUser] = useState();
   const handleSearch = async () => {
-    if (!displayName.trim()) {
-      // Input is empty, don't perform search
-      return;
-    }
-
     setLoading(true);
 
-    const q = query(
-      collection('users'),
-      where('displayName', '==', displayName)
-    );
+    // Adjusted the query to use firestore().collection() instead
+    const q = firestore().collection('users').where('displayName', '==', searchTerm);
 
     try {
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        setUser(querySnapshot.docs[0].data());
-        setErr(false);
-      } else {
-        setUser(null);
-        setErr(true);
-      }
+      const querySnapshot = await q.get();
+      const fetchedUsers = querySnapshot.docs.map(doc => doc.data());
+
+      setUsers(fetchedUsers);
     } catch (error) {
       console.error('Error while searching:', error.message);
-      setErr(true);
     } finally {
       setLoading(false);
     }
-  };
+};
 
-  const handleKey = (e) => {
-    if (e.nativeEvent.key === 'Enter') {
-      handleSearch();
+  
+const handleSelect = async (selectedUser) => {
+  if (!currentUser?.uid || !selectedUser?.uid) {
+    return;
+  }
+
+  console.log("handleSelect started");
+
+  const combinedId = currentUser.uid > selectedUser.uid ? currentUser.uid + selectedUser.uid : selectedUser.uid + currentUser.uid;
+  console.log("Combined ID:", combinedId);
+
+  try {
+    const res = await firestore().collection('chats').doc(combinedId).get();
+    console.log("Chat doc exists:", res.exists);
+
+    if (!res.exists) {
+      await firestore().collection('chats').doc(combinedId).set({ messages: [] });
     }
-  };
 
-  const handleSelect = async () => {
-    const currentUser = useAuth(); 
-
-    if (!currentUser?.uid || !user?.uid) {
-      return;
-    }
-
-    const combinedId =
-      currentUser.uid > user.uid
-        ? currentUser.uid + user.uid
-        : user.uid + currentUser.uid;
-
-    try {
-      const res = await getFirestoreDoc(doc('chats', combinedId));
-
-      if (!res.exists) {
-        await setDoc(doc('chats', combinedId), { messages: [] });
-
-        await updateDoc(doc('userChats', currentUser.uid), {
-          [`${combinedId}.userInfo`]: {
-            uid: user.uid,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          },
-          [`${combinedId}.date`]: serverTimestamp(),
-        });
-
-        await updateDoc(doc('userChats', user.uid), {
-          [`${combinedId}.userInfo`]: {
-            uid: currentUser.uid,
-            displayName: currentUser.displayName,
-            photoURL: currentUser.photoURL,
-          },
-          [`${combinedId}.date`]: serverTimestamp(),
-        });
+    // Update for currentUser
+    await firestore().collection('userChats').doc(currentUser.uid).set({
+      [`${combinedId}`]: {
+        date: firestore.FieldValue.serverTimestamp(),
+        userInfo: {
+          uid: selectedUser.uid,
+          displayName: selectedUser.displayName,
+          photoURL: selectedUser.photoURL
+        }
       }
-    } catch (error) {
-      console.error(error);
-    }
+    }, { merge: true });
 
-    setUser(null);
-    setDisplayName('');
-  };
+    // Update for selectedUser
+    await firestore().collection('userChats').doc(selectedUser.uid).set({
+      [`${combinedId}`]: {
+        date: firestore.FieldValue.serverTimestamp(),
+        userInfo: {
+          uid: currentUser.uid,
+          displayName: currentUser.displayName,
+          photoURL: currentUser.photoURL
+        }
+      }
+    }, { merge: true });
+
+    console.log('handleSelect function called!');
+    
+  } catch (error) {
+    console.error("Error in handleSelect:", error.message);
+  }
+};
+
+
+
+
+
 
   return (
     <>
-      <Button title="Search" onPress={() => setModalVisible(true)} />
-
       <Modal
         animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        transparent={false}
+        visible={isVisible}
+        onRequestClose={onClose}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Find a user"
-              onChangeText={(text) => setDisplayName(text)}
-              onKeyPress={handleKey}
-              value={displayName}
-            />
-            {err && <Text>User not found!</Text>}
-            {user && (
-              <TouchableOpacity
-                style={styles.userChat}
-                onPress={() => {
-                  handleSelect();
-                  setModalVisible(false);
-                }}
-              >
-                <Text>{user.displayName}</Text>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.textStyle}>Close</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.container}> 
+          <TextInput
+            style={styles.textInput}
+            placeholder="Find users"
+            onChangeText={(text) => setSearchTerm(text)}
+            value={searchTerm}
+          />
+          <Button title="Search" onPress={handleSearch} />
+          {loading && (
+            <ActivityIndicator size="large" color="#0000ff" style={styles.loading} />
+          )}
+            <ScrollView style={styles.usersList}>
+                {users.map(user => (
+                    <TouchableOpacity
+                        key={user.uid}
+                        style={styles.userChat}
+                        onPress={() => {
+                            handleSelect(user);
+                            onClose();
+                        }}
+                    >
+                        {/* Display Avatar */}
+                        <Image
+                            source={{ uri: user.photoURL || 'default_avatar_url' }}  // Make sure to replace 'default_avatar_url' with a placeholder image URL in case the user doesn't have an avatar.
+                            style={styles.avatar}
+                        />
+                        
+                        {/* Display User Information */}
+                        <View style={styles.userInfo}>
+                            <Text style={styles.displayName}>{user.displayName}</Text>
+                            <Text>{user.email}</Text>
+                            <Text>{user.uid}</Text>
+                        </View>
+                    </TouchableOpacity>
+                ))}
+            </ScrollView>
+
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Text style={styles.textStyle}>Close</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
     </>
@@ -165,53 +153,60 @@ const Search = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#cccccc',
     padding: 20,
   },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
+  textInput: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    borderRadius: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
+  usersList: {
+    flex: 1,
+  },
+  userChat: {
+    flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    padding: 10,
+    backgroundColor: '#ebebeb',
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  avatar: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      marginRight: 10,
+  },
+  userInfo: {
+      flex: 1,
+  },
+  displayName: {
+      fontWeight: 'bold',
   },
   closeButton: {
     backgroundColor: '#2196F3',
     borderRadius: 20,
-    padding: 10,
+    padding: 15,
     elevation: 2,
-    marginTop: 10,
+    alignItems: 'center',
   },
   textStyle: {
     color: 'white',
     fontWeight: 'bold',
-    textAlign: 'center',
   },
-  textInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
+  errorText: {
+    color: 'red',
     marginBottom: 10,
-    width: 200,
+    alignSelf: 'center',
   },
-  userChat: {
-    padding: 10,
-    backgroundColor: '#ebebeb',
-    borderRadius: 5,
-    marginBottom: 10,
+  loading: {
+    marginBottom: 20,
+    alignSelf: 'center',
   },
 });
 

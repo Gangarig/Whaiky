@@ -1,12 +1,45 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, StyleSheet, Button } from "react-native";
+import firestore from "@react-native-firebase/firestore";
+import Messages from "./Messages";
+import Input from "./Input";
+import { useChat } from "../../context/ChatContext";
+const Chat = ({ navigation, route }) => {
+  const { data } = useChat();
+  const { chatId, userInfo } = route.params;
 
-const Chat = () => {
   return (
-    <View>
-      <Text>Chat</Text>
+    <View style={styles.chatContainer}>
+      <Button title="Go Back" onPress={() => navigation.goBack()} />
+      <View style={styles.chatInfo}>
+        <Text style={styles.chatDisplayName}>{userInfo.displayName}</Text>
+        <View style={styles.chatIcons}>
+          <Image source={{ uri: userInfo.photoURL }} style={{ width: 50, height: 50, borderRadius: 25 }} />
+        </View>
+      </View>
+      <Messages chatId={chatId} />
+      <Input />
     </View>
-  )
-}
+  );
+};
 
-export default Chat
+const styles = StyleSheet.create({
+  chatContainer: {
+    flex: 1,
+  },
+  chatInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+  },
+  chatDisplayName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  chatIcons: {
+    flexDirection: "row",
+  },
+});
+
+export default Chat;

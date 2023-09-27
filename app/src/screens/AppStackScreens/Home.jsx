@@ -3,7 +3,7 @@ import { View, Text, FlatList, Image, TouchableOpacity, Button, RefreshControl }
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import AddPost from '../../components/AddPost';
 const Home = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
@@ -11,6 +11,7 @@ const Home = ({ navigation }) => {
   const [lastVisible, setLastVisible] = useState(null);
   const [firstVisible, setFirstVisible] = useState(null);
 
+      
   const initialFetch = async () => {
     try {
       const query = firestore()
@@ -99,7 +100,7 @@ const Home = ({ navigation }) => {
     <SafeAreaView>
       <View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
-          <Button title='AddPost' onPress={() => navigation.navigate('AddPost')} />
+          <Button title='AddPost' onPress={()=> navigation.navigate('AddPost')} />
           <Button title='Refresh' onPress={handleRefresh} />
         </View>
         {refreshing && <Text>Loading...</Text>}

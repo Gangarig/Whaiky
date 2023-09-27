@@ -1,149 +1,155 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Alert, Image, ActivityIndicator, StyleSheet, Switch } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, ScrollView, Image, StyleSheet } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { useAuth } from '../context/AuthContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import ImagePicker from 'react-native-image-crop-picker';
 
-const selectMultipleImagesFromGallery = (width, height, maxImages = 3) => {
-  return new Promise((resolve, reject) => {
-    ImagePicker.openPicker({
-      width,
-      height,
-      cropping: true,
-      multiple: true,
-      maxFiles: maxImages,
-    })
-    .then((images) => {
-      const paths = images.map(image => image.path);
-      resolve(paths);
-    })
-    .catch((error) => {
-      reject(error);
+const AddPost = ({ navigation }) => {
+    const { currentUser } = useAuth();
+
+    const [postDetails, setPostDetails] = useState({
+        title: '',
+        description: '',
+        price: '',
+        location: {
+            country: '',
+            state: '',
+            city: ''
+        },
+        category: {
+            categoryId: '',
+            categoryText: '',
+            optionId: '',
+            optionText: ''
+        },
+        images: [],
+        postType: 'lookingForService',
+        postId: ''
     });
-  });
-};
 
-const AddPostScreen = () => {
-  const { currentUser } = useAuth();
-  const [postTitle, setPostTitle] = useState('');
-  const [postDesc, setPostDesc] = useState('');
-  const [postPrice, setPostPrice] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState(1);
-  const [selectedOptionId, setSelectedOptionId] = useState(1);
-  const [city, setCity] = useState('');
-  const [zipcode, setZipcode] = useState('');
-  const [postImages, setPostImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [imageUploading, setImageUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+    const updatePostDetail = (key, value) => {
+        setPostDetails(prevState => ({ ...prevState, [key]: value }));
+    };
 
-  const pickImages = async () => {
-    try {
-      const imagePaths = await selectMultipleImagesFromGallery(4, 3);
-      setPostImages(imagePaths);
-    } catch (error) {
-      console.error('Error picking images:', error);
-    }
-  };
+    const takePhoto = async () => {
+        const image = await ImagePicker.openCamera({ width: 300, height: 400, cropping: true });
+        setPostDetails(prevState => ({ ...prevState, images: [...prevState.images, image.path] }));
+    };
 
-  const handlePost = async () => {
-    if (!postTitle || !postDesc || !postPrice || !selectedCategoryId || !selectedOptionId || !city || !zipcode) {
-      Alert.alert('Error', 'Please fill in all the fields.');
-      return;
-    }
+    const selectPhoto = async () => {
+        const images = await ImagePicker.openPicker({
+            multiple: true,
+            maxFiles: 3 - postDetails.images.length
+        });
+        setPostDetails(prevState => ({ ...prevState, images: [...prevState.images, ...images.map(img => img.path)] }));
+    };
 
-    if (isNaN(parseFloat(postPrice))) {
-      Alert.alert('Error', 'Please enter a valid price.');
-      return;
-    }
+    const handlePost = async () => {
+        const docRef = await firestore().collection('posts').add({
+            ...postDetails,
+            createdAt: firestore.FieldValue.serverTimestamp(),
+            ownerAvatar: currentUser.photoURL,
+            ownerName: currentUser.displayName,
+            ownerId: currentUser.uid
+        });
 
-    setLoading(true);
+        setPostDetails(prevState => ({ ...prevState, postId: docRef.id }));
 
-    try {
-      const postRef = firestore().collection('posts').doc();
-      const postId = postRef.id;
+        const uploadedImages = [];
+        for (let i = 0; i < postDetails.images.length; i++) {
+            const snapshot = await storage().ref(`post_images/${docRef.id}/${i}`).putFile(postDetails.images[i]);
+            const url = await snapshot.ref.getDownloadURL();
+            uploadedImages.push(url);
+        }
 
-      // Upload images to Firebase Storage
-      const imageURLs = [];
-      for (let i = 0; i < postImages.length; i++) {
-        const imagePath = postImages[i];
-        const imageName = `post_${postId}_${i}`;
-        const storageRef = storage().ref(`post_images/${imageName}`);
-        const result = await storageRef.putFile(imagePath);
-        const imageUrl = await storageRef.getDownloadURL();
-        imageURLs.push(imageUrl);
-      }
+        await docRef.update({ images: uploadedImages });
+    };
 
-      // Save post data in Firestore
-      await postRef.set({
-        title: postTitle,
-        description: postDesc,
-        price: parseFloat(postPrice),
-        categoryId: selectedCategoryId,
-        optionId: selectedOptionId,
-        imageURLs,
-        city,
-        zipcode,
-        ownerName: currentUser.displayName,
-        ownerId: currentUser.uid,
-      });
-
-      Alert.alert('Success', 'Your post has been successfully created.');
-    } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'An error occurred. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text>Title</Text>
-      <TextInput value={postTitle} onChangeText={setPostTitle} />
-
-      <Text>Description</Text>
-      <TextInput multiline value={postDesc} onChangeText={setPostDesc} />
-
-      <Text>Price</Text>
-      <TextInput value={postPrice} onChangeText={setPostPrice} />
-
-      <Text>Category</Text>
-      <Picker selectedValue={selectedCategoryId} onValueChange={setSelectedCategoryId}>
-        {/* Categories list */}
-      </Picker>
-
-      <Text>Option</Text>
-      <Picker selectedValue={selectedOptionId} onValueChange={setSelectedOptionId}>
-        {/* Options list based on selected category */}
-      </Picker>
-
-      <Text>City</Text>
-      <TextInput value={city} onChangeText={setCity} />
-
-      <Text>Zip Code</Text>
-      <TextInput value={zipcode} onChangeText={setZipcode} />
-
-      <Button title="Select Images" onPress={pickImages} />
-      {postImages.map((uri, index) => (
-        <Image key={index} source={{ uri }} style={{ width: 100, height: 100 }} />
-      ))}
-
-      <Button title="Submit Post" onPress={handlePost} disabled={loading} />
-
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
-    </View>
-  );
+    return (
+        <SafeAreaView style={styles.container}>
+            <ScrollView>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Post Type</Text>
+                    <Button title={postDetails.postType} onPress={() => updatePostDetail('postType', postDetails.postType === 'lookingForService' ? 'providingService' : 'lookingForService')} />
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Title</Text>
+                    <TextInput style={styles.input} placeholder="Title" value={postDetails.title} onChangeText={(text) => updatePostDetail('title', text)} />
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Description</Text>
+                    <TextInput style={styles.input} placeholder="Description" value={postDetails.description} onChangeText={(text) => updatePostDetail('description', text)} />
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Price</Text>
+                    <TextInput style={styles.input} placeholder="Price" value={postDetails.price} onChangeText={(text) => updatePostDetail('price', text)} />
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Country</Text>
+                    <TextInput style={styles.input} placeholder="Country" value={postDetails.location.country} onChangeText={(text) => updatePostDetail('location', {...postDetails.location, country: text})} />
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>State</Text>
+                    <TextInput style={styles.input} placeholder="State" value={postDetails.location.state} onChangeText={(text) => updatePostDetail('location', {...postDetails.location, state: text})} />
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>City</Text>
+                    <TextInput style={styles.input} placeholder="City" value={postDetails.location.city} onChangeText={(text) => updatePostDetail('location', {...postDetails.location, city: text})} />
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Category</Text>
+                    <TextInput style={styles.input} placeholder="Category" value={postDetails.category.categoryText} onChangeText={(text) => updatePostDetail('category', {...postDetails.category, categoryText: text})} />
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Option</Text>
+                    <TextInput style={styles.input} placeholder="Option" value={postDetails.category.optionText} onChangeText={(text) => updatePostDetail('category', {...postDetails.category, optionText: text})} />
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Image</Text>
+                    <View style={styles.imagesContainer}>
+                        {postDetails.images.map((image, index) => (
+                            <Image key={index} source={{ uri: image }} style={styles.image} />
+                        ))}
+                    </View>
+                    <Button title="Take Photo" onPress={takePhoto} />
+                    <Button title="Select Photos" onPress={selectPhoto} />
+                </View>
+                <Button title="Submit" onPress={handlePost} />
+            </ScrollView>
+        </SafeAreaView>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+    container: {
+        flex: 1,
+        padding: 15,
+        backgroundColor: '#f5f5f5',
+    },
+    section: {
+        marginBottom: 20,
+    },
+    label: {
+        marginBottom: 10,
+        fontWeight: 'bold',
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#d1d1d1',
+        padding: 10,
+        borderRadius: 4,
+    },
+    imagesContainer: {
+        flexDirection: 'row',
+        marginBottom: 15,
+    },
+    image: {
+        width: 100,
+        height: 100,
+        marginRight: 10,
+    },
 });
 
-export default AddPostScreen;
+export default AddPost;
