@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet, Platform, KeyboardAvoidingView } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,14 +9,13 @@ const ForgotPassword = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState(null);
 
   const isEmailValid = (email) => {
-    // A simple email validation function
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
     return emailPattern.test(email);
   };
 
   const handlePasswordReset = () => {
     if (!isEmailValid(email)) {
-      setErrorMessage('Please enter a valid email address.');
+      Alert.alert('Error', 'Please enter a valid email address.');
       setMessage(null);
       return;
     }
@@ -30,35 +29,57 @@ const ForgotPassword = ({ navigation }) => {
       .catch((error) => {
         switch (error.code) {
           case 'auth/user-not-found':
-            setErrorMessage('There is no user corresponding to the given email.');
+            Alert.alert('Error', 'There is no user corresponding to the given email.');
             break;
           case 'auth/invalid-email':
-            setErrorMessage('That email address is invalid!');
+            Alert.alert('Error', 'That email address is invalid!');
             break;
           default:
-            setErrorMessage(error.message);
+            Alert.alert('Error', error.message);
             break;
         }
       });
   };
 
   return (
-    <SafeAreaView>
-      <View style={{ padding: 20 }}>
-        {errorMessage && <Text style={{ color: 'red' }}>{errorMessage}</Text>}
-        {message && <Text style={{ color: 'green' }}>{message}</Text>}
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.inner}>
+        <Text style={styles.title}>Forgot Password</Text>
+        {message && <Text style={{ color: 'green', marginBottom: 10 }}>{message}</Text>}
         <TextInput
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
-          style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, padding: 10 }}
-          autoCapitalize="none" // Prevent automatic capitalization
+          style={styles.input}
+          autoCapitalize="none"
         />
         <Button title="Reset Password" onPress={handlePasswordReset} />
         <Button title="Back to Sign In" onPress={() => navigation.navigate('login')} />
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  inner: {
+    padding: 20,
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    fontWeight: 'bold',
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    padding: 10,
+  }
+});
 
 export default ForgotPassword;

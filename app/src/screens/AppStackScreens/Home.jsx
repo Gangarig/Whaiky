@@ -3,7 +3,7 @@ import { View, Text, FlatList, Image, TouchableOpacity, Button, RefreshControl }
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AddPost from '../../components/AddPost';
+
 const Home = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
@@ -91,7 +91,7 @@ const Home = ({ navigation }) => {
       <View style={{ margin: 10, padding: 10, borderWidth: 1, borderColor: '#ccc' }}>
         <Text style={{ fontSize: 18 }}>{item.title}</Text>
         <Text style={{ fontSize: 16, color: '#777' }}>Price: {item.price}</Text>
-        <Image source={{ uri: item.imageURL }} style={{ width: 100, height: 100 }} />
+        <Image source={{ uri: item.images[0] }} style={{ width: 100, height: 100 }} />
       </View>
     </TouchableOpacity>
   );
@@ -101,7 +101,6 @@ const Home = ({ navigation }) => {
       <View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
           <Button title='AddPost' onPress={()=> navigation.navigate('AddPost')} />
-          <Button title='Refresh' onPress={handleRefresh} />
         </View>
         {refreshing && <Text>Loading...</Text>}
         {currentUser ? (

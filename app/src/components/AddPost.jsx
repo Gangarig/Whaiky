@@ -28,6 +28,10 @@ const AddPost = ({ navigation }) => {
         postType: 'lookingForService',
         postId: ''
     });
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const [uploadProgress, setUploadProgress] = useState(0);
+
 
     const updatePostDetail = (key, value) => {
         setPostDetails(prevState => ({ ...prevState, [key]: value }));
@@ -47,28 +51,67 @@ const AddPost = ({ navigation }) => {
     };
 
     const handlePost = async () => {
-        const docRef = await firestore().collection('posts').add({
-            ...postDetails,
-            createdAt: firestore.FieldValue.serverTimestamp(),
-            ownerAvatar: currentUser.photoURL,
-            ownerName: currentUser.displayName,
-            ownerId: currentUser.uid
-        });
+        try {
+            const docRef = await firestore().collection('posts').add({
+                ...postDetails,
+                createdAt: firestore.FieldValue.serverTimestamp(),
+                ownerAvatar: currentUser.photoURL,
+                ownerName: currentUser.displayName,
+                ownerId: currentUser.uid
+            });
+    
+            setPostDetails(prevState => ({ ...prevState, postId: docRef.id }));
+    
+            const uploadedImages = [];
+            for (let i = 0; i < postDetails.images.length; i++) {
+                const imageName = `${currentUser.uid}_${Date.now()}_${i}`; 
 
-        setPostDetails(prevState => ({ ...prevState, postId: docRef.id }));
+                const task = storage().ref(`post_images/${docRef.id}/${imageName}`).putFile(postDetails.images[i]);
 
-        const uploadedImages = [];
-        for (let i = 0; i < postDetails.images.length; i++) {
-            const snapshot = await storage().ref(`post_images/${docRef.id}/${i}`).putFile(postDetails.images[i]);
-            const url = await snapshot.ref.getDownloadURL();
-            uploadedImages.push(url);
+                task.on('state_changed', snapshot => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    setUploadProgress(progress);
+                });
+
+                await task;
+
+                const url = await storage().ref(`post_images/${docRef.id}/${imageName}`).getDownloadURL();
+                uploadedImages.push(url);
+            }
+    
+            await docRef.update({ images: uploadedImages });
+    
+            setSuccess('Post created successfully!');
+            setPostDetails({
+                title: '',
+                description: '',
+                price: '',
+                location: {
+                    country: '',
+                    state: '',
+                    city: ''
+                },
+                category: {
+                    categoryId: '',
+                    categoryText: '',
+                    optionId: '',
+                    optionText: ''
+                },
+                images: [],
+                postType: 'lookingForService',
+                postId: ''
+            });
+            navigation.goBack();
+        } catch (error) {
+            setError('Error creating post: ' + error.message);
         }
-
-        await docRef.update({ images: uploadedImages });
     };
+    
 
     return (
         <SafeAreaView style={styles.container}>
+            {error && <Text style={{color: 'red', alignSelf: 'center', margin: 5}}>{error}</Text>}
+            {success && <Text style={{color: 'green', alignSelf: 'center', margin: 5}}>{success}</Text>}
             <ScrollView>
                 <View style={styles.section}>
                     <Text style={styles.label}>Post Type</Text>
@@ -108,14 +151,19 @@ const AddPost = ({ navigation }) => {
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.label}>Image</Text>
-                    <View style={styles.imagesContainer}>
-                        {postDetails.images.map((image, index) => (
-                            <Image key={index} source={{ uri: image }} style={styles.image} />
-                        ))}
+                    <View style={{ height: 10, width: '100%', backgroundColor: '#E0E0E0', marginBottom: 10 }}>
+                        <View style={{ height: '100%', width: `${uploadProgress}%`, backgroundColor: 'green' }} />
                     </View>
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
+                        {postDetails.images.map((image, index) => (
+                            <Image key={index} source={{ uri: image }} style={styles.selectedImage} />
+                        ))}
+                    </ScrollView>
                     <Button title="Take Photo" onPress={takePhoto} />
                     <Button title="Select Photos" onPress={selectPhoto} />
+                    <Button title="Back"onPress={() => navigation.goBack()} />
                 </View>
+
                 <Button title="Submit" onPress={handlePost} />
             </ScrollView>
         </SafeAreaView>
@@ -149,6 +197,12 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         marginRight: 10,
+    },
+    selectedImage: {
+        width: 100,
+        height: 100,
+        marginRight: 10,
+        borderRadius: 10,
     },
 });
 

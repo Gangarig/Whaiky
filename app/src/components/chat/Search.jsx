@@ -11,6 +11,7 @@ import {
   ScrollView,
   Alert,Image
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { query, getDocs, where, collection,
 getDoc, doc, setDoc, updateDoc, serverTimestamp
 } from '@react-native-firebase/firestore';
@@ -97,7 +98,8 @@ const handleSelect = async (selectedUser) => {
 
 
   return (
-    <>
+    <SafeAreaView>
+      <View>
       <Modal
         animationType="slide"
         transparent={false}
@@ -146,7 +148,8 @@ const handleSelect = async (selectedUser) => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </>
+      </View>
+    </SafeAreaView>
   );
 };
 

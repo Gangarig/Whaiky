@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, Image, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Image, ActivityIndicator, StyleSheet , ScrollView} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import ImagePicker from 'react-native-image-crop-picker';
 import { AuthContext } from '../../context/AuthContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -15,14 +16,9 @@ const SignUp = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const { setCurrentUser } = useContext(AuthContext);
 
-  const isFormValid = () => email && password && displayName;
+  const DEFAULT_IMAGE = require('./avatar.png');
 
-  const clearInputs = () => {
-    setEmail('');
-    setPassword('');
-    setDisplayName('');
-    setImage(require('./avatar.png'));
-  };
+  const isFormValid = () => email && password && displayName;
 
   const pickImage = async () => {
     try {
@@ -46,31 +42,36 @@ const SignUp = ({ navigation }) => {
     setLoading(true);
 
     try {
-      // User creation
       const userCredential = await auth().createUserWithEmailAndPassword(email, password);
       const user = userCredential.user;
 
-      // Avatar upload using user's UID as filename
-      const imageName = user.uid; // This line changed from the earlier dynamic naming
-      await storage().ref(`profile_images/${imageName}`).putFile(image);
-      const downloadURL = await storage().ref(`profile_images/${imageName}`).getDownloadURL();
+      let imageURL = DEFAULT_IMAGE;
 
-      // User profile and Firestore update
-      await user.updateProfile({ displayName, photoURL: downloadURL });
+      if (image !== DEFAULT_IMAGE) {
+        const imageName = user.uid; 
+        await storage().ref(`profile_images/${imageName}`).putFile(image);
+        imageURL = await storage().ref(`profile_images/${imageName}`).getDownloadURL();
+      } else {
+        imageURL = 'https://firebasestorage.googleapis.com/v0/b/whaiky-f9e40.appspot.com/o/profile_images%2Favatar.png?alt=media&token=d53e6557-2d05-4137-8092-4100bc4ab2f1';
+      }
+
+      await user.updateProfile({ displayName, photoURL: imageURL });
       await firestore().collection('users').doc(user.uid).set({
         uid: user.uid,
         displayName,
         email,
         createdAt: new Date().getTime(),
-        photoURL: downloadURL
+        photoURL: imageURL
       });
-      await firestore().collection('userChats').doc(user.uid).set({});
-      setCurrentUser({ uid: user.uid, displayName, email, photoURL: downloadURL });
+      setCurrentUser({ uid: user.uid, displayName, email, photoURL: imageURL });
+
       setErrorMessage(null);
-      clearInputs();
       alert("Signed up successfully");
       await auth().signInWithEmailAndPassword(email, password);
+
     } catch (error) {
+      console.error("Sign-up error:", error);
+
       switch (error.code) {
         case 'auth/email-already-in-use':
           setErrorMessage('That email address is already in use!');
@@ -85,10 +86,11 @@ const SignUp = ({ navigation }) => {
     } finally {
       setLoading(false);
     }
-};
-
+  };
 
   return (
+    <SafeAreaView>
+    <ScrollView>
     <View style={styles.container}>
       {errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
       <TextInput placeholder="Username" value={displayName} onChangeText={setDisplayName} style={styles.input} />
@@ -99,6 +101,8 @@ const SignUp = ({ navigation }) => {
       {loading ? <ActivityIndicator size="large" /> : <Button title="Sign Up" onPress={handleSignUp} disabled={!isFormValid()} />}
       <Button title="Already have an account? Login" onPress={() => navigation.navigate('login')} />
     </View>
+    </ScrollView>
+    </SafeAreaView>
   );
 };
 

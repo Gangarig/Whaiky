@@ -4,6 +4,8 @@ import firestore from "@react-native-firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
 import { useChat } from "../../context/ChatContext";
 
+const defaultAvatar = require("../../../assets/images/avatar/avatar.png"); // Default image source
+
 const Chats = ({ navigation }) => {
   const [chats, setChats] = useState([]);
   const { currentUser } = useAuth();
@@ -53,7 +55,7 @@ const Chats = ({ navigation }) => {
             }}
           >
             <Image
-              source={{ uri: item.userInfo.photoURL }}
+              source={item.userInfo.photoURL ? { uri: item.userInfo.photoURL } : defaultAvatar}
               style={{ width: 50, height: 50, borderRadius: 25 }}
             />
             <View style={{ marginLeft: 10 }}>

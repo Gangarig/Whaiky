@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Image, StyleSheet, SafeAreaView, TouchableOpacity, Alert, Modal } from 'react-native';
+import { View, Text, TextInput, Button, Image, StyleSheet, SafeAreaView, TouchableOpacity, Modal } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import PhoneInput from 'react-native-phone-input';
 import LocationPicker from '../../../service/LocationPicker';
-import ImagePicker from 'react-native-image-crop-picker'; // Import ImagePicker
+import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import { ScrollView } from 'react-native';
 
@@ -19,8 +19,8 @@ const PersonalInfo = ({ navigation }) => {
     state: '',
     city: ''
   });
-  const [locationChanged, setLocationChanged] = useState(false); // Track if location is changed
-  
+  const [locationChanged, setLocationChanged] = useState(false);
+
   const fetchData = async () => {
     if (currentUser?.uid) {
       const userDocRef = firestore().collection('users').doc(currentUser.uid);
@@ -28,9 +28,7 @@ const PersonalInfo = ({ navigation }) => {
 
       if (userDoc.exists) {
         const userData = userDoc.data();
-        // Update the state with the user data
         setUserInfo(userData);
-        // Set the userLocation state
         setUserLocation({
           country: userData.country || '',
           state: userData.state || '',
@@ -74,7 +72,6 @@ const PersonalInfo = ({ navigation }) => {
   };
 
   const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
-    // Check if the location has changed
     if (
       selectedCountry !== userLocation.country ||
       selectedState !== userLocation.state ||
@@ -93,7 +90,6 @@ const PersonalInfo = ({ navigation }) => {
   const handleUpdate = async () => {
     if (currentUser?.uid) {
       try {
-        // Create a new user data object
         const updatedUserData = {
           firstName: userInfo.firstName || null,
           lastName: userInfo.lastName || null,
@@ -101,14 +97,12 @@ const PersonalInfo = ({ navigation }) => {
           phoneNumbers: userInfo.phoneNumbers || null,
         };
         
-        // Add location data if it has changed
         if (locationChanged) {
           updatedUserData.country = userLocation.country || null;
           updatedUserData.state = userLocation.state || null;
           updatedUserData.city = userLocation.city || null;
         }
 
-        // Update the user document
         await firestore().collection('users').doc(currentUser.uid).update(updatedUserData);
 
         alert('Information updated successfully!');
