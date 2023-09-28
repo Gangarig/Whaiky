@@ -9,6 +9,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './app/src/screens/AuthStackScreens/Login'
 import SignUp from './app/src/screens/AuthStackScreens/SignUp'
 import ForgotPassword from './app/src/screens/AuthStackScreens/ForgotPassword'
+import Welcome from './app/src/screens/AuthStackScreens/Welcome'
+
+
 //app screens
 import Home from './app/src/screens/AppStackScreens/Home'
 import Category from './app/src/screens/AppStackScreens/Category'
@@ -38,6 +41,9 @@ import AddPost from './app/src/components/AddPost';
 import { AuthProvider, useAuth } from './app/src/context/AuthContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ChatContextProvider } from './app/src/context/ChatContext';
+
+
+
 const Stack = createStackNavigator();
 function CategoryStack() {
   return (
@@ -94,7 +100,8 @@ function DrawerNavigator() {
 const AuthStack = createStackNavigator();
 function AuthStackScreens() {
   return (
-    <AuthStack.Navigator initialRouteName='login'>
+    <AuthStack.Navigator initialRouteName='login' screenOptions={{headerShown:false}}>
+      <AuthStack.Screen name="welcome" component={Welcome} />
       <AuthStack.Screen name="login" component={Login} />
       <AuthStack.Screen name="signup" component={SignUp} />
       <AuthStack.Screen name="forgot" component={ForgotPassword} />
