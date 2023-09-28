@@ -5,7 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import Logo from '../../../assets/logo/logo.png';
 import ButtonWithGradient from '../../style/Button';
-import { KeyboardAvoidingView } from 'react-native';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -102,7 +101,6 @@ const styles = StyleSheet.create({
     color: '#000',
     fontFamily: 'Montserrat',
     fontSize: 25,
-    fontStyle: 'normal',
     fontWeight: '700',
     lineHeight: 32 * 1.2,
   },
@@ -196,6 +194,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
     lineHeight: 16 * 1.2,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    fontWeight: '400',
+    lineHeight: 12,
+    marginTop: 10,
   },
 });
 
