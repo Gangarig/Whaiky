@@ -101,6 +101,7 @@ const Home = ({ navigation }) => {
       <View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
           <Button title='AddPost' onPress={()=> navigation.navigate('AddPost')} />
+          <Button title='Refresh' onPress={handleRefresh} />
         </View>
         {refreshing && <Text>Loading...</Text>}
         {currentUser ? (

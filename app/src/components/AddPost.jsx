@@ -31,7 +31,22 @@ const AddPost = ({ navigation }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
-
+    const validateForm = () => {
+        if (
+            !postDetails.title ||
+            !postDetails.description ||
+            !postDetails.price ||
+            !postDetails.location.country ||
+            !postDetails.location.state ||
+            !postDetails.location.city ||
+            !postDetails.category.categoryText ||
+            !postDetails.category.optionText
+        ) {
+            setError('Please fill in all required fields.');
+            return false;
+        }
+        return true;
+    };
 
     const updatePostDetail = (key, value) => {
         setPostDetails(prevState => ({ ...prevState, [key]: value }));
@@ -51,6 +66,9 @@ const AddPost = ({ navigation }) => {
     };
 
     const handlePost = async () => {
+        if (!validateForm()) {
+            return;
+        }
         try {
             const docRef = await firestore().collection('posts').add({
                 ...postDetails,

@@ -100,7 +100,7 @@ function DrawerNavigator() {
 const AuthStack = createStackNavigator();
 function AuthStackScreens() {
   return (
-    <AuthStack.Navigator initialRouteName='login' screenOptions={{headerShown:false}}>
+    <AuthStack.Navigator initialRouteName='welcome' screenOptions={{headerShown:false}}>
       <AuthStack.Screen name="welcome" component={Welcome} />
       <AuthStack.Screen name="login" component={Login} />
       <AuthStack.Screen name="signup" component={SignUp} />
