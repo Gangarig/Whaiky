@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View, StyleSheet, Image, Text, Platform,
-  TouchableOpacity, TextInput,Keyboard, KeyboardAvoidingView
+  TouchableOpacity, TextInput, Keyboard, KeyboardAvoidingView
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import Logo from '../../../assets/logo/logo.png';
 import { Global } from '../../../style/Global';
-import { showMessage } from "react-native-flash-message";
+import { showMessage } from 'react-native-flash-message';
 import { ScrollView } from 'react-native-gesture-handler';
-import GradientButton from '../../../style/GradientButton'
+import GradientButton from '../../../style/GradientButton';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -20,20 +20,16 @@ const Login = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const passwordInputRef = useRef(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true); 
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false); 
-      }
-    );
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
+
     return () => {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
@@ -44,27 +40,42 @@ const Login = ({ navigation }) => {
     if (errorMessage) {
       showMessage({
         message: errorMessage,
-        type: "danger",
+        type: 'danger',
       });
     }
   }, [errorMessage]);
+
+  useEffect(() => {
+    if (attemptCount >= 3) {
+      setDisabled(true);
+
+      setTimeout(() => {
+        setDisabled(false);
+        setAttemptCount(0);
+      }, 10000); // Disable for 10 seconds
+    }
+  }, [attemptCount]);
 
   const handleSignIn = async () => {
     if (!email || !password) {
       setErrorMessage('Please fill in all fields.');
       return;
     }
-    if (attemptCount >= 3) {
-      setErrorMessage('Too many failed attempts. Please wait and try again.');
+
+    if (disabled) {
+      setErrorMessage('Sign-in is disabled for 10 seconds. Please try again later.');
       return;
     }
+
     setLoading(true);
+    setErrorMessage(null);
+
     try {
       await auth().signInWithEmailAndPassword(email, password);
-      setErrorMessage(null);
       setAttemptCount(0);
     } catch (error) {
-      setAttemptCount(prevCount => prevCount + 1);
+      setAttemptCount((prevCount) => prevCount + 1);
+
       switch (error.code) {
         case 'auth/user-not-found':
           setErrorMessage('There is no user corresponding to the given email.');
@@ -125,7 +136,7 @@ const Login = ({ navigation }) => {
                 value={password}
                 secureTextEntry
               />
-              <Text style={styles.forgot}>FORGOT PASSWORD?</Text>
+              <Text style={styles.forgot} onPress={handleForgotPassword}>FORGOT PASSWORD?</Text>
             </View>
           </View>
           <View style={styles.buttons}>
