@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet, Platform, KeyboardAvoidingView, Image } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import Logo from '../../../assets/logo/logo.png';
+import { Global } from '../../../style/Global';
+import { showMessage } from 'react-native-flash-message';
 
 const ForgotPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const isEmailValid = (email) => {
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
@@ -16,30 +18,50 @@ const ForgotPassword = ({ navigation }) => {
 
   const handlePasswordReset = () => {
     if (!isEmailValid(email)) {
-      Alert.alert('Error', 'Please enter a valid email address.');
-      setMessage(null);
+      showMessage({
+        message: "Error",
+        description: "Please enter a valid email address.",
+        type: "danger",
+      });
+      setErrorMessage(null);
       return;
     }
 
     auth()
       .sendPasswordResetEmail(email)
       .then(() => {
-        setMessage('Password reset email sent!');
+        setErrorMessage('Password reset email sent!');
       })
       .catch((error) => {
+        let errorText = '';
         switch (error.code) {
           case 'auth/user-not-found':
-            Alert.alert('Error', 'There is no user corresponding to the given email.');
+            errorText = 'There is no user corresponding to the given email.';
             break;
           case 'auth/invalid-email':
-            Alert.alert('Error', 'That email address is invalid!');
+            errorText = 'That email address is invalid!';
             break;
           default:
-            Alert.alert('Error', error.message);
+            errorText = error.message;
             break;
         }
+        showMessage({
+          message: "Error",
+          description: errorText,
+          type: "danger",
+        });
       });
   };
+
+  useEffect(() => {
+    if (errorMessage) {
+      showMessage({
+        message: "Success",
+        description: errorMessage, // this will contain 'Password reset email sent!' on success
+        type: 'success',
+      });
+    }
+  }, [errorMessage]);
 
   return (
     <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container}>
@@ -49,9 +71,8 @@ const ForgotPassword = ({ navigation }) => {
             <Image source={Logo} style={styles.logoImage} />
           </View>
           <View style={styles.contentBox}>
-            <Text style={styles.title}>Forgot Password</Text>
-            {message && <Text style={styles.message}>{message}</Text>}
-            <Text style={styles.label}>Email address</Text>
+            <Text style={Global.title}>Forgot Password</Text>
+            <Text style={Global.label}>Email address</Text>
             <TextInput
               placeholder="Type your email"
               value={email}
@@ -60,8 +81,8 @@ const ForgotPassword = ({ navigation }) => {
               autoCapitalize="none"
             />
             <View style={styles.buttonContainer}>
-              <Button title="Reset Password" onPress={handlePasswordReset} style={styles.button} />
-              <Button title="Back to Sign In" onPress={() => navigation.navigate('login')} style={styles.button} />
+              <Button title="Reset Password" onPress={handlePasswordReset} style={Global.button} />
+              <Button title="Back to Sign In" onPress={() => navigation.navigate('login')} style={Global.button} />
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -107,23 +128,10 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginTop: 10,
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    fontWeight: 'bold',
-    color: '#000',
-  },
   message: {
     color: 'green',
     marginBottom: 20,
     fontWeight: 'bold',
-  },
-  label: {
-    marginBottom: 5,
-    fontFamily: 'Montserrat',
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
   },
   input: {
     height: 40,

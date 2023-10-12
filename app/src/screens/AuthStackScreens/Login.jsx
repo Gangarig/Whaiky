@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View, StyleSheet, Image, Text, Platform,
+  TouchableOpacity, TextInput,Keyboard, KeyboardAvoidingView
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import Logo from '../../../assets/logo/logo.png';
-import ButtonWithGradient from '../../style/Button';
+import { Global } from '../../../style/Global';
+import { showMessage } from "react-native-flash-message";
+import { ScrollView } from 'react-native-gesture-handler';
+import GradientButton from '../../../style/GradientButton'
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -12,31 +18,53 @@ const Login = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [attemptCount, setAttemptCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const passwordInputRef = useRef(null);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); 
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); 
+      }
+    );
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (errorMessage) {
+      showMessage({
+        message: errorMessage,
+        type: "danger",
+      });
+    }
+  }, [errorMessage]);
 
   const handleSignIn = async () => {
     if (!email || !password) {
       setErrorMessage('Please fill in all fields.');
       return;
     }
-
     if (attemptCount >= 3) {
       setErrorMessage('Too many failed attempts. Please wait and try again.');
       return;
     }
-
     setLoading(true);
-
     try {
       await auth().signInWithEmailAndPassword(email, password);
-      console.log('User signed in!');
       setErrorMessage(null);
       setAttemptCount(0);
-      // Optionally, navigate the user to a home or dashboard screen after successful login
-      // navigation.navigate('Home');
     } catch (error) {
-      console.error('Login error:', error);
       setAttemptCount(prevCount => prevCount + 1);
-
       switch (error.code) {
         case 'auth/user-not-found':
           setErrorMessage('There is no user corresponding to the given email.');
@@ -56,152 +84,157 @@ const Login = ({ navigation }) => {
     }
   };
 
+  const goToSignUp = () => {
+    navigation.navigate('signup');
+  };
+
+  const handleForgotPassword = () => {
+    navigation.navigate('forgot');
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container}>
-        <View style={styles.box}>
-          <Image source={Logo} style={styles.logoImage} />
-        </View>
-        <View style={styles.box1}>
-          <View style={styles.box2}>
-            <Text style={styles.title}>LOGIN</Text>
-            {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
-            <Text style={styles.label}>Email address</Text>
-            <TextInput placeholder="Type your email" value={email} onChangeText={setEmail} style={styles.input} />
-            <Text style={styles.label}>Password</Text>
-            <TextInput placeholder="Type your password" value={password} onChangeText={setPassword} secureTextEntry style={styles.input} />
-            <TouchableOpacity style={styles.forgot} onPress={() => navigation.navigate('forgot')}>
-              <Text>Forgot Password?</Text>
-            </TouchableOpacity>
-            <View style={styles.box3}>
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ButtonWithGradient onPress={handleSignIn} title="CONTINUE" />
-              </View>
-              <Text>or</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('signup')}>
-                <Text style={styles.signup}>SIGN UP</Text>
-              </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradient}>
+      </LinearGradient>
+      <Image source={Logo} style={[Global.logo, styles.logo]}/>
+      <KeyboardAvoidingView 
+        style={{ flex: 1, width: '100%' }} 
+        behavior={Platform.OS === "ios" ? "padding" : "height"} 
+        keyboardVerticalOffset={Platform.select({ios: 0, android: 500})} 
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={styles.content}> 
+            <Text style={[Global.title,styles.title]}>LOGIN</Text>
+            <View style={styles.inputs}>
+              <Text style={[Global.titleSecondary,styles.label]}>Email address</Text>
+              <TextInput
+                style={[Global.input,styles.input]}
+                placeholder="Email"
+                onChangeText={(text) => setEmail(text)}
+                value={email}
+                autoCapitalize="none"
+                onSubmitEditing={() => passwordInputRef.current.focus()}
+                blurOnSubmit={false}
+              />
+              <Text style={[Global.titleSecondary,styles.label]}>Password</Text>
+              <TextInput
+                ref={passwordInputRef}
+                style={[Global.input,styles.input]}
+                placeholder="Password"
+                onChangeText={(text) => setPassword(text)}
+                value={password}
+                secureTextEntry
+              />
+              <Text style={styles.forgot}>FORGOT PASSWORD?</Text>
             </View>
           </View>
-        </View>
-      </LinearGradient>
+          <View style={styles.buttons}>
+            <GradientButton text="CONTINUE" onPress={handleSignIn}
+            />
+            <Text>or</Text>
+            <TouchableOpacity style={Global.link} onPress={goToSignUp}>
+              <Text style={styles.signUp }>SIGN UP</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+  
     </SafeAreaView>
   );
+  
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+    position:'relative',
+    backgroundColor: '#FBFBFB',
+    paddingTop:100,
   },
-  title: {
-    position: 'absolute',
-    top: 20,
-    color: '#000',
-    fontFamily: 'Montserrat',
-    fontSize: 25,
-    fontWeight: '700',
-    lineHeight: 32 * 1.2,
-  },
-  logoImage: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  box: {
-    width: '100%',
+  gradient: {
     height: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 50,
-  },
-  box1: {
-    width: '100%',
-    height: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-  },
-  box2: {
-    width: '90%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
     position: 'absolute',
-    bottom: 100,
-    zIndex: 11,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 20,
-    shadowColor: '#000',
+    top: 0,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  content: {
+    width: 330,
+    height: 366,
+    borderRadius: 10,
+    backgroundColor: "#FBFBFB",
+    shadowColor: "rgba(0, 0, 0, 0.25)",
     shadowOffset: {
       width: 0,
-      height: 0,
+      height: 0
     },
-    shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
-    position: 'relative',
-  },
-  box3: {
-    width: '50%',
+    shadowOpacity: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+  },
+  logo :{
     position: 'absolute',
-    bottom: -80,
-    zIndex: 11,
-    gap: 10,
+    top:30,
   },
-  input: {
-    height: 40,
-    width: '80%',
-    borderColor: 'gray',
-    padding: 10,
-    width: '90%',
-    borderBottomColor: 'gray',
-    borderBottomWidth: 1,
-    paddingLeft: 0,
-    fontFamily: 'Lato',
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 14 * 1.0,
+  title:{
+    position: 'absolute',
+    top: 40,
   },
-  label: {
-    marginTop: 10,
-    width: '90%',
-    textAlign: 'left',
-    marginBottom: 5,
-    fontFamily: 'Montserrat',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  forgot: {
-    width: '90%',
-    alignItems: 'flex-end',
-    fontFamily: 'Lato',
+  forgot:{
+    fontFamily: 'Montserrat-Regular',
     fontSize: 12,
     fontWeight: '400',
+    fontStyle: 'normal',
+    lineHeight: 12,
     color: '#7B7B7B',
-    lineHeight: 12,
   },
-  signup: {
-    fontFamily: 'Montserrat',
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
-    lineHeight: 16 * 1.2,
+  inputs:{
+    gap: 5,
+    marginTop: 20,
   },
-  errorText: {
-    color: 'red',
+  label:{
+    marginTop: 20,
+  },
+  forgot:{
+    textAlign: 'right',
+    color: '#7b7b7b',
+    fontFamily: 'Montserrat-Regular',
     fontSize: 12,
     fontWeight: '400',
-    lineHeight: 12,
-    marginTop: 10,
+    letterSpacing: 0,
+    lineHeight: 'normal', 
+  },
+  or:{
+    color: '#7b7b7b',
+    fontFamily: 'Montserrat-Medium, Helvetica',
+    fontSize: 16,
+    fontWeight: '500',
+    letterSpacing: 0,
+    lineHeight: 20,
+  },
+  signUp:{
+    color: '#000000',
+    fontFamily: 'Montserrat-Bold, Helvetica',
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0,
+    lineHeight: 20,
+  },
+  buttons:{
+    gap: 5,
+    alignItems: 'center',
+    top: -24,
   },
 });
 
 export default Login;
+
+
+
+
+

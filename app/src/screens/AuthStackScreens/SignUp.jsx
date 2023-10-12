@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,10 @@ import { AuthContext } from '../../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import Logo from '../../../assets/logo/logo.png';
+import { Global } from '../../../style/Global';
+import FlashMessage from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
+
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -41,9 +45,18 @@ const SignUp = ({ navigation }) => {
       });
       setImage(selectedImage.path);
     } catch (error) {
-      console.error('Image selection error:', error);
+      setErrorMessage(error.message); 
     }
   };
+
+  useEffect(() => {
+    if (errorMessage) {
+      showMessage({
+        message: errorMessage,
+        type: 'danger',
+      });
+    }
+  }, [errorMessage]);
 
   const handleSignUp = async () => {
     if (!isFormValid()) {
@@ -101,47 +114,58 @@ const SignUp = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <LinearGradient colors={['#9E41F0', '#01AD94']} style={styles.gradient}>
-        <ScrollView contentContainerStyle={styles.container}>
-          {errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
-          <Text style={styles.title}>Sign Up</Text>
-          <Text style={styles.label}>Username</Text>
-          <TextInput
-            placeholder="Username"
-            value={displayName}
-            onChangeText={setDisplayName}
-            style={styles.input}
-          />
-          <Text style={styles.label}>Email</Text>
-          <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={styles.input} />
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            style={styles.input}
-          />
-          <TouchableOpacity style={styles.button} onPress={pickImage}>
-            <Text style={styles.buttonText}>Pick an avatar</Text>
-          </TouchableOpacity>
-          {image && <Image source={typeof image === 'number' ? image : { uri: image }} style={styles.avatar} />}
-          {loading ? (
-            <ActivityIndicator size="large" color="#9E41F0" />
-          ) : (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleSignUp}
-              disabled={!isFormValid()}
-            >
-              <Text style={styles.buttonText}>Sign Up</Text>
+  
+    <SafeAreaView style={Global.container}>
+      <LinearGradient 
+      colors={['#9E41F0', '#01AD94']} 
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.gradient}
+      >
+      <View style={[styles.content]}>
+            <Text style={Global.title}>Sign Up</Text>
+            <Text style={Global.label}>Email</Text>
+            <TextInput
+              style={[Global.input,styles.input]}
+              placeholder="Email"
+              onChangeText={(text) => setEmail(text)}
+              value={email}
+              autoCapitalize="none"
+            />
+            <Text style={Global.label}>Password</Text>
+            <TextInput
+              style={[Global.input,styles.input]}
+              placeholder="Password"
+              onChangeText={(text) => setPassword(text)}
+              value={password}
+              secureTextEntry
+            />
+            <Text style={Global.label}>Confirm Password</Text>
+            <TextInput
+              style={[Global.input,styles.input]}
+              placeholder="Confirm Password"
+              onChangeText={(text) => setPassword(text)}
+              value={password}
+              secureTextEntry
+            />
+            <Text style={Global.label}>Display Name</Text>
+            <TextInput
+              style={[Global.input,styles.input]}
+              placeholder="Display Name"
+              onChangeText={(text) => setDisplayName(text)}
+              value={displayName}
+            />
+            <TouchableOpacity style={Global.button} onPress={pickImage}>
+              <Text style={Global.buttonText}>Pick an image</Text>
             </TouchableOpacity>
-          )}
-          <TouchableOpacity onPress={() => navigation.navigate('login')}>
-            <Text style={styles.loginLink}>Already have an account? Login</Text>
-          </TouchableOpacity>
-        </ScrollView>
+            <Image source={image} style={Global.image} />
+            <TouchableOpacity style={Global.button} onPress={handleSignUp}>
+              <Text style={Global.buttonText}>Sign Up</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('login')}>
+              <Text style={Global.linkText}>Already have an account? Sign In</Text>
+            </TouchableOpacity>
+      </View>
       </LinearGradient>
     </SafeAreaView>
   );
@@ -149,68 +173,24 @@ const SignUp = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   gradient: {
-    flex: 1,
-  },
-  header: {
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 40,
   },
-  logo: {
-    width: 100,
-    height: 100,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: 'black',
-  },
-  container: {
-    flexGrow: 1,
+  content: {
     backgroundColor: 'white',
-    margin: 20,
-    borderRadius: 10,
+    width: '80%',
     padding: 20,
-  },
-  label: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  errorMessage: {
-    color: 'red',
-    marginBottom: 10,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
-    padding: 10,
-    borderRadius: 5,
+    ...Global.input,
+    width: '100%',
   },
-  avatar: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: '#9E41F0',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    marginBottom: 15,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  loginLink: {
-    marginTop: 20,
-    textAlign: 'center',
-    textDecorationLine: 'underline',
-  },
+
 });
 
 export default SignUp;

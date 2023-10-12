@@ -3,6 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from '@react-navigation/stack';
+import FlashMessage from "react-native-flash-message";
 
 
 //auth screens
@@ -101,7 +102,7 @@ const AuthStack = createStackNavigator();
 function AuthStackScreens() {
   return (
     <AuthStack.Navigator initialRouteName='welcome' screenOptions={{headerShown:false}}>
-      <AuthStack.Screen name="welcome" component={Welcome} />
+      {/* <AuthStack.Screen name="welcome" component={Welcome} /> */}
       <AuthStack.Screen name="login" component={Login} />
       <AuthStack.Screen name="signup" component={SignUp} />
       <AuthStack.Screen name="forgot" component={ForgotPassword} />
@@ -135,6 +136,7 @@ export default function App() {
     <ChatContextProvider>
     <NavigationContainer>
     <Main />
+    <FlashMessage position="top" />
     </NavigationContainer>
     </ChatContextProvider>
     </AuthProvider>
