@@ -7,6 +7,8 @@ import Logo from '../../../assets/logo/logo.png';
 import { Global } from '../../../style/Global';
 import { showMessage } from 'react-native-flash-message';
 
+
+
 const ForgotPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
@@ -56,100 +58,65 @@ const ForgotPassword = ({ navigation }) => {
   useEffect(() => {
     if (errorMessage) {
       showMessage({
-        message: "Success",
+        message: "danger",
         description: errorMessage, // this will contain 'Password reset email sent!' on success
-        type: 'success',
+        type: 'danger',
       });
     }
   }, [errorMessage]);
 
   return (
-    <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.inner}>
-          <View style={styles.box}>
-            <Image source={Logo} style={styles.logoImage} />
-          </View>
-          <View style={styles.contentBox}>
+    <KeyboardAvoidingView 
+    style={{ flex: 1 }} 
+    behavior={Platform.OS === "ios" ? "padding" : "height"} 
+    keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
+  >
+      <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={Global.container}>
+        <Image source={Logo} style={[Global.logo,styles.logo]} />
+        
+        <View style={[styles.content,Global.center]}>
             <Text style={Global.title}>Forgot Password</Text>
-            <Text style={Global.label}>Email address</Text>
+            <Text style={Global.titleSecondary}>Email address</Text>
+
             <TextInput
-              placeholder="Type your email"
-              value={email}
-              onChangeText={setEmail}
-              style={styles.input}
-              autoCapitalize="none"
+                style={Global.input}
+                placeholder="Type your email"
+                placeholderTextColor="#383838"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                textContentType="emailAddress"
             />
-            <View style={styles.buttonContainer}>
-              <Button title="Reset Password" onPress={handlePasswordReset} style={Global.button} />
-              <Button title="Back to Sign In" onPress={() => navigation.navigate('login')} style={Global.button} />
+
+            <View style={Global.row}>
+                <Button title="Reset Password" onPress={handlePasswordReset} />
+                <Button title="Back to Login" onPress={() => navigation.navigate('login')} />
             </View>
-          </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </LinearGradient>
+        </View>
+      </LinearGradient>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  inner: {
+  content:{
+    backgroundColor: '#FBFBFB',
+    borderRadius: 15,
     padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  box: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoImage: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  contentBox: {
-    backgroundColor: 'white',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
+    width: '90%',
+    gap: 10,
+    shadowColor: "rgba(0, 0, 0, 0.25)",
     shadowOffset: {
       width: 0,
-      height: 0,
+      height: 0
     },
-    shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
-    marginTop: 10,
+    shadowOpacity: 1,
   },
-  message: {
-    color: 'green',
-    marginBottom: 20,
-    fontWeight: 'bold',
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
-    padding: 10,
-    width: '100%',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 5,
-  },
+  logo:{
+    marginBottom: 30,
+  }
 });
 
 export default ForgotPassword;

@@ -30,6 +30,7 @@
     "react-native-check-box": "^2.1.7",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-dropdown-select-list": "^2.0.5",
+    "react-native-flash-message": "^0.4.2",
     "react-native-gesture-handler": "^2.13.0",
     "react-native-image-crop-picker": "^0.40.0",
     "react-native-linear-gradient": "^2.8.3",

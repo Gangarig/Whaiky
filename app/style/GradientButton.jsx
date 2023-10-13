@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 4,
     elevation: 5, // Android shadow
+    backgroundColor: 'transparent',
     shadowColor: 'rgba(37, 44, 97, 0.3)', // iOS shadow
     shadowOffset: {
       width: 0,

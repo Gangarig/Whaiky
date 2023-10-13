@@ -2,23 +2,16 @@ import { StyleSheet } from 'react-native';
 
 export const Global = StyleSheet.create({
     container :{
-        backgroundColor: '#FBFBFB',
-        shadowColor: 'rgba(0, 0, 0, 0.25)',
-        shadowOffset: {
-            width: 0,
-            height: 0
-        },
-        shadowRadius: 4,
-        shadowOpacity: 1
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position:'relative',
     },
     title: {    
-        width: 107,
-        height: 39,
         fontFamily: 'Montserrat-Bold',
         fontSize: 32,
         fontWeight: '700',
         fontStyle: 'normal',
-        lineHeight: 32,
         color: '#000000',
     },
     titleSecondary: {
@@ -27,25 +20,20 @@ export const Global = StyleSheet.create({
         height: 20,
         fontWeight: '600',
         fontStyle: 'normal',
-        lineHeight: 16,
         color: '#1F1F1F',
         },
     text: {
-        height: 14,
         fontFamily: 'Montserrat-Medium',
         fontSize: 14,
         fontWeight: '500',
         fontStyle: 'normal',
-        lineHeight: 100,
         color: '#383838',
     },
     textSecondary: {
-        height: 12,
         fontFamily: 'Montserrat-Regular',
         fontSize: 12,
         fontWeight: '400',
         fontStyle: 'normal',
-        lineHeight: 100,
         color: '#383838',
     },
     input: {
@@ -76,6 +64,16 @@ export const Global = StyleSheet.create({
         textAlign: 'center',
         textDecorationLine: 'underline',
     },
+    center: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    row: {
+        flexDirection: 'row',
+    },
+    link:{
+       fontWeight: 'bold',
+    }
 }
 )
 ;

@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position:'relative',
     backgroundColor: '#FBFBFB',
-    paddingTop:100,
+
   },
   gradient: {
     height: '50%',
@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 100,
   },
   logo :{
     position: 'absolute',
@@ -201,7 +202,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '400',
     fontStyle: 'normal',
-    lineHeight: 12,
     color: '#7B7B7B',
   },
   inputs:{
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '400',
     letterSpacing: 0,
-    lineHeight: 'normal', 
+
   },
   or:{
     color: '#7b7b7b',
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     letterSpacing: 0,
-    lineHeight: 20,
+
   },
   signUp:{
     color: '#000000',
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0,
-    lineHeight: 20,
+
   },
   buttons:{
     gap: 5,
