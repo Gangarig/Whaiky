@@ -61,7 +61,7 @@ const SignUp = ({ navigation }) => {
       setCurrentUser({ uid: user.uid, displayName, email, photoURL: 'DEFAULT_IMAGE_URL' });
 
       setErrorMessage(null);
-      alert('Signed up successfully');
+      showMessage('Signed up successfully');
       await auth().signInWithEmailAndPassword(email, password);
     } catch (error) {
       console.error('Sign-up error:', error);

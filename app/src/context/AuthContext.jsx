@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
               ...userData,
               uid: user.uid,
               email: user.email,
-              photoURL: user.photoURL,
             });
           } else {
             setCurrentUser(null);
