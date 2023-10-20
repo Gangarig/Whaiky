@@ -17,7 +17,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Global } from '../../../style/Global';
 import { showMessage } from 'react-native-flash-message';
 import GradientButton from '../../../style/GradientButton';
-import CheckBox from 'react-native-check-box'
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -118,19 +117,11 @@ const SignUp = ({ navigation }) => {
             secureTextEntry
           />
           <View style={styles.checkboxContainer}>
-            <CheckBox
-              isChecked={checkBox1}
-              onClick={() => {}}
-            />
             <Text style={Global.text}>
               Password must have 8 characters
             </Text>
           </View>
           <View style={styles.checkboxContainer}>
-            <CheckBox
-              isChecked={checkBox2}
-              onClick={() => {}}
-            />
             <Text style={Global.text}>
               At least one number or special character
             </Text>

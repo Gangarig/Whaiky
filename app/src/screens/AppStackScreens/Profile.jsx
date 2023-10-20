@@ -37,7 +37,6 @@ const Profile = ({ navigation }) => {
             <Text style={styles.nameText}>{userData.displayName || 'N/A'}</Text>
             <Text style={styles.infoText}>Email: {userData.email || 'N/A'}</Text>
             <Text style={styles.infoText}>UID: {userData.uid || 'N/A'}</Text>
-            <Text style={styles.infoText}>Avatar URL: {userData.photoURL || 'N/A'}</Text>
             <Text style={styles.infoText}>Country: {userData.country || 'N/A'}</Text>
             <Text style={styles.infoText}>State: {userData.state || 'N/A'}</Text>
             <Text style={styles.infoText}>City: {userData.city || 'N/A'}</Text>
@@ -62,14 +61,13 @@ const Profile = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f2f5', // Facebook-like background color
+    backgroundColor: '#FFF', 
   },
   scrollContainer: {
     padding: 16,
   },
   profileContainer: {
-    alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'grey',
     borderRadius: 10,
     padding: 20,
     marginBottom: 16,

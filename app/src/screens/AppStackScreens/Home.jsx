@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
-
+import { Global } from '../../../style/Global';
 
 const DEFAULT_IMAGE = require('./../../../assets/images/default.png');
 const Home = ({ navigation }) => {
@@ -108,7 +108,6 @@ const Home = ({ navigation }) => {
       <View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
           <Button title='AddPost' onPress={() => navigation.navigate('AddPost')} />
-          <Button title='Refresh' onPress={handleRefresh} />
         </View>
         {refreshing && <Text>Loading...</Text>}
         {currentUser ? (
