@@ -136,7 +136,7 @@ export default function App() {
     <ChatContextProvider>
     <NavigationContainer>
     <Main />
-    <FlashMessage position="top" />
+    <FlashMessage position="top" style={{zIndex:9999}}/>
     </NavigationContainer>
     </ChatContextProvider>
     </AuthProvider>

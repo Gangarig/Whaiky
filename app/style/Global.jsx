@@ -42,7 +42,7 @@ export const Global = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: '#FBFBFB',
         borderStyle: 'solid',
-        borderWidth: 0.5,
+        borderWidth: 1,
         borderColor: 'rgba(136, 136, 136, 1.0)',
         paddingHorizontal: 15,
         paddingVertical: 10,

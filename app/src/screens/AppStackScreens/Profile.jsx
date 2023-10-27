@@ -3,6 +3,7 @@ import { View, Text, Button, Image, StyleSheet, SafeAreaView, ScrollView } from 
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
+import { Global } from '../../../style/Global';
 
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -35,14 +36,23 @@ const Profile = ({ navigation }) => {
           <View style={styles.profileContainer}>
             <Image source={{ uri: userData.photoURL }} style={styles.avatar} />
             <Text style={styles.nameText}>{userData.displayName || 'N/A'}</Text>
+            <Text style={styles.infoText}>First Name: {userData.firstName || 'N/A'}</Text>
+            <Text style={styles.infoText}>Last Name: {userData.lastName || 'N/A'}</Text>
             <Text style={styles.infoText}>Email: {userData.email || 'N/A'}</Text>
             <Text style={styles.infoText}>UID: {userData.uid || 'N/A'}</Text>
             <Text style={styles.infoText}>Country: {userData.country || 'N/A'}</Text>
             <Text style={styles.infoText}>State: {userData.state || 'N/A'}</Text>
             <Text style={styles.infoText}>City: {userData.city || 'N/A'}</Text>
-            <Text style={styles.infoText}>Phone: {userData.phone || 'N/A'}</Text>
-            <Text style={styles.infoText}>First Name: {userData.firstName || 'N/A'}</Text>
-            <Text style={styles.infoText}>Last Name: {userData.lastName || 'N/A'}</Text>
+            <Text style={styles.infoText}>Phone Numbers:</Text>
+            {userData.phoneNumbers && userData.phoneNumbers.length > 0 ? (
+              userData.phoneNumbers.map((phoneNumber, index) => (
+                <Text key={index} style={styles.infoText}>
+                  {phoneNumber}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.infoText}>N/A</Text>
+            )}
             <Text style={styles.infoText}>
               Created At: {userData.createdAt ? new Date(userData.createdAt).toLocaleString() : 'N/A'}
             </Text>
@@ -67,7 +77,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   profileContainer: {
-    backgroundColor: 'grey',
+    backgroundColor: '#FFF',
     borderRadius: 10,
     padding: 20,
     marginBottom: 16,

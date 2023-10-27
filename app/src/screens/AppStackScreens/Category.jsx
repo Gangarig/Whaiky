@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     gap: 16,
+    paddingVertical: 16,
   },
   mainCategory: {
     width: 350,

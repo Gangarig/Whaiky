@@ -1,95 +1,143 @@
-import React from 'react';
-import { View, Text, Button, ScrollView, SafeAreaView } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
-import ServiceCategoryPicker from '../../../service/ServiceCategoryPicker';
-import { categoriesData } from '../../dataStatic/categoriesData';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, ScrollView, SafeAreaView, StyleSheet, Alert } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import { useAuth } from '../../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
+import ServiceCategoryPicker from '../../../service/ServiceCategoryPicker';
+import { Global } from '../../../style/Global';
+
 const Legalinfo = ({ navigation }) => {
   const { currentUser } = useAuth();
-  const [ Category, setCategory ] = useState([]);
-  const [ Option, setOption ] = useState([]);
   const [services, setServices] = useState([]);
   const [isPickerModalVisible, setPickerModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      const subscriber = firestore()
+        .collection('users')
+        .doc(currentUser.uid)
+        .onSnapshot(documentSnapshot => {
+          setServices(documentSnapshot.data().services || []);
+        });
+
+      // Unsubscribe from events when no longer in use
+      return () => subscriber();
+    } else {
+      showMessage({
+        message: 'No user is signed in',
+        type: 'warning',
+      });
+    }
+  }, [currentUser]);
 
   const togglePickerModal = () => {
     setPickerModalVisible(prevVisible => !prevVisible);
   };
 
-  const handleServicesUpdate = (updatedServices) => {
-    setServices(updatedServices);
+  const handleDeleteService = (service) => {
+    Alert.alert(
+      "Delete Service",
+      "Are you sure you want to delete this service?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "OK", onPress: () => deleteService(service) }
+      ]
+    );
   };
 
+  const deleteService = (serviceToDelete) => {
+    // First, update the local state
+    setServices(prevServices => 
+      prevServices.filter(service => service.categoryId !== serviceToDelete.categoryId)
+    );
   
-  const handleSave = () => {
-    // Ensure there is a current user before proceeding
-    if (!currentUser || !currentUser.uid) {
-      console.error("No user found. Cannot save to Firestore.");
-      alert("Error saving data. Please log in again.");
+    // Then, create a reference to the user's document
+    const userDocRef = firestore().collection('users').doc(currentUser.uid);
+  
+    // Remove the service from the user's document in Firestore
+    userDocRef.update({
+      services: firestore.FieldValue.arrayRemove({
+        categoryId: serviceToDelete.categoryId,
+        categoryText: serviceToDelete.categoryText,
+        optionId: serviceToDelete.optionId,
+        optionText: serviceToDelete.optionText,
+      })
+    })
+    .then(() => {
+      showMessage({
+        message: "Service deleted successfully.",
+        type: "success",
+      });
+    })
+    .catch(error => {
+      console.error("Error removing service from Firestore: ", error);
+      showMessage({
+        message: "Error deleting service. Please try again later.",
+        type: "danger",
+      });
+    });
+  };
+  
+
+  const handleSaveAndContinue = () => {
+    if (services.length === 0) {
+      showMessage({
+        message: "Please select at least one service before continuing.",
+        type: "danger",
+      });
       return;
     }
-  
-    // Prepare the data for Firestore
-    const servicesData = services.map(s => ({
-      CategoryId: s.categoryId,
-      Category: s.categoryText,
-      OptionId: s.optionId,
-      Option: s.optionText,
-    }));
-  
-    // Save to Firestore
-    firestore()
-      .collection('users')
-      .doc(currentUser.uid)
-      .set({ services: servicesData }, { merge: true })
-      .then(() => {
-        alert('Info saved successfully!');
-      })
-      .catch(error => {
-        console.error("Error saving to Firestore:", error);
-        alert("Error saving data. Please try again later.");
-      });
-  };
-  
-const handleSaveAndContinue = () => {
-  handleSave();
-  navigation.navigate('DocumentUpload');
-};
 
-return (
-  <SafeAreaView style={{ flex: 1 }}>
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <View style={{ padding: 16 }}>
-        <Text>Legalinfo</Text>
-        <Button title="Go Back" onPress={() => navigation.goBack()} />
-        {/* 2. Trigger button to show modal */}
-        <Button title="Select Services" onPress={togglePickerModal} />
-        {/* 3. Pass modalVisible and toggle function as props */}
+    // Navigate to the next screen if there are selected services
+    navigation.navigate('DocumentUpload');
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <Text style={Global.title}>Service Information</Text>
+
+        <Button title="Choose a Category" onPress={togglePickerModal} />
+
         <ServiceCategoryPicker 
-          onServicesChange={handleServicesUpdate} 
           modalVisible={isPickerModalVisible} 
           toggleModal={togglePickerModal} 
+          // other necessary props 
         />
-                  {/* Selected Services List Display */}
-                  <View style={{ marginTop: 20 }}>
-            <Text>Selected Services:</Text>
-            {services.map((service, index) => (
-              <View key={index} style={{ flexDirection: 'row', marginVertical: 5 }}>
-                <Text>
-                  Category Id: {service.categoryId},
-                  Category Text: {service.categoryText},
-                  Option Id: {service.optionId || 'N/A'},
-                  Option Text: {service.optionText}
-                </Text>
-              </View>
-            ))}
+
+        {services.map((service, index) => (
+          <View key={index} style={styles.serviceContainer}>
+            <Text style={[Global.titleSecondary]}>{service.categoryText}</Text>
+            <Text style={[Global.text]}>{service.optionText}</Text>
+            <Button title="Delete" onPress={() => handleDeleteService(service)} />
           </View>
-        <Button title="Save and Continue" onPress={handleSaveAndContinue}/>
-      </View>
-    </ScrollView>
-  </SafeAreaView>
-);
+        ))}
+
+        <Button title="Save and Continue" onPress={handleSaveAndContinue} />
+        <Button title="Go Back" onPress={() => navigation.goBack()} />
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  serviceContainer: {
+    padding: 10,
+    marginVertical: 5,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+});
 
 export default Legalinfo;

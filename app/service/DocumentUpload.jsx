@@ -1,12 +1,14 @@
-import { View, Text } from 'react-native'
+import { View, Text,StyleSheet } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAuth } from '../src/context/AuthContext'
 import ImageCropPicker from 'react-native-image-crop-picker'
-import { TextInput } from 'react-native-gesture-handler'
+import { ScrollView, TextInput } from 'react-native-gesture-handler'
 import { useState } from 'react'
 import { Button } from 'react-native'
 import storage from '@react-native-firebase/storage'
+import { Global } from '../style/Global'
+import { showMessage } from 'react-native-flash-message'
 const DocumentUpload = ({navigation}) => {
     const { currentUser } = useAuth()
     const [image, setImage] = useState(null)
@@ -48,8 +50,8 @@ const DocumentUpload = ({navigation}) => {
     
   return (
     <SafeAreaView>
-    <View>
-      <Text>DocumentUpload</Text>
+    <ScrollView style={styles.container}>
+      <Text style={Global.title}>DocumentUpload</Text>
         <Text> ID card number</Text>
         <TextInput placeholder="Enter ID card number" />
         <Text> Upload ID</Text>
@@ -58,9 +60,13 @@ const DocumentUpload = ({navigation}) => {
         <TextInput placeholder="Enter Home Address" />
         <Button title="Save and Continue" onPress={handleUploadPhoto} />
         <Button title="Go Back" onPress={() => navigation.goBack()} />
-    </View>
+    </ScrollView>
     </SafeAreaView>
   )
 }
+
+const styles = StyleSheet.create({
+
+})
 
 export default DocumentUpload

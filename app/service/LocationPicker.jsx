@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Button, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Country, State, City } from 'country-state-city';
+import { Global } from '../style/Global';
+import { showMessage } from 'react-native-flash-message';
 
 const LocationPicker = ({ onSave , onClose }) => {
   const [country, setCountry] = useState(null);
@@ -105,6 +107,10 @@ const LocationPicker = ({ onSave , onClose }) => {
   const handleSaveAndClose = () => {
     onSave(country, state, city);
     if (onClose) onClose();
+    showMessage({
+      message: 'Location saved successfully!',
+      type: 'success',
+    });
   };
 
   useEffect(() => {
@@ -114,9 +120,9 @@ const LocationPicker = ({ onSave , onClose }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.centeredContainer}>
-        <Text>Location Picker</Text>
-
-        <Text>Country</Text>
+        <Text style={Global.title}>Choose a Location</Text>
+        
+        <Text style={Global.titleSecondary}>Country</Text>
         <DropDownPicker
           open={countryOpen}
           value={country}
@@ -134,10 +140,9 @@ const LocationPicker = ({ onSave , onClose }) => {
           zIndexInverse={1000}
           closeAfterSelectByDefault={true}
         />
-
         {stateItems.length > 0 && (
           <>
-            <Text>State</Text>
+            <Text style={Global.titleSecondary}>State</Text>
             <DropDownPicker
               open={stateOpen}
               value={state}
@@ -155,10 +160,9 @@ const LocationPicker = ({ onSave , onClose }) => {
             />
           </>
         )}
-
         {cityItems.length > 0 && (
           <>
-            <Text>City</Text>
+            <Text style={Global.titleSecondary}>City</Text>
             <DropDownPicker
               open={cityOpen}
               value={city}
@@ -176,17 +180,19 @@ const LocationPicker = ({ onSave , onClose }) => {
             />
           </>
         )}
+
         { country  && 
-        (<>
-        <Text>Selected Location</Text>
-        <Text>Country:{country}</Text>  
-        </>        
+        (<View style={styles.subContainer}>
+
+        <Text style={Global.titleSecondary}>Selected Location</Text>
+        <Text style={Global.titleSecondary}>Country:{country}</Text>  
+        </View>        
         )}
         { state  &&
-        (<Text>State:{state}</Text>
+        (<Text style={Global.titleSecondary}>State:{state}</Text>
         )}
         { city  &&
-        (<Text>City:{city}</Text>
+        (<Text style={Global.titleSecondary}>City:{city}</Text>
         )}
 
       {showSaveButton && (
@@ -209,6 +215,7 @@ const styles = StyleSheet.create({
 
   centeredContainer: {
     width: '95%',
+    gap: 10,
   },
   dropdownContainer: {
     marginTop: 10,
@@ -221,6 +228,9 @@ const styles = StyleSheet.create({
   },
   dropdownScrollView: {
     maxHeight: Dimensions.get('window').height * 0.5,
+  },
+  subContainer: {
+    gap: 10,
   },
 });
 
