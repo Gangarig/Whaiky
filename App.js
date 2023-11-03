@@ -89,6 +89,7 @@ const Drawer = createDrawerNavigator();
 function DrawerNavigator() {
   return (
     <Drawer.Navigator initialRouteName="Home">
+      <Drawer.Screen name="DocumentUpload" component={DocumentUpload} />
       <Drawer.Screen name="Home" component={HomeStackScreen} />
       <Drawer.Screen name="Category" component={CategoryStack} />
       <Drawer.Screen name="Messages" component={ChatStackScreen} />
