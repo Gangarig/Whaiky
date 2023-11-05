@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, FlatList, Image, TouchableOpacity,
-  Button, RefreshControl, SafeAreaView
+  Button, RefreshControl, SafeAreaView, StyleSheet ,Modal
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import { Global } from '../../../style/Global';
+import AddPost from '../../components/AddPost';
+import { shallowEqual } from 'react-native-reanimated/lib/typescript/reanimated2/hook/utils';
+import { showMessage } from 'react-native-flash-message';
 
 const DEFAULT_IMAGE = require('./../../../assets/images/default.png');
 const Home = ({ navigation }) => {
-  const { currentUser } = useAuth();
+  const { currentUser , personalInfoComplete } = useAuth();
   const [posts, setPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [lastVisible, setLastVisible] = useState(null);
   const [firstVisible, setFirstVisible] = useState(null);
-
+  const [modalVisible, setModalVisible] = useState(false);
   const initialFetch = async () => {
     try {
       const query = firestore()
@@ -83,6 +86,16 @@ const Home = ({ navigation }) => {
     await fetchNew();
     setRefreshing(false);
   };
+  const openModal = () => {
+    if(personalInfoComplete){
+      setModalVisible(true);
+    }else{
+      showMessage({
+        message: "Please complete your personal info first",
+        type: "danger",
+      });
+    }
+  };
 
   const renderItem = ({ item }) => {
     if (!item.title || !item.price ) {
@@ -107,7 +120,7 @@ const Home = ({ navigation }) => {
     <SafeAreaView>
       <View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
-          <Button title='AddPost' onPress={() => navigation.navigate('AddPost')} />
+        <Button title="Create a Post" onPress={openModal} />
         </View>
         {refreshing && <Text>Loading...</Text>}
         {currentUser ? (
@@ -128,9 +141,28 @@ const Home = ({ navigation }) => {
         ) : (
           <Text>Please sign in to see posts.</Text>
         )}
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <View style={styles.container}>
+          <View style={styles.modalContent}>
+            <AddPost onPostSubmitted={() => setModalVisible(false)} />
+            <Button title="Cancel" onPress={() => setModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
+
       </View>
     </SafeAreaView>
   );
 };
 
 export default Home;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:'#fff'
+  },
+
+});

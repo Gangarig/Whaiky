@@ -4,17 +4,23 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Country } from 'country-state-city';
 import { Global } from '../style/Global';
 
-const CountryPicker = ({ onValueChange, value }) => {
+const CountryPicker = ({ onSelect, value }) => {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([]);
+  const [selectedValue, setSelectedValue] = useState(null); // Track the selected value
 
   useEffect(() => {
     const countries = Country.getAllCountries().map((country) => ({
       label: country.name,
-      value: country.isoCode,
+      value: country.name,
     }));
     setItems(countries);
   }, []);
+
+  useEffect(() => {
+    // Update the selectedValue whenever the value prop changes
+    setSelectedValue(value);
+  }, [value]);
 
   const handleOpen = useCallback(() => {
     setOpen((prevState) => !prevState);
@@ -24,11 +30,15 @@ const CountryPicker = ({ onValueChange, value }) => {
     <View style={styles.container}>
       <DropDownPicker
         open={open}
-        value={value}
+        value={selectedValue} // Use the selectedValue state here
         items={items}
         setOpen={handleOpen}
-        setValue={onValueChange}
+        setValue={(selectedItem) => {
+          setSelectedValue(selectedItem);
+          onSelect(selectedItem);
+        }}
         placeholder="Country of Issue"
+        placeholderStyle={{ color: 'gray' }} // Set the color of the placeholder text
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
         zIndex={open ? 5000 : undefined}
@@ -40,8 +50,10 @@ const CountryPicker = ({ onValueChange, value }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 296,
+    width: '100%',
+    marginBottom: 10,
   },
+
   dropdown: {
     borderColor: 'black',
     borderWidth: 1,

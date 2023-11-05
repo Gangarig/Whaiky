@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
 
   centeredContainer: {
     width: '95%',
-    gap: 10,
+    gap: 5,
   },
   dropdownContainer: {
     marginTop: 10,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     maxHeight: Dimensions.get('window').height * 0.5,
   },
   subContainer: {
-    gap: 10,
+    gap: 5,
   },
 });
 

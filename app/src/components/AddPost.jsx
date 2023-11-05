@@ -1,227 +1,389 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, ScrollView, Image, StyleSheet } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  Button,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  Modal,
+  Image,
+} from 'react-native';
 import { useAuth } from '../context/AuthContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import ImagePicker from 'react-native-image-crop-picker';
+import { Global } from '../../style/Global';
+import firestore from '@react-native-firebase/firestore';
+import LocationPicker from '../../service/LocationPicker';
+import CategoryPicker from '../../service/CategoryPicker';
+import ImageCropPicker from 'react-native-image-crop-picker'; // Import the image picker library
+import { showMessage } from 'react-native-flash-message';
+import firebase from '@react-native-firebase/app';
+import ProgressBar from './ProgressBar';
 
 const AddPost = ({ navigation }) => {
-    const { currentUser } = useAuth();
+  const { currentUser } = useAuth();
+  const [postType, setPostType] = useState('Looking For Service');
+  const [subTitle, setSubTitle] = useState('Looking For Service');
+  const [post, setPost] = useState({
+    title: '',
+    description: '',
+    country: currentUser.country,
+    state: currentUser.state,
+    city: currentUser.city,
+    categoryId: 11,
+    categoryText: 'Other', // Initialize with default text
+    optionId: 41,
+    optionText: 'Other', // Initialize with default text
+    price: '',
+    images: [], // Store selected images here
+    ownerId: currentUser.uid,
+    ownerName: currentUser.displayName,
+    ownerAvatar: currentUser.photoURL,
+    createdAt: firestore.FieldValue.serverTimestamp(),
+    updatedAt: firestore.FieldValue.serverTimestamp(),
+  });
+  const [modalVisible, setModalVisible] = useState(false);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [progress, setProgress] = useState(0);
 
-    const [postDetails, setPostDetails] = useState({
+  const changeType = () => {
+    if (postType === 'LookingForService') {
+      setPostType('OfferingService');
+      setSubTitle('Offering Service');
+    } else {
+      setPostType('LookingForService');
+      setSubTitle('Looking For Service');
+    }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+  const openCategoryModal = () => {
+    setCategoryModalVisible(true);
+  };
+
+  const closeCategoryModal = () => {
+    setCategoryModalVisible(false);
+  };
+
+  const handleCategorySave = (category, option, categoryText, optionText) => {
+    setSelectedCategory(category);
+    setSelectedOption(option);
+    setPost({ ...post, categoryText, optionText }); // Update categoryText and optionText in state
+    closeModal();
+  };
+
+  const handleCategoryPickerSave = (categoryId, optionId, categoryText, optionText) => {
+    setModalVisible(false);
+
+    setPost({
+      ...post,
+      categoryId: categoryId || 11,
+      optionId: optionId || 41,
+      categoryText,
+      optionText,
+    });
+  };
+
+  const pickImages = async () => {
+    try {
+      const currentImageCount = post.images.length;
+      const maxImageCount = 3;
+  
+      if (currentImageCount >= maxImageCount) {
+        showMessage({
+          message: 'You can upload up to three images.',
+          type: 'warning',
+        });
+        return;
+      }
+  
+      const remainingImageCount = maxImageCount - currentImageCount;
+  
+      const images = await ImageCropPicker.openPicker({
+        multiple: true,
+        mediaType: 'photo',
+        compressImageQuality: 0.7,
+        compressImageMaxWidth: 1000,
+        compressImageMaxHeight: 1000,
+        cropping: false,
+        maxFiles: remainingImageCount, // Limit the number of images user can pick
+      });
+  
+      const updatedImages = [...post.images, ...images.slice(0, remainingImageCount)];
+  
+      setPost({ ...post, images: updatedImages });
+    } catch (error) {
+      console.error('Error picking images:', error);
+    }
+  };
+  const handleImageDelete = (index) => {
+    const updatedImages = [...post.images];
+    updatedImages.splice(index, 1);
+    setPost({ ...post, images: updatedImages });
+  };
+  const handlePost = async () => {
+    // Check if the post has a title, price, and description
+    if (!post.title || !post.price || !post.description) {
+      showMessage({
+        message: 'Please ensure the title, price, and description are filled out.',
+        type: 'warning',
+      });
+      return;
+    }
+  
+    // Generate a new document reference with an auto-generated ID
+    const newPostRef = firestore().collection('posts').doc();
+  
+    // Use the unique document ID in your image storage path
+    const uniquePostId = newPostRef.id;
+  
+    try {
+      // Start uploading the images if there are any
+      let imageUrls = [];
+      if (post.images.length > 0) {
+        const imageUploadPromises = post.images.map(async (image, index) => {
+          const response = await fetch(image.path);
+          const blob = await response.blob();
+          const imageRef = firebase.storage().ref(`post_images/${uniquePostId}/${index}`);
+          await imageRef.put(blob);
+          return imageRef.getDownloadURL();
+        });
+  
+        // Wait for all the images to be uploaded
+        imageUrls = await Promise.all(imageUploadPromises);
+      }
+  
+      // Set the post data with the unique ID and uploaded image URLs
+      await newPostRef.set({
+        ...post,
+        images: imageUrls,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+        updatedAt: firestore.FieldValue.serverTimestamp(),
+      });
+  
+      // Reset the form to initial state
+      setPost({
         title: '',
         description: '',
+        country: currentUser.country,
+        state: currentUser.state,
+        city: currentUser.city,
+        categoryId: 11,
+        categoryText: 'Other',
+        optionId: 41,
+        optionText: 'Other',
         price: '',
-        location: {
-            country: '',
-            state: '',
-            city: ''
-        },
-        category: {
-            categoryId: '',
-            categoryText: '',
-            optionId: '',
-            optionText: ''
-        },
         images: [],
-        postType: 'lookingForService',
-        postId: ''
-    });
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const validateForm = () => {
-        if (
-            !postDetails.title ||
-            !postDetails.description ||
-            !postDetails.price ||
-            !postDetails.location.country ||
-            !postDetails.location.state ||
-            !postDetails.location.city ||
-            !postDetails.category.categoryText ||
-            !postDetails.category.optionText
-        ) {
-            setError('Please fill in all required fields.');
-            return false;
-        }
-        return true;
-    };
+        ownerId: currentUser.uid,
+        ownerName: currentUser.displayName,
+        ownerAvatar: currentUser.photoURL,
+        // Removed the createdAt and updatedAt from here
+      });
+  
+      showMessage({
+        message: 'Post created successfully!',
+        type: 'success',
+      });
+  
+      // Close any open modals
+      setModalVisible(false);
+      setCategoryModalVisible(false);
+  
+      // If you have additional logic to handle after the post is created,
+      // define the `onPostSubmitted` function and call it here.
+      // onPostSubmitted();
+  
+    } catch (error) {
+      console.error('Error creating post:', error);
+      showMessage({
+        message: 'There was an error creating the post.',
+        type: 'danger',
+      });
+    }
+  };
+  
+  
+  
+  return (
+    <View style={Global.container}>
+      <Text style={Global.title}>Create a Post</Text>
+      <ProgressBar progress={progress} />
+      <View style={Global.postContainer}>
+      <Button title={subTitle} style={Global.postTypeButton} onPress={changeType}/>
 
-    const updatePostDetail = (key, value) => {
-        setPostDetails(prevState => ({ ...prevState, [key]: value }));
-    };
+      </View>
+      <View style={styles.imageContainer}>
+        
+        {post.images.map((image, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => handleImageDelete(index)}
+              style={styles.imageWrapper}
+            >
+              <Image source={{ uri: image.path }} style={styles.image} />
+              <Text style={styles.deleteText}>Delete</Text>
+            </TouchableOpacity>
+          ))}
+          {post.images.length < 3 && (
+            <TouchableOpacity
+              onPress={pickImages}
+              style={styles.addImageWrapper}
+            >
+              <Text style={styles.addImageText}>Add Image</Text>
+            </TouchableOpacity>
+          )}
+      </View>
 
-    const takePhoto = async () => {
-        const image = await ImagePicker.openCamera({ width: 300, height: 400, cropping: true });
-        setPostDetails(prevState => ({ ...prevState, images: [...prevState.images, image.path] }));
-    };
 
-    const selectPhoto = async () => {
-        const images = await ImagePicker.openPicker({
-            multiple: true,
-            maxFiles: 3 - postDetails.images.length
-        });
-        setPostDetails(prevState => ({ ...prevState, images: [...prevState.images, ...images.map(img => img.path)] }));
-    };
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={Global.input}
+          placeholder="Title"
+          onChangeText={(text) => setPost({ ...post, title: text })}
+        />
+        <TextInput
+          style={Global.input}
+          placeholder="Description"
+          onChangeText={(text) => setPost({ ...post, description: text })}
+        />
+        <TextInput
+          style={Global.input}
+          placeholder="Price"
+          onChangeText={(text) => setPost({ ...post, price: text })}
+        />
+      </View>
+      {post.country && (
+        <View style={styles.location}>
+          <Text style={Global.titleSecondary}>Country: {post.country}</Text>
+          <Text style={Global.titleSecondary}>State: {post.state}</Text>
+          <Text style={Global.titleSecondary}>City: {post.city}</Text>
+        </View>
+      )}
+      {post.categoryId && (
+        <View style={styles.box}>
+          <Text style={Global.titleSecondary}>
+            Category: {post.categoryText} 
+          </Text>
+          <Text style={Global.titleSecondary}>
+            Option: {post.optionText} 
+          </Text>
+        </View>
+      )}
+      <View style={styles.buttonBox}>
+        <Button
+          title="Select a Location"
+          onPress={() => setModalVisible(true)}
+        />
+        <Button title="Select Category" onPress={openCategoryModal} />
+      </View>
+      <View>
+        <Button title='Post' onPress={handlePost} />
+      </View>
 
-    const handlePost = async () => {
-        if (!validateForm()) {
-            return;
-        }
-        try {
-            const docRef = await firestore().collection('posts').add({
-                ...postDetails,
-                createdAt: firestore.FieldValue.serverTimestamp(),
-                ownerAvatar: currentUser.photoURL,
-                ownerName: currentUser.displayName,
-                ownerId: currentUser.uid
-            });
-    
-            setPostDetails(prevState => ({ ...prevState, postId: docRef.id }));
-    
-            const uploadedImages = [];
-            for (let i = 0; i < postDetails.images.length; i++) {
-                const imageName = `${currentUser.uid}_${Date.now()}_${i}`; 
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+      >
+        <View style={Global.modalContainer}>
+          <View style={styles.modalContent}>
+            <LocationPicker
+              onClose={closeModal}
+              onSave={(selectedCountry, selectedState, selectedCity) => {
+                const updatedPost = { ...post };
+                if (selectedCountry) updatedPost.country = selectedCountry;
+                if (selectedState) updatedPost.state = selectedState;
+                if (selectedCity) updatedPost.city = selectedCity;
 
-                const task = storage().ref(`post_images/${docRef.id}/${imageName}`).putFile(postDetails.images[i]);
-
-                task.on('state_changed', snapshot => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    setUploadProgress(progress);
-                });
-
-                await task;
-
-                const url = await storage().ref(`post_images/${docRef.id}/${imageName}`).getDownloadURL();
-                uploadedImages.push(url);
-            }
-    
-            await docRef.update({ images: uploadedImages });
-    
-            setSuccess('Post created successfully!');
-            setPostDetails({
-                title: '',
-                description: '',
-                price: '',
-                location: {
-                    country: '',
-                    state: '',
-                    city: ''
-                },
-                category: {
-                    categoryId: '',
-                    categoryText: '',
-                    optionId: '',
-                    optionText: ''
-                },
-                images: [],
-                postType: 'lookingForService',
-                postId: ''
-            });
-            navigation.goBack();
-        } catch (error) {
-            setError('Error creating post: ' + error.message);
-        }
-    };
-    
-
-    return (
-        <SafeAreaView style={styles.container}>
-            {error && <Text style={{color: 'red', alignSelf: 'center', margin: 5}}>{error}</Text>}
-            {success && <Text style={{color: 'green', alignSelf: 'center', margin: 5}}>{success}</Text>}
-            <ScrollView>
-                <View style={styles.section}>
-                    <Text style={styles.label}>Post Type</Text>
-                    <Button title={postDetails.postType} onPress={() => updatePostDetail('postType', postDetails.postType === 'lookingForService' ? 'providingService' : 'lookingForService')} />
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.label}>Title</Text>
-                    <TextInput style={styles.input} placeholder="Title" value={postDetails.title} onChangeText={(text) => updatePostDetail('title', text)} />
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.label}>Description</Text>
-                    <TextInput style={styles.input} placeholder="Description" value={postDetails.description} onChangeText={(text) => updatePostDetail('description', text)} />
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.label}>Price</Text>
-                    <TextInput style={styles.input} placeholder="Price" value={postDetails.price} onChangeText={(text) => updatePostDetail('price', text)} />
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.label}>Country</Text>
-                    <TextInput style={styles.input} placeholder="Country" value={postDetails.location.country} onChangeText={(text) => updatePostDetail('location', {...postDetails.location, country: text})} />
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.label}>State</Text>
-                    <TextInput style={styles.input} placeholder="State" value={postDetails.location.state} onChangeText={(text) => updatePostDetail('location', {...postDetails.location, state: text})} />
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.label}>City</Text>
-                    <TextInput style={styles.input} placeholder="City" value={postDetails.location.city} onChangeText={(text) => updatePostDetail('location', {...postDetails.location, city: text})} />
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.label}>Category</Text>
-                    <TextInput style={styles.input} placeholder="Category" value={postDetails.category.categoryText} onChangeText={(text) => updatePostDetail('category', {...postDetails.category, categoryText: text})} />
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.label}>Option</Text>
-                    <TextInput style={styles.input} placeholder="Option" value={postDetails.category.optionText} onChangeText={(text) => updatePostDetail('category', {...postDetails.category, optionText: text})} />
-                </View>
-                <View style={styles.section}>
-                    <Text style={styles.label}>Image</Text>
-                    <View style={{ height: 10, width: '100%', backgroundColor: '#E0E0E0', marginBottom: 10 }}>
-                        <View style={{ height: '100%', width: `${uploadProgress}%`, backgroundColor: 'green' }} />
-                    </View>
-                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
-                        {postDetails.images.map((image, index) => (
-                            <Image key={index} source={{ uri: image }} style={styles.selectedImage} />
-                        ))}
-                    </ScrollView>
-                    <Button title="Take Photo" onPress={takePhoto} />
-                    <Button title="Select Photos" onPress={selectPhoto} />
-                    <Button title="Back"onPress={() => navigation.goBack()} />
-                </View>
-
-                <Button title="Submit" onPress={handlePost} />
-            </ScrollView>
-        </SafeAreaView>
-    );
+                setPost(updatedPost);
+                closeModal();
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={categoryModalVisible}
+      >
+        <View style={Global.modalContainer}>
+          <View style={styles.modalContent}>
+            <CategoryPicker
+              onSave={handleCategoryPickerSave}
+              onClose={closeCategoryModal}
+            />
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 15,
-        backgroundColor: '#f5f5f5',
-    },
-    section: {
-        marginBottom: 20,
-    },
-    label: {
-        marginBottom: 10,
-        fontWeight: 'bold',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#d1d1d1',
-        padding: 10,
-        borderRadius: 4,
-    },
-    imagesContainer: {
-        flexDirection: 'row',
-        marginBottom: 15,
-    },
-    image: {
-        width: 100,
-        height: 100,
-        marginRight: 10,
-    },
-    selectedImage: {
-        width: 100,
-        height: 100,
-        marginRight: 10,
-        borderRadius: 10,
-    },
+  inputContainer: {
+    padding: 10,
+    gap: 10,
+  },
+  modalContent: {
+    height: '85%',
+    width: '80%',
+  },
+  location: {
+    flexDirection: 'row',
+    gap: 10,
+    padding: 5,
+  },
+  buttonBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  box: {
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  imageWrapper: {
+    width: '30%', // Adjust the width as needed
+    marginBottom: 10,
+    position: 'relative',
+  },
+  image: {
+    width: '100%',
+    height: 100,
+    borderRadius: 5,
+  },
+  deleteText: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    color: 'white',
+    padding: 5,
+    borderRadius: 5,
+  },
+  addImageWrapper: {
+    width: '30%', // Adjust the width as needed
+    marginBottom: 10,
+    backgroundColor: '#f2f2f2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  addImageText: {
+    color: '#333',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default AddPost;

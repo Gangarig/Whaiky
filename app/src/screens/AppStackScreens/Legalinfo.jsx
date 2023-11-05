@@ -1,122 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, ScrollView, SafeAreaView, StyleSheet, Alert } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
+import { View, Text, FlatList, Image, StyleSheet, Button } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
-import ServiceCategoryPicker from '../../../service/ServiceCategoryPicker';
-import { Global } from '../../../style/Global';
 
-const Legalinfo = ({ navigation }) => {
+const LegalInfo = ({navigation}) => {
   const { currentUser } = useAuth();
-  const [services, setServices] = useState([]);
-  const [isPickerModalVisible, setPickerModalVisible] = useState(false);
+  const [documents, setDocuments] = useState([]);
+  const [certificates, setCertificates] = useState([]);
 
   useEffect(() => {
-    if (currentUser) {
-      const subscriber = firestore()
-        .collection('users')
-        .doc(currentUser.uid)
-        .onSnapshot(documentSnapshot => {
-          setServices(documentSnapshot.data().services || []);
-        });
+    const userDocRef = firestore().collection('users').doc(currentUser.uid);
 
-      // Unsubscribe from events when no longer in use
-      return () => subscriber();
-    } else {
-      showMessage({
-        message: 'No user is signed in',
-        type: 'warning',
-      });
-    }
+    // Subscribe to real-time updates for documents
+    const documentsListener = userDocRef.collection('documents').onSnapshot((querySnapshot) => {
+      const documentsData = querySnapshot.docs.map((doc) => doc.data());
+      setDocuments(documentsData);
+    });
+
+    // Subscribe to real-time updates for certificates
+    const certificatesListener = userDocRef.collection('certificates').onSnapshot((querySnapshot) => {
+      const certificatesData = querySnapshot.docs.map((doc) => doc.data());
+      setCertificates(certificatesData);
+    });
+
+    // Unsubscribe listeners when the component unmounts
+    return () => {
+      documentsListener();
+      certificatesListener();
+    };
   }, [currentUser]);
 
-  const togglePickerModal = () => {
-    setPickerModalVisible(prevVisible => !prevVisible);
-  };
-
-  const handleDeleteService = (service) => {
-    Alert.alert(
-      "Delete Service",
-      "Are you sure you want to delete this service?",
-      [
-        { text: "Cancel", style: "cancel" },
-        { text: "OK", onPress: () => deleteService(service) }
-      ]
-    );
-  };
-
-  const deleteService = (serviceToDelete) => {
-    // First, update the local state
-    setServices(prevServices => 
-      prevServices.filter(service => service.categoryId !== serviceToDelete.categoryId)
-    );
-  
-    // Then, create a reference to the user's document
-    const userDocRef = firestore().collection('users').doc(currentUser.uid);
-  
-    // Remove the service from the user's document in Firestore
-    userDocRef.update({
-      services: firestore.FieldValue.arrayRemove({
-        categoryId: serviceToDelete.categoryId,
-        categoryText: serviceToDelete.categoryText,
-        optionId: serviceToDelete.optionId,
-        optionText: serviceToDelete.optionText,
-      })
-    })
-    .then(() => {
-      showMessage({
-        message: "Service deleted successfully.",
-        type: "success",
-      });
-    })
-    .catch(error => {
-      console.error("Error removing service from Firestore: ", error);
-      showMessage({
-        message: "Error deleting service. Please try again later.",
-        type: "danger",
-      });
-    });
-  };
-  
-
-  const handleSaveAndContinue = () => {
-    if (services.length === 0) {
-      showMessage({
-        message: "Please select at least one service before continuing.",
-        type: "danger",
-      });
-      return;
-    }
-
-    // Navigate to the next screen if there are selected services
-    navigation.navigate('DocumentUpload');
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Text style={Global.title}>Service Information</Text>
-
-        <Button title="Choose a Category" onPress={togglePickerModal} />
-
-        <ServiceCategoryPicker 
-          modalVisible={isPickerModalVisible} 
-          toggleModal={togglePickerModal} 
-          // other necessary props 
-        />
-
-        {services.map((service, index) => (
-          <View key={index} style={styles.serviceContainer}>
-            <Text style={[Global.titleSecondary]}>{service.categoryText}</Text>
-            <Text style={[Global.text]}>{service.optionText}</Text>
-            <Button title="Delete" onPress={() => handleDeleteService(service)} />
+    <View style={styles.container}>
+      <Text style={styles.title}>Legal Info</Text>
+      <FlatList
+        data={documents.concat(certificates)}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.itemContainer}>
+            {item.type ? (
+              // Render documents
+              <>
+                <Text style={styles.documentType}>Document Type: {item.type}</Text>
+                <Text>Document Number: {item.number}</Text>
+                <Text>Full Name: {item.fullName}</Text>
+                <Text>Country of Issue: {item.country}</Text>
+                <Text>Date of Issue: {item.dateOfIssue}</Text>
+                <Text>Date of Expiry: {item.dateOfExpiry}</Text>
+                {/* Display images as needed */}
+                {item.frontImage && (
+                  <Image source={{ uri: item.frontImage }} style={styles.image} />
+                )}
+                {item.backImage && (
+                  <Image source={{ uri: item.backImage }} style={styles.image} />
+                )}
+              </>
+            ) : (
+              // Render certificates
+              <>
+                <Text style={styles.certificateTitle}>Certificate Title: {item.title}</Text>
+                <Text>Description: {item.description}</Text>
+                {/* Display certificate images as needed */}
+                {item.imageUrl && (
+                  <Image source={{ uri: item.imageUrl }} style={styles.image} />
+                )}
+              </>
+            )}
           </View>
-        ))}
-
-        <Button title="Save and Continue" onPress={handleSaveAndContinue} />
-        <Button title="Go Back" onPress={() => navigation.goBack()} />
-      </ScrollView>
-    </SafeAreaView>
+        )}
+      />
+      <Button title='Go Back' onPress={() => navigation.goBack()} />
+    </View>
   );
 };
 
@@ -128,16 +82,36 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
     marginBottom: 20,
   },
-  serviceContainer: {
-    padding: 10,
-    marginVertical: 5,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 5,
+  itemContainer: {
+    backgroundColor: '#fff',
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  documentType: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  certificateTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    marginVertical: 10,
+    borderRadius: 8,
   },
 });
 
-export default Legalinfo;
+export default LegalInfo;

@@ -22,6 +22,8 @@ import Settings from './app/src/screens/AppStackScreens/Settings'
 import ServiceCategoryPicker from './app/service/ServiceCategoryPicker';
 import PostDetail from './app/src/screens/AppStackScreens/PostDetail';
 import LocationPicker from './app/service/LocationPicker';
+
+
 //chat screens
 import ChatScreen from './app/src/screens/AppStackScreens/ChatScreen'
 import Chat from './app/src/components/chat/Chat'
@@ -30,8 +32,12 @@ import Chat from './app/src/components/chat/Chat'
 
 //profile screens
 import PersonalInfo from './app/src/screens/AppStackScreens/PersonalInfo'
-import LegalInfo from './app/src/screens/AppStackScreens/Legalinfo'
+import ServiceCategory from './app/src/screens/AppStackScreens/ServiceCategory'
 import DocumentUpload from './app/service/DocumentUpload';
+import Certificate from './app/service/Certificate';
+import Contractor from './app/service/Contractor';
+import LegalInfo from './app/src/screens/AppStackScreens/LegalInfo'
+import Complete from './app/service/Complete'; 
 
 // components
 import Loading from './app/src/components/Loading';
@@ -42,7 +48,7 @@ import AddPost from './app/src/components/AddPost';
 import { AuthProvider, useAuth } from './app/src/context/AuthContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ChatContextProvider } from './app/src/context/ChatContext';
-
+import { AccountStatus } from './app/src/context/AccountStatus';
 
 
 const Stack = createStackNavigator();
@@ -70,8 +76,12 @@ function ProfileStackScreen() {
     <ProfileStack.Navigator screenOptions={{headerShown:false}}>
       <ProfileStack.Screen name="ProfileScreen" component={Profile} />
       <ProfileStack.Screen name="PersonalInfo" component={PersonalInfo} />
-      <ProfileStack.Screen name="LegalInfo" component={LegalInfo} />
+      <ProfileStack.Screen name="Services" component={ServiceCategory} />
       <ProfileStack.Screen name="DocumentUpload" component={DocumentUpload} />
+      <ProfileStack.Screen name="Certificate" component={Certificate} />
+      <ProfileStack.Screen name="LegalInfo" component={LegalInfo} />
+      <ProfileStack.Screen name="Contractor" component={Contractor} />
+      <ProfileStack.Screen name="Complete" component={Complete} />
     </ProfileStack.Navigator>
   );
 }
@@ -89,7 +99,6 @@ const Drawer = createDrawerNavigator();
 function DrawerNavigator() {
   return (
     <Drawer.Navigator initialRouteName="Home">
-      <Drawer.Screen name="DocumentUpload" component={DocumentUpload} />
       <Drawer.Screen name="Home" component={HomeStackScreen} />
       <Drawer.Screen name="Category" component={CategoryStack} />
       <Drawer.Screen name="Messages" component={ChatStackScreen} />

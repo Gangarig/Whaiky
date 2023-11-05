@@ -28,7 +28,40 @@ const Profile = ({ navigation }) => {
 
     fetchData();
   }, [currentUser]);
-
+  const handleContractor = async () => {
+    try {
+      if (currentUser?.uid) {
+        const userDocRef = firestore().collection('users').doc(currentUser.uid);
+  
+        const userDoc = await userDocRef.get();
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+  
+          // Check if legalInfo status is completed
+          if (userData.legalInfo === 'completed') {
+            // Navigate to the Contractor page
+            navigation.navigate('Contractor');
+          } else {
+            // Navigate to the Services page
+            navigation.navigate('Services');
+          }
+        } else {
+          // Handle the case where user document does not exist
+          showMessage({
+            message: 'User document not found.',
+            type: 'danger',
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      showMessage({
+        message: 'An error occurred while fetching user data.',
+        type: 'danger',
+      });
+    }
+  };
+  
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -60,7 +93,7 @@ const Profile = ({ navigation }) => {
         )}
         <View style={styles.buttonContainer}>
           <Button title="Fill the personal Info forms" onPress={() => navigation.navigate('PersonalInfo')} />
-          <Button title="Become a Contractor" onPress={() => navigation.navigate('LegalInfo')} />
+          <Button title="Become a Contractor" onPress={handleContractor} />
           <Button title="Log Out" onPress={() => auth().signOut()} />
         </View>
       </ScrollView>

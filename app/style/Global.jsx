@@ -46,6 +46,7 @@ export const Global = StyleSheet.create({
         borderColor: 'rgba(136, 136, 136, 1.0)',
         paddingHorizontal: 15,
         paddingVertical: 10,
+
     },
     error: {
         fontWeight: 'bold',
@@ -73,7 +74,17 @@ export const Global = StyleSheet.create({
     },
     link:{
        fontWeight: 'bold',
-    }
+    },
+    center: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor:'#fff'
+    },
 }
 )
 ;
