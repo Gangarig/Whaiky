@@ -4,6 +4,19 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from '@react-navigation/stack';
 import FlashMessage from "react-native-flash-message";
+import Test from './app/src/screens/AppStackScreens/Test';
+import { StyleSheet } from 'react-native';
+import { Image } from 'react-native';
+import logo from './app/assets/logo/logo.png';
+import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import LogoutButton from './app/src/components/LogOut';
+import { Global } from './app/style/Global';
+import { View } from 'react-native';
+import cogs from './app/assets/icons/cogs.png';
+import creditCard from './app/assets/icons/credit-card.png';
+import owner from './app/assets/icons/owner.png';
+import webforms from './app/assets/icons/webforms.png';
+
 
 
 //auth screens
@@ -95,16 +108,75 @@ function ChatStackScreen() {
   );
 }
 
-const Drawer = createDrawerNavigator();
-function DrawerNavigator() {
+function CustomDrawerContent(props) {
+  const { currentUser } = useAuth();
   return (
-    <Drawer.Navigator initialRouteName="Home">
+    <DrawerContentScrollView {...props}>
+      <View style={{height: '100%'}}> 
+        <Image
+          source={{ uri: currentUser?.photoURL || logo }}
+          style={styles.profileImage}
+        />
+        <DrawerItemList {...props} />
+      </View>
+      <View style={styles.logoutButton}>
+        <LogoutButton />
+      </View>
+    </DrawerContentScrollView>
+  );
+}
+const styles = StyleSheet.create({
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    marginVertical: 30,
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  logoutButton: {
+    padding: 25, 
+    borderTopWidth: 1, 
+    borderTopColor: '#ccc'
+  },
+});
+
+
+
+
+
+
+
+const Drawer = createDrawerNavigator();
+
+function DrawerNavigator() {
+  const {currentUser} = useAuth();
+  return (
+    <Drawer.Navigator
+      initialRouteName="Home"
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      screenOptions={{
+        drawerStyle: {
+          backgroundColor: '#fff',
+          width: 250,
+        },
+        drawerLabelStyle: {
+          fontSize: 20,
+          height: 25,
+        },
+        drawerActiveBackgroundColor: '#9E42F0',
+        drawerActiveTintColor: '#fff', 
+      }}
+    >
       <Drawer.Screen name="Home" component={HomeStackScreen} />
       <Drawer.Screen name="Category" component={CategoryStack} />
       <Drawer.Screen name="Messages" component={ChatStackScreen} />
       <Drawer.Screen name="Profile" component={ProfileStackScreen} />
-      <Drawer.Screen name="Settings" component={Settings} />
-      <Drawer.Screen name="LogOut" component={LogOut} />
+      <Drawer.Screen 
+      name="Settings" 
+      component={Settings} 
+      />
     </Drawer.Navigator>
   );
 }
@@ -154,3 +226,4 @@ export default function App() {
    
   );
 }
+

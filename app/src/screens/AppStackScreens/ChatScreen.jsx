@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Button } from 'react-native';
 import Search from '../../components/chat/Search';
 import Chats from '../../components/chat/Chats';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import CustomHeader from '../../components/CustomHeader';
 const ChatScreen = ({ navigation }) => {
   const [searchModalVisible, setSearchModalVisible] = useState(false);
 
@@ -23,9 +23,9 @@ const ChatScreen = ({ navigation }) => {
           onPress={handleSearchButtonPress}
           color="#007AFF" // Use your preferred color
         />
-        <Button title="Go back" onPress={() => navigation.goBack()} />
         <Search isVisible={searchModalVisible} onClose={handleCloseSearch} />
         <Chats navigation={navigation} />
+        <Button title="Go back" style={{padding:10}} onPress={() => navigation.goBack()} />
       </View>
     </SafeAreaView>
   );
@@ -34,7 +34,9 @@ const ChatScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF', // Use your preferred background color
+    backgroundColor: '#fff', // Use your preferred background color
+
+
   },
   container: {
     flex: 1,

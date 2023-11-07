@@ -127,7 +127,7 @@ const PostDetail = ({ route, navigation }) => {
           <Text style={styles.postOwner}>Posted by: {post.ownerName}</Text>
           <Text style={styles.postType}>Post Type: {post.postType}</Text>
           <Text style={styles.postLocation}>
-            Location: {post.location.country}, {post.location.state}, {post.location.city}
+            Location: {post.country}, {post.state}, {post.city}
           </Text>
           {currentUser?.uid === post.ownerId && (
             <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>

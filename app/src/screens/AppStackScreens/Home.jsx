@@ -16,8 +16,6 @@ const Home = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [lastVisible, setLastVisible] = useState(null);
-  const [firstVisible, setFirstVisible] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const initialFetch = async () => {
     try {
       const query = firestore()
@@ -120,7 +118,7 @@ const Home = ({ navigation }) => {
     <SafeAreaView>
       <View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
-        <Button title="Create a Post" onPress={openModal} />
+        <Button title="Create a Post" onPress={() => navigation.navigate('AddPost')} />
         </View>
         {refreshing && <Text>Loading...</Text>}
         {currentUser ? (
@@ -141,15 +139,6 @@ const Home = ({ navigation }) => {
         ) : (
           <Text>Please sign in to see posts.</Text>
         )}
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <View style={styles.container}>
-          <View style={styles.modalContent}>
-            <AddPost onPostSubmitted={() => setModalVisible(false)} />
-            <Button title="Cancel" onPress={() => setModalVisible(false)} />
-          </View>
-        </View>
-      </Modal>
-
       </View>
     </SafeAreaView>
   );

@@ -14,15 +14,18 @@ import { Global } from '../../style/Global';
 import firestore from '@react-native-firebase/firestore';
 import LocationPicker from '../../service/LocationPicker';
 import CategoryPicker from '../../service/CategoryPicker';
-import ImageCropPicker from 'react-native-image-crop-picker'; // Import the image picker library
+import ImageCropPicker from 'react-native-image-crop-picker';
 import { showMessage } from 'react-native-flash-message';
 import firebase from '@react-native-firebase/app';
-import ProgressBar from './ProgressBar';
+import * as Progress from 'react-native-progress';
+import GradientButton from '../../style/GradientButton';
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();
+
   const [postType, setPostType] = useState('Looking For Service');
   const [subTitle, setSubTitle] = useState('Looking For Service');
+
   const [post, setPost] = useState({
     title: '',
     description: '',
@@ -30,29 +33,30 @@ const AddPost = ({ navigation }) => {
     state: currentUser.state,
     city: currentUser.city,
     categoryId: 11,
-    categoryText: 'Other', // Initialize with default text
+    categoryText: 'Other Services',
     optionId: 41,
-    optionText: 'Other', // Initialize with default text
+    optionText: 'Other Services',
     price: '',
-    images: [], // Store selected images here
+    images: [],
     ownerId: currentUser.uid,
     ownerName: currentUser.displayName,
     ownerAvatar: currentUser.photoURL,
     createdAt: firestore.FieldValue.serverTimestamp(),
     updatedAt: firestore.FieldValue.serverTimestamp(),
   });
+
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
-  const [progress, setProgress] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const changeType = () => {
-    if (postType === 'LookingForService') {
-      setPostType('OfferingService');
+    if (postType === 'Looking For Service') {
+      setPostType('Offering Service');
       setSubTitle('Offering Service');
     } else {
-      setPostType('LookingForService');
+      setPostType('Looking For Service');
       setSubTitle('Looking For Service');
     }
   };
@@ -60,6 +64,7 @@ const AddPost = ({ navigation }) => {
   const closeModal = () => {
     setModalVisible(false);
   };
+
   const openCategoryModal = () => {
     setCategoryModalVisible(true);
   };
@@ -71,7 +76,7 @@ const AddPost = ({ navigation }) => {
   const handleCategorySave = (category, option, categoryText, optionText) => {
     setSelectedCategory(category);
     setSelectedOption(option);
-    setPost({ ...post, categoryText, optionText }); // Update categoryText and optionText in state
+    setPost({ ...post, categoryText, optionText });
     closeModal();
   };
 
@@ -85,6 +90,32 @@ const AddPost = ({ navigation }) => {
       categoryText,
       optionText,
     });
+  };
+
+  const uploadImage = async (imageUri) => {
+    const filename = imageUri.substring(imageUri.lastIndexOf('/') + 1);
+    const uploadTask = firebase.storage().ref(`uploads/${filename}`).putFile(imageUri);
+
+    // Set up a listener for upload progress
+    uploadTask.on(
+      firebase.storage.TaskEvent.STATE_CHANGED,
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100; // Calculate progress as a percentage
+        setUploadProgress(progress); // Update the progress state
+      },
+      (error) => {
+        console.error(error);
+        showMessage({
+          message: 'Upload failed',
+          type: 'danger',
+        });
+      },
+      () => {
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          console.log('File available at', downloadURL);
+        });
+      }
+    );
   };
 
   const pickImages = async () => {
@@ -109,23 +140,44 @@ const AddPost = ({ navigation }) => {
         compressImageMaxWidth: 1000,
         compressImageMaxHeight: 1000,
         cropping: false,
-        maxFiles: remainingImageCount, // Limit the number of images user can pick
+        maxFiles: remainingImageCount,
       });
+  
+      if (!images || images.length === 0) {
+        // No images selected or user canceled
+        return;
+      }
   
       const updatedImages = [...post.images, ...images.slice(0, remainingImageCount)];
   
       setPost({ ...post, images: updatedImages });
     } catch (error) {
+      if (error.message && error.message.includes('User cancelled image selection')) {
+        // User canceled image selection, no need to show an error message
+        return;
+      }
+  
       console.error('Error picking images:', error);
+  
+      // Handle other errors, such as network issues or unexpected errors
+      showMessage({
+        message: 'An error occurred while picking images. Please try again later.',
+        type: 'danger',
+      });
     }
   };
+  
+  
+  
+  
+
   const handleImageDelete = (index) => {
     const updatedImages = [...post.images];
     updatedImages.splice(index, 1);
     setPost({ ...post, images: updatedImages });
   };
+
   const handlePost = async () => {
-    // Check if the post has a title, price, and description
     if (!post.title || !post.price || !post.description) {
       showMessage({
         message: 'Please ensure the title, price, and description are filled out.',
@@ -133,15 +185,11 @@ const AddPost = ({ navigation }) => {
       });
       return;
     }
-  
-    // Generate a new document reference with an auto-generated ID
+
     const newPostRef = firestore().collection('posts').doc();
-  
-    // Use the unique document ID in your image storage path
     const uniquePostId = newPostRef.id;
-  
+
     try {
-      // Start uploading the images if there are any
       let imageUrls = [];
       if (post.images.length > 0) {
         const imageUploadPromises = post.images.map(async (image, index) => {
@@ -151,20 +199,17 @@ const AddPost = ({ navigation }) => {
           await imageRef.put(blob);
           return imageRef.getDownloadURL();
         });
-  
-        // Wait for all the images to be uploaded
+
         imageUrls = await Promise.all(imageUploadPromises);
       }
-  
-      // Set the post data with the unique ID and uploaded image URLs
+
       await newPostRef.set({
         ...post,
         images: imageUrls,
         createdAt: firestore.FieldValue.serverTimestamp(),
         updatedAt: firestore.FieldValue.serverTimestamp(),
       });
-  
-      // Reset the form to initial state
+
       setPost({
         title: '',
         description: '',
@@ -180,22 +225,14 @@ const AddPost = ({ navigation }) => {
         ownerId: currentUser.uid,
         ownerName: currentUser.displayName,
         ownerAvatar: currentUser.photoURL,
-        // Removed the createdAt and updatedAt from here
       });
-  
+
       showMessage({
         message: 'Post created successfully!',
         type: 'success',
       });
-  
-      // Close any open modals
-      setModalVisible(false);
-      setCategoryModalVisible(false);
-  
-      // If you have additional logic to handle after the post is created,
-      // define the `onPostSubmitted` function and call it here.
-      // onPostSubmitted();
-  
+
+      navigation.goBack();
     } catch (error) {
       console.error('Error creating post:', error);
       showMessage({
@@ -204,39 +241,35 @@ const AddPost = ({ navigation }) => {
       });
     }
   };
-  
-  
-  
+
   return (
     <View style={Global.container}>
       <Text style={Global.title}>Create a Post</Text>
-      <ProgressBar progress={progress} />
       <View style={Global.postContainer}>
-      <Button title={subTitle} style={Global.postTypeButton} onPress={changeType}/>
-
+        <Button title={subTitle} style={Global.postTypeButton} onPress={changeType} />
       </View>
       <View style={styles.imageContainer}>
-        
-        {post.images.map((image, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleImageDelete(index)}
-              style={styles.imageWrapper}
-            >
-              <Image source={{ uri: image.path }} style={styles.image} />
-              <Text style={styles.deleteText}>Delete</Text>
-            </TouchableOpacity>
-          ))}
-          {post.images.length < 3 && (
-            <TouchableOpacity
-              onPress={pickImages}
-              style={styles.addImageWrapper}
-            >
-              <Text style={styles.addImageText}>Add Image</Text>
-            </TouchableOpacity>
-          )}
+      {post.images.map((image, index) => (
+        <TouchableOpacity
+          key={index}
+          onPress={() => handleImageDelete(index)}
+          style={styles.imageWrapper}
+        >
+          <Image source={{ uri: image.path }} style={styles.image} />
+          <Text style={styles.deleteText}>Delete</Text>
+        </TouchableOpacity>
+      ))}
+      {post.images.length < 3 && (
+        <TouchableOpacity onPress={pickImages} style={styles.addImageWrapper}>
+          <Text style={styles.addImageText}>Add Image</Text>
+        </TouchableOpacity>
+      )}
       </View>
-
+      {post.images.length > 0 && (
+        <View style={styles.progressBarContainer}>
+          <Progress.Bar progress={uploadProgress / 100} width={null} />
+        </View>
+      )}
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -264,30 +297,22 @@ const AddPost = ({ navigation }) => {
       )}
       {post.categoryId && (
         <View style={styles.box}>
-          <Text style={Global.titleSecondary}>
-            Category: {post.categoryText} 
-          </Text>
-          <Text style={Global.titleSecondary}>
-            Option: {post.optionText} 
-          </Text>
+          <Text style={Global.titleSecondary}>Category: {post.categoryText}</Text>
+          <Text style={Global.titleSecondary}>Option: {post.optionText}</Text>
         </View>
       )}
       <View style={styles.buttonBox}>
-        <Button
-          title="Select a Location"
-          onPress={() => setModalVisible(true)}
-        />
+        <Button title="Select a Location" onPress={() => setModalVisible(true)} />
         <Button title="Select Category" onPress={openCategoryModal} />
       </View>
       <View>
-        <Button title='Post' onPress={handlePost} />
+        <GradientButton
+          text={'Post'}
+          onPress={handlePost}
+        />
+        <Button title='Cancel' onPress={() => navigation.goBack()} />
       </View>
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-      >
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={Global.modalContainer}>
           <View style={styles.modalContent}>
             <LocationPicker
@@ -305,17 +330,10 @@ const AddPost = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={categoryModalVisible}
-      >
+      <Modal animationType="slide" transparent={true} visible={categoryModalVisible}>
         <View style={Global.modalContainer}>
           <View style={styles.modalContent}>
-            <CategoryPicker
-              onSave={handleCategoryPickerSave}
-              onClose={closeCategoryModal}
-            />
+            <CategoryPicker onSave={handleCategoryPickerSave} onClose={closeCategoryModal} />
           </View>
         </View>
       </Modal>
@@ -328,7 +346,7 @@ const styles = StyleSheet.create({
     padding: 10,
     gap: 10,
   },
-  modalContent: {
+modalContent: {
     height: '85%',
     width: '80%',
   },
@@ -349,11 +367,11 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     paddingVertical: 10,
   },
   imageWrapper: {
-    width: '30%', // Adjust the width as needed
+    width: '30%',
     marginBottom: 10,
     position: 'relative',
   },
@@ -372,7 +390,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   addImageWrapper: {
-    width: '30%', // Adjust the width as needed
+    width: '30%',
     marginBottom: 10,
     backgroundColor: '#f2f2f2',
     justifyContent: 'center',
@@ -383,6 +401,9 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  progressBarContainer: {
+    width: '90%',
   },
 });
 

@@ -3,9 +3,9 @@ import { View, Text, Image, TouchableOpacity, FlatList } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
 import { useChat } from "../../context/ChatContext";
-
-const defaultAvatar = require("../../../assets/images/avatar/avatar.png"); // Default image source
-
+import defaultAvatar from "../../../assets/images/avatar/avatar.png";
+import { StyleSheet } from "react-native";
+import { Global } from "../../../style/Global";
 const Chats = ({ navigation }) => {
   const [chats, setChats] = useState([]);
   const { currentUser } = useAuth();
@@ -44,8 +44,9 @@ const Chats = ({ navigation }) => {
         data={chats.sort((a, b) => b.date - a.date)}
         keyExtractor={(item) => item.chatId}
         renderItem={({ item }) => (
+
           <TouchableOpacity
-            style={{ flexDirection: "row", alignItems: "center", padding: 10 }}
+            style={styles.userInfo}
             onPress={() => {
               handleSelect(item.chatId, item.userInfo);
               navigation.navigate("Chat", {
@@ -55,12 +56,16 @@ const Chats = ({ navigation }) => {
             }}
           >
             <Image
-              source={item.userInfo.photoURL ? { uri: item.userInfo.photoURL } : defaultAvatar}
+              source={
+                item.userInfo.photoURL
+                  ? { uri: item.userInfo.photoURL }
+                  : defaultAvatar
+              }
               style={{ width: 50, height: 50, borderRadius: 25 }}
             />
             <View style={{ marginLeft: 10 }}>
-              <Text>User: {item.userInfo.displayName}</Text>
-              <Text>Last Message: {item.lastMessage?.text}</Text>
+              <Text style={Global.titleSecondary}>User: {item.userInfo.displayName}</Text>
+              <Text style={Global.titleSecondary}>Last Message: {item.lastMessage?.text}</Text>
             </View>
           </TouchableOpacity>
         )}
@@ -70,3 +75,21 @@ const Chats = ({ navigation }) => {
 };
 
 export default Chats;
+
+
+const styles = StyleSheet.create({
+
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+});
