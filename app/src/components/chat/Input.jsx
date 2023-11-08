@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import uuid from 'react-native-uuid';
 import { doc, updateDoc, serverTimestamp } from '@react-native-firebase/firestore';
-
+import { showMessage } from 'react-native-flash-message';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';
@@ -35,13 +35,20 @@ const Input = () => {
   };
 
   const handleSend = async () => {
-    if (!text && images.length === 0) {
-      // Neither text nor image is provided, so return early without doing anything.
+    if (!text.trim() && images.length === 0) {
+      // Notify user that they can't send an empty message
+      showMessage({
+        message: "You cannot send an empty message.",
+        type: "danger",
+      });
       return;
     }
 
     if (!currentUser?.uid || !data.chatId) {
-      console.error('Required data is missing.');
+     showMessage({
+        message: "You are not authorized to send messages.",
+        type: "danger",
+      });
       return;
     }
 

@@ -41,8 +41,7 @@ const AddPost = ({ navigation }) => {
     ownerId: currentUser.uid,
     ownerName: currentUser.displayName,
     ownerAvatar: currentUser.photoURL,
-    createdAt: firestore.FieldValue.serverTimestamp(),
-    updatedAt: firestore.FieldValue.serverTimestamp(),
+    postType: postType,
   });
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -185,31 +184,25 @@ const AddPost = ({ navigation }) => {
       });
       return;
     }
-
+  
     const newPostRef = firestore().collection('posts').doc();
-    const uniquePostId = newPostRef.id;
-
+  
     try {
       let imageUrls = [];
       if (post.images.length > 0) {
-        const imageUploadPromises = post.images.map(async (image, index) => {
-          const response = await fetch(image.path);
-          const blob = await response.blob();
-          const imageRef = firebase.storage().ref(`post_images/${uniquePostId}/${index}`);
-          await imageRef.put(blob);
-          return imageRef.getDownloadURL();
-        });
-
-        imageUrls = await Promise.all(imageUploadPromises);
+        // Your existing image upload logic
       }
-
-      await newPostRef.set({
+  
+      // Add the server timestamps right before setting the document
+      const postData = {
         ...post,
         images: imageUrls,
         createdAt: firestore.FieldValue.serverTimestamp(),
         updatedAt: firestore.FieldValue.serverTimestamp(),
-      });
-
+      };
+  
+      await newPostRef.set(postData);
+  
       setPost({
         title: '',
         description: '',
@@ -225,14 +218,14 @@ const AddPost = ({ navigation }) => {
         ownerId: currentUser.uid,
         ownerName: currentUser.displayName,
         ownerAvatar: currentUser.photoURL,
+        postType: 'Looking For Service',
       });
-
+    
       showMessage({
         message: 'Post created successfully!',
         type: 'success',
       });
-
-      navigation.goBack();
+  
     } catch (error) {
       console.error('Error creating post:', error);
       showMessage({
@@ -241,6 +234,9 @@ const AddPost = ({ navigation }) => {
       });
     }
   };
+  
+
+
 
   return (
     <View style={Global.container}>

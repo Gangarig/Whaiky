@@ -4,6 +4,7 @@ import firestore from "@react-native-firebase/firestore";
 import Messages from "./Messages";
 import Input from "./Input";
 import { useChat } from "../../context/ChatContext";
+import defaultAvatar from "../../../assets/images/avatar/avatar.png";
 const Chat = ({ navigation, route }) => {
   const { data } = useChat();
   const { chatId, userInfo } = route.params;
@@ -14,7 +15,11 @@ const Chat = ({ navigation, route }) => {
       <View style={styles.chatInfo}>
         <Text style={styles.chatDisplayName}>{userInfo.displayName}</Text>
         <View style={styles.chatIcons}>
-          <Image source={{ uri: userInfo.photoURL }} style={{ width: 50, height: 50, borderRadius: 25 }} />
+          <Image source={
+            userInfo.photoURL
+              ? { uri: userInfo.photoURL }
+              : defaultAvatar
+          } style={{ width: 50, height: 50, borderRadius: 25 }} />
         </View>
       </View>
       <Messages chatId={chatId} />

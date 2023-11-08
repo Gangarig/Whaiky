@@ -55,15 +55,21 @@ const SignUp = ({ navigation }) => {
         displayName,
         email,
         createdAt: new Date().getTime(),
-        photoURL: 'DEFAULT_IMAGE_URL', // you can replace this with a default image URL if you have one
+        photoURL: '', 
       });
-      setCurrentUser({ uid: user.uid, displayName, email, photoURL: 'DEFAULT_IMAGE_URL' });
+      setCurrentUser({ uid: user.uid, displayName, email, photoURL: '' });
 
       setErrorMessage(null);
-      showMessage('Signed up successfully');
+      showMessage({
+        message: 'Account created successfully!',
+        type: 'success',
+      });
       await auth().signInWithEmailAndPassword(email, password);
     } catch (error) {
-      console.error('Sign-up error:', error);
+      showMessage({
+        message: error.message,
+        type: 'danger',
+      });
     
       switch (error.code) {
         case 'auth/email-already-in-use':

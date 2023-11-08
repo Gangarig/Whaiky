@@ -4,6 +4,8 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import { Global } from '../../../style/Global';
+import { showMessage } from 'react-native-flash-message';
+import defaultAvatar from '../../../assets/images/avatar/avatar.png';
 
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -67,7 +69,11 @@ const Profile = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {userData && (
           <View style={styles.profileContainer}>
-            <Image source={{ uri: userData.photoURL }} style={styles.avatar} />
+            <Image source={
+              userData.photoURL
+                ? { uri: userData.photoURL }
+                : defaultAvatar
+            } style={styles.avatar} />
             <Text style={styles.nameText}>{userData.displayName || 'N/A'}</Text>
             <Text style={styles.infoText}>First Name: {userData.firstName || 'N/A'}</Text>
             <Text style={styles.infoText}>Last Name: {userData.lastName || 'N/A'}</Text>
@@ -92,7 +98,7 @@ const Profile = ({ navigation }) => {
           </View>
         )}
         <View style={styles.buttonContainer}>
-          <Button title="Fill the personal Info forms" onPress={() => navigation.navigate('PersonalInfo')} />
+          <Button title="Complete Profile" onPress={() => navigation.navigate('PersonalInfo')} />
           <Button title="Become a Contractor" onPress={handleContractor} />
           <Button title="Log Out" onPress={() => auth().signOut()} />
         </View>

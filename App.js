@@ -4,10 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from '@react-navigation/stack';
 import FlashMessage from "react-native-flash-message";
-import Test from './app/src/screens/AppStackScreens/Test';
 import { StyleSheet } from 'react-native';
 import { Image } from 'react-native';
-import logo from './app/assets/logo/logo.png';
+import defaultAvatar from './app/assets/images/avatar/avatar.png';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import LogoutButton from './app/src/components/LogOut';
 import { Global } from './app/style/Global';
@@ -51,6 +50,7 @@ import Certificate from './app/service/Certificate';
 import Contractor from './app/service/Contractor';
 import LegalInfo from './app/src/screens/AppStackScreens/LegalInfo'
 import Complete from './app/service/Complete'; 
+import DashBoard from './app/src/screens/AppStackScreens/DashBoard';
 
 // components
 import Loading from './app/src/components/Loading';
@@ -114,7 +114,7 @@ function CustomDrawerContent(props) {
     <DrawerContentScrollView {...props}>
       <View style={{height: '100%'}}> 
         <Image
-          source={{ uri: currentUser?.photoURL || logo }}
+          source={currentUser?.photoURL ? { uri: currentUser.photoURL } : defaultAvatar}
           style={styles.profileImage}
         />
         <DrawerItemList {...props} />
@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
   },
-  logoutButton: {
-    padding: 25, 
+  logoutButton: { 
+    padding: 10,
     borderTopWidth: 1, 
     borderTopColor: '#ccc'
   },
@@ -170,6 +170,7 @@ function DrawerNavigator() {
       }}
     >
       <Drawer.Screen name="Home" component={HomeStackScreen} />
+      <Drawer.Screen name="Dashboard" component={DashBoard} />
       <Drawer.Screen name="Category" component={CategoryStack} />
       <Drawer.Screen name="Messages" component={ChatStackScreen} />
       <Drawer.Screen name="Profile" component={ProfileStackScreen} />

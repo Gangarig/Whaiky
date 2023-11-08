@@ -6,52 +6,53 @@ export const AuthContext = createContext({
   currentUser: null,
   setCurrentUser: () => null,
   loading: true,
-  personalInfoComplete: false, // Add personalInfoComplete to the context
-  updatePersonalInfoComplete: () => null, // Function to update personalInfoComplete
+  profile: 'incomplete', // Track profile completion status
+  setProfile: () => null, // Function to update profile status
 });
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [personalInfoComplete, setPersonalInfoComplete] = useState(false); // Initialize personalInfoComplete
+  const [profile, setProfile] = useState('incomplete'); // Initialize profile status
 
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(async (user) => {
-      try {
-        if (user) {
-          const userDoc = await firestore().collection('users').doc(user.uid).get();
-          if (userDoc.exists) {
-            const userData = userDoc.data();
+    const unsubscribeAuth = auth().onAuthStateChanged(user => {
+      if (user) {
+        // If there is a user, start listening to the user's document
+        const unsubscribeUser = firestore().collection('users').doc(user.uid).onSnapshot(doc => {
+          if (doc.exists) {
+            const userData = doc.data();
             setCurrentUser({
               ...userData,
               uid: user.uid,
               email: user.email,
             });
-            
-            // Check personal info completion and update personalInfoComplete
-            const isPersonalInfoComplete = checkPersonalInfoCompletion(userData);
-            setPersonalInfoComplete(isPersonalInfoComplete);
+            const isProfileComplete = checkProfileCompletion(userData);
+            setProfile(isProfileComplete ? 'completed' : 'incomplete');
           } else {
             setCurrentUser(null);
+            setProfile('incomplete');
           }
-        } else {
-          setCurrentUser(null);
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+          setLoading(false); // Set loading to false after getting user data
+        }, error => {
+          console.error('Error listening to user data:', error);
+          setLoading(false); // Set loading to false even if there's an error
+        });
+  
+        return () => unsubscribeUser();
+      } else {
         setCurrentUser(null);
-      } finally {
-        setLoading(false);
+        setProfile('incomplete');
+        setLoading(false); // Set loading to false if there is no user
       }
     });
-
-    return () => {
-      unsubscribe();
-    };
+  
+    return () => unsubscribeAuth();
   }, []);
+  
 
-  const checkPersonalInfoCompletion = (userData) => {
-    // Implement your logic to check personal info completion here
+  const checkProfileCompletion = (userData) => {
+    // Implement the logic to check if the profile is complete
     const {
       firstName,
       lastName,
@@ -59,7 +60,6 @@ export const AuthProvider = ({ children }) => {
       state,
       city,
       phoneNumbers,
-      createdAt,
     } = userData;
 
     return (
@@ -68,14 +68,9 @@ export const AuthProvider = ({ children }) => {
       country &&
       state &&
       city &&
-      phoneNumbers &&
-      phoneNumbers.length > 0 &&
-      createdAt
+      Array.isArray(phoneNumbers) &&
+      phoneNumbers.length > 0
     );
-  };
-
-  const updatePersonalInfoComplete = (value) => {
-    setPersonalInfoComplete(value);
   };
 
   return (
@@ -84,8 +79,8 @@ export const AuthProvider = ({ children }) => {
         currentUser,
         setCurrentUser,
         loading,
-        personalInfoComplete, 
-        updatePersonalInfoComplete, 
+        profile, // Provide profile status in the context
+        setProfile, // Provide function to update profile status
       }}
     >
       {children}
