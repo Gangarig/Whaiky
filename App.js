@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useState , useEffect } from 'react';
+import firestore from '@react-native-firebase/firestore';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -62,6 +64,7 @@ import { AuthProvider, useAuth } from './app/src/context/AuthContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ChatContextProvider } from './app/src/context/ChatContext';
 import { AccountStatus } from './app/src/context/AccountStatus';
+import SubmissionDetail from './app/src/components/SubmissionDetail';
 
 
 const Stack = createStackNavigator();
@@ -83,6 +86,17 @@ function HomeStackScreen() {
     </HomeStack.Navigator>
   );
 }
+
+const AdminStack = createStackNavigator();
+function AdminStackScreen() {
+  return (
+    <AdminStack.Navigator screenOptions={{headerShown:false}}>
+      <AdminStack.Screen name="DashBoard" component={DashBoard} />
+      <AdminStack.Screen name="SubmitDetail" component={SubmissionDetail} />
+    </AdminStack.Navigator>
+  );
+}
+
 const ProfileStack = createStackNavigator();
 function ProfileStackScreen() {
   return (
@@ -110,6 +124,7 @@ function ChatStackScreen() {
 
 function CustomDrawerContent(props) {
   const { currentUser } = useAuth();
+  
   return (
     <DrawerContentScrollView {...props}>
       <View style={{height: '100%'}}> 
@@ -152,6 +167,42 @@ const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
   const {currentUser} = useAuth();
+  const [userData, setUserData] = useState(null);
+const [Dashboard, setDashBoard] = useState(false);
+
+useEffect(() => {
+  if (currentUser) {
+    const unsubscribe = firestore()
+      .collection('users')
+      .doc(currentUser.uid)
+      .onSnapshot(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          console.log('User Data', documentSnapshot.data());
+          setUserData(documentSnapshot.data());
+        }
+      }, error => {
+        console.log('Error:', error);
+        showMessage({
+          message: 'Error fetching user data.',
+          type: 'danger',
+        });
+      });
+
+    // Remember to unsubscribe from your onSnapshot call when it's no longer needed
+    return () => unsubscribe();
+  }
+}, [currentUser]);
+
+useEffect(() => {
+  if (userData && userData.status === 'admin') {
+    setDashBoard(true);
+  } else {
+    setDashBoard(false);
+  }
+}, [userData]);
+
+
+
   return (
     <Drawer.Navigator
       initialRouteName="Home"
@@ -170,7 +221,7 @@ function DrawerNavigator() {
       }}
     >
       <Drawer.Screen name="Home" component={HomeStackScreen} />
-      <Drawer.Screen name="Dashboard" component={DashBoard} />
+      {Dashboard ? <Drawer.Screen name="Dashboard" component={AdminStackScreen} /> : null}
       <Drawer.Screen name="Category" component={CategoryStack} />
       <Drawer.Screen name="Messages" component={ChatStackScreen} />
       <Drawer.Screen name="Profile" component={ProfileStackScreen} />

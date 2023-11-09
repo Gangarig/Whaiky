@@ -225,7 +225,7 @@ const AddPost = ({ navigation }) => {
         message: 'Post created successfully!',
         type: 'success',
       });
-  
+      navigation.goBack();
     } catch (error) {
       console.error('Error creating post:', error);
       showMessage({

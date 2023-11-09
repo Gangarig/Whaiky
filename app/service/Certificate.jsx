@@ -146,7 +146,7 @@ const Certificate = ({ navigation }) => {
           />
           <View>
           <Button title="Upload Certificate" onPress={uploadCertificate} />
-          <Button title='Skip' onPress={() => navigation.navigate('Complete')} />
+          <Button title='Continue or Skip' onPress={() => navigation.navigate('Complete')} />
           <Button title="Go Back" onPress={() => navigation.goBack()} />
           </View>
         </View>

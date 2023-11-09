@@ -23,11 +23,16 @@ const Home = ({ navigation }) => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await fetchPosts('new');
+    const newPosts = await fetchPosts('new');
+    if (newPosts && newPosts.length > 0) {
+      setPosts(newPosts);
+    }
     setRefreshing(false);
   };
+  
 
   const fetchPosts = async (direction) => {
+    let fetchedPosts = [];
     try {
       let query;
       if (direction === 'initial' || direction === 'new') {
@@ -35,7 +40,7 @@ const Home = ({ navigation }) => {
           .collection('posts')
           .orderBy('createdAt', 'desc')
           .limit(5);
-
+  
         if (direction === 'new' && firstVisible) {
           query = query.endBefore(firstVisible);
         }
@@ -46,34 +51,30 @@ const Home = ({ navigation }) => {
           .startAfter(lastVisible)
           .limit(5);
       }
-
+  
       if (query) {
         const snapshot = await query.get();
-        let fetchedPosts = snapshot.docs.map(doc => {
+        fetchedPosts = snapshot.docs.map(doc => {
           const post = doc.data();
           if (!post.title || !post.description || !post.price) {
             throw new Error('Post data is incomplete');
           }
           return { id: doc.id, ...post };
         });
-
-        // Filter out duplicates based on id
-        if (direction !== 'initial') {
+  
+        // Filter out duplicates based on id for 'new' and 'more'
+        if (direction === 'new' || direction === 'more') {
           fetchedPosts = fetchedPosts.filter(newPost => 
             !posts.some(existingPost => existingPost.id === newPost.id)
           );
         }
-
-        if (direction === 'initial') {
-          setPosts(fetchedPosts);
-        } else if (direction === 'more') {
-          setPosts(prevState => [...prevState, ...fetchedPosts]);
-        } else if (direction === 'new') {
-          setPosts(fetchedPosts);
+  
+        if (fetchedPosts.length > 0) {
+          if (direction === 'new') {
+            setFirstVisible(snapshot.docs[0]);
+          }
+          setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
         }
-        
-        setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-        setFirstVisible(snapshot.docs[0]);
       }
     } catch (error) {
       showMessage({
@@ -81,7 +82,10 @@ const Home = ({ navigation }) => {
         type: "danger",
       });
     }
+    // Return the fetched posts so they can be used in the calling function
+    return fetchedPosts;
   };
+  
 
   const checkPostExistence = async (postId) => {
     try {

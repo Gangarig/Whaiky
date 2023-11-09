@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import uuid from 'react-native-uuid';
-import { doc, updateDoc, serverTimestamp } from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
@@ -14,12 +13,13 @@ const Input = () => {
   const [images, setImages] = useState([]);
   const { currentUser } = useAuth();
   const { data } = useChat();
-
+  const [ send , setSend ] = useState(false);
   const pickImages = () => {
     ImageCropPicker.openPicker({
       multiple: true,
       maxFiles: 3, // Limit to 3 images
       cropping: true,
+
     }).then(selectedImages => {
       setImages(selectedImages.map(img => img.path));
     });
@@ -35,6 +35,14 @@ const Input = () => {
   };
 
   const handleSend = async () => {
+    if (send) {
+      showMessage({
+        message: "Sending message... Please wait.",
+        type: "danger",
+      });
+      return;
+    }
+
     if (!text.trim() && images.length === 0) {
       // Notify user that they can't send an empty message
       showMessage({
@@ -89,12 +97,18 @@ const Input = () => {
             [`${data.chatId}.lastMessage`]: { text },
             [`${data.chatId}.date`]: firestore.FieldValue.serverTimestamp(),
         });
+        setSend(true);
     } catch (error) {
       console.error("Error updating document:", error);
+      showMessage({
+        message: "An error occurred while sending the message.",
+        type: "danger",
+      });
     }
     
     setText('');
     setImages([]);
+    setSend(false);
   };
 
   return (
