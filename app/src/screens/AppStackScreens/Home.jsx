@@ -6,6 +6,8 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import { showMessage } from 'react-native-flash-message';
+import FastImage from 'react-native-fast-image'
+
 
 const DEFAULT_IMAGE = require('./../../../assets/images/default.png');
 
@@ -138,7 +140,12 @@ const Home = ({ navigation }) => {
         <Text style={styles.postTitle}>{item.title}</Text>
         <Text style={styles.postPrice}>Price: {item.price}</Text>
         {item.images && item.images[0] && (
-          <Image source={{ uri: item.images[0] }} style={styles.postImage} />
+          // <Image source={{ uri: item.images[0] }} style={styles.postImage} />
+          <FastImage 
+            source={{ uri: item.images[0] }}
+            style={styles.postImage}
+            resizeMode={FastImage.resizeMode.contain}
+          />
         )}
       </View>
     </TouchableOpacity>

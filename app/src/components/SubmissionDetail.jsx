@@ -4,6 +4,8 @@ import firestore from '@react-native-firebase/firestore';
 import { Global } from '../../style/Global';
 import { showMessage } from 'react-native-flash-message';
 import storage from '@react-native-firebase/storage';
+import FastImage from 'react-native-fast-image'
+
 
 const SubmissionDetail = ({ navigation, route }) => {
   const id = route.params.id;
@@ -13,10 +15,13 @@ const SubmissionDetail = ({ navigation, route }) => {
       try {
         const docSnapshot = await firestore().collection('users').doc(id).collection('documents').get();
         const certSnapshot = await firestore().collection('users').doc(id).collection('certificates').get();
+        
+        // Combine documents and certificates, and filter out items with status 'approved'
         const combinedSubmissions = [
           ...docSnapshot.docs.map(doc => ({ id: doc.id, type: 'document', ...doc.data() })),
           ...certSnapshot.docs.map(cert => ({ id: cert.id, type: 'certificate', ...cert.data() })),
-        ];
+        ].filter(item => item.status !== 'approved');
+  
         if (combinedSubmissions.length === 0) {
           navigation.goBack();
         } else {
@@ -27,9 +32,10 @@ const SubmissionDetail = ({ navigation, route }) => {
         showMessage({ message: 'Error fetching submissions', type: 'danger' });
       }
     };
-
+  
     fetchSubmissions();
   }, [id, navigation]);
+  
 
   const removeSubmissionById = (submissionId) => {
     setSubmissions(currentSubmissions => {
@@ -148,10 +154,18 @@ const SubmissionDetail = ({ navigation, route }) => {
       
     }
   };
+  const clean = async () => {
+    await firestore().collection('submission').doc(id).delete();
+  }
+  if (submissions.length === 0) {
+    clean();
+  }
+
   
   const renderSubmissionItem = ({ item }) => (
     <View style={styles.itemContainer}>
     <Text style={styles.documentType}>
+
       {['Passport', 'ID', "Driver's License"].includes(item.type) ? 'Document Type: ' : 'Certificate Title: '}
       {['Passport', 'ID', "Driver's License"].includes(item.type) ? item.type : item.title}
     </Text>
@@ -164,15 +178,30 @@ const SubmissionDetail = ({ navigation, route }) => {
           <Text style={styles.textField}>Date of Issue: {item.dateOfIssue}</Text>
           <Text style={styles.textField}>Date of Expiry: {item.dateOfExpiry}</Text>
           {/* Document images */}
-          {item.frontImage && <Image style={styles.image} source={{ uri: item.frontImage }} />}
-          {item.backImage && <Image style={styles.image} source={{ uri: item.backImage }} />}
+          {item.frontImage && 
+            <FastImage
+              source={{ uri: item.frontImage }}
+              style={styles.image}
+              resizeMode={FastImage.resizeMode.contain}
+            />
+           }
+          {item.backImage && 
+            <FastImage
+              source={{ uri: item.backImage }}
+              style={styles.image}
+              resizeMode={FastImage.resizeMode.contain}
+          />}
         </>
       )}
       {item.type === 'certificate' && (
         <>
           <Text style={styles.textField}>Certificate Title: {item.title}</Text>
           <Text style={styles.textField}>Certificate Description: {item.description}</Text>
-          <Image style={styles.image} source={{ uri: item.imageUrl }} />
+          <FastImage
+            source={{ uri: item.imageUrl }}
+            style={styles.image}
+            resizeMode={FastImage.resizeMode.contain}
+          />
         </>
       )}
       <View style={styles.buttonBox}>

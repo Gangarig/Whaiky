@@ -32,29 +32,29 @@ const Profile = ({ navigation }) => {
   }, [currentUser]);
   
   const handleContractor = async () => {
+
     try {
       if (currentUser?.uid) {
-        const userDocRef = firestore().collection('users').doc(currentUser.uid);
+        const querySnapshot = await firestore()
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('documents')
+          .where('status', '==', 'approved')
+          .get();
   
-        const userDoc = await userDocRef.get();
-        if (userDoc.exists) {
-          const userData = userDoc.data();
-  
-          // Check if legalInfo status is completed
-          if (userData.legalInfo === 'completed') {
-            // Navigate to the Contractor page
-            navigation.navigate('Contractor');
-          } else {
-            // Navigate to the Services page
-            navigation.navigate('Services');
-          }
+        if (!querySnapshot.empty) {
+          // At least one document with status 'approved' exists, navigate to 'Contractor' screen
+          navigation.navigate('Contractor'); // Replace 'Contractor' with your actual screen name
         } else {
-          // Handle the case where user document does not exist
-          showMessage({
-            message: 'User document not found.',
-            type: 'danger',
-          });
+          // No document with status 'approved' found, navigate to 'Services' screen
+          navigation.navigate('Services'); // Replace 'Services' with your actual screen name
         }
+      } else {
+        // Handle the case where user document does not exist
+        showMessage({
+          message: 'User document not found.',
+          type: 'danger',
+        });
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 100,
     height: 100,
-    borderRadius: 50,
+    borderRadius: 10,
     marginBottom: 16,
   },
   nameText: {

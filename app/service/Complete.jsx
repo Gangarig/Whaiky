@@ -24,14 +24,14 @@ const Complete = ({ navigation }) => {
         }, { merge: true });
         
         showMessage({ message: 'Submission Successful', type: 'success' });
-        navigation.navigate('ProfileScreen');
+        navigation.navigate('Home');
       } catch (error) {
         showMessage({
           message: 'Submission Failed - Please try again later.',
           description: error.message,
           type: 'danger',
         });
-        navigation.navigate('ProfileScreen');
+        navigation.navigate('Home');
       } finally {
         setIsSubmitting(false);
       }
@@ -40,7 +40,7 @@ const Complete = ({ navigation }) => {
     return (
       <View style={Global.container}>
         <GradientButton
-          text="Complete"
+          text="Sent a Submission"
           onPress={submit}
           disabled={isSubmitting}
         />

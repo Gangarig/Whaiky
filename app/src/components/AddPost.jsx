@@ -25,6 +25,7 @@ const AddPost = ({ navigation }) => {
 
   const [postType, setPostType] = useState('Looking For Service');
   const [subTitle, setSubTitle] = useState('Looking For Service');
+  const [documentApproved, setDocumentApproved] = useState(false); // Track if the document is approved
 
   const [post, setPost] = useState({
     title: '',
@@ -50,7 +51,38 @@ const AddPost = ({ navigation }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  useEffect(() => {
+    // Check if the user has an approved document when the component mounts
+    const checkDocumentApproval = async () => {
+      try {
+        const docSnapshot = await firestore()
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('documents')
+          .get();
+
+        if (docSnapshot.size > 0 && docSnapshot.docs[0].data().status === 'approved') {
+          setDocumentApproved(true);
+        } else {
+          setDocumentApproved(false);
+        }
+      } catch (error) {
+        console.error('Error checking document approval:', error);
+      }
+    };
+
+    checkDocumentApproval();
+  }, [currentUser.uid]);
+
   const changeType = () => {
+    if (!documentApproved) {
+      showMessage({
+        message: 'You must upload an approved document before you can offer a service.',
+        type: 'warning',
+      });
+      return;
+    }
+
     if (postType === 'Looking For Service') {
       setPostType('Offering Service');
       setSubTitle('Offering Service');
@@ -121,7 +153,7 @@ const AddPost = ({ navigation }) => {
     try {
       const currentImageCount = post.images.length;
       const maxImageCount = 3;
-  
+
       if (currentImageCount >= maxImageCount) {
         showMessage({
           message: 'You can upload up to three images.',
@@ -129,9 +161,9 @@ const AddPost = ({ navigation }) => {
         });
         return;
       }
-  
+
       const remainingImageCount = maxImageCount - currentImageCount;
-  
+
       const images = await ImageCropPicker.openPicker({
         multiple: true,
         mediaType: 'photo',
@@ -141,23 +173,23 @@ const AddPost = ({ navigation }) => {
         cropping: false,
         maxFiles: remainingImageCount,
       });
-  
+
       if (!images || images.length === 0) {
         // No images selected or user canceled
         return;
       }
-  
+
       const updatedImages = [...post.images, ...images.slice(0, remainingImageCount)];
-  
+
       setPost({ ...post, images: updatedImages });
     } catch (error) {
       if (error.message && error.message.includes('User cancelled image selection')) {
         // User canceled image selection, no need to show an error message
         return;
       }
-  
+
       console.error('Error picking images:', error);
-  
+
       // Handle other errors, such as network issues or unexpected errors
       showMessage({
         message: 'An error occurred while picking images. Please try again later.',
@@ -165,10 +197,6 @@ const AddPost = ({ navigation }) => {
       });
     }
   };
-  
-  
-  
-  
 
   const handleImageDelete = (index) => {
     const updatedImages = [...post.images];
@@ -184,15 +212,20 @@ const AddPost = ({ navigation }) => {
       });
       return;
     }
-  
+
     const newPostRef = firestore().collection('posts').doc();
-  
+
     try {
       let imageUrls = [];
       if (post.images.length > 0) {
-        // Your existing image upload logic
+        for (const image of post.images) {
+          await uploadImage(image.path);
+          // Obtain the download URL for each uploaded image
+          const downloadURL = await firebase.storage().ref(`uploads/${image.filename}`).getDownloadURL();
+          imageUrls.push(downloadURL);
+        }
       }
-  
+
       // Add the server timestamps right before setting the document
       const postData = {
         ...post,
@@ -200,9 +233,9 @@ const AddPost = ({ navigation }) => {
         createdAt: firestore.FieldValue.serverTimestamp(),
         updatedAt: firestore.FieldValue.serverTimestamp(),
       };
-  
+
       await newPostRef.set(postData);
-  
+
       setPost({
         title: '',
         description: '',
@@ -220,7 +253,7 @@ const AddPost = ({ navigation }) => {
         ownerAvatar: currentUser.photoURL,
         postType: 'Looking For Service',
       });
-    
+
       showMessage({
         message: 'Post created successfully!',
         type: 'success',
@@ -234,9 +267,6 @@ const AddPost = ({ navigation }) => {
       });
     }
   };
-  
-
-
 
   return (
     <View style={Global.container}>
@@ -245,21 +275,21 @@ const AddPost = ({ navigation }) => {
         <Button title={subTitle} style={Global.postTypeButton} onPress={changeType} />
       </View>
       <View style={styles.imageContainer}>
-      {post.images.map((image, index) => (
-        <TouchableOpacity
-          key={index}
-          onPress={() => handleImageDelete(index)}
-          style={styles.imageWrapper}
-        >
-          <Image source={{ uri: image.path }} style={styles.image} />
-          <Text style={styles.deleteText}>Delete</Text>
-        </TouchableOpacity>
-      ))}
-      {post.images.length < 3 && (
-        <TouchableOpacity onPress={pickImages} style={styles.addImageWrapper}>
-          <Text style={styles.addImageText}>Add Image</Text>
-        </TouchableOpacity>
-      )}
+        {post.images.map((image, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => handleImageDelete(index)}
+            style={styles.imageWrapper}
+          >
+            <Image source={{ uri: image.path }} style={styles.image} />
+            <Text style={styles.deleteText}>Delete</Text>
+          </TouchableOpacity>
+        ))}
+        {post.images.length < 3 && (
+          <TouchableOpacity onPress={pickImages} style={styles.addImageWrapper}>
+            <Text style={styles.addImageText}>Add Image</Text>
+          </TouchableOpacity>
+        )}
       </View>
       {post.images.length > 0 && (
         <View style={styles.progressBarContainer}>
@@ -302,10 +332,7 @@ const AddPost = ({ navigation }) => {
         <Button title="Select Category" onPress={openCategoryModal} />
       </View>
       <View>
-        <GradientButton
-          text={'Post'}
-          onPress={handlePost}
-        />
+        <GradientButton text={'Post'} onPress={handlePost} />
         <Button title='Cancel' onPress={() => navigation.goBack()} />
       </View>
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
@@ -342,7 +369,7 @@ const styles = StyleSheet.create({
     padding: 10,
     gap: 10,
   },
-modalContent: {
+  modalContent: {
     height: '85%',
     width: '80%',
   },

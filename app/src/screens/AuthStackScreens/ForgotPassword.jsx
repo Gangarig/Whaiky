@@ -62,7 +62,7 @@ const ForgotPassword = ({ navigation }) => {
         description: errorMessage, // this will contain 'Password reset email sent!' on success
         type: 'danger',
       });
-    }
+    } 
   }, [errorMessage]);
 
   return (

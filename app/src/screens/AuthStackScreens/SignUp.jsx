@@ -30,6 +30,7 @@ const SignUp = ({ navigation }) => {
   useEffect(() => {
     setCheckBox1(password.length >= 8);
     setCheckBox2(/[~!@#$%^&*()_+\-=[\]{}|;:'",.<>?/]/.test(password));
+   
 }, [password]);
 
   useEffect(() => {

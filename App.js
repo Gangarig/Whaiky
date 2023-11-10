@@ -220,7 +220,6 @@ useEffect(() => {
         drawerActiveTintColor: '#fff', 
       }}
     >
-      <Drawer.Screen name="Test" component={Complete} />
       <Drawer.Screen name="Home" component={HomeStackScreen} />
       {Dashboard ? <Drawer.Screen name="Dashboard" component={AdminStackScreen} /> : null}
       <Drawer.Screen name="Category" component={CategoryStack} />
