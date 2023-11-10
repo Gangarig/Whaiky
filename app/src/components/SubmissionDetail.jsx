@@ -1,24 +1,238 @@
-import { View, Text , StyleSheet } from 'react-native'
-import React from 'react'
-import { useAuth } from '../context/AuthContext'
-import firestore from '@react-native-firebase/firestore'
-import { Global } from '../../style/Global'
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Button, FlatList, Image } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import { Global } from '../../style/Global';
+import { showMessage } from 'react-native-flash-message';
+import storage from '@react-native-firebase/storage';
 
-const SubmissionDetail = ({navigation, route}) => {
-    const id = route.params.id
-    console.log(id)
-  return (
-    <View style={style.container}>
-      <Text style={Global.title}>SubmissionDetail</Text>
-    </View>
-  )
-}
+const SubmissionDetail = ({ navigation, route }) => {
+  const id = route.params.id;
+  const [submissions, setSubmissions] = useState([]);
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        const docSnapshot = await firestore().collection('users').doc(id).collection('documents').get();
+        const certSnapshot = await firestore().collection('users').doc(id).collection('certificates').get();
+        const combinedSubmissions = [
+          ...docSnapshot.docs.map(doc => ({ id: doc.id, type: 'document', ...doc.data() })),
+          ...certSnapshot.docs.map(cert => ({ id: cert.id, type: 'certificate', ...cert.data() })),
+        ];
+        if (combinedSubmissions.length === 0) {
+          navigation.goBack();
+        } else {
+          setSubmissions(combinedSubmissions);
+        }
+      } catch (error) {
+        console.error('Error fetching submissions: ', error);
+        showMessage({ message: 'Error fetching submissions', type: 'danger' });
+      }
+    };
 
-export default SubmissionDetail
+    fetchSubmissions();
+  }, [id, navigation]);
 
-const style = StyleSheet.create({
-    container:{
-        flex:1,
-        alignItems:'center'
+  const removeSubmissionById = (submissionId) => {
+    setSubmissions(currentSubmissions => {
+      const updatedSubmissions = currentSubmissions.filter(submission => submission.id !== submissionId);
+      if (updatedSubmissions.length === 0) {
+        navigation.goBack();
+      }
+      return updatedSubmissions;
+    });
+  };
+
+  const deleteImage = async (imageUrl) => {
+    try {
+      const imageRef = storage().refFromURL(imageUrl);
+      await imageRef.delete();
+      console.log('Image has been deleted successfully.');
+    } catch (error) {
+      console.error('Error while deleting the image: ', error);
+      showMessage({
+        message: 'Error deleting image',
+        type: 'danger',
+      });
     }
-})
+  };
+
+  const Approve = async (item) => {
+    if(item.type == 'certificate')
+    {
+      try{
+      firestore()
+      .collection('users')
+      .doc(id)
+      .collection('certificates') 
+      .doc(item.id)
+      .update({
+        status: 'approved',
+      })
+      .then(() => {
+        showMessage({
+          message: 'Certificate approved!',
+          type: 'success',
+        });
+        console.log('Certificate approved!');
+        removeSubmissionById(item.id);
+      });
+      }
+      catch(error){
+        console.log(error);
+    }
+    }
+    else
+    {
+      try{
+      firestore()
+      .collection('users')
+      .doc(id)
+      .collection('documents') 
+      .doc(item.id)
+      .update({
+        status: 'approved',
+      })
+      .then(() => {
+        showMessage({
+          message: 'Document approved!',
+          type: 'success',
+        });
+        console.log('Document approved!');
+        removeSubmissionById(item.id);
+      });
+    }
+      catch(error){
+        showMessage({
+          message: 'Error approving document',
+          type: 'danger',
+        });
+        console.log(error);
+      }
+    }
+  };
+  
+  const Deny = async (item) => {
+      await deleteImage(item.imageUrl);
+    if(item.type == 'certificate')
+    {
+      firestore()
+      .collection('users')
+      .doc(id)
+      .collection('certificates') 
+      .doc(item.id)
+      .delete()
+      .then(() => {
+        showMessage({
+          message: 'Certificate deleted!',
+          type: 'success',
+        });
+        console.log('Certificate deleted!');
+        removeSubmissionById(item.id);
+      });
+    }
+    else
+    {
+      firestore()
+      .collection('users')
+      .doc(id)
+      .collection('documents') 
+      .doc(item.id)
+      .delete()
+      .then(() => {
+        showMessage({
+          message: 'Document deleted!',
+          type: 'success',
+        });
+        console.log('Document deleted!');
+        removeSubmissionById(item.id);
+      });
+      
+    }
+  };
+  
+  const renderSubmissionItem = ({ item }) => (
+    <View style={styles.itemContainer}>
+    <Text style={styles.documentType}>
+      {['Passport', 'ID', "Driver's License"].includes(item.type) ? 'Document Type: ' : 'Certificate Title: '}
+      {['Passport', 'ID', "Driver's License"].includes(item.type) ? item.type : item.title}
+    </Text>
+    {['Passport', 'ID', "Driver's License"].includes(item.type) && (
+        <>
+          {/* Document-specific text fields */}
+          <Text style={styles.textField}>Document Number: {item.number}</Text>
+          <Text style={styles.textField}>Full Name: {item.fullName}</Text>
+          <Text style={styles.textField}>Country of Issue: {item.country}</Text>
+          <Text style={styles.textField}>Date of Issue: {item.dateOfIssue}</Text>
+          <Text style={styles.textField}>Date of Expiry: {item.dateOfExpiry}</Text>
+          {/* Document images */}
+          {item.frontImage && <Image style={styles.image} source={{ uri: item.frontImage }} />}
+          {item.backImage && <Image style={styles.image} source={{ uri: item.backImage }} />}
+        </>
+      )}
+      {item.type === 'certificate' && (
+        <>
+          <Text style={styles.textField}>Certificate Title: {item.title}</Text>
+          <Text style={styles.textField}>Certificate Description: {item.description}</Text>
+          <Image style={styles.image} source={{ uri: item.imageUrl }} />
+        </>
+      )}
+      <View style={styles.buttonBox}>
+            <Button title='Approve' onPress={() => Approve(item)} />
+            <Button title='Deny' onPress={() => Deny(item)} />
+      </View>
+   
+    </View>
+  );
+  
+
+  
+
+  return (
+    <View style={styles.container}>
+      <Text style={Global.title}>Submission Details</Text>
+      <FlatList
+        data={submissions}
+        keyExtractor={(item) => item.id}
+        renderItem={renderSubmissionItem}
+      />
+         <Button title='Back' onPress={() => navigation.goBack()} />
+    </View>
+  );
+};
+
+export default SubmissionDetail;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  itemContainer: {
+    width: '100%',
+    backgroundColor: '#fff',
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  documentType: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    marginVertical: 10,
+    borderRadius: 8,
+  },
+  buttonBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+});

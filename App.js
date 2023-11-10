@@ -20,6 +20,7 @@ import webforms from './app/assets/icons/webforms.png';
 
 
 
+
 //auth screens
 import Login from './app/src/screens/AuthStackScreens/Login'
 import SignUp from './app/src/screens/AuthStackScreens/SignUp'
@@ -177,7 +178,6 @@ useEffect(() => {
       .doc(currentUser.uid)
       .onSnapshot(documentSnapshot => {
         if (documentSnapshot.exists) {
-          console.log('User Data', documentSnapshot.data());
           setUserData(documentSnapshot.data());
         }
       }, error => {
@@ -220,6 +220,7 @@ useEffect(() => {
         drawerActiveTintColor: '#fff', 
       }}
     >
+      <Drawer.Screen name="Test" component={Complete} />
       <Drawer.Screen name="Home" component={HomeStackScreen} />
       {Dashboard ? <Drawer.Screen name="Dashboard" component={AdminStackScreen} /> : null}
       <Drawer.Screen name="Category" component={CategoryStack} />

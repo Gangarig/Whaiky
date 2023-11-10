@@ -30,6 +30,7 @@ const Profile = ({ navigation }) => {
 
     fetchData();
   }, [currentUser]);
+  
   const handleContractor = async () => {
     try {
       if (currentUser?.uid) {

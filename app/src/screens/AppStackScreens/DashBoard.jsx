@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Touchable } from 'react-native'
+import { View, Text, StyleSheet, Touchable, Button } from 'react-native'
 import React,{ useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { Global } from '../../../style/Global'
@@ -39,13 +39,42 @@ const DashBoard = ({navigation}) => {
       const unsubscribe = firestore()
         .collection('submission')
         .onSnapshot(
-          (querySnapshot) => {
-            const newSubmissions = querySnapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            }));
-            setSubmissions(newSubmissions);
-            console.log('newSubmissions', newSubmissions);
+          async (querySnapshot) => {
+            const operations = querySnapshot.docs.map(async (doc) => {
+              const userId = doc.data().userId;
+    
+              // Asynchronously check for documents existence
+              const documentsExist = await firestore()
+                .collection('users')
+                .doc(userId)
+                .collection('documents')
+                .limit(1)
+                .get()
+                .then(docSnapshot => docSnapshot.size > 0);
+    
+              // Asynchronously check for certificates existence if documents don't exist
+              const certificatesExist = !documentsExist && await firestore()
+                .collection('users')
+                .doc(userId)
+                .collection('certificates')
+                .limit(1)
+                .get()
+                .then(docSnapshot => docSnapshot.size > 0);
+              
+              // If neither documents nor certificates exist, delete the submission
+              if (!documentsExist && !certificatesExist) {
+                await firestore().collection('submission').doc(doc.id).delete();
+                return null; // Returning null to filter out later
+              }
+    
+              // Return the submission data if either documents or certificates exist
+              return { id: doc.id, ...doc.data() };
+            });
+    
+            const submissionsWithChecks = await Promise.all(operations);
+            
+            // Filter out any null submissions (which were deleted)
+            setSubmissions(submissionsWithChecks.filter(submission => submission !== null));
           },
           (error) => {
             console.log('Error fetching submissions:', error);
@@ -60,8 +89,27 @@ const DashBoard = ({navigation}) => {
       return () => unsubscribe();
     }, []);
     
+    const Done = async (item) => {
+      firestore()
+      .collection('submission')
+      .doc(item.id)
+      .delete()
+      .then(() => {
+        showMessage({
+          message: 'Submission completed successfully',
+          type: 'success',
+        });
+      })
+      .catch((error) => {
+        console.error('Error removing submission: ', error);
+        showMessage({
+          message: 'Error removing submission',
+          type: 'danger',
+        });
+      });
     
-
+    }  
+    
     return (
       <View style={styles.container}>
         <Text style={Global.title}>Dashboard</Text>
@@ -74,9 +122,13 @@ const DashBoard = ({navigation}) => {
               <TouchableOpacity onPress={() => navigation.navigate('SubmitDetail', { id: item.id })}>
               <Text style={styles.submissionTitle}>Submit ID : {item.userId}</Text>
               </TouchableOpacity> 
+              <TouchableOpacity onPress={() => Done}>
+              <Text style={styles.submissionTitle}>Done</Text>
+              </TouchableOpacity>
             </View>
           )}
         />
+        <Button title='Back' onPress={() => navigation.goBack()} />
       </View>
     );    
 }
