@@ -49,6 +49,7 @@ const SubmissionDetail = ({ navigation, route }) => {
 
   const deleteImage = async (imageUrl) => {
     try {
+      console.log('Deleting image: ', imageUrl);
       const imageRef = storage().refFromURL(imageUrl);
       await imageRef.delete();
       console.log('Image has been deleted successfully.');
@@ -117,7 +118,15 @@ const SubmissionDetail = ({ navigation, route }) => {
   };
   
   const Deny = async (item) => {
-      await deleteImage(item.imageUrl);
+      console.log(item);
+      if(item.frontImage)
+      {
+      await deleteImage(item.frontImage);
+      }
+      if(item.backImage)
+      {
+      await deleteImage(item.backImage);
+      }
     if(item.type == 'certificate')
     {
       firestore()

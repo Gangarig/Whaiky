@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, Button } from 'react-native'
 import React from 'react'
 import GradientButton from '../style/GradientButton'
 import { Global } from '../style/Global'
@@ -24,14 +24,14 @@ const Complete = ({ navigation }) => {
         }, { merge: true });
         
         showMessage({ message: 'Submission Successful', type: 'success' });
-        navigation.navigate('Home');
+        navigation.navigate('ProfileScreen');
       } catch (error) {
         showMessage({
           message: 'Submission Failed - Please try again later.',
           description: error.message,
           type: 'danger',
         });
-        navigation.navigate('Home');
+        navigation.navigate('ProfileScreen');
       } finally {
         setIsSubmitting(false);
       }
@@ -40,10 +40,11 @@ const Complete = ({ navigation }) => {
     return (
       <View style={Global.container}>
         <GradientButton
-          text="Sent a Submission"
+          text="Send a Submission"
           onPress={submit}
           disabled={isSubmitting}
         />
+        
       </View>
     );
   };

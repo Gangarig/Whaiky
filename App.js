@@ -51,7 +51,7 @@ import ServiceCategory from './app/src/screens/AppStackScreens/ServiceCategory'
 import DocumentUpload from './app/service/DocumentUpload';
 import Certificate from './app/service/Certificate';
 import Contractor from './app/service/Contractor';
-import LegalInfo from './app/src/screens/AppStackScreens/LegalInfo'
+import LegalInfo from './app/src/screens/AppStackScreens/Legalinfo';
 import Complete from './app/service/Complete'; 
 import DashBoard from './app/src/screens/AppStackScreens/DashBoard';
 
@@ -158,12 +158,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
-
-
-
-
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
@@ -220,6 +214,7 @@ useEffect(() => {
         drawerActiveTintColor: '#fff', 
       }}
     >
+
       <Drawer.Screen name="Home" component={HomeStackScreen} />
       {Dashboard ? <Drawer.Screen name="Dashboard" component={AdminStackScreen} /> : null}
       <Drawer.Screen name="Category" component={CategoryStack} />
