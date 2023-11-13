@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import Message from "./Message";
-import { useChat } from "../../context/ChatContext";
-
+import { useChat } from "../../../../context/ChatContext";
 const Messages = () => {
   const [messages, setMessages] = useState([]);
   const { data } = useChat();

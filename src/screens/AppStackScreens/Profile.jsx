@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, Image, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { useAuth } from '../../context/AuthContext';
-import { Global } from '../../../style/Global';
 import { showMessage } from 'react-native-flash-message';
-import defaultAvatar from '../../../assets/images/avatar/avatar.png';
+import { useAuth } from '../../context/AuthContext';
+import defaultAvatar from '../../assets/images/avatar/avatar.png';
+import { Global } from '../../constant/Global';
+
 
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();

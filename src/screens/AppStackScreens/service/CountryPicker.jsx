@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Country } from 'country-state-city';
-import { Global } from '../style/Global';
+import { Global } from '../../../constant/Global';
 
 const CountryPicker = ({ onSelect, value }) => {
   const [open, setOpen] = useState(false);

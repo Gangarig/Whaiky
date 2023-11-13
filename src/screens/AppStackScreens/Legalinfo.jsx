@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, Button } from 'react-native';
-import { useAuth } from '../../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
+import { useAuth } from '../../context/AuthContext';
+
+
 
 const LegalInfo = ({navigation}) => {
   const { currentUser } = useAuth();

@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import LogoutButton from '../components/LogOut';
-import { useAuth } from '../contexts/AuthContext';
-import defaultAvatar from '../assets/images/avatar/avatar.png';
+import { useAuth } from '../context/AuthContext';
+import LogoutButton from '../service/LogOut';
 
 function CustomDrawerContent(props) {
     const { currentUser } = useAuth();

@@ -12,10 +12,10 @@ import {
 } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { showMessage } from 'react-native-flash-message';
-import { useAuth } from '../src/context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import { Global } from '../style/Global';
+import { Global } from '../../../constant/Global';
 
 const Certificate = ({ navigation }) => {
   const { currentUser } = useAuth();

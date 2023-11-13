@@ -9,15 +9,11 @@ import {
   Button,
   ActivityIndicator,
   ScrollView,
-  Alert,Image
+  Image
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { query, getDocs, where, collection,
-getDoc, doc, setDoc, updateDoc, serverTimestamp
-} from '@react-native-firebase/firestore';
 import firestore from '@react-native-firebase/firestore';
-import { useAuth } from '../../context/AuthContext';
-
+import { useAuth } from "../../../../context/AuthContext";
 const Search = ({ isVisible, onClose, navigation }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [users, setUsers] = useState([]);

@@ -1,11 +1,13 @@
 import { View, Text, Button } from 'react-native'
 import React from 'react'
-import GradientButton from '../style/GradientButton'
-import { Global } from '../style/Global'
 import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
-import { useAuth } from '../src/context/AuthContext';
 import { useState } from 'react';
+import { useAuth } from '../../../context/AuthContext';
+import { Global } from '../../../constant/Global';
+import GradientButton from '../../../components/GradientButton';
+
+
 
 const Complete = ({ navigation }) => {
     const { currentUser } = useAuth();

@@ -2,11 +2,11 @@ import { View, Text, Button, TextInput, Alert, StyleSheet, Modal, FlatList } fro
 import React from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useState, useEffect } from 'react';
-import { categoriesData } from '../src/dataStatic/categoriesData';
 import { showMessage } from 'react-native-flash-message';
-import { Global } from '../style/Global';
 import firestore from '@react-native-firebase/firestore';
-import { useAuth } from '../src/context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
+import { Global } from '../../../constant/Global';
+import { categoriesData } from '../../../constant/dataStatic/categoriesData';
 
 const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) => {
   const [openCategory, setOpenCategory] = useState(false);

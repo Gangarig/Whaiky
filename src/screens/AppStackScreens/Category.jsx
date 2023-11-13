@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text,Image, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
-import { Global}  from '../../../style/Global'
-import { categoriesData } from '../../dataStatic/categoriesData';
 import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import { useRef } from 'react';
 import { Dimensions } from 'react-native';
-
+import { Global } from '../../constant/Global';
+import { categoriesData } from '../../constant/dataStatic/categoriesData';
 
 const Category = ({ navigation, route }) => {
   const [openCategories, setOpenCategories] = useState([]);

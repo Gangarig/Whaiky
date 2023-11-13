@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, Button, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Country, State, City } from 'country-state-city';
-import { Global } from '../style/Global';
 import { showMessage } from 'react-native-flash-message';
+import { Global } from '../../../constant/Global';
 
 const LocationPicker = ({ onSave , onClose }) => {
   const [country, setCountry] = useState(null);

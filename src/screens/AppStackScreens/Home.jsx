@@ -4,10 +4,9 @@ import {
   Button, RefreshControl, SafeAreaView, StyleSheet
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { useAuth } from '../../context/AuthContext';
 import { showMessage } from 'react-native-flash-message';
 import FastImage from 'react-native-fast-image'
-
+import { useAuth } from '../../context/AuthContext';
 
 const DEFAULT_IMAGE = require('./../../../assets/images/default.png');
 

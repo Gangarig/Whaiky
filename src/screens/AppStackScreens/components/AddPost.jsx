@@ -9,16 +9,16 @@ import {
   Modal,
   Image,
 } from 'react-native';
-import { useAuth } from '../context/AuthContext';
-import { Global } from '../../style/Global';
+import { useAuth } from '../../../context/AuthContext';
+import { Global } from '../../../constant/Global';
 import firestore from '@react-native-firebase/firestore';
-import LocationPicker from '../../service/LocationPicker';
-import CategoryPicker from '../../service/CategoryPicker';
+import LocationPicker from '../service/LocationPicker';
+import CategoryPicker from '../service/CategoryPicker';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { showMessage } from 'react-native-flash-message';
 import firebase from '@react-native-firebase/app';
 import * as Progress from 'react-native-progress';
-import GradientButton from '../../style/GradientButton';
+import GradientButton from '../../../components/GradientButton';
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();

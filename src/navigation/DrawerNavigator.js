@@ -1,7 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {useAuth} from '../contexts/AuthContext';
-import AdminStackScreen from './AdminStack';
+import firestore from '@react-native-firebase/firestore';
+import {showMessage} from 'react-native-flash-message';
+import {useAuth} from '../context/AuthContext';
+import CustomDrawerItems from './CustomDrawerItems';
+import HomeStack from './HomeStack';
+import AdminStack from './AdminStack';
+import CategoryStack from './CategoryStack';
+import ChatStack from './ChatStack';
+import ProfileStack from './ProfileStack';
+import Settings from '../screens/AppStackScreens/Settings';
 
 const Drawer = createDrawerNavigator();
 
@@ -43,7 +51,7 @@ useEffect(() => {
   return (
     <Drawer.Navigator
       initialRouteName="Home"
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={(props) => <CustomDrawerItems {...props} />}
       screenOptions={{
         drawerStyle: {
           backgroundColor: '#fff',
@@ -58,11 +66,11 @@ useEffect(() => {
       }}
     >
 
-      <Drawer.Screen name="Home" component={HomeStackScreen} />
-      {Dashboard ? <Drawer.Screen name="Dashboard" component={AdminStackScreen} /> : null}
+      <Drawer.Screen name="Home" component={HomeStack} />
+      {Dashboard ? <Drawer.Screen name="Dashboard" component={AdminStack} /> : null}
       <Drawer.Screen name="Category" component={CategoryStack} />
-      <Drawer.Screen name="Messages" component={ChatStackScreen} />
-      <Drawer.Screen name="Profile" component={ProfileStackScreen} />
+      <Drawer.Screen name="Messages" component={ChatStack} />
+      <Drawer.Screen name="Profile" component={ProfileStack} />
       <Drawer.Screen 
       name="Settings" 
       component={Settings} 

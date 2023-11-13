@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, ScrollView, SafeAreaView, StyleSheet, Alert } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
-import { useAuth } from '../../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
-import ServiceCategoryPicker from '../../../service/ServiceCategoryPicker';
-import { Global } from '../../../style/Global';
+import { useAuth } from '../../context/AuthContext';
+import ServiceCategoryPicker from '../../screens/AppStackScreens/service/ServiceCategoryPicker';
+
 
 const ServiceCategory = ({ navigation }) => {
   const { currentUser } = useAuth();

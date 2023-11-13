@@ -3,10 +3,9 @@ import { View, Text, TextInput, Button, Alert, StyleSheet, Platform, KeyboardAvo
 import auth from '@react-native-firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import Logo from '../../../assets/logo/logo.png';
-import { Global } from '../../../style/Global';
 import { showMessage } from 'react-native-flash-message';
-
+import Logo from '../../assets/logo/logo.png';
+import Global from '../../constant/Global';
 
 
 const ForgotPassword = ({ navigation }) => {

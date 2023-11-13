@@ -1,6 +1,8 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import Category from "../screens/Category";
+import Category from "../screens/AppStackScreens/Category";
+import CategoryDetail from "../screens/AppStackScreens/CategoryDetail";
+
 
 const Stack = createStackNavigator();
 function CategoryStack() {

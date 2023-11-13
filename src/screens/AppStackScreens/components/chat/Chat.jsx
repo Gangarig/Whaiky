@@ -3,8 +3,8 @@ import { View, Text, Image, StyleSheet, Button } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import Messages from "./Messages";
 import Input from "./Input";
-import { useChat } from "../../context/ChatContext";
-import defaultAvatar from "../../../assets/images/avatar/avatar.png";
+import { useChat } from "../../../../context/ChatContext";
+import defaultAvatar from '../../../../assets/images/avatar/avatar.png';
 const Chat = ({ navigation, route }) => {
   const { data } = useChat();
   const { chatId, userInfo } = route.params;

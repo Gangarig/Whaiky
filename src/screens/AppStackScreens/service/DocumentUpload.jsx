@@ -13,12 +13,12 @@ import {
 } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { showMessage } from 'react-native-flash-message';
-import { useAuth } from '../src/context/AuthContext';
 import CountryPicker from './CountryPicker'; 
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Global } from '../style/Global';
+import { useAuth } from '../../../context/AuthContext';
+import { Global } from '../../../constant/Global';
 
 const DocumentUpload = ({ navigation }) => {
   const { currentUser } = useAuth();

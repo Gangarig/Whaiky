@@ -1,14 +1,13 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import Profile from "../screens/Profile";
-import PersonalInfo from "../screens/PersonalInfo";
-import ServiceCategory from "../screens/ServiceCategory";
-import DocumentUpload from "../screens/DocumentUpload";
-import Certificate from "../screens/Certificate";
-import LegalInfo from "../screens/LegalInfo";
-import Contractor from "../screens/Contractor";
-import Complete from "../screens/Complete";
-
+import Profile from "../screens/AppStackScreens/Profile";
+import PersonalInfo from "../screens/AppStackScreens/PersonalInfo";
+import ServiceCategory from "../screens/AppStackScreens/ServiceCategory";
+import DocumentUpload from "../screens/AppStackScreens/service/DocumentUpload";
+import Certificate from "../screens/AppStackScreens/service/Certificate";
+import LegalInfo from "../screens/AppStackScreens/Legalinfo";
+import Contractor from "../screens/AppStackScreens/service/Contractor";
+import Complete from "../screens/AppStackScreens/service/Complete";
 
 
 

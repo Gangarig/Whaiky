@@ -1,9 +1,8 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import Home from '../screens/Home';
-import AddPost from '../components/AddPost';
-import PostDetail from '../components/PostDetail';
-
+import Home from '../screens/AppStackScreens/Home';
+import AddPost from '../screens/AppStackScreens/components/AddPost';
+import PostDetail from '../screens/AppStackScreens/PostDetail';
 
 const HomeStack = createStackNavigator();
 function HomeStackScreen() {

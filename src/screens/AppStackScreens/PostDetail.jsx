@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, Button, StyleSheet, TouchableOpacity, Alert, Modal, ScrollView } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import { useAuth } from '../../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../../context/AuthContext';
+
 
 const PostDetail = ({ route, navigation }) => {
   const currentUser = useAuth(); // from your user context

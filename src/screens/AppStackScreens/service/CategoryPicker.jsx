@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Modal } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { categoriesData } from '../src/dataStatic/categoriesData';
-import { Global } from '../style/Global';
+import { categoriesData } from '../../../constant/dataStatic/categoriesData';
+import { Global } from '../../../constant/Global';
 
 const CategoryPicker = ({ onSave, onClose }) => {
   const [openCategory, setOpenCategory] = useState(false);

@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Image, StyleSheet, SafeAreaView, TouchableOpacity, Modal } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { useAuth } from '../../context/AuthContext';
 import PhoneInput from 'react-native-phone-input';
-import LocationPicker from '../../../service/LocationPicker';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import { ScrollView } from 'react-native';
-import avatar from '../../../assets/images/avatar/avatar.png';
-import { Global } from '../../../style/Global';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { Alert } from 'react-native';
+import { useAuth } from '../../context/AuthContext';
+import { Global } from '../../constant/Global';
+import avatar from '../../assets/images/avatar/avatar.png';
+import LocationPicker from '../AppStackScreens/service/LocationPicker';
+
 
 const PersonalInfo = ({ navigation }) => {
   const { currentUser } = useAuth();

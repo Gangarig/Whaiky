@@ -1,9 +1,11 @@
 import { View, Text, StyleSheet, Button, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../../context/AuthContext'
-import { Global } from '../../../style/Global'
 import { showMessage } from 'react-native-flash-message'
 import firestore from '@react-native-firebase/firestore'
+import { useAuth } from '../../context/AuthContext'
+import { Global } from '../../constant/Global'
+
+
 
 const DashBoard = ({ navigation }) => {
   const { currentUser } = useAuth()

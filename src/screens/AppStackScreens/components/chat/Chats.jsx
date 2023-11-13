@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, FlatList } from "react-native";
 import firestore from "@react-native-firebase/firestore";
-import { useAuth } from "../../context/AuthContext";
-import { useChat } from "../../context/ChatContext";
-import defaultAvatar from "../../../assets/images/avatar/avatar.png";
+import { useAuth } from "../../../../context/AuthContext";
+import { useChat } from "../../../../context/ChatContext";
 import { StyleSheet } from "react-native";
 import { showMessage } from "react-native-flash-message";
-import { Global } from "../../../style/Global";
+import { Global } from "../../../../constant/Global";
 import { Alert } from "react-native";
+import defaultAvatar from '../../../../assets/images/avatar/avatar.png';
 
 
 const Chats = ({ navigation }) => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Image, Modal, TouchableOpacity, StyleSheet } from "react-native";
-import { useAuth } from "../../context/AuthContext";
-import { useChat } from "../../context/ChatContext";
+import { useAuth } from "../../../../context/AuthContext";
+import { useChat } from "../../../../context/ChatContext";
 
 const Message = ({ message }) => {
   const { currentUser } = useAuth();

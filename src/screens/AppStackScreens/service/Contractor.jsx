@@ -1,9 +1,7 @@
 import { View, Text,Button ,StyleSheet} from 'react-native'
 import React from 'react'
-import { useAuth } from '../src/context/AuthContext'
-import { Global } from '../style/Global'
-import GradientButton from '../style/GradientButton'
-
+import { Global } from '../../../constant/Global'
+import GradientButton from '../../../components/GradientButton'
 const Contractor = ({navigation}) => {
   return (
     <View style={Global.container}>

@@ -3,8 +3,8 @@ import { View, Text, TextInput, Button, TouchableOpacity, Image, StyleSheet } fr
 import uuid from 'react-native-uuid';
 import { showMessage } from 'react-native-flash-message';
 import firestore from '@react-native-firebase/firestore';
-import { useAuth } from '../../context/AuthContext';
-import { useChat } from '../../context/ChatContext';
+import { useAuth } from "../../../../context/AuthContext";
+import { useChat } from "../../../../context/ChatContext";
 import ImageCropPicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 
