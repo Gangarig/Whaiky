@@ -1,12 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Animated, StyleSheet, Image, View, Button, Text, TouchableOpacity } from 'react-native';
+import { Animated, StyleSheet, Image, View, Text, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Logo from '../../../assets/logo/logo.png';
-import Image1 from '../../../assets/images/image1.png';
-import Image2 from '../../../assets/images/image2.png';
-import Image3 from '../../../assets/images/image3.png';
-
+import Logo from '../../assets/logo/logo.png';
+import Image1 from '../../assets/images/image1.png';
+import Image2 from '../../assets/images/image2.png';
+import Image3 from '../../assets/images/image3.png';
 const Welcome = ({ navigation }) => {
     const [activeView, setActiveView] = useState(1);
     const fadeAnim = useRef(new Animated.Value(1)).current;

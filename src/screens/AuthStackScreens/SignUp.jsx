@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../../app/src/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { Global } from '../../../style/Global';
