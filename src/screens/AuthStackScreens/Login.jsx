@@ -7,10 +7,12 @@ import auth from '@react-native-firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import Logo from '../../assets/logo/logo.png';
-import Global from '../../constant/Global';
+import { Global } from '../../constant/Global';
 import { showMessage } from 'react-native-flash-message';
 import { ScrollView } from 'react-native-gesture-handler';
 import GradientButton from '../../components/GradientButton';
+
+
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
