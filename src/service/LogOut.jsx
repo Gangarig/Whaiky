@@ -16,7 +16,7 @@ export const LogoutButton = () => {
             });
     };
 
-    return <Button title="Log Out" onPress={()=>handleLogout} />;
+    return <Button title="Log Out" onPress={handleLogout} />;
 }
 
 export default LogoutButton;

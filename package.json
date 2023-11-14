@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@invertase/react-native-apple-authentication": "^2.3.0",
     "@react-native-community/datetimepicker": "^7.6.1",
     "@react-native-firebase/analytics": "^18.4.0",
     "@react-native-firebase/app": "^18.4.0",
@@ -17,6 +18,7 @@
     "@react-native-firebase/database": "^18.4.0",
     "@react-native-firebase/firestore": "^18.4.0",
     "@react-native-firebase/storage": "^18.4.0",
+    "@react-native-google-signin/google-signin": "^10.1.0",
     "@react-native-masked-view/masked-view": "^0.2.9",
     "@react-native-picker/picker": "^2.5.1",
     "@react-navigation/drawer": "^6.6.3",

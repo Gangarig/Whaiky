@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View, StyleSheet, Image, Text, Platform,
-  TouchableOpacity, TextInput, Keyboard, KeyboardAvoidingView
+  TouchableOpacity, TextInput, Keyboard, KeyboardAvoidingView, ScrollView
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,53 +9,30 @@ import LinearGradient from 'react-native-linear-gradient';
 import Logo from '../../assets/logo/logo.png';
 import { Global } from '../../constant/Global';
 import { showMessage } from 'react-native-flash-message';
-import { ScrollView } from 'react-native-gesture-handler';
 import GradientButton from '../../components/GradientButton';
-
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(null);
   const [attemptCount, setAttemptCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const passwordInputRef = useRef(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [disabled, setDisabled] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true);
-    });
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false);
-    });
+  const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+    setKeyboardVisible(true);
+  });
 
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
+  const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+    setKeyboardVisible(false);
+  });
 
-  useEffect(() => {
-    if (errorMessage) {
-      showMessage({
-        message: errorMessage,
-        type: 'danger',
-      });
-    }
-  }, [errorMessage]);
-
-  useEffect(() => {
-    if (attemptCount >= 3) {
-      setDisabled(true);
-
-      setTimeout(() => {
-        setDisabled(false);
-        setAttemptCount(0);
-      }, 10000); // Disable for 10 seconds
-    }
-  }, [attemptCount]);
+  const cleanupListeners = () => {
+    keyboardDidHideListener.remove();
+    keyboardDidShowListener.remove();
+  };
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -108,19 +85,19 @@ const Login = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradient}>
       </LinearGradient>
-      <Image source={Logo} style={[Global.logo, styles.logo]}/>
-      <KeyboardAvoidingView 
-        style={{ flex: 1, width: '100%' }} 
-        behavior={Platform.OS === "ios" ? "padding" : "height"} 
-        keyboardVerticalOffset={Platform.select({ios: 0, android: 500})} 
+      <Image source={Logo} style={[Global.logo, styles.logo]} />
+      <KeyboardAvoidingView
+        style={{ flex: 1, width: '100%' }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <View style={styles.content}> 
-            <Text style={[Global.title,styles.title]}>LOGIN</Text>
+          <View style={styles.content}>
+            <Text style={[Global.title, styles.title]}>LOGIN</Text>
             <View style={styles.inputs}>
-              <Text style={[Global.titleSecondary,styles.label]}>Email address</Text>
+              <Text style={[Global.titleSecondary, styles.label]}>Email address</Text>
               <TextInput
-                style={[Global.input,styles.input]}
+                style={[Global.input, styles.input]}
                 placeholder="Email"
                 onChangeText={(text) => setEmail(text)}
                 value={email}
@@ -128,10 +105,10 @@ const Login = ({ navigation }) => {
                 onSubmitEditing={() => passwordInputRef.current.focus()}
                 blurOnSubmit={false}
               />
-              <Text style={[Global.titleSecondary,styles.label]}>Password</Text>
+              <Text style={[Global.titleSecondary, styles.label]}>Password</Text>
               <TextInput
                 ref={passwordInputRef}
-                style={[Global.input,styles.input]}
+                style={[Global.input, styles.input]}
                 placeholder="Password"
                 onChangeText={(text) => setPassword(text)}
                 value={password}
@@ -141,19 +118,16 @@ const Login = ({ navigation }) => {
             </View>
           </View>
           <View style={styles.buttons}>
-            <GradientButton text="CONTINUE" onPress={handleSignIn}
-            />
+            <GradientButton text="CONTINUE" onPress={handleSignIn} />
             <Text>or</Text>
             <TouchableOpacity style={Global.link} onPress={goToSignUp}>
-              <Text style={styles.signUp }>SIGN UP</Text>
+              <Text style={styles.signUp}>SIGN UP</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-  
     </SafeAreaView>
   );
-  
 };
 
 const styles = StyleSheet.create({
@@ -161,9 +135,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    position:'relative',
+    position: 'relative',
     backgroundColor: '#FBFBFB',
-
   },
   gradient: {
     height: '50%',
@@ -173,7 +146,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   content: {
     width: 330,
     height: 366,
@@ -190,54 +162,44 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 100,
   },
-  logo :{
+  logo: {
     position: 'absolute',
-    top:30,
+    top: 30,
   },
-  title:{
+  title: {
     position: 'absolute',
     top: 40,
   },
-  forgot:{
+  forgot: {
     fontFamily: 'Montserrat-Regular',
     fontSize: 12,
     fontWeight: '400',
     fontStyle: 'normal',
     color: '#7B7B7B',
+    textAlign: 'right',
   },
-  inputs:{
+  inputs: {
     gap: 5,
     marginTop: 20,
   },
-  label:{
+  label: {
     marginTop: 20,
   },
-  forgot:{
-    textAlign: 'right',
-    color: '#7b7b7b',
-    fontFamily: 'Montserrat-Regular',
-    fontSize: 12,
-    fontWeight: '400',
-    letterSpacing: 0,
-
-  },
-  or:{
+  or: {
     color: '#7b7b7b',
     fontFamily: 'Montserrat-Medium, Helvetica',
     fontSize: 16,
     fontWeight: '500',
     letterSpacing: 0,
-
   },
-  signUp:{
+  signUp: {
     color: '#000000',
     fontFamily: 'Montserrat-Bold, Helvetica',
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0,
-
   },
-  buttons:{
+  buttons: {
     gap: 5,
     alignItems: 'center',
     top: -24,
@@ -245,8 +207,3 @@ const styles = StyleSheet.create({
 });
 
 export default Login;
-
-
-
-
-

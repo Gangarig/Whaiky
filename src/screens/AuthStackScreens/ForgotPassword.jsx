@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, Platform, KeyboardAvoidingView, Image } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Platform, KeyboardAvoidingView, Image } from 'react-native';
 import auth from '@react-native-firebase/auth';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import LinearGradient from 'react-native-linear-gradient';
 import { showMessage } from 'react-native-flash-message';
 import Logo from '../../assets/logo/logo.png';
-import Global from '../../constant/Global';
-
+import {Global} from '../../constant/Global';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ForgotPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -17,6 +15,11 @@ const ForgotPassword = ({ navigation }) => {
     return emailPattern.test(email);
   };
 
+  const clearFields = () => {
+    setEmail('');
+    setErrorMessage(null);
+  };
+
   const handlePasswordReset = () => {
     if (!isEmailValid(email)) {
       showMessage({
@@ -24,14 +27,19 @@ const ForgotPassword = ({ navigation }) => {
         description: "Please enter a valid email address.",
         type: "danger",
       });
-      setErrorMessage(null);
+      clearFields();
       return;
     }
 
     auth()
       .sendPasswordResetEmail(email)
       .then(() => {
-        setErrorMessage('Password reset email sent!');
+        showMessage({
+          message: "Success",
+          description: 'Password reset email sent!',
+          type: "success",
+        });
+        clearFields();
       })
       .catch((error) => {
         let errorText = '';
@@ -55,25 +63,22 @@ const ForgotPassword = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (errorMessage) {
-      showMessage({
-        message: "danger",
-        description: errorMessage, // this will contain 'Password reset email sent!' on success
-        type: 'danger',
-      });
-    } 
-  }, [errorMessage]);
+    // Cleanup error message when navigating back to this screen
+    return () => {
+      setErrorMessage(null);
+    };
+  }, []);
 
   return (
     <KeyboardAvoidingView 
-    style={{ flex: 1 }} 
-    behavior={Platform.OS === "ios" ? "padding" : "height"} 
-    keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
-  >
+      style={{ flex: 1 }} 
+      behavior={Platform.OS === "ios" ? "padding" : "height"} 
+      keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
+    >
       <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={Global.container}>
-        <Image source={Logo} style={[Global.logo,styles.logo]} />
+        <Image source={Logo} style={[Global.logo, styles.logo]} />
         
-        <View style={[styles.content,Global.center]}>
+        <View style={[styles.content, Global.center]}>
             <Text style={Global.title}>Forgot Password</Text>
             <Text style={Global.titleSecondary}>Email address</Text>
 
@@ -99,7 +104,7 @@ const ForgotPassword = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  content:{
+  content: {
     backgroundColor: '#FBFBFB',
     borderRadius: 15,
     padding: 20,
@@ -113,7 +118,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOpacity: 1,
   },
-  logo:{
+  logo: {
     marginBottom: 30,
   }
 });
