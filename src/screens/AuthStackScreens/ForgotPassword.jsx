@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Platform, KeyboardAvoidingView, Image } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Platform, Image, KeyboardAvoidingView } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { showMessage } from 'react-native-flash-message';
 import Logo from '../../assets/logo/logo.png';
-import {Global} from '../../constant/Global';
+import { Global } from '../../constant/Global';
 import LinearGradient from 'react-native-linear-gradient';
+import { shadowStyle } from '../../constant/Shadow';
+import SecondaryButton from '../../components/Buttons/SecondaryButton';
+import SuccessButton from '../../components/Buttons/SuccessButton';
+import PrimaryButton from '../../components/Buttons/PrimaryButton';
 
 const ForgotPassword = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -70,57 +74,85 @@ const ForgotPassword = ({ navigation }) => {
   }, []);
 
   return (
-    <KeyboardAvoidingView 
-      style={{ flex: 1 }} 
-      behavior={Platform.OS === "ios" ? "padding" : "height"} 
-      keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
-    >
-      <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={Global.container}>
+    <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={Global.container}>
+
+      {Platform.OS === 'android' && (
         <Image source={Logo} style={[Global.logo, styles.logo]} />
-        
-        <View style={[styles.content, Global.center]}>
+      )  
+      }
+      {Platform.OS === 'ios' ? (
+        <KeyboardAvoidingView
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' ,width:'100%'}}
+          behavior="padding"
+          keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}
+        >
+          <Image source={Logo} style={[Global.logo, styles.logo]} />
+          <View style={[styles.content, Global.center, shadowStyle]}>
             <Text style={Global.title}>Forgot Password</Text>
             <Text style={Global.titleSecondary}>Email address</Text>
-
+            
             <TextInput
-                style={Global.input}
-                placeholder="Type your email"
-                placeholderTextColor="#383838"
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                textContentType="emailAddress"
+              style={Global.input}
+              placeholder="Type your email"
+              placeholderTextColor="#383838"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              textContentType="emailAddress"
             />
 
-            <View style={Global.row}>
-                <Button title="Reset Password" onPress={handlePasswordReset} />
-                <Button title="Back to Login" onPress={() => navigation.navigate('login')} />
+            <View style={[Global.row,styles.ButtonBox,styles.ios]}>
+            <PrimaryButton text="Reset" onPress={handlePasswordReset} />
+            <SecondaryButton text="Back" onPress={() => navigation.navigate('login')} />
             </View>
+          </View>
+        </KeyboardAvoidingView>
+      ) : (
+        <View style={[styles.content, Global.center, shadowStyle]}>
+          <Text style={Global.title}>Forgot Password</Text>
+          <Text style={Global.titleSecondary}>Email address</Text>
+
+          <TextInput
+            style={Global.input}
+            placeholder="Type your email"
+            placeholderTextColor="#383838"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            textContentType="emailAddress"
+          />
+
+          <View style={[Global.row,styles.ButtonBox]}>
+            <PrimaryButton text="Reset" onPress={handlePasswordReset} />
+            <SecondaryButton text="Back" onPress={() => navigation.navigate('login')} />
+          </View>
         </View>
-      </LinearGradient>
-    </KeyboardAvoidingView>
+      )}
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   content: {
-    backgroundColor: '#FBFBFB',
+    backgroundColor: '#fff',
     borderRadius: 15,
     padding: 20,
     width: '90%',
     gap: 10,
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    shadowOffset: {
-      width: 0,
-      height: 0
-    },
-    shadowRadius: 4,
-    shadowOpacity: 1,
+    borderWidth: .5,
   },
   logo: {
     marginBottom: 30,
-  }
+  },
+  ButtonBox:{
+    gap: 10,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%',
+  },
+
 });
 
 export default ForgotPassword;

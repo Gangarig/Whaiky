@@ -13,8 +13,12 @@ function Main() {
   
     return (  
         <>
-          { currentUser ? 
-          <DrawerNavigator /> :
+          { currentUser ?
+          <>
+          <DrawerNavigator />
+
+          </>
+          :
           <AuthStackScreens />
           }
         </>

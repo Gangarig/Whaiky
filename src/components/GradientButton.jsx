@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {shadowStyle} from '../constant/Shadow';
 
 const GradientButton = ({ text, onPress }) => {
   const TouchableComponent =
@@ -8,7 +9,7 @@ const GradientButton = ({ text, onPress }) => {
 
   return (
     <TouchableComponent onPress={onPress}>
-      <View style={styles.shadowContainer}>
+      <View style={[styles.shadowContainer,shadowStyle]}>
         <LinearGradient
           colors={['rgb(158, 66, 240)', 'rgb(2, 173, 148)']}
           start={{ x: 0, y: 0 }}
@@ -27,23 +28,21 @@ const styles = StyleSheet.create({
     width: 243,
     height: 48,
     borderRadius: 4,
-    elevation: 5, // Android shadow
-    backgroundColor: 'transparent',
-    shadowColor: 'rgba(37, 44, 97, 0.3)', // iOS shadow
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowRadius: 10,
-    shadowOpacity: 1,
+    backgroundColor: '#fff',
+    borderColor:'#ddd',
+    borderRadius: 4,
+    borderWidth: 1,
+
   },
   button: {
     alignItems: 'center',
     borderRadius: 4,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     width: '100%', // Use '100%' to fill the shadow container width
     height: '100%', // Use '100%' to fill the shadow container height
+    borderWidth: .5,
   },
   getStarted: {
     color: '#ffffff',
@@ -51,7 +50,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0,
-    marginVertical: -1, // Use marginVertical to adjust the position
   },
 });
 

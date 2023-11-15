@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View, StyleSheet, Image, Text, Platform,
-  TouchableOpacity, TextInput, Keyboard, KeyboardAvoidingView, ScrollView
+  TouchableOpacity, TextInput, Keyboard, ScrollView,
+  KeyboardAvoidingView
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,6 +11,7 @@ import Logo from '../../assets/logo/logo.png';
 import { Global } from '../../constant/Global';
 import { showMessage } from 'react-native-flash-message';
 import GradientButton from '../../components/GradientButton';
+import { shadowStyle } from '../../constant/Shadow';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -21,27 +23,39 @@ const Login = ({ navigation }) => {
   const [disabled, setDisabled] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-    setKeyboardVisible(true);
-  });
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
 
-  const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-    setKeyboardVisible(false);
-  });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
 
-  const cleanupListeners = () => {
-    keyboardDidHideListener.remove();
-    keyboardDidShowListener.remove();
-  };
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   const handleSignIn = async () => {
     if (!email || !password) {
       setErrorMessage('Please fill in all fields.');
+      showMessage({
+        message: 'Error',
+        description: 'Please fill in all fields.',
+        type: 'danger',
+      });
       return;
     }
 
     if (disabled) {
       setErrorMessage('Sign-in is disabled for 10 seconds. Please try again later.');
+      showMessage({
+        message: 'Error',
+        description: 'Sign-in is disabled for 10 seconds. Please try again later.',
+        type: 'danger',
+      });
       return;
     }
 
@@ -68,6 +82,11 @@ const Login = ({ navigation }) => {
           setErrorMessage(error.message);
           break;
       }
+      showMessage({
+        message: 'Error',
+        description: errorMessage,
+        type: 'danger',
+      });
     } finally {
       setLoading(false);
     }
@@ -86,46 +105,40 @@ const Login = ({ navigation }) => {
       <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradient}>
       </LinearGradient>
       <Image source={Logo} style={[Global.logo, styles.logo]} />
-      <KeyboardAvoidingView
-        style={{ flex: 1, width: '100%' }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}
-      >
-        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <View style={styles.content}>
-            <Text style={[Global.title, styles.title]}>LOGIN</Text>
-            <View style={styles.inputs}>
-              <Text style={[Global.titleSecondary, styles.label]}>Email address</Text>
-              <TextInput
-                style={[Global.input, styles.input]}
-                placeholder="Email"
-                onChangeText={(text) => setEmail(text)}
-                value={email}
-                autoCapitalize="none"
-                onSubmitEditing={() => passwordInputRef.current.focus()}
-                blurOnSubmit={false}
-              />
-              <Text style={[Global.titleSecondary, styles.label]}>Password</Text>
-              <TextInput
-                ref={passwordInputRef}
-                style={[Global.input, styles.input]}
-                placeholder="Password"
-                onChangeText={(text) => setPassword(text)}
-                value={password}
-                secureTextEntry
-              />
-              <Text style={styles.forgot} onPress={handleForgotPassword}>FORGOT PASSWORD?</Text>
-            </View>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={[styles.content, shadowStyle, { marginTop: keyboardVisible ? -100 : 100 }]}>
+          <Text style={[Global.title, styles.title]}>LOGIN</Text>
+          <View style={styles.inputs}>
+            <Text style={[Global.titleSecondary, styles.label]}>Email address</Text>
+            <TextInput
+              style={[Global.input, styles.input]}
+              placeholder="Email"
+              onChangeText={(text) => setEmail(text)}
+              value={email}
+              autoCapitalize="none"
+              onSubmitEditing={() => passwordInputRef.current.focus()}
+              blurOnSubmit={false}
+            />
+            <Text style={[Global.titleSecondary, styles.label]}>Password</Text>
+            <TextInput
+              ref={passwordInputRef}
+              style={[Global.input, styles.input]}
+              placeholder="Password"
+              onChangeText={(text) => setPassword(text)}
+              value={password}
+              secureTextEntry
+            />
+            <Text style={styles.forgot} onPress={handleForgotPassword}>FORGOT PASSWORD?</Text>
           </View>
-          <View style={styles.buttons}>
-            <GradientButton text="CONTINUE" onPress={handleSignIn} />
-            <Text>or</Text>
-            <TouchableOpacity style={Global.link} onPress={goToSignUp}>
-              <Text style={styles.signUp}>SIGN UP</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+        <View style={styles.buttons}>
+          <GradientButton text="CONTINUE" onPress={handleSignIn} />
+          <Text>or</Text>
+          <TouchableOpacity style={Global.link} onPress={goToSignUp}>
+            <Text style={styles.signUp}>SIGN UP</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -151,16 +164,11 @@ const styles = StyleSheet.create({
     height: 366,
     borderRadius: 10,
     backgroundColor: "#FBFBFB",
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    shadowOffset: {
-      width: 0,
-      height: 0
-    },
-    shadowRadius: 4,
-    shadowOpacity: 1,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 100,
+    borderWidth: 1,
+
   },
   logo: {
     position: 'absolute',

@@ -1,24 +1,33 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet ,Text} from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { useAuth } from '../context/AuthContext';
 import LogoutButton from '../service/LogOut';
+import Colors from '../constant/Colors';
+import { Global } from '../constant/Global';
+import { shadowStyle } from '../constant/Shadow';
 
 function CustomDrawerContent(props) {
     const { currentUser } = useAuth();
     
     return (
-      <DrawerContentScrollView {...props}>
-        <View style={{height: '100%'}}> 
+      <DrawerContentScrollView 
+      contentContainerStyle={{flex:1,justifyContent:'space-between'}}
+      {...props}>
+        <View style={styles.menu}> 
+          <View style={styles.profileBox}>
           <Image
             source={currentUser?.photoURL ? { uri: currentUser.photoURL } : defaultAvatar}
             style={styles.profileImage}
           />
-          <DrawerItemList {...props} />
+          <Text style={[Global.titleSecondary,styles.name]}>{currentUser.displayName}</Text>
+          </View>
+          <DrawerItemList style={styles.item} {...props} />
         </View>
         <View style={styles.logoutButton}>
           <LogoutButton />
         </View>
+
       </DrawerContentScrollView>
     );
   }
@@ -26,16 +35,34 @@ function CustomDrawerContent(props) {
     profileImage: {
       width: 100,
       height: 100,
-      borderRadius: 10,
-      marginVertical: 30,
+      borderRadius: 50,
       alignSelf: 'center',
-      borderWidth: 1,
-      borderColor: '#ccc',
+      borderWidth: 2,
+      borderColor: Colors.primary,
     },
     logoutButton: { 
-      padding: 10,
       borderTopWidth: 1, 
-      borderTopColor: '#ccc'
+      borderTopColor: '#ccc',
+    },
+    menu: {
+      justifyContent: 'space-around',
+    },
+    name:{
+      textAlign:'center',
+      color:Colors.text,
+      fontSize:20,
+      fontWeight:'bold',
+      height:30,
+    },
+    profileBox:{
+      gap:10,
+      justifyContent:'space-around',
+      alignItems:'center',
+      height:150,
+      borderBottomWidth: 1, 
+      borderBottomColor: '#ccc',
+      marginVertical:30,
+
     },
   });
 

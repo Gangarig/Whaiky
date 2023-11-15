@@ -1,15 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import {useAuth} from '../context/AuthContext';
+import AdminStackScreen from './AdminStack';
+import HomeStackScreen from './HomeStack';
+import ProfileStackScreen from './ProfileStack';
+import ChatStackScreen from './ChatStack';
+import Settings from '../screens/AppStackScreens/Settings';
+import CustomDrawerContent from './CustomDrawerItems';
+import CategoryStack from './CategoryStack';
 import firestore from '@react-native-firebase/firestore';
 import {showMessage} from 'react-native-flash-message';
-import {useAuth} from '../context/AuthContext';
-import CustomDrawerItems from './CustomDrawerItems';
-import HomeStack from './HomeStack';
-import AdminStack from './AdminStack';
-import CategoryStack from './CategoryStack';
-import ChatStack from './ChatStack';
-import ProfileStack from './ProfileStack';
-import Settings from '../screens/AppStackScreens/Settings';
+import SVGIcons from '../constant/SVGIcons';
+import { shadowStyle } from '../constant/Shadow';
+import { Global } from '../constant/Global';
+import LinearGradient from 'react-native-linear-gradient';
+
 
 const Drawer = createDrawerNavigator();
 
@@ -51,29 +56,91 @@ useEffect(() => {
   return (
     <Drawer.Navigator
       initialRouteName="Home"
-      drawerContent={(props) => <CustomDrawerItems {...props} />}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         drawerStyle: {
           backgroundColor: '#fff',
-          width: 250,
+          width: 220,
         },
         drawerLabelStyle: {
           fontSize: 20,
           height: 25,
+          ...Global.titleSecondary,
+          color: '#fff',
         },
-        drawerActiveBackgroundColor: '#9E42F0',
-        drawerActiveTintColor: '#fff', 
+        drawerInactiveTintColor: '#fff',
+        drawerInactiveBackgroundColor: '#9E42F0',
+        drawerActiveBackgroundColor: '#B57DFF',
+        drawerActiveTintColor: 'black',
+        headerTintColor: '#9E42F0',
+        headerStyle: {
+          backgroundColor: '#fff',
+        },
+    
       }}
     >
 
-      <Drawer.Screen name="Home" component={HomeStack} />
-      {Dashboard ? <Drawer.Screen name="Dashboard" component={AdminStack} /> : null}
-      <Drawer.Screen name="Category" component={CategoryStack} />
-      <Drawer.Screen name="Messages" component={ChatStack} />
-      <Drawer.Screen name="Profile" component={ProfileStack} />
       <Drawer.Screen 
+      name="Home" 
+      component={HomeStackScreen} 
+      options={{
+        drawerIcon: () => (
+          // Use your SVG icon from the SVGIcons object here
+          <>{SVGIcons.home}</>
+        ),
+      }}
+      />
+      {Dashboard ? <Drawer.Screen 
+      name="Dashboard" 
+      component={AdminStackScreen} 
+            options={{
+        drawerIcon: () => (
+          // Use your SVG icon from the SVGIcons object here
+          <>{SVGIcons.home}</>
+        ),
+      }}
+      /> : null}
+
+      <Drawer.Screen 
+      name="Category" 
+      component={CategoryStack} 
+            options={{
+        drawerIcon: () => (
+          // Use your SVG icon from the SVGIcons object here
+          <>{SVGIcons.categories}</>
+        ),
+      }}
+      />
+      <Drawer.Screen 
+      name="Messages" 
+      component={ChatStackScreen} 
+            options={{
+        drawerIcon: () => (
+          // Use your SVG icon from the SVGIcons object here
+          <>{SVGIcons.chat}</>
+        ),
+      }}
+      />
+      <Drawer.Screen 
+      name="Profile" 
+      component={ProfileStackScreen} 
+            options={{
+        drawerIcon: () => (
+          // Use your SVG icon from the SVGIcons object here
+          <>{SVGIcons.profile}</>
+        ),
+      }}
+      />
+      <Drawer.Screen 
+
       name="Settings" 
       component={Settings} 
+      options={{
+        drawerIcon: () => (
+          // Use your SVG icon from the SVGIcons object here
+          <>{SVGIcons.cogs}</>
+        ),
+      }}
       />
     </Drawer.Navigator>
   );

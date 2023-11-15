@@ -43,7 +43,7 @@ export const Global = StyleSheet.create({
         backgroundColor: '#FBFBFB',
         borderStyle: 'solid',
         borderWidth: 1,
-        borderColor: 'rgba(136, 136, 136, 1.0)',
+        borderColor: '#3d3d3d',
         paddingHorizontal: 15,
         paddingVertical: 10,
 

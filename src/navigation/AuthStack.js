@@ -5,6 +5,7 @@ import SignUp from '../screens/AuthStackScreens/SignUp';
 import ForgotPassword from '../screens/AuthStackScreens/ForgotPassword';
 // import Welcome from '../Screens/AuthStackScreens/Welcome';
 
+
 const AuthStack = createStackNavigator();
 function AuthStackScreens() {
   return (

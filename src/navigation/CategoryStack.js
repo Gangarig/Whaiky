@@ -2,7 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Category from "../screens/AppStackScreens/Category";
 import CategoryDetail from "../screens/AppStackScreens/CategoryDetail";
-
+import DrawerNavigator from "./DrawerNavigator";
 
 const Stack = createStackNavigator();
 function CategoryStack() {

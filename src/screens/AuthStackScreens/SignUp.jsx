@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text,TextInput, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, Keyboard, Platform } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from '../../context/AuthContext';
@@ -10,6 +10,7 @@ import { showMessage } from 'react-native-flash-message';
 import GradientButton from '../../components/GradientButton';
 import signInWithGoogle from './SocialSignIn/Google';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import { shadowStyle } from '../../constant/Shadow';
 
 const InputField = ({ label, value, onChangeText, secureTextEntry }) => (
   <View>
@@ -33,10 +34,7 @@ const SignUp = ({ navigation }) => {
     const hasMinLength = formData.password.length >= 8;
     const hasSpecialChar = /[~!@#$%^&*()_+\\-=[\]{}|;:'",.<>?]/.test(formData.password);
     return hasMinLength && hasSpecialChar;
-};
-
-  
-
+  };
 
   useEffect(() => {
     if (errorMessage) {
@@ -49,7 +47,7 @@ const SignUp = ({ navigation }) => {
   }, [errorMessage]);
 
   const handleInputChange = (name, value) => {
-    setFormData(prevState => ({ ...prevState, [name]: value }));
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleSignUp = async () => {
@@ -64,49 +62,91 @@ const SignUp = ({ navigation }) => {
     }
 
     try {
-      const userCredential = await auth().createUserWithEmailAndPassword(formData.email, formData.password);
+      const userCredential = await auth().createUserWithEmailAndPassword(
+        formData.email,
+        formData.password
+      );
       const user = userCredential.user;
       await firestore().collection('users').doc(user.uid).set({
         uid: user.uid,
         displayName: formData.displayName,
         email: formData.email,
         createdAt: new Date().getTime(),
-        photoURL: '', 
+        photoURL: '',
       });
-      setCurrentUser({ uid: user.uid, displayName: formData.displayName, email: formData.email, photoURL: '' });
+      setCurrentUser({
+        uid: user.uid,
+        displayName: formData.displayName,
+        email: formData.email,
+        photoURL: '',
+      });
       showMessage({ message: 'Account created successfully!', type: 'success' });
     } catch (error) {
       setErrorMessage(error.message);
     }
   };
 
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+    setKeyboardVisible(true);
+  });
+
+  const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+    setKeyboardVisible(false);
+  });
+
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradient} />
-      <KeyboardAvoidingView style={styles.keyboardView} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <View style={styles.content}>
-            <Text style={[Global.title, styles.title]}>Create new account</Text>
-            <InputField label="User name" value={formData.displayName} onChangeText={(text) => handleInputChange('displayName', text)} />
-            <InputField label="Email address" value={formData.email} onChangeText={(text) => handleInputChange('email', text)} />
-            <InputField label="Password" value={formData.password} onChangeText={(text) => handleInputChange('password', text)} secureTextEntry={true} />
-          </View>
-          <View style={[styles.Buttons, Global.center]}>
-            <GradientButton text="CONTINUE" onPress={handleSignUp} />
-            <Text style={Global.text}>or</Text>
-            <GoogleSigninButton
-            style={styles.googleButton}
+      <LinearGradient
+        colors={['#9E41F0', '#01AD94']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradient}
+      />
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        style={{ marginBottom: keyboardVisible ? 0 : 100 }}
+      >
+        <View style={[styles.content,shadowStyle]}>
+          <Text style={[Global.title, styles.title]}>Create new account</Text>
+          <InputField
+            label="User name"
+            value={formData.displayName}
+            onChangeText={(text) => handleInputChange('displayName', text)}
+          />
+          <InputField
+            label="Email address"
+            value={formData.email}
+            onChangeText={(text) => handleInputChange('email', text)}
+          />
+          <InputField
+            label="Password"
+            value={formData.password}
+            onChangeText={(text) => handleInputChange('password', text)}
+            secureTextEntry={true}
+          />
+        </View>
+        <View style={[styles.Buttons, Global.center]}>
+          <GradientButton text="CONTINUE" onPress={handleSignUp} />
+          <Text style={Global.text}>or</Text>
+          <GoogleSigninButton
+            style={[styles.googleButton,shadowStyle]}
             size={GoogleSigninButton.Size.Wide}
             color={GoogleSigninButton.Color.Dark}
             onPress={() => signInWithGoogle(setCurrentUser)}
-            />
-            <Text style={Global.text}>
-              Already have an account? <Text onPress={() => navigation.navigate('login')} style={Global.link}> Sign-in</Text> instead
-            </Text>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView> 
+          />
+          <Text style={Global.text}>
+            Already have an account?{' '}
+            <Text onPress={() => navigation.navigate('login')} style={Global.link}>
+              {' '}
+              Sign-in
+            </Text>{' '}
+            instead
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -116,7 +156,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    backgroundColor: '#FBFBFB',
+    backgroundColor: '#fff',
   },
   gradient: {
     height: '50%',
@@ -126,14 +166,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  keyboardView: { 
-    flex: 1, 
-    width: '100%' 
-  },
-  scrollView: { 
-    flexGrow: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center' 
+  scrollView: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     width: 330,
@@ -142,11 +178,9 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     marginTop: 20,
     borderRadius: 10,
-    backgroundColor: "#FBFBFB",
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 4,
-    shadowOpacity: 1,
+    backgroundColor: '#fff',
+    borderWidth: .5,
+    borderColor: '#3d3d3d',
     gap: 7,
   },
   title: { fontSize: 24 },
@@ -158,16 +192,9 @@ const styles = StyleSheet.create({
     width: 248,
     height: 48,
     borderRadius: 4,
-    elevation: 5, // Android shadow
-    backgroundColor: 'transparent',
-    shadowColor: 'rgba(37, 44, 97, 0.3)', // iOS shadow
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowRadius: 10,
-    shadowOpacity: 1,
-  }
+    backgroundColor: 'fff',
+
+  },
 });
 
 export default SignUp;
