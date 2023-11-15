@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import { Dimensions } from 'react-native';
 import { Global } from '../../constant/Global';
 import { categoriesData } from '../../constant/dataStatic/categoriesData';
-
+import { shadowStyle } from '../../constant/Shadow';
 const Category = ({ navigation, route }) => {
   const [openCategories, setOpenCategories] = useState([]);
   const scrollViewRef = useRef(); 
@@ -46,12 +46,13 @@ const Category = ({ navigation, route }) => {
       {categoriesData.map(category => (
         <View key={category.id}
           onLayout={onLayout(category.id)}
+          style={shadowStyle}
           >
           <LinearGradient
           start={{x: 0, y: 0}} 
           end={{x: 1, y: 0}}
           colors={['rgb(158, 66, 240)', 'rgb(95, 109, 203)']}
-          style={styles.mainCategory}
+          style={[styles.mainCategory]}
           >
             <TouchableOpacity style={styles.mainCategory} onPress={() => toggleCategory(category.id)}>
             <Image source={category.icon} style={styles.icon} />
@@ -70,6 +71,7 @@ const Category = ({ navigation, route }) => {
               ))}
             </View>
           )}
+          <View style={styles.border}></View>
         </View>
       ))}
     </ScrollView>
@@ -96,6 +98,7 @@ const styles = StyleSheet.create({
     gap: 16,
     flexDirection: 'row',
     alignItems: 'center',
+
   },
   title: {
     color: '#FFF',
@@ -123,6 +126,11 @@ const styles = StyleSheet.create({
   },
   bottomPadding: {
     paddingBottom: 100,
+  },
+  border: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'black',
+    marginTop: 16,
   },
 });
 

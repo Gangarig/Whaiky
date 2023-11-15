@@ -123,31 +123,29 @@ const AddPost = ({ navigation }) => {
     });
   };
 
-  const uploadImage = async (imageUri) => {
-    const filename = imageUri.substring(imageUri.lastIndexOf('/') + 1);
-    const uploadTask = firebase.storage().ref(`uploads/${filename}`).putFile(imageUri);
-
-    // Set up a listener for upload progress
-    uploadTask.on(
-      firebase.storage.TaskEvent.STATE_CHANGED,
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100; // Calculate progress as a percentage
-        setUploadProgress(progress); // Update the progress state
-      },
-      (error) => {
-        console.error(error);
-        showMessage({
-          message: 'Upload failed',
-          type: 'danger',
-        });
-      },
-      () => {
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          console.log('File available at', downloadURL);
-        });
-      }
-    );
+  const uploadImage = async (imageUri, postId) => {
+    const filename = `${postId}_${Date.now()}.jpg`; // Unique filename for each image
+    const storagePath = `posts/${postId}/${filename}`; // Updated path with postId
+    const uploadTask = firebase.storage().ref(storagePath).putFile(imageUri);
+  
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        },
+        (error) => {
+          console.error(error);
+          reject(error);
+        },
+        () => {
+          resolve(storagePath); // Return the storage path upon successful upload
+        }
+      );
+    });
   };
+  
 
   const pickImages = async () => {
     try {
@@ -212,30 +210,28 @@ const AddPost = ({ navigation }) => {
       });
       return;
     }
-
+  
     const newPostRef = firestore().collection('posts').doc();
-
+  
     try {
       let imageUrls = [];
       if (post.images.length > 0) {
         for (const image of post.images) {
-          await uploadImage(image.path);
-          // Obtain the download URL for each uploaded image
-          const downloadURL = await firebase.storage().ref(`uploads/${image.filename}`).getDownloadURL();
+          const storagePath = await uploadImage(image.path, newPostRef.id);
+          const downloadURL = await firebase.storage().ref(storagePath).getDownloadURL();
           imageUrls.push(downloadURL);
         }
       }
-
-      // Add the server timestamps right before setting the document
+  
       const postData = {
         ...post,
         images: imageUrls,
         createdAt: firestore.FieldValue.serverTimestamp(),
         updatedAt: firestore.FieldValue.serverTimestamp(),
       };
-
+  
       await newPostRef.set(postData);
-
+  
       setPost({
         title: '',
         description: '',
@@ -253,7 +249,7 @@ const AddPost = ({ navigation }) => {
         ownerAvatar: currentUser.photoURL,
         postType: 'Looking For Service',
       });
-
+  
       showMessage({
         message: 'Post created successfully!',
         type: 'success',
@@ -267,6 +263,7 @@ const AddPost = ({ navigation }) => {
       });
     }
   };
+  
 
   return (
     <View style={Global.container}>

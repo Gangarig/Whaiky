@@ -14,7 +14,7 @@ import SVGIcons from '../constant/SVGIcons';
 import { shadowStyle } from '../constant/Shadow';
 import { Global } from '../constant/Global';
 import LinearGradient from 'react-native-linear-gradient';
-
+import Test from '../screens/Test';
 
 const Drawer = createDrawerNavigator();
 
@@ -79,6 +79,16 @@ useEffect(() => {
     
       }}
     >
+      <Drawer.Screen 
+      name="Test" 
+      component={Test} 
+      options={{
+        drawerIcon: () => (
+          // Use your SVG icon from the SVGIcons object here
+          <>{SVGIcons.home}</>
+        ),
+      }}
+      />
 
       <Drawer.Screen 
       name="Home" 

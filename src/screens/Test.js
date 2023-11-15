@@ -8,12 +8,12 @@ import SuccessButton from '../components/Buttons/SuccessButton'
 import WarningButton from '../components/Buttons/WarningButton'
 import LogoutButton from '../service/LogOut'
 import SVGIcons from '../constant/SVGIcons'
-
+import PostCard from '../components/PostCard';
 
 const Test = () => {
   return (
     <View style={styles.container}>
-      <Text>Test</Text>
+      {/* <Text>Test</Text>
         <PrimaryButton text="Primary" />
         <SecondaryButton text="Secondary" />
         <DangerButton text="Danger" />
@@ -32,7 +32,8 @@ const Test = () => {
           {SVGIcons.dashBoard}
 
           
-        </View>
+        </View> */}
+        <PostCard />
         <LogoutButton />
     </View>
   )
@@ -46,6 +47,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width:'100%',
-    backgroundColor: '#3d3d3d',
+    backgroundColor: '#fff',
   },
 });

@@ -1,93 +1,73 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import {
-  View, Text, FlatList, Image, TouchableOpacity,
-  Button, RefreshControl, SafeAreaView, StyleSheet
+  View, Text, TouchableOpacity, Button,
+  RefreshControl, SafeAreaView, FlatList, StyleSheet
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
-import FastImage from 'react-native-fast-image'
 import { useAuth } from '../../context/AuthContext';
-
-const DEFAULT_IMAGE = require('./../../../assets/images/default.png');
+import PostCard from '../../components/PostCard';
+import { FlashList } from '@shopify/flash-list';
+import { shadowStyle } from '../../constant/Shadow';
 
 const Home = ({ navigation }) => {
-  const { currentUser, profile , loading} = useAuth();
-  
+  const { currentUser, profile } = useAuth();
   const [posts, setPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [lastVisible, setLastVisible] = useState(null);
-  const [firstVisible, setFirstVisible] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const lastFetchedPost = useRef(null);
 
   useEffect(() => {
-    fetchPosts('initial');
+    fetchPosts();
   }, []);
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    const newPosts = await fetchPosts('new');
-    if (newPosts && newPosts.length > 0) {
-      setPosts(newPosts);
-    }
-    setRefreshing(false);
-  };
-  
+  const fetchPosts = async (loadMore = false) => {
+    if (loadingMore && !loadMore) return;
+    setLoadingMore(true);
 
-  const fetchPosts = async (direction) => {
-    let fetchedPosts = [];
     try {
-      let query;
-      if (direction === 'initial' || direction === 'new') {
-        query = firestore()
-          .collection('posts')
-          .orderBy('createdAt', 'desc')
-          .limit(5);
-  
-        if (direction === 'new' && firstVisible) {
-          query = query.endBefore(firstVisible);
-        }
-      } else if (direction === 'more' && lastVisible) {
-        query = firestore()
-          .collection('posts')
-          .orderBy('createdAt', 'desc')
-          .startAfter(lastVisible)
-          .limit(5);
+      let query = firestore()
+        .collection('posts')
+        .orderBy('createdAt', 'desc')
+        .limit(5);
+
+      if (loadMore && lastFetchedPost.current) {
+        query = query.startAfter(lastFetchedPost.current);
       }
-  
-      if (query) {
-        const snapshot = await query.get();
-        fetchedPosts = snapshot.docs.map(doc => {
-          const post = doc.data();
-          if (!post.title || !post.description || !post.price) {
-            throw new Error('Post data is incomplete');
-          }
-          return { id: doc.id, ...post };
-        });
-  
-        // Filter out duplicates based on id for 'new' and 'more'
-        if (direction === 'new' || direction === 'more') {
-          fetchedPosts = fetchedPosts.filter(newPost => 
-            !posts.some(existingPost => existingPost.id === newPost.id)
-          );
-        }
-  
-        if (fetchedPosts.length > 0) {
-          if (direction === 'new') {
-            setFirstVisible(snapshot.docs[0]);
-          }
-          setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-        }
+
+      const snapshot = await query.get();
+      const fetchedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      if (fetchedPosts.length > 0) {
+        lastFetchedPost.current = snapshot.docs[snapshot.docs.length - 1];
+        setPosts(loadMore ? [...posts, ...fetchedPosts] : fetchedPosts);
+        setHasMore(fetchedPosts.length === 5);
+      } else {
+        setHasMore(false);
       }
     } catch (error) {
       showMessage({
         message: error.message || 'Failed to fetch posts',
-        type: "danger",
+        type: 'danger',
       });
+    } finally {
+      setLoadingMore(false);
+      setRefreshing(false);
     }
-    // Return the fetched posts so they can be used in the calling function
-    return fetchedPosts;
   };
-  
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    lastFetchedPost.current = null;
+    fetchPosts();
+  };
+
+  const onEndReached = () => {
+    if (!loadingMore && hasMore) {
+      fetchPosts(true);
+    }
+  };
   const checkPostExistence = async (postId) => {
     try {
       const doc = await firestore().collection('posts').doc(postId).get();
@@ -96,19 +76,17 @@ const Home = ({ navigation }) => {
           message: 'This post is no longer available',
           type: "danger",
         });
-        handleRefresh();  // refresh to fetch current posts
         return false;
       }
       return true;
     } catch (error) {
       showMessage({
-        message: error.message,
+        message: error.message || 'Error checking post existence',
         type: "danger",
       });
       return false;
     }
   };
-
   const navigateToPostDetail = async (postId) => {
     const exists = await checkPostExistence(postId);
     if (exists) {
@@ -122,53 +100,45 @@ const Home = ({ navigation }) => {
         message: 'Please sign in to create a post.',
         type: "danger",
       });
-    } else if (profile !== 'completed') { // Check if profile is complete
+    } else if (profile !== 'completed') {
       showMessage({
         message: 'Please complete your profile to create a post.',
         type: "danger",
       });
-      navigation.navigate('PersonalInfo');  // Navigate to complete the profile if not done
+      navigation.navigate('PersonalInfo');
     } else {
-      navigation.navigate('AddPost');  // Navigate to the screen to create a post
+      navigation.navigate('AddPost');
     }
   };
-  
-  const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => navigateToPostDetail(item.id)}>
-      <View style={styles.postContainer}>
-        <Text style={styles.postTitle}>{item.title}</Text>
-        <Text style={styles.postPrice}>Price: {item.price}</Text>
-        {item.images && item.images[0] && (
-          // <Image source={{ uri: item.images[0] }} style={styles.postImage} />
-          <FastImage 
-            source={{ uri: item.images[0] }}
-            style={styles.postImage}
-            resizeMode={FastImage.resizeMode.contain}
-          />
-        )}
-      </View>
-    </TouchableOpacity>
-  );
 
-  // Ensure unique keys for each item
-  const keyExtractor = item => item.id;
+  const renderItem = ({ item }) => (
+    <PostCard
+      owner={item.ownerName}
+      postTitle={item.title}
+      postImageSource={item.images && item.images[0] ? item.images[0] : null}
+      onPress={() => navigateToPostDetail(item.id)}
+    />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <Button title="Create a Post" onPress={() => checkAccountStatus()} />
+      <Button title="Create a Post" onPress={checkAccountStatus} />
       {currentUser ? (
-        <FlatList
-          style={{ width: '100%' }}
+        <View style={[styles.flashList,shadowStyle]}>
+        <FlashList
           data={posts}
           renderItem={renderItem}
-          keyExtractor={keyExtractor}
+          keyExtractor={item => item.id}
+          estimatedItemSize={100} // Set an estimated size for each item
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          onEndReached={() => fetchPosts('more')}
+          onEndReached={onEndReached}
           onEndReachedThreshold={0.5}
+          ListFooterComponent={loadingMore ? <Text>Loading more...</Text> : null}
           ListEmptyComponent={<Text>No posts available.</Text>}
         />
+        </View>
       ) : (
         <Text>Please sign in to see posts.</Text>
       )}
@@ -181,25 +151,14 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    width: '100%',
   },
-  postContainer: {
-    margin: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc'
-  },
-  postTitle: {
-    fontSize: 18
-  },
-  postPrice: {
-    fontSize: 16,
-    color: '#777'
-  },
-  postImage: {
-    width: 100,
-    height: 100
-  },
+  flashList:{
+    flex:1,
+    paddingHorizontal:10,
+    borderWidth:1,
+    borderColor:'#ccc'
+  }
+
 });
