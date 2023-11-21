@@ -5,10 +5,11 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
-import { useAuth } from '../../context/AuthContext';
-import PostCard from '../../components/PostCard';
+import { useAuth } from '../../../context/AuthContext';
+import PostCard from '../../../components/PostCard';
 import { FlashList } from '@shopify/flash-list';
-import { shadowStyle } from '../../constant/Shadow';
+import { shadowStyle } from '../../../constant/Shadow';
+
 
 const Home = ({ navigation }) => {
   const { currentUser, profile } = useAuth();
@@ -20,6 +21,9 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     fetchPosts();
+    return () => {
+      setPosts([]);
+    };
   }, []);
 
   const fetchPosts = async (loadMore = false) => {
@@ -122,7 +126,12 @@ const Home = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Button title="Create a Post" onPress={checkAccountStatus} />
+      <TouchableOpacity
+        style={styles.createPostButton}
+        onPress={checkAccountStatus}
+      >
+        <Text style={styles.createPostButtonText}>Create a Post</Text>
+      </TouchableOpacity>
       {currentUser ? (
         <View style={[styles.flashList,shadowStyle]}>
         <FlashList
@@ -159,6 +168,7 @@ const styles = StyleSheet.create({
     paddingHorizontal:10,
     borderWidth:1,
     borderColor:'#ccc'
-  }
+  },
+  
 
 });

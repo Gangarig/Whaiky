@@ -20,7 +20,6 @@ export const Global = StyleSheet.create({
         height: 20,
         fontWeight: '600',
         fontStyle: 'normal',
-        color: '#1F1F1F',
         },
     text: {
         fontFamily: 'Montserrat-Medium',

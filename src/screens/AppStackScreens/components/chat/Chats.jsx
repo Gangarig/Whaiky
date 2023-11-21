@@ -8,7 +8,7 @@ import { showMessage } from "react-native-flash-message";
 import { Global } from "../../../../constant/Global";
 import { Alert } from "react-native";
 import defaultAvatar from '../../../../assets/images/avatar/avatar.png';
-
+import ProfileCard from "../../../../components/ProfileCard";
 
 const Chats = ({ navigation }) => {
   const [chats, setChats] = useState([]);
@@ -100,75 +100,33 @@ const Chats = ({ navigation }) => {
   
 
   const renderChatItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.chatItem}
+    <ProfileCard
+      displayName={item.userInfo.displayName}
+      message={item.lastMessage?.text || "No messages yet"}
       onPress={() => handleSelect(item.chatId, item.userInfo)}
-    >
-      <Image
-        source={item.userInfo.photoURL ? { uri: item.userInfo.photoURL } : defaultAvatar}
-        style={styles.avatar}
-      />
-      <View style={styles.chatDetails}>
-        <Text style={Global.titleSecondary}>Name: {item.userInfo.displayName}</Text>
-        <Text style={Global.text}>Last Message :{item.lastMessage?.text || "No messages yet"}</Text>
-      </View>
-      <TouchableOpacity 
-        onPress={() => deleteChat(item.userInfo.uid)}
-      >
-        <Text style={Global.textSecondary}>Delete</Text>
-      </TouchableOpacity>
-    </TouchableOpacity>
+    />
   );
+  
 
   return (
+    <View style={styles.flatList}>
     <FlatList
       data={chats}
       keyExtractor={(item) => item.chatId}
       renderItem={renderChatItem}
       ListEmptyComponent={<Text style={styles.noChatsText}>No chats available.</Text>}
     />
+    </View>
   );
 };
 
 export default Chats;
 
 const styles = StyleSheet.create({
-  chatItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-    shadowOffset: {
-      width: 3,
-      height: 3,
-    },
-    elevation: 1,
-    backgroundColor: '#fff',
+  flatList: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#fff",
   },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  chatDetails: {
-    marginLeft: 10,
-    flex: 1,
-  },
-  chatName: {
-    fontWeight: 'bold',
-  },
-  lastMessage: {
-    color: '#666',
-  },
-  noChatsText: {
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 16,
-  },
+
 });

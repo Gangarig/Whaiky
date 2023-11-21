@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import Home from '../screens/AppStackScreens/Home';
+import Home from '../screens/AppStackScreens/HomeScreens/Home';
 import AddPost from '../screens/AppStackScreens/components/AddPost';
 import PostDetail from '../screens/AppStackScreens/PostDetail';
 import { Button } from 'react-native';
