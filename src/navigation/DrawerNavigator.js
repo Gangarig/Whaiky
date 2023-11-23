@@ -84,7 +84,6 @@ useEffect(() => {
       component={Test} 
       options={{
         drawerIcon: () => (
-          // Use your SVG icon from the SVGIcons object here
           <>{SVGIcons.home}</>
         ),
       }}
@@ -95,7 +94,6 @@ useEffect(() => {
       component={HomeStackScreen} 
       options={{
         drawerIcon: () => (
-          // Use your SVG icon from the SVGIcons object here
           <>{SVGIcons.home}</>
         ),
       }}
@@ -105,7 +103,6 @@ useEffect(() => {
       component={AdminStackScreen} 
             options={{
         drawerIcon: () => (
-          // Use your SVG icon from the SVGIcons object here
           <>{SVGIcons.home}</>
         ),
       }}
@@ -116,7 +113,6 @@ useEffect(() => {
       component={CategoryStack} 
             options={{
         drawerIcon: () => (
-          // Use your SVG icon from the SVGIcons object here
           <>{SVGIcons.categories}</>
         ),
       }}
@@ -126,7 +122,6 @@ useEffect(() => {
       component={ChatStackScreen} 
             options={{
         drawerIcon: () => (
-          // Use your SVG icon from the SVGIcons object here
           <>{SVGIcons.chat}</>
         ),
       }}
@@ -136,7 +131,6 @@ useEffect(() => {
       component={ProfileStackScreen} 
             options={{
         drawerIcon: () => (
-          // Use your SVG icon from the SVGIcons object here
           <>{SVGIcons.profile}</>
         ),
       }}
@@ -147,7 +141,6 @@ useEffect(() => {
       component={Settings} 
       options={{
         drawerIcon: () => (
-          // Use your SVG icon from the SVGIcons object here
           <>{SVGIcons.cogs}</>
         ),
       }}

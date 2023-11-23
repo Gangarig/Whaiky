@@ -1,9 +1,10 @@
 
 const Colors = {
     primary: '#9E42F0',
+    secondary: '#fff',
+    lightPrimary: '#413ee6',
     background: '#FBFBFB',
     text: '#000',
-    secondary: '#fff',
     danger: '#dc3545',
     success: '#28a745',
     warning: '#ffc107',

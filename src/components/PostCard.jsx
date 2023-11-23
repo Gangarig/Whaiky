@@ -18,7 +18,7 @@ const PostCard = ({ owner,postTitle, postImageSource,onPress }) => {
         <View style={styles.postImageWrapper}>
             {postImageSource === null ? (
                 <View style={styles.noImage}>
-                  <Text style={[Global.titleSecondary,styles.white]}>No Image</Text>
+                  <Text style={[Global.titleSecondary,styles.black]}>No Image</Text>
                 </View>
                 ) : (
                     <FastImage 
@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontWeight: 'bold',
   },
-  white:{
-    color:Colors.white,
+  black:{
+    color:Colors.black,
   }
 
 });

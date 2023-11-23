@@ -9,7 +9,10 @@ import { useAuth } from '../../../context/AuthContext';
 import PostCard from '../../../components/PostCard';
 import { FlashList } from '@shopify/flash-list';
 import { shadowStyle } from '../../../constant/Shadow';
-
+import BackButton from '../../../components/Buttons/BackButton';
+import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import GradientButton from '../../../components/GradientButton';
+import { TextInput } from 'react-native-gesture-handler';
 
 const Home = ({ navigation }) => {
   const { currentUser, profile } = useAuth();
@@ -114,7 +117,7 @@ const Home = ({ navigation }) => {
       navigation.navigate('AddPost');
     }
   };
-
+  const Search = () => {};
   const renderItem = ({ item }) => (
     <PostCard
       owner={item.ownerName}
@@ -126,12 +129,17 @@ const Home = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity
-        style={styles.createPostButton}
-        onPress={checkAccountStatus}
+      <View style={styles.createPost}>
+      <View
+        style={styles.buttonBox}
       >
-        <Text style={styles.createPostButtonText}>Create a Post</Text>
-      </TouchableOpacity>
+        <PrimaryButton text="Create a Post" onPress={checkAccountStatus} />
+        <View style={styles.searchButtonBox}>
+        <PrimaryButton text="Search" onPress={Search} />
+        </View>
+      </View>
+      
+      </View>
       {currentUser ? (
         <View style={[styles.flashList,shadowStyle]}>
         <FlashList
@@ -169,6 +177,16 @@ const styles = StyleSheet.create({
     borderWidth:1,
     borderColor:'#ccc'
   },
+  buttonBox:{
+    backgroundColor:'#FBFBFB',
+    flexDirection:'row',
+    justifyContent:'space-around',
+    alignItems:'center',
+    paddingVertical:10,
+    paddingHorizontal:10,
+    borderRadius:10,
+    marginHorizontal:10,
+  }
   
 
 });

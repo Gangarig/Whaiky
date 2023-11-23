@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/AppStackScreens/HomeScreens/Home';
 import AddPost from '../screens/AppStackScreens/components/AddPost';
-import PostDetail from '../screens/AppStackScreens/PostDetail';
+import PostDetail from '../screens/AppStackScreens/HomeScreens/PostDetail';
 import { Button } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { DrawerActions } from '@react-navigation/native';
