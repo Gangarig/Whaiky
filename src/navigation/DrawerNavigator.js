@@ -15,7 +15,8 @@ import { shadowStyle } from '../constant/Shadow';
 import { Global } from '../constant/Global';
 import LinearGradient from 'react-native-linear-gradient';
 import Test from '../screens/Test';
-
+import ContractorStack from './ContractorStack';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
@@ -66,7 +67,7 @@ useEffect(() => {
           fontSize: 20,
           height: 25,
           ...Global.titleSecondary,
-          color: '#fff',
+          color: '',
         },
         drawerInactiveTintColor: '#fff',
         drawerInactiveBackgroundColor: '#9E42F0',
@@ -79,32 +80,31 @@ useEffect(() => {
     
       }}
     >
-      <Drawer.Screen 
+      {/* <Drawer.Screen 
       name="Test" 
       component={Test} 
       options={{
-        drawerIcon: () => (
-          <>{SVGIcons.home}</>
-        ),
+
       }}
-      />
+      /> */}
 
       <Drawer.Screen 
       name="Home" 
       component={HomeStackScreen} 
+      />
+      <Drawer.Screen 
+      name="Contractor" 
+      component={ContractorStack} 
       options={{
-        drawerIcon: () => (
-          <>{SVGIcons.home}</>
-        ),
+
       }}
       />
+      
       {Dashboard ? <Drawer.Screen 
       name="Dashboard" 
       component={AdminStackScreen} 
             options={{
-        drawerIcon: () => (
-          <>{SVGIcons.home}</>
-        ),
+
       }}
       /> : null}
 
@@ -112,27 +112,21 @@ useEffect(() => {
       name="Category" 
       component={CategoryStack} 
             options={{
-        drawerIcon: () => (
-          <>{SVGIcons.categories}</>
-        ),
+
       }}
       />
       <Drawer.Screen 
       name="Messages" 
       component={ChatStackScreen} 
             options={{
-        drawerIcon: () => (
-          <>{SVGIcons.chat}</>
-        ),
+
       }}
       />
       <Drawer.Screen 
       name="Profile" 
       component={ProfileStackScreen} 
             options={{
-        drawerIcon: () => (
-          <>{SVGIcons.profile}</>
-        ),
+
       }}
       />
       <Drawer.Screen 
@@ -140,9 +134,7 @@ useEffect(() => {
       name="Settings" 
       component={Settings} 
       options={{
-        drawerIcon: () => (
-          <>{SVGIcons.cogs}</>
-        ),
+
       }}
       />
     </Drawer.Navigator>

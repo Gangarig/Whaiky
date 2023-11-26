@@ -16,10 +16,13 @@ import PostCardDetail from '../components/PostCardDetail';
 const Test = () => {
   return (
     <View style={styles.container}>
-        {/* <Loader /> */}
-        {/* <ProfileCard />
-        <BackButton /> */}
-        <PostCardDetail />
+        <BackButton />
+        <DangerButton text={'TEST'}/>
+        <SecondaryButton text={'TEST'} />
+        <PrimaryButton text={'TEST'} />
+        <SuccessButton text={'TEST'} />
+        <WarningButton text={'TEST'} />
+        <LogoutButton text={'TEST'} />
     </View>
 
   )

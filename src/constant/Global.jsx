@@ -26,7 +26,6 @@ export const Global = StyleSheet.create({
         fontSize: 14,
         fontWeight: '500',
         fontStyle: 'normal',
-        color: '#383838',
     },
     textSecondary: {
         fontFamily: 'Montserrat-Regular',

@@ -5,12 +5,17 @@ import PhoneInput from 'react-native-phone-input';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import { ScrollView } from 'react-native';
-import FlashMessage, { showMessage } from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
 import { Alert } from 'react-native';
-import { useAuth } from '../../context/AuthContext';
-import { Global } from '../../constant/Global';
-import avatar from '../../assets/images/avatar/avatar.png';
-import LocationPicker from '../AppStackScreens/service/LocationPicker';
+import { useAuth } from '../../../context/AuthContext';
+import { Global } from '../../../constant/Global';
+import avatar from '../../../assets/images/avatar/avatar.png';
+import LocationPicker from '../../AppStackScreens/service/LocationPicker';
+import { shadowStyle } from '../../../constant/Shadow';
+import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import LinearGradient from 'react-native-linear-gradient';
+import Colors from '../../../constant/Colors';
+import BackButton from '../../../components/Buttons/BackButton';
 
 
 const PersonalInfo = ({ navigation }) => {
@@ -164,9 +169,17 @@ const PersonalInfo = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView>
-      <ScrollView>
-        <View style={styles.container}>
+      <ScrollView style={styles.container} >
+        <View>
+          <BackButton onPress={() => navigation.goBack()} />
+        </View>
+          <LinearGradient
+            colors={['#9E41F0', '#4C7BC0']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.profileContainer]}
+          >
+        <View >
           <View style={styles.avatarBox}>
             <Image
               source={userInfo.photoURL && userInfo.photoURL !== 'null' && userInfo.photoURL !== ''
@@ -174,36 +187,33 @@ const PersonalInfo = ({ navigation }) => {
                 : avatar }
               style={styles.avatar}
             />
-            </View>
-            <TouchableOpacity>
-              <Button title="Change Avatar" onPress={handleAvatarChange} />
-            </TouchableOpacity>
+          </View>
           <Text style={[Global.titleSecondary,styles.left]}>Full Name</Text>
           <TextInput
             placeholder="First Name"
             value={userInfo.firstName || ''}
             onChangeText={(text) => setUserInfo({ ...userInfo, firstName: text })}
-            style={Global.input}
+            style={styles.input}
           />
           <TextInput
             placeholder="Last Name"
             value={userInfo.lastName || ''}
             onChangeText={(text) => setUserInfo({ ...userInfo, lastName: text })}
-            style={Global.input}
+            style={styles.input}
           />
           <Text style={[Global.titleSecondary,styles.left]}>UserName</Text>
           <TextInput
             placeholder="User Name"
             value={userInfo.displayName || ''}
             onChangeText={(text) => setUserInfo({ ...userInfo, displayName: text })}
-            style={Global.input}
+            style={styles.input}
           />
           <Text style={[Global.titleSecondary,styles.left]}>Email</Text>
           <TextInput
             placeholder="Email"
             value={userInfo.email || ''}
             editable={false}
-            style={Global.input}
+            style={styles.input}
           />
           <Text style={[Global.titleSecondary,styles.left]}>Location</Text>
           {userLocation.country && userLocation.state && userLocation.city ? (
@@ -215,126 +225,63 @@ const PersonalInfo = ({ navigation }) => {
           ) : (
             <Text style={Global.text}>N/A</Text>
           )}
-          <Button title="Select Location" onPress={() => setLocationPickerVisible(true)} />
-            
-
-          {/* Location Picker Modal */}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={locationPickerVisible}
-            onRequestClose={() => {
-              setLocationPickerVisible(false);
-            }}
-          >
-            <View style={styles.fullScreenModal}>
-              <TouchableOpacity 
-                style={styles.modalOverlay} 
-                activeOpacity={1} 
-                onPressOut={() => { setLocationPickerVisible(false); }}
-              />
-              <LocationPicker
-                onSave={(selectedCountry, selectedState, selectedCity) => {
-                  handleLocationSave(selectedCountry, selectedState, selectedCity);
-                  setLocationPickerVisible(false); 
-                }}
-                onClose={() => setLocationPickerVisible(false)} 
-              />
-            </View>
-          </Modal>
-
-          <Text style={[Global.titleSecondary,styles.left]}>Phone Number</Text>
-          {userInfo.phoneNumbers && userInfo.phoneNumbers.length > 0 ? (
-            userInfo.phoneNumbers.map((phoneNumber, index) => (
-              <View key={index} style={styles.phoneNumberContainer}>
-                <Text style={Global.text}>{phoneNumber}</Text>
-                  <Button title='Delete' onPress={()=>deletePhoneNumber(index)} style={Global.text}/>
-              </View>
-            ))
-          ) : (
-            <Text style={Global.text}>N/A</Text>
-          )}
-
-          <Button title="Add Phone Number" onPress={() => setPhoneInputModalVisible(true)} />
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={phoneInputModalVisible}
-            onRequestClose={() => {
-              setPhoneInputModalVisible(false);
-            }}
-          >
-            <View style={styles.fullScreenModal}>
-              <TouchableOpacity
-                style={styles.modalOverlay}
-                activeOpacity={1}
-                onPressOut={() => { setPhoneInputModalVisible(false); }}
-              />
-
-              <View style={styles.modalContent}>
-                <Text style={Global.titleSecondary}>Enter Phone Number</Text>
-                <PhoneInput
-                  ref={(ref) => { phoneInput = ref; }}
-                  initialCountry="at"
-                  value={newPhoneNumber}
-                  onChangePhoneNumber={(text) => setNewPhoneNumber(text)}
-                  style={Global.input}
-                />
-                <Button title="Add" onPress={addPhoneNumber} />
-              </View>
-              <Button title="Close" onPress={() => setPhoneInputModalVisible(false)} />
-            </View>
-          </Modal>
-          
-          <View style={[Global.row,Global.center]}>
-          <Button title="Update Info" onPress={handleUpdate} />
-          <Button title="Go back" onPress={() => navigation.goBack()} />
-          </View>
         </View>
+        </LinearGradient>
+        <PrimaryButton text="Save" onPress={handleUpdate} />
+        <PrimaryButton text="Change Avatar" onPress={handleAvatarChange} />
+        <PrimaryButton text="Add Phone Number" onPress={() => setPhoneInputModalVisible(true)} />
+        <PrimaryButton text="Change Location" onPress={() => setLocationPickerVisible(true)} />
       </ScrollView>
-    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 30,
+    gap: 10,
+    flex: 1,
+    width: '100%',
+    ...shadowStyle
+  },
+  profileContainer: {
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
-  },
-  avatarBox: {
-    alignItems: 'center',
-    marginBottom: 20,
+    gap: 5,
   },
   avatar: {
-    width: 100,
-    height: 100,
+    width: 114,
+    height: 119,
+    borderWidth: 2,
+    borderColor: Colors.white,
+    borderRadius: 100,
   },
-  fullScreenModal: {
-    flex: 1,
-    justifyContent:'center',
-    alignItems:'center',
-    height: '100%',
-    backgroundColor: '#FFF',
-    paddingVertical: 50,
+  input: {
+    borderWidth: 0,
+    backgroundColor: 'transparent',
   },
-  left:{
-    alignSelf:'flex-start',
-    paddingLeft:25,
+  nameText: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: Colors.white,
+    paddingBottom: 10,
   },
-  phoneNumberContainer: {
+  infoWrapper: {
+    width: '100%',
+    gap: 5,
+    paddingBottom: 80,
+  },
+  infoBox: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 10,
-    paddingHorizontal: 30,
   },
-  locationContainer: {
-    width: '100%',
-    marginBottom: 10,
-    paddingHorizontal: 30,
+  infoText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: Colors.white,
   },
 });
 

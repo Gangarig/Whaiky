@@ -10,14 +10,18 @@ import Contractor from "../screens/AppStackScreens/service/Contractor";
 import Complete from "../screens/AppStackScreens/service/Complete";
 
 
-const ProfileStack = createStackNavigator();
-function ProfileStackScreen() {
+const ContractorStack = createStackNavigator();
+function ContractorStackScreen() {
   return (
-    <ProfileStack.Navigator screenOptions={{headerShown:false}}>
-      <ProfileStack.Screen name="ProfileScreen" component={Profile} />
-      <ProfileStack.Screen name="PersonalInfo" component={PersonalInfo} />
-    </ProfileStack.Navigator>
+    <ContractorStack.Navigator screenOptions={{headerShown:false}}>
+      <ContractorStack.Screen name="ContractorMain" component={Contractor} />
+      <ContractorStack.Screen name="Services" component={ServiceCategory} />
+      <ContractorStack.Screen name="DocumentUpload" component={DocumentUpload} />
+      <ContractorStack.Screen name="Certificate" component={Certificate} />
+      <ContractorStack.Screen name="LegalInfo" component={LegalInfo} />
+      <ContractorStack.Screen name="Complete" component={Complete} />
+    </ContractorStack.Navigator>
   );
 }
 
-export default ProfileStackScreen;
+export default ContractorStackScreen;
