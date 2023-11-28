@@ -4,7 +4,6 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../../context/AuthContext';
-import BackButton from '../../../components/Buttons/BackButton';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import PostCardDetail from '../../../components/PostCardDetail';
 
@@ -15,9 +14,6 @@ const PostDetail = ({ route, navigation }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [viewImageIndex, setViewImageIndex] = useState(null);
 
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
 
   const toggleConfirmModal = () => {
     setShowConfirmModal(!showConfirmModal);
@@ -81,9 +77,6 @@ const PostDetail = ({ route, navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.BackButton}>
-      <BackButton onPress={handleGoBack} />
-      </View>
       {post ? <PostCardDetail post={post}/> : <Text>Loading...</Text>}
       <View style={styles.buttonBox}>
         {currentUser && currentUser.uid === post?.ownerId && (
@@ -101,10 +94,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FBFBFB',
     position: 'relative',
-  },
-  BackButton: {
-    paddingTop: 20,
-    paddingLeft: 20,
   },
   buttonBox: {
     justifyContent: 'center',

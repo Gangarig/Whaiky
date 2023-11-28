@@ -1,39 +1,64 @@
-import { View, Text,StyleSheet,Image } from 'react-native'
-import React from 'react'
-import Svg, { Path } from 'react-native-svg';
-import DangerButton from '../components/Buttons/DangerButton'
-import SecondaryButton from '../components/Buttons/SecondaryButton'
-import PrimaryButton from '../components/Buttons/PrimaryButton'
-import SuccessButton from '../components/Buttons/SuccessButton'
-import WarningButton from '../components/Buttons/WarningButton'
-import LogoutButton from '../service/LogOut'
-import SVGIcons from '../constant/SVGIcons'
-import PostCard from '../components/PostCard';
-import Loader from '../components/Loader';
-import ProfileCard from '../components/ProfileCard';
-import BackButton from '../components/Buttons/BackButton';
-import PostCardDetail from '../components/PostCardDetail';
+import React, { useCallback, useRef, useMemo } from "react";
+import { StyleSheet, View, Text, Button,ScrollView } from "react-native";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { shadowStyle } from "../constant/Shadow";
+
 const Test = () => {
+  // hooks
+  const sheetRef = useRef(null);
+
+  // variables
+  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+
+  // callbacks
+  const handleSheetChange = useCallback((index) => {
+    console.log("handleSheetChange", index);
+  }, []);
+  const handleSnapPress = useCallback((index) => {
+    sheetRef.current?.snapToIndex(index);
+  }, []);
+  const handleClosePress = useCallback(() => {
+    sheetRef.current?.close();
+  }, []);
+
   return (
     <View style={styles.container}>
-        <BackButton />
-        <DangerButton text={'TEST'}/>
-        <SecondaryButton text={'TEST'} />
-        <PrimaryButton text={'TEST'} />
-        <SuccessButton text={'TEST'} />
-        <WarningButton text={'TEST'} />
-        <LogoutButton text={'TEST'} />
+      <ScrollView style={styles.scrollViewStyle} contentContainerStyle={styles.scrollContent}>
+        {/* Place your main content here */}
+        <Button title="Snap To 90%" onPress={() => handleSnapPress(2)} />
+        <Button title="Snap To 50%" onPress={() => handleSnapPress(1)} />
+        <Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />
+        <Button title="Close" onPress={() => handleClosePress()} />
+        {/* ... other content ... */}
+      </ScrollView>
+
+      <BottomSheet
+        ref={sheetRef}
+        snapPoints={snapPoints}
+        onChange={handleSheetChange}
+      >
+        <BottomSheetView>
+          <Text>Awesome 🔥</Text>
+          <Button title="Close" onPress={() => handleClosePress()} />
+        </BottomSheetView>
+      </BottomSheet>
     </View>
-
-  )
-}
-
-export default Test
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  },
+  scrollViewStyle: {
+    flex: 1,
+
+  },
+  scrollContent: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
   },
 });
+
+export default Test;

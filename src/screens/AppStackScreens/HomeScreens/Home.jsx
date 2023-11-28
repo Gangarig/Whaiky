@@ -9,7 +9,6 @@ import { useAuth } from '../../../context/AuthContext';
 import PostCard from '../../../components/PostCard';
 import { FlashList } from '@shopify/flash-list';
 import { shadowStyle } from '../../../constant/Shadow';
-import BackButton from '../../../components/Buttons/BackButton';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import GradientButton from '../../../components/GradientButton';
 import { TextInput } from 'react-native-gesture-handler';

@@ -10,7 +10,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import { shadowStyle } from '../../../constant/Shadow';
 import  Colors  from '../../../constant/Colors';
-import BackButton from '../../../components/Buttons/BackButton';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
 const Profile = ({ navigation }) => {
@@ -74,9 +73,6 @@ const Profile = ({ navigation }) => {
   
   return (
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View>
-            <BackButton onPress={() => navigation.goBack()} />
-          </View>
         {userData && (
           <LinearGradient
             colors={['#9E41F0', '#4C7BC0']}
@@ -84,9 +80,7 @@ const Profile = ({ navigation }) => {
             end={{ x: 1, y: 0 }}
             style={[styles.profileContainer]}
           >
-          <TouchableOpacity onPress={()=>navigation.navigate('PersonalInfo')} style={styles.Edit}>
-             <FontAwesomeIcon icon='fa-solid fa-pen-to-square' color='#fff' size={32} />
-          </TouchableOpacity>
+            <View style={styles.avatarWrapper}>
             <FastImage
               source={
                 userData.photoURL
@@ -95,6 +89,10 @@ const Profile = ({ navigation }) => {
               }
               style={styles.avatar}
             />
+          <TouchableOpacity onPress={()=>navigation.navigate('PersonalInfo')} style={styles.Edit}>
+             <FontAwesomeIcon icon='fa-solid fa-pen-to-square' color='#fff' size={32} />
+          </TouchableOpacity>
+            </View>
             <Text style={[styles.nameText]}>{userData.displayName || 'N/A'}</Text>
             <View style={styles.infoWrapper}>
               <View style={styles.infoBox}>
@@ -188,10 +186,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.white,
   },
+  avatarWrapper:{
+    position:'relative',
+  },
   Edit:{
     position:'absolute',
-    top:20,
-    right:20,
+    right:0,
+    bottom:0,
+    ...shadowStyle,
   }
 });
 

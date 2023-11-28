@@ -8,17 +8,26 @@ import { ChatContextProvider } from './src/context/ChatContext';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
-import { faIdCard, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { faCamera, faIdCard, faMinus, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import Test from './src/screens/Test';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-library.add(fab, faSquareCheck , faPenToSquare,faIdCard)
+
+library.add(
+  fab, 
+  faSquareCheck ,
+  faPenToSquare,
+  faIdCard,
+  faCamera,
+  faMinus
+  )
 
 
 
 export default function App() {
   return (
-    
-    <SafeAreaProvider>    
+    <SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>    
     <AuthProvider>
     <ChatContextProvider>
     <NavigationContainer>
@@ -27,6 +36,7 @@ export default function App() {
     </NavigationContainer>
     </ChatContextProvider>
     </AuthProvider>
+    </GestureHandlerRootView>
     </SafeAreaProvider>
    
   );

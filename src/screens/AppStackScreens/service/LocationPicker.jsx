@@ -5,6 +5,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Country, State, City } from 'country-state-city';
 import { showMessage } from 'react-native-flash-message';
 import { Global } from '../../../constant/Global';
+import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import { shadowStyle } from '../../../constant/Shadow';
 
 const LocationPicker = ({ onSave , onClose }) => {
   const [country, setCountry] = useState(null);
@@ -129,8 +131,6 @@ const LocationPicker = ({ onSave , onClose }) => {
           items={countryItems}
           setOpen={handleCountryOpen}
           setValue={handleCountryChange}
-          searchable={true}
-          searchPlaceholder="Search for a country..."
           containerStyle={styles.dropdownContainer}
           style={styles.dropdown}
           scrollViewProps={{
@@ -179,20 +179,6 @@ const LocationPicker = ({ onSave , onClose }) => {
               closeAfterSelectByDefault={true}
             />
           </>
-        )}
-
-        { country  && 
-        (<View style={styles.subContainer}>
-
-        <Text style={Global.titleSecondary}>Selected Location</Text>
-        <Text style={Global.titleSecondary}>Country:{country}</Text>  
-        </View>        
-        )}
-        { state  &&
-        (<Text style={Global.titleSecondary}>State:{state}</Text>
-        )}
-        { city  &&
-        (<Text style={Global.titleSecondary}>City:{city}</Text>
         )}
 
       {showSaveButton && (

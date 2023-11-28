@@ -1,6 +1,7 @@
 
 const Colors = {
     primary: '#9E42F0',
+    buttonBg: '#7B5BDC',
     secondary: '#fff',
     lightPrimary: '#413ee6',
     background: '#FBFBFB',

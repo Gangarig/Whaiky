@@ -3,7 +3,8 @@ import AuthStackScreens from "./AuthStack";
 import DrawerNavigator from "./DrawerNavigator";
 import { useAuth } from "../context/AuthContext";
 import Loading from "../components/Loading";
-
+import PersonalInfo from "../screens/AppStackScreens/ProfileScreens/PersonalInfo";
+import Test from "../screens/Test";
 function Main() {
     const { currentUser, setCurrentUser, loading } = useAuth();
   
@@ -15,8 +16,9 @@ function Main() {
         <>
           { currentUser ?
           <>
-          <DrawerNavigator />
-
+          {/* <DrawerNavigator />
+          <PersonalInfo /> */}
+          <Test/>
           </>
           :
           <AuthStackScreens />
