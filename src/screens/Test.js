@@ -1,63 +1,66 @@
-import React, { useCallback, useRef, useMemo } from "react";
-import { StyleSheet, View, Text, Button,ScrollView } from "react-native";
+import React, { useCallback, useRef, useMemo, useState } from "react";
+import { StyleSheet, View, Text, Button, ScrollView } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { shadowStyle } from "../constant/Shadow";
 
 const Test = () => {
-  // hooks
   const sheetRef = useRef(null);
-
-  // variables
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+  const [isScrollEnabled, setIsScrollEnabled] = useState(true);
 
-  // callbacks
   const handleSheetChange = useCallback((index) => {
     console.log("handleSheetChange", index);
+    setIsScrollEnabled(index === 0); 
   }, []);
+
   const handleSnapPress = useCallback((index) => {
     sheetRef.current?.snapToIndex(index);
   }, []);
+  
   const handleClosePress = useCallback(() => {
     sheetRef.current?.close();
   }, []);
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollViewStyle} contentContainerStyle={styles.scrollContent}>
-        {/* Place your main content here */}
-        <Button title="Snap To 90%" onPress={() => handleSnapPress(2)} />
-        <Button title="Snap To 50%" onPress={() => handleSnapPress(1)} />
-        <Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />
-        <Button title="Close" onPress={() => handleClosePress()} />
-        {/* ... other content ... */}
-      </ScrollView>
-
+    <ScrollView 
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      scrollEnabled={isScrollEnabled}
+    >
+      <Button title="Snap To 90%" onPress={() => handleSnapPress(2)} />
+      <Button title="Snap To 50%" onPress={() => handleSnapPress(1)} />
+      <Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />
+      <Button title="Close" onPress={() => handleClosePress()} />
+      
       <BottomSheet
         ref={sheetRef}
         snapPoints={snapPoints}
         onChange={handleSheetChange}
+        style={shadowStyle}
       >
-        <BottomSheetView>
+        <BottomSheetView style={styles.BottomSheet}>
           <Text>Awesome 🔥</Text>
           <Button title="Close" onPress={() => handleClosePress()} />
         </BottomSheetView>
       </BottomSheet>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: "100%",
+    backgroundColor: "#fff",
+    paddingTop: 100,
   },
-  scrollViewStyle: {
-    flex: 1,
-
+  contentContainer: {
+    padding: 24,
   },
-  scrollContent: {
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1,
+  BottomSheet: {
+    backgroundColor: "#fff",
+    padding: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
 });
 
