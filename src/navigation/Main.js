@@ -16,9 +16,9 @@ function Main() {
         <>
           { currentUser ?
           <>
-          {/* <DrawerNavigator />
-          <PersonalInfo /> */}
-          <Test/>
+          <DrawerNavigator />
+          {/* <PersonalInfo />
+          <Test/> */}
           </>
           :
           <AuthStackScreens />

@@ -17,7 +17,8 @@ import Colors from '../../../constant/Colors';
 import { shadowStyle } from '../../../constant/Shadow';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import BottomSheet from '@gorhom/bottom-sheet';
-
+import { handleAvatarChange } from '../../AppStackScreens/service/Image/AvatarChange';
+import { handleUpdate } from '../../AppStackScreens/service/ProfileUpdate';
 
 
 
@@ -64,41 +65,6 @@ const PersonalInfo = ({ navigation }) => {
     fetchData();
   }, [currentUser]);
 
-
-  const handleAvatarChange = async () => {
-    try {
-      const image = await ImagePicker.openPicker({
-        width: 300,
-        height: 400,
-        cropping: true
-      });
-  
-      if (!image) {
-        return;
-      }
-  
-      const storageRef = storage().ref(`profile_images/${currentUser.uid}`);
-      await storageRef.putFile(image.path);
-      const downloadURL = await storageRef.getDownloadURL();
-  
-      await firestore().collection('users').doc(currentUser.uid).update({
-        photoURL: downloadURL
-      });
-  
-      setUserInfo(prevState => ({ ...prevState, photoURL: downloadURL }));
-  
-      showMessage({
-        message: 'Avatar updated successfully!' + error.message,
-        type: 'success',
-      });
-    } catch (error) {
-      showMessage({
-        message: 'Error updating avatar: ' + error.message,
-        type: 'danger',
-      });
-    }
-  };
-
   const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
     if (
       selectedCountry !== userLocation.country ||
@@ -115,37 +81,6 @@ const PersonalInfo = ({ navigation }) => {
     });
   };
 
-  const handleUpdate = async () => {
-    if (currentUser?.uid) {
-      try {
-        const updatedUserData = {
-          firstName: userInfo.firstName || null,
-          lastName: userInfo.lastName || null,
-          displayName: userInfo.displayName || null,
-          phoneNumbers: userInfo.phoneNumbers || null,
-        };
-        
-        if (locationChanged) {
-          updatedUserData.country = userLocation.country || null;
-          updatedUserData.state = userLocation.state || null;
-          updatedUserData.city = userLocation.city || null;
-        }
-
-        await firestore().collection('users').doc(currentUser.uid).update(updatedUserData);
-
-        showMessage({
-          message: 'Information updated successfully!',
-          type: 'success',
-        });
-
-      } catch (error) {
-        showMessage({
-          message: 'Error updating information: ' + error.message,
-          type: 'danger',
-        });
-      }
-    }
-  };
 
   const addPhoneNumber = () => {
     if (newPhoneNumber) {
@@ -191,7 +126,7 @@ const PersonalInfo = ({ navigation }) => {
                 : avatar }
               style={styles.avatar}
             />
-            <TouchableOpacity style={styles.camera} onPress={handleAvatarChange}>
+            <TouchableOpacity style={styles.camera} onPress={handleAvatarChange(currentUser,setUserInfo)}>
               <FontAwesomeIcon size={24} icon="fa-solid fa-camera" /> 
             </TouchableOpacity>
           </View>
@@ -316,7 +251,7 @@ const PersonalInfo = ({ navigation }) => {
             <Button title="Close" onPress={closeBottomSheet} />
           </View>
         </BottomSheet>
-             <PrimaryButton text="Save" onPress={handleUpdate} />
+             <PrimaryButton text="Save" onPress={handleUpdate(currentUser, userInfo, userLocation, locationChanged)} />
         </View>
       </ScrollView>
   );
