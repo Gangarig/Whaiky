@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import DashBoard from "../screens/AppStackScreens/DashBoard";
-import SubmissionDetail from "../screens/AppStackScreens/components/SubmissionDetail";
+import DashBoard from "../screens/AppStackScreens/AdminScreens/DashBoard";
+import SubmissionDetail from "../screens/AppStackScreens/ProfileScreens/SubmissionDetail";
 
 const AdminStack = createStackNavigator();
 function AdminStackScreen() {

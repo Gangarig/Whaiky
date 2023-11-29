@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, ScrollView, SafeAreaView, StyleSheet, Alert } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import firestore from '@react-native-firebase/firestore';
-import { useAuth } from '../../context/AuthContext';
-import ServiceCategoryPicker from '../../screens/AppStackScreens/service/ServiceCategoryPicker';
+import { useAuth } from '../../../context/AuthContext';
+import ServiceCategoryPicker from '../service/ServiceCategoryPicker';
 
 
 const ServiceCategory = ({ navigation }) => {

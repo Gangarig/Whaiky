@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image, StyleSheet ,Text} from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { useAuth } from '../context/AuthContext';
-import LogoutButton from '../service/LogOut';
+import LogoutButton from '../screens/AppStackScreens/service/LogOut';
 import Colors from '../constant/Colors';
 import { Global } from '../constant/Global';
 import { shadowStyle } from '../constant/Shadow';

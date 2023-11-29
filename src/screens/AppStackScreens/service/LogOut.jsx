@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button } from 'react-native';
 import auth from '@react-native-firebase/auth';
-import { Global } from '../constant/Global';
-import Colors from '../constant/Colors';
+import { Global } from '../../../constant/Global';
+import Colors from '../../../constant/Colors';
 import { TouchableOpacity,Text,StyleSheet } from 'react-native';
 export const LogoutButton = () => {
     const handleLogout = () => {

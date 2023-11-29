@@ -15,26 +15,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
+    useEffect(() => {
       if (currentUser?.uid) {
         const userDocRef = firestore().collection('users').doc(currentUser.uid);
-
         const unsubscribe = userDocRef.onSnapshot((doc) => {
           if (doc.exists) {
             setUserData(doc.data());
           }
         });
-
-        return () => {
-          unsubscribe();
-        };
+  
+        return () => unsubscribe();
       }
-    };
+    }, [currentUser]);
 
-    fetchData();
-  }, [currentUser]);
+  
+    const getUserDataValue = (key, defaultValue = 'N/A') => {
+      return userData && userData[key] ? userData[key] : defaultValue;
+    };
   
   const handleContractor = async () => {
 
@@ -70,76 +67,67 @@ const Profile = ({ navigation }) => {
     }
   };
   
-  
   return (
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {userData && (
-          <LinearGradient
-            colors={['#9E41F0', '#4C7BC0']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={[styles.profileContainer]}
-          >
-            <View style={styles.avatarWrapper}>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      {userData && (
+        <LinearGradient
+          colors={['#9E41F0', '#4C7BC0']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.profileContainer}
+        >
+          <View style={styles.avatarWrapper}>
             <FastImage
-              source={
-                userData.photoURL
-                  ? { uri: userData.photoURL }
-                  : defaultAvatar
-              }
+              source={userData.photoURL ? { uri: userData.photoURL } : defaultAvatar}
               style={styles.avatar}
             />
-          <TouchableOpacity onPress={()=>navigation.navigate('PersonalInfo')} style={styles.Edit}>
-             <FontAwesomeIcon icon='fa-solid fa-pen-to-square' color='#fff' size={32} />
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('PersonalInfo')} style={styles.Edit}>
+              <FontAwesomeIcon icon='fa-solid fa-pen-to-square' color='#fff' size={32} />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.nameText}>{getUserDataValue('displayName')}</Text>
+          <View style={styles.infoWrapper}>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>First Name:</Text>
+              <Text style={styles.infoText}>{getUserDataValue('firstName')}</Text>
             </View>
-            <Text style={[styles.nameText]}>{userData.displayName || 'N/A'}</Text>
-            <View style={styles.infoWrapper}>
-              <View style={styles.infoBox}>
-                <Text style={[styles.infoText]}>First Name:</Text>
-                <Text style={[styles.infoText]}>{userData.firstName || 'N/A'}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={[styles.infoText]}>Last Name:</Text>
-                <Text style={[styles.infoText]}>{userData.lastName || 'N/A'}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={[styles.infoText]}>Email:</Text>
-                <Text style={[styles.infoText]}>{userData.email || 'N/A'}</Text>
-                </View>
-              <View style={styles.infoBox}>
-                <Text style={[styles.infoText]}>Phone:</Text>
-                <Text style={[styles.infoText]}>{userData.phoneNumbers[0] || 'N/A'}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={[styles.infoText]}>Country:</Text>
-                <Text style={[styles.infoText]}>{userData.country || 'N/A'}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={[styles.infoText]}>City:</Text>
-                <Text style={[styles.infoText]}>{userData.city || 'N/A'}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={[styles.infoText]}>State:</Text>
-                <Text style={[styles.infoText]}>{userData.state || 'N/A'}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={[styles.infoText]}>City:</Text>
-                <Text style={[styles.infoText]}>{userData.city || 'N/A'}</Text>
-              </View>
-              <View style={styles.infoBox}>
-              <Text style={[styles.infoText]}>Created:</Text>
-                <Text style={[styles.infoText]}>
-                {userData.createdAt
-                ? new Date(userData.createdAt).toLocaleDateString()
-                : 'N/A'}
-                </Text>
-              </View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>Last Name:</Text>
+              <Text style={styles.infoText}>{getUserDataValue('lastName')}</Text>
             </View>
-          </LinearGradient>
-        )}
-      </ScrollView>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>Email:</Text>
+              <Text style={styles.infoText}>{getUserDataValue('email')}</Text>
+            </View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>Phone:</Text>
+              <Text style={styles.infoText}>{getUserDataValue('phoneNumbers', []).join(', ')}</Text>
+            </View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>Country:</Text>
+              <Text style={styles.infoText}>{getUserDataValue('country')}</Text>
+            </View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>State:</Text>
+              <Text style={styles.infoText}>{getUserDataValue('state')}</Text>
+            </View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>City:</Text>
+              <Text style={styles.infoText}>{getUserDataValue('city')}</Text>
+            </View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>Created:</Text>
+              <Text style={styles.infoText}>
+                {userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}
+              </Text>
+            </View>
+          </View>
+        </LinearGradient>
+      )}
+    </ScrollView>
   );
+  
+
 };
 
 const styles = StyleSheet.create({

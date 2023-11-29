@@ -1,6 +1,6 @@
 import { View, Text ,StyleSheet, Button} from 'react-native'
 import React from 'react'
-import LogOut from '../../service/LogOut'
+import LogOut from './service/LogOut'
 import { DrawerActions } from '@react-navigation/native';
 
 

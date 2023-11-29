@@ -9,7 +9,6 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
 import { faCamera, faIdCard, faMinus, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
-import Test from './src/screens/Test';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 

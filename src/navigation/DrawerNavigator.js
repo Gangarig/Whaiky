@@ -14,7 +14,6 @@ import SVGIcons from '../constant/SVGIcons';
 import { shadowStyle } from '../constant/Shadow';
 import { Global } from '../constant/Global';
 import LinearGradient from 'react-native-linear-gradient';
-import Test from '../screens/Test';
 import ContractorStack from './ContractorStack';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 const Drawer = createDrawerNavigator();

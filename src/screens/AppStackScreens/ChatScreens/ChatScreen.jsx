@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button, Image } from 'react-native';
-import Chats from './components/chat/Chats';
-import Search from './components/chat/Search';
+import Chats from './chat/Chats';
+import Search from './chat/Search';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { showMessage } from 'react-native-flash-message';
 

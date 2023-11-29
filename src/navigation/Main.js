@@ -4,7 +4,7 @@ import DrawerNavigator from "./DrawerNavigator";
 import { useAuth } from "../context/AuthContext";
 import Loading from "../components/Loading";
 import PersonalInfo from "../screens/AppStackScreens/ProfileScreens/PersonalInfo";
-import Test from "../screens/Test";
+import Location from "../screens/AppStackScreens/service/Location";
 function Main() {
     const { currentUser, setCurrentUser, loading } = useAuth();
   
@@ -17,8 +17,8 @@ function Main() {
           { currentUser ?
           <>
           <DrawerNavigator />
-          {/* <PersonalInfo />
-          <Test/> */}
+          {/* <Location /> */}
+          {/* <PersonalInfo /> */}
           </>
           :
           <AuthStackScreens />

@@ -19,7 +19,7 @@ import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { handleAvatarChange } from '../../AppStackScreens/service/Image/AvatarChange';
 import { handleUpdate } from '../../AppStackScreens/service/ProfileUpdate';
-
+import Location from '../service/Location';
 
 
 const PersonalInfo = ({ navigation }) => {
@@ -51,20 +51,19 @@ const PersonalInfo = ({ navigation }) => {
       }
     }
   };
-  const [bottomSheetIndex, setBottomSheetIndex] = useState(-1); 
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const bottomSheetRef = useRef(null);
-  const toggleBottomSheet = () => {
-    setBottomSheetIndex(prevIndex => (prevIndex === -1 ? 1 : -1)); 
-  };
-  const closeBottomSheet = () => {
-    setBottomSheetIndex(-1);
-  };
 
   useEffect(() => {
     fetchData();
   }, [currentUser]);
 
+  const update = () => {
+    handleUpdate(currentUser, userInfo, userLocation, locationChanged);
+    navigation.goBack();
+  }
+
+  const changeAvatar = async () => {
+    handleAvatarChange(currentUser,setUserInfo);
+  };
   const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
     if (
       selectedCountry !== userLocation.country ||
@@ -72,13 +71,18 @@ const PersonalInfo = ({ navigation }) => {
       selectedCity !== userLocation.city
     ) {
       setLocationChanged(true);
+      setUserLocation({
+        country: selectedCountry || 'N/A',
+        state: selectedState || 'N/A',
+        city: selectedCity || 'N/A'
+      });
+      
+    } else {
+      setLocationChanged(false);
+
     }
-    
-    setUserLocation({
-      country: selectedCountry,
-      state: selectedState,
-      city: selectedCity
-    });
+
+
   };
 
 
@@ -115,10 +119,14 @@ const PersonalInfo = ({ navigation }) => {
       { cancelable: false },
     );
   };
+  const containerStyle = StyleSheet.flatten([
+    styles.container,
+    (locationPickerVisible || phoneInputModalVisible) && styles.modalOpenContainer,
+  ]);
 
   return (
       <ScrollView style={{flex:1}}>
-        <View style={styles.container}>
+        <View style={containerStyle}>
           <View style={styles.avatarBox}>
             <FastImage
               source={userInfo.photoURL && userInfo.photoURL !== 'null' && userInfo.photoURL !== ''
@@ -126,7 +134,7 @@ const PersonalInfo = ({ navigation }) => {
                 : avatar }
               style={styles.avatar}
             />
-            <TouchableOpacity style={styles.camera} onPress={handleAvatarChange(currentUser,setUserInfo)}>
+            <TouchableOpacity style={styles.camera} onPress={changeAvatar}>
               <FontAwesomeIcon size={24} icon="fa-solid fa-camera" /> 
             </TouchableOpacity>
           </View>
@@ -144,7 +152,7 @@ const PersonalInfo = ({ navigation }) => {
             onChangeText={(text) => setUserInfo({ ...userInfo, lastName: text })}
             style={styles.input}
           />
-          <Text style={[Global.titleSecondary,styles.left]}>UserName</Text>
+          <Text style={[Global.titleSecondary,styles.left]}>User Name</Text>
           <TextInput
             placeholder="User Name"
             value={userInfo.displayName || ''}
@@ -169,8 +177,6 @@ const PersonalInfo = ({ navigation }) => {
             <Text style={Global.text}>N/A</Text>
           )}
           <PrimaryButton text="Select Location" onPress={() => setLocationPickerVisible(true)} />
-          <PrimaryButton text={isSheetOpen ? "Close Bottom Sheet" : "Open Bottom Sheet"} onPress={toggleBottomSheet} />
-
 
           {/* Location Picker Modal */}
           <Modal
@@ -187,7 +193,7 @@ const PersonalInfo = ({ navigation }) => {
                 activeOpacity={1} 
                 onPressOut={() => { setLocationPickerVisible(false); }}
               />
-              <LocationPicker
+              <Location
                 onSave={(selectedCountry, selectedState, selectedCity) => {
                   handleLocationSave(selectedCountry, selectedState, selectedCity);
                   setLocationPickerVisible(false); 
@@ -218,7 +224,7 @@ const PersonalInfo = ({ navigation }) => {
               setPhoneInputModalVisible(false);
             }}
           >
-            <View style={styles.fullScreenModal}>
+            <View style={styles.phoneModal}>
               <TouchableOpacity
                 style={styles.modalOverlay}
                 activeOpacity={1}
@@ -226,7 +232,7 @@ const PersonalInfo = ({ navigation }) => {
               />
 
               <View style={styles.modalPhone}>
-                <Text style={Global.titleSecondary}>Enter Phone Number</Text>
+                <Text style={[Global.title,styles.title]}>Enter Phone Number</Text>
                 <PhoneInput
                   ref={(ref) => { phoneInput = ref; }}
                   initialCountry="at"
@@ -234,24 +240,15 @@ const PersonalInfo = ({ navigation }) => {
                   onChangePhoneNumber={(text) => setNewPhoneNumber(text)}
                   style={styles.input}
                 />
-                <Button title="Add" onPress={addPhoneNumber} />
+                <View style={styles.buttonBox}>
+                <PrimaryButton text="Add" onPress={addPhoneNumber} />
+                <PrimaryButton text="Close" onPress={() => setPhoneInputModalVisible(false)} />
+                </View>
               </View>
-              <Button title="Close" onPress={() => setPhoneInputModalVisible(false)} />
+           
             </View>
           </Modal>
-
-          <BottomSheet
-          ref={bottomSheetRef}
-          index={bottomSheetIndex}
-          snapPoints={['10%', '50%']}
-          onChange={index => setBottomSheetIndex(index)}
-        >
-          <View style={styles.contentContainer}>
-            <Text>Bottom Sheet Content Here</Text>
-            <Button title="Close" onPress={closeBottomSheet} />
-          </View>
-        </BottomSheet>
-             <PrimaryButton text="Save" onPress={handleUpdate(currentUser, userInfo, userLocation, locationChanged)} />
+             <PrimaryButton text="Save" onPress={update} />
         </View>
       </ScrollView>
   );
@@ -265,7 +262,9 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingBottom: 100,
     backgroundColor:Colors.background,
-
+  },
+  modalOpenContainer: {
+    opacity: 0.5,
   },
   avatar: {
     width: 114,
@@ -313,21 +312,31 @@ const styles = StyleSheet.create({
     fontFamily:'Montserrat-Medium',
   },
   fullScreenModal: {
-    justifyContent:'center',
-    alignItems:'center',
     height: 450,
     width: '100%',
-    paddingHorizontal: 30,
-    paddingVertical: 10,
-    backgroundColor: Colors.background,
     bottom: 0,
     position: 'absolute',
-    ...shadowStyle,
     borderTopColor: '#696969',
     borderTopWidth: 2,
+    backgroundColor: Colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  phoneModal:{
+    height: 250,
+    width: '100%',
+    bottom: 0,
+    position: 'absolute',
+    borderTopColor: '#696969',
+    borderTopWidth: 2,
+    backgroundColor: Colors.background,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalPhone:{
     gap : 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   phoneNumberContainer: {
     flexDirection: 'row',
@@ -346,6 +355,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     paddingVertical: 10,
+  },
+  title:{
+    color:Colors.primary,
+  },
+  buttonBox:{
+    flexDirection:'row',
+    gap:10,
   },
 
 });

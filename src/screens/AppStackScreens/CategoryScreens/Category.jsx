@@ -4,9 +4,9 @@ import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import { useRef } from 'react';
 import { Dimensions } from 'react-native';
-import { Global } from '../../constant/Global';
-import { categoriesData } from '../../constant/dataStatic/categoriesData';
-import { shadowStyle } from '../../constant/Shadow';
+import { Global } from '../../../constant/Global';
+import { categoriesData } from '../../../constant/dataStatic/categoriesData';
+import { shadowStyle } from '../../../constant/Shadow';
 const Category = ({ navigation, route }) => {
   const [openCategories, setOpenCategories] = useState([]);
   const scrollViewRef = useRef(); 

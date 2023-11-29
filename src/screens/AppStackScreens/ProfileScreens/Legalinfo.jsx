@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, Button } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 
 
 

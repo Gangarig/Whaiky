@@ -2,8 +2,8 @@ import { View, Text, StyleSheet, Button, FlatList, TouchableOpacity } from 'reac
 import React, { useEffect, useState } from 'react'
 import { showMessage } from 'react-native-flash-message'
 import firestore from '@react-native-firebase/firestore'
-import { useAuth } from '../../context/AuthContext'
-import { Global } from '../../constant/Global'
+import { useAuth } from '../../../context/AuthContext'
+import { Global } from '../../../constant/Global'
 
 
 
