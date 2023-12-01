@@ -3,15 +3,21 @@ import React from 'react'
 import { Global } from '../constant/Global'
 import FastImage from 'react-native-fast-image'
 import defaultImage from '../assets/images/avatar/avatar.png'
-const ProfileCard = ({ displayName, message, onPress }) => {
+import { shadowStyle } from '../constant/Shadow'
+import Colors from '../constant/Colors'
+
+const ProfileCard = ({ displayName, message,avatar, onPress }) => {
+
+  const avatarImage = avatar ? { uri: avatar } : defaultImage;
     return (
       <View style={styles.profileCardWrapper}>
         <TouchableOpacity onPress={onPress} style={styles.profileCard}>
           <View style={styles.profileImageWrapper}>
-            <FastImage source={defaultImage} style={styles.profileImage} />
+            <FastImage source={avatarImage} style={styles.profileImage} />
           </View>
+          
           <View style={styles.profileCardInfo}>
-            <Text style={Global.titleSecondary}>Sent from: {displayName}</Text>
+            <Text style={Global.titleSecondary}>{displayName}</Text>
             <Text style={Global.Text}>Last Message: {message}</Text>
           </View>
         </TouchableOpacity>
@@ -27,19 +33,18 @@ const styles = StyleSheet.create({
         height: 85,
         justifyContent:'center',
         alignItems:'center',
-        width:'90%',
-        borderBottomColor:'rgba(105, 105, 105, 1.0)',
-        borderBottomWidth:0.5,
+        width:'100%',
         maxWidth:380,
     },
     profileCard:{
-        width: '100%',
-        maxWidth: 380,
+        width: '95%',
         height: 65,
-        backgroundColor:'#fff',
+        backgroundColor: Colors.background,
         borderRadius:4,
         flexDirection:'row',
+        gap:20,
     },
+
     profileImageWrapper:{
         width:63,
         height:60,
@@ -51,8 +56,9 @@ const styles = StyleSheet.create({
         height:'100%',
     },
     profileCardInfo:{
-        height:'100%',
+        height:65,
         justifyContent:'space-between',
         paddingVertical:5,
+        
     }
 });

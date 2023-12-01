@@ -19,6 +19,8 @@ import { showMessage } from 'react-native-flash-message';
 import firebase from '@react-native-firebase/app';
 import * as Progress from 'react-native-progress';
 import GradientButton from './GradientButton';
+import Location from '../screens/AppStackScreens/service/Location';
+import PrimaryButton from './Buttons/PrimaryButton';
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();

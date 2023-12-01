@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: Colors.white,
     borderRadius: 100,
+    backgroundColor: Colors.background,
   },
   nameText: {
     fontSize: 25,

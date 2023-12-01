@@ -83,8 +83,7 @@ const Login = ({ navigation }) => {
           break;
       }
       showMessage({
-        message: 'Error',
-        description: errorMessage,
+        message: error.message,
         type: 'danger',
       });
     } finally {

@@ -6,6 +6,7 @@ import LogoutButton from '../screens/AppStackScreens/service/LogOut';
 import Colors from '../constant/Colors';
 import { Global } from '../constant/Global';
 import { shadowStyle } from '../constant/Shadow';
+import defaultAvatar from '../assets/images/avatar/avatar.png';
 
 function CustomDrawerContent(props) {
     const { currentUser } = useAuth();

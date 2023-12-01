@@ -1,165 +1,250 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { useContext, useState, useRef } from 'react';
+import { View, TextInput, Text, Button, TouchableOpacity, Image, StyleSheet, Animated, Modal } from 'react-native';
 import uuid from 'react-native-uuid';
 import { showMessage } from 'react-native-flash-message';
 import firestore from '@react-native-firebase/firestore';
-import { useAuth } from "../../../../context/AuthContext";
-import { useChat } from "../../../../context/ChatContext";
+import { useAuth } from '../../../../context/AuthContext';
+import { ChatContext } from '../../../../context/ChatContext';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
+import Colors from '../../../../constant/Colors';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { Global } from '../../../../constant/Global';
+import { shadowStyle } from '../../../../constant/Shadow';
+import FastImage from 'react-native-fast-image';
 
 const Input = () => {
   const [text, setText] = useState('');
   const [images, setImages] = useState([]);
   const { currentUser } = useAuth();
-  const { data } = useChat();
-  const [ send , setSend ] = useState(false);
-  const pickImages = () => {
-    ImageCropPicker.openPicker({
-      multiple: true,
-      maxFiles: 3, // Limit to 3 images
-      cropping: true,
+  const { data } = useContext(ChatContext); 
+  const [visible, setVisible] = useState(false);
 
-    }).then(selectedImages => {
-      setImages(selectedImages.map(img => img.path));
-    });
-  };
-  
+  const sidebarWidth = useRef(new Animated.Value(25)).current;
+  const slideInAnimation = useRef(new Animated.Value(0)).current;
 
-  const openCamera = () => {
-    ImageCropPicker.openCamera({
-      cropping: true,
-    }).then(image => {
-      setImages([image.path]);
-    });
-  };
-
-  const handleSend = async () => {
-    if (send) {
-      showMessage({
-        message: "Sending message... Please wait.",
-        type: "danger",
-      });
-      return;
+  const uploadImages = async () => {
+    const uploadedImageURLs = [];
+    for (const img of images) {
+      const imageId = uuid.v4();
+      const reference = storage().ref(`chat/images/${data.chatId}/${imageId}`);
+      await reference.putFile(img);
+      const url = await reference.getDownloadURL();
+      uploadedImageURLs.push(url);
     }
+    return uploadedImageURLs;
+  };
 
+  const sendMessage = async () => {
     if (!text.trim() && images.length === 0) {
-      // Notify user that they can't send an empty message
-      showMessage({
-        message: "You cannot send an empty message.",
-        type: "danger",
-      });
-      return;
-    }
-
-    if (!currentUser?.uid || !data.chatId) {
-     showMessage({
-        message: "You are not authorized to send messages.",
-        type: "danger",
-      });
+      showMessage({ message: 'Cannot send an empty message.', type: 'warning' });
       return;
     }
 
     const messageId = uuid.v4();
-    let uploadedImageURLs = [];
+    const uploadedImageURLs = await uploadImages();
 
-    if (images.length > 0) {
-      for (let img of images) {
-        const reference = storage().ref(`chat/images/${messageId}`);
-        await reference.putFile(img);
-        const url = await reference.getDownloadURL();
-        uploadedImageURLs.push(url);
-      }
-    }
+    const newMessage = {
+      id: messageId,
+      senderId: currentUser.uid,
+      timestamp: firestore.FieldValue.serverTimestamp(),
+      text,
+      images: uploadedImageURLs,
+    };
 
     try {
-      await firestore()
-        .collection("chats")
-        .doc(data.chatId)
-        .update({
-          messages: firestore.FieldValue.arrayUnion({
-            id: messageId,
-            text,
-            senderId: currentUser.uid,
-            images: uploadedImageURLs,
-          }),
+      const chatRef = firestore().collection('chats').doc(data.chatId);
+      await firestore().runTransaction(async (transaction) => {
+        transaction.update(chatRef, {
+          lastMessage: { text, timestamp: firestore.FieldValue.serverTimestamp() },
         });
-        // Update userChats for the current user
-        const userChatRef = firestore().collection('userChats').doc(currentUser.uid);
-        await userChatRef.update({
-            [`${data.chatId}.lastMessage`]: { text },
-            [`${data.chatId}.date`]: firestore.FieldValue.serverTimestamp(),
-        });
-
-        // Update userChats for the other user
-        const otherUserChatRef = firestore().collection('userChats').doc(data.user.uid);
-        await otherUserChatRef.update({
-            [`${data.chatId}.lastMessage`]: { text },
-            [`${data.chatId}.date`]: firestore.FieldValue.serverTimestamp(),
-        });
-        setSend(true);
-    } catch (error) {
-      console.error("Error updating document:", error);
-      showMessage({
-        message: "An error occurred while sending the message.",
-        type: "danger",
+        transaction.set(chatRef.collection('messages').doc(messageId), newMessage);
       });
+
+      setText('');
+      setImages([]);
+      closeSidebar(); // Close the sidebar after sending the message
+    } catch (error) {
+      showMessage({ message: 'Failed to send message.', type: 'danger' });
     }
-    
-    setText('');
-    setImages([]);
-    setSend(false);
+  };
+
+  const pickImages = () => {
+    ImageCropPicker.openPicker({
+      multiple: true,
+      maxFiles: 3,
+      cropping: true,
+    })
+      .then((selectedImages) => {
+        setImages(selectedImages.map((img) => img.path));
+        setVisible(false);
+        closeSidebar(); 
+      })
+      .catch(() => {
+        setVisible(false);
+        closeSidebar(); 
+      });
+  };
+
+  const openCamera = () => {
+    ImageCropPicker.openCamera({
+      cropping: true,
+    })
+      .then((image) => {
+        setImages([image.path]);
+        setVisible(false);
+        closeSidebar();
+      })
+      .catch(() => {
+        setVisible(false);
+        closeSidebar(); 
+      });
+  };
+
+  const closeSidebar = () => {
+    Animated.parallel([
+      Animated.timing(sidebarWidth, {
+        toValue: 25,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+      Animated.timing(slideInAnimation, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  };
+
+  const toggleSidebar = () => {
+    const isOpen = sidebarWidth._value > 25;
+    setVisible(!visible);
+    if (isOpen) {
+      closeSidebar();
+    } else {
+      Animated.parallel([
+        Animated.timing(sidebarWidth, {
+          toValue: 75,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(slideInAnimation, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    }
   };
 
   return (
     <View style={styles.container}>
-      {images.map((image, index) => (
-        <Image key={index} source={{ uri: image }} style={styles.previewImage} />
-      ))}
+      { images.length > 0 ? (
+        <View style={styles.imageWrapper}>
+          { images.map((img, index) => (
+            <TouchableOpacity key={index} onPress={() => openImageModal(img)}>
+              <FastImage source={{ uri: img }} style={styles.messageImage} />
+            </TouchableOpacity>
+          ))}
+        </View>
+      ) : null
+      }
+      <Animated.View style={[styles.sideWrapper, { width: sidebarWidth, transform: [{ translateX: slideInAnimation }] }]}>
+        <TouchableOpacity onPress={toggleSidebar}>
+          <FontAwesomeIcon size={18} color={Colors.white} icon="fa-solid fa-arrow-right" />
+        </TouchableOpacity>
+        { visible ? (
+          <>
+        <TouchableOpacity onPress={pickImages}>
+          <FontAwesomeIcon size={18} color={Colors.white} icon="fa-solid fa-image" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={openCamera}>
+          <FontAwesomeIcon size={18} color={Colors.white} icon="fa-solid fa-camera" />
+        </TouchableOpacity>
+          </>
+        ) : null }
+      </Animated.View>
       <TextInput
         style={styles.input}
         onChangeText={setText}
         value={text}
         placeholder="Type something..."
       />
-      <View style={styles.buttonGroup}>
-        <TouchableOpacity style={styles.button} onPress={pickImages}>
-          <Text>Select Images</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={openCamera}>
-          <Text>Open Camera</Text>
-        </TouchableOpacity>
-        <Button title="Send" onPress={handleSend} />
-      </View>
+      <TouchableOpacity style={styles.send} onPress={sendMessage}>
+        <FontAwesomeIcon color={Colors.white} size={18} icon="fa-solid fa-arrow-up" />
+      </TouchableOpacity>
     </View>
+    
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-  },
-  previewImage: {
-    width: 100,
-    height: 100,
-    marginRight: 10,
+    flexDirection: 'row',
+    width: '100%',
+    borderTopColor: Colors.primary,
+    borderTopWidth: 1,
+    borderColor: Colors.primary,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+    backgroundColor: Colors.background,
+    position: 'relative',
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  buttonGroup: {
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    width: '80%',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    ...Global.text,
+    fontSize: 18,
   },
-  button: {
-    backgroundColor: 'lightblue',
-    padding: 10,
+  send: {
+    backgroundColor: Colors.primary,
+    width: 25,
+    height: 25,
     borderRadius: 5,
-    marginHorizontal: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...shadowStyle,
+  },
+  sideWrapper: {
+    backgroundColor: Colors.primary,
+    height: 25, 
+    width: 25,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...shadowStyle,
+    position: 'absolute',
+    left: 5,
+    zIndex: 1,
+    flexDirection: 'row', 
+    gap: 5,
+  },
+  rightArrow: {
+    position: 'absolute',
+    left: 0,
+    zIndex: 1,
+  },
+  imageWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    backgroundColor: Colors.primary,
+    position: 'absolute',
+    left: 10,
+    zIndex: 1,
+    padding: 5,
+    borderRadius: 5,
+    bottom: 50,
+    ...shadowStyle,
+  },
+  messageImage: {
+    width: 100, 
+    height: 100,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.white,
   },
 });
 

@@ -3,33 +3,31 @@ import { useAuth } from './AuthContext';
 
 export const ChatContext = createContext(undefined);
 
+// Action Types
+const CHANGE_USER = "CHANGE_USER";
+
+// Chat ID generation function
+const generateChatId = (currentUid, targetUid) => {
+    return currentUid > targetUid ? currentUid + targetUid : targetUid + currentUid;
+};
+
 export const ChatContextProvider = ({ children }) => {
     const { currentUser } = useAuth();
 
-    
-
     const INITIAL_STATE = {
-        chatId: "null",
+        chatId: null,
         user: {}
     };
 
     const chatReducer = (state, action) => {
-        
         switch (action.type) {
-            case "CHANGE_USER":
-                const currentUid = currentUser && currentUser.uid;
-                const targetUid = action.payload && action.payload.uid;
+            case CHANGE_USER:
+                const currentUid = currentUser?.uid;
+                const targetUid = action.payload?.uid;
 
-                if (currentUid && targetUid) {
-                    return {
-                        user: action.payload,
-                        chatId: currentUid > targetUid
-                            ? currentUid + targetUid
-                            : targetUid + currentUid
-                    };
-                } else {
-                    return state;
-                }
+                return currentUid && targetUid
+                    ? { ...state, user: action.payload, chatId: generateChatId(currentUid, targetUid) }
+                    : state;
             default:
                 return state;
         }

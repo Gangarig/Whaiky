@@ -32,7 +32,7 @@ const SignUp = ({ navigation }) => {
 
   const isPasswordValid = () => {
     const hasMinLength = formData.password.length >= 8;
-    const hasSpecialChar = /[~!@#$%^&*()_+\\-=[\]{}|;:'",.<>?]/.test(formData.password);
+    const hasSpecialChar = /[~!@#\$%\^&\*\(\)_+\-=\[\]{}|;:'",.<>\\?]/.test(formData.password);
     return hasMinLength && hasSpecialChar;
   };
 

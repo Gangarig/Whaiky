@@ -1,29 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, Button } from "react-native";
-import firestore from "@react-native-firebase/firestore";
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import FastImage from 'react-native-fast-image'; // Ensure this is imported
 import Messages from "./Messages";
 import Input from "./Input";
-import { useChat } from "../../../../context/ChatContext";
-import defaultAvatar from '../../../../assets/images/avatar/avatar.png';
+import Colors from "../../../../constant/Colors";
+import defaultAvatar from '../../../../assets/images/avatar/avatar.png'; // Assuming you have a default avatar image
+
 const Chat = ({ navigation, route }) => {
-  const { data } = useChat();
   const { chatId, userInfo } = route.params;
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <View style={styles.headerTitle}>
+          <FastImage
+            source={{ uri: userInfo.photoURL || defaultAvatar }}
+            style={styles.avatar}
+          />
+          <Text style={styles.headerText}>{userInfo.displayName}</Text>
+        </View>
+      ),
+      headerBackTitleVisible: false,
+      headerTintColor: Colors.primary, // Adjusted to match the app's color theme
+    });
+  }, [navigation, userInfo]);
 
   return (
     <View style={styles.chatContainer}>
-      <Button title="Go Back" onPress={() => navigation.goBack()} />
-      <View style={styles.chatInfo}>
-        <Text style={styles.chatDisplayName}>{userInfo.displayName}</Text>
-        <View style={styles.chatIcons}>
-          <Image source={
-            userInfo.photoURL
-              ? { uri: userInfo.photoURL }
-              : defaultAvatar
-          } style={{ width: 50, height: 50, borderRadius: 25 }} />
-        </View>
-      </View>
       <Messages chatId={chatId} />
-      <Input />
+      <Input chatId={chatId} />
     </View>
   );
 };
@@ -31,19 +36,22 @@ const Chat = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
+    backgroundColor: Colors.background,
+    // Removed border styling for a cleaner look
   },
-  chatInfo: {
+  headerTitle: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    padding: 10,
   },
-  chatDisplayName: {
-    fontSize: 16,
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    marginRight: 10,
+  },
+  headerText: {
     fontWeight: "bold",
-  },
-  chatIcons: {
-    flexDirection: "row",
+    color: Colors.text, // Adjusted to use the app's text color for consistency
   },
 });
 
