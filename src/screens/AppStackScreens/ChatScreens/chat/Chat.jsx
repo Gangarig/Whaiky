@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import FastImage from 'react-native-fast-image'; // Ensure this is imported
 import Messages from "./Messages";
-import Input from "./Input";
 import Colors from "../../../../constant/Colors";
 import defaultAvatar from '../../../../assets/images/avatar/avatar.png'; // Assuming you have a default avatar image
 
@@ -21,14 +20,13 @@ const Chat = ({ navigation, route }) => {
         </View>
       ),
       headerBackTitleVisible: false,
-      headerTintColor: Colors.primary, // Adjusted to match the app's color theme
+      headerTintColor: Colors.primary,
     });
   }, [navigation, userInfo]);
 
   return (
     <View style={styles.chatContainer}>
       <Messages chatId={chatId} />
-      <Input chatId={chatId} />
     </View>
   );
 };

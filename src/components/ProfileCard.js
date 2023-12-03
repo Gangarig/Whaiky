@@ -6,7 +6,7 @@ import defaultImage from '../assets/images/avatar/avatar.png'
 import { shadowStyle } from '../constant/Shadow'
 import Colors from '../constant/Colors'
 
-const ProfileCard = ({ displayName, message,avatar, onPress }) => {
+const ProfileCard = ({ displayName, lastMessage,avatar, onPress }) => {
 
   const avatarImage = avatar ? { uri: avatar } : defaultImage;
     return (
@@ -18,7 +18,7 @@ const ProfileCard = ({ displayName, message,avatar, onPress }) => {
           
           <View style={styles.profileCardInfo}>
             <Text style={Global.titleSecondary}>{displayName}</Text>
-            <Text style={Global.Text}>Last Message: {message}</Text>
+            <Text style={Global.Text}>Last Message: {lastMessage}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -50,6 +50,9 @@ const styles = StyleSheet.create({
         height:60,
         borderRadius:4,
         overflow:'hidden',
+        borderWidth:1,
+        borderColor:Colors.primary,
+        backgroundColor:Colors.background,
     },
     profileImage:{
         width:'100%',

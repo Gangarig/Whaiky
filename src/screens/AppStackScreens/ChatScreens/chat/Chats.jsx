@@ -2,16 +2,13 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, Alert, StyleSheet } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useAuth } from "../../../../context/AuthContext";
-import { useChat } from "../../../../context/ChatContext";
-import showMessage from "react-native-flash-message";
 import Colors from "../../../../constant/Colors";
 import ProfileCard from "../../../../components/ProfileCard";
-import defaultAvatar from '../../../../assets/images/avatar/avatar.png';
+import showMessage from "react-native-flash-message";
 
 const Chats = ({ navigation }) => {
   const [chats, setChats] = useState([]);
   const { currentUser } = useAuth();
-  const { dispatch } = useChat();
 
   useEffect(() => {
     if (currentUser?.uid) {
@@ -53,7 +50,6 @@ const Chats = ({ navigation }) => {
   };
 
   const handleSelect = (chatId, userInfo) => {
-    dispatch({ type: "CHANGE_USER", payload: userInfo });
     navigation.navigate("Chat", {
       chatId,
       userInfo,
@@ -97,7 +93,7 @@ const Chats = ({ navigation }) => {
     <View style={styles.profileWrapper}>
       <ProfileCard
         displayName={item.userInfo.displayName || "Unknown User"}
-        message={item.lastMessage?.text || "No messages yet"}
+        lastMessage={item.lastMessage?.text || "No messages yet"}
         avatar={item.userInfo.photoURL }
         onPress={() => handleSelect(item.chatId, item.userInfo)}
         onDeletePress={() => deleteChat(item.userInfo)}

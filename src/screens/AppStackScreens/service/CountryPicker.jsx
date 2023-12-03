@@ -30,7 +30,7 @@ const CountryPicker = ({ onSelect, value }) => {
     <View style={styles.container}>
       <DropDownPicker
         open={open}
-        value={selectedValue} // Use the selectedValue state here
+        value={selectedValue}
         items={items}
         setOpen={handleOpen}
         setValue={(selectedItem) => {
@@ -38,7 +38,7 @@ const CountryPicker = ({ onSelect, value }) => {
           onSelect(selectedItem);
         }}
         placeholder="Country of Issue"
-        placeholderStyle={{ color: 'gray' }} // Set the color of the placeholder text
+        placeholderStyle={{ color: 'gray' }} 
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
         zIndex={open ? 5000 : undefined}

@@ -23,7 +23,7 @@ library.add(
   faPaperPlane,
   faArrowUp,
   faArrowRight,
-  faImage
+  faImage,
   )
 
 
