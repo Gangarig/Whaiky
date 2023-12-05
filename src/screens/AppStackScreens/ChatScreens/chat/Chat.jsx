@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
     backgroundColor: Colors.background,
-    // Removed border styling for a cleaner look
+    
   },
   headerTitle: {
     flexDirection: "row",
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontWeight: "bold",
-    color: Colors.text, // Adjusted to use the app's text color for consistency
+    color: Colors.text, 
   },
 });
 

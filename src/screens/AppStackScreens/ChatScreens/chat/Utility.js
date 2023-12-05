@@ -6,29 +6,42 @@ import uuid from 'react-native-uuid';
 
 export const sendMessage = async (message, chatId) => {
   try {
-    const { text, user } = message;
-    if (!text || !user || !user._id) {
-      throw new Error("Message text or user ID is undefined.");
+    // Destructuring message object
+    const { text, user, imageUrls } = message;
+
+    // Check if at least text or imageUrls is present
+    if (!text && (!imageUrls || imageUrls.length === 0)) {
+      throw new Error("Message text and images are undefined.");
     }
 
+    // Check for user ID
+    if (!user || !user._id) {
+      throw new Error("User ID is undefined.");
+    }
+
+    // Prepare message data for Firestore
+    let messageData = {
+      text: text || '', // Ensure text is a string
+      senderId: user._id,
+      timestamp: firestore.FieldValue.serverTimestamp(),
+    };
+
+    // Add image URLs if present
+    if (imageUrls && imageUrls.length > 0) {
+      messageData.imageUrls = imageUrls;
+    }
+
+    // Firestore operations
     await firestore()
       .collection('chats')
       .doc(chatId)
       .collection('messages')
-      .add({
-        text: message.text,
-        senderId: message.user._id,
-        timestamp: firestore.FieldValue.serverTimestamp(),
-      });
+      .add(messageData);
     firestore()
       .collection('chats')
       .doc(chatId)
       .set({
-        lastMessage: {
-          text: message.text,
-          senderId: message.user._id,
-          timestamp: firestore.FieldValue.serverTimestamp(),
-        },
+        lastMessage: messageData,
       }, { merge: true });
   } catch (error) {
     console.error("Error sending message: ", error);
@@ -38,6 +51,7 @@ export const sendMessage = async (message, chatId) => {
     });
   }
 };
+
 
 export const uploadImages = async (images, chatId) => {
   if (!images || images.length === 0) {
@@ -63,28 +77,27 @@ export const uploadImages = async (images, chatId) => {
   }
 };
 
-export const pickImages = (setImage, setVisible, closeSidebar) => {
-  ImageCropPicker.openPicker({
-    multiple: true,
-    maxFiles: 3,
-    cropping: true,
-    compressImageMaxWidth: 1024,
-    compressImageMaxHeight: 1024,
-    compressImageQuality: 0.7,
-  })
+export const pickImages = () => {
+  return new Promise((resolve, reject) => {
+    ImageCropPicker.openPicker({
+      multiple: true,
+      maxFiles: 3,
+      cropping: true,
+      compressImageMaxWidth: 1024,
+      compressImageMaxHeight: 1024,
+      compressImageQuality: 0.7,
+    })
     .then((selectedImages) => {
-      setImage(selectedImages.map((img) => img.path));
-      setVisible(false);
-      closeSidebar(); 
+      resolve(selectedImages.map((img) => img.path));
     })
     .catch((error) => {
-      console.error("Error picking images: ", error);
-      setVisible(false);
-      closeSidebar(); 
+      reject(error);
     });
+  });
 };
 
-export const openCamera = (setImage, setVisible, closeSidebar) => {
+
+export const openCamera = (setImage) => {
   ImageCropPicker.openCamera({
     cropping: true,
     compressImageMaxWidth: 1024,
@@ -93,12 +106,8 @@ export const openCamera = (setImage, setVisible, closeSidebar) => {
   })
     .then((image) => {
       setImage([image.path]);
-      setVisible(false);
-      closeSidebar();
     })
     .catch((error) => {
       console.error("Error opening camera: ", error);
-      setVisible(false);
-      closeSidebar(); 
     });
 };

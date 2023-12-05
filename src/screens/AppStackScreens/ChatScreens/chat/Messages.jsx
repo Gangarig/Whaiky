@@ -5,6 +5,8 @@ import { useAuth } from '../../../../context/AuthContext';
 import { sendMessage, uploadImages } from './Utility';
 import Input from './Input'; 
 import { View } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import MessageImage from './MessageImage';
 
 const Messages = ({ chatId }) => {
   const [messages, setMessages] = useState([]);
@@ -19,7 +21,6 @@ const Messages = ({ chatId }) => {
       .onSnapshot(querySnapshot => {
         const firebaseMessages = querySnapshot.docs.map(doc => {
           const data = doc.data();
-          // Fallback for timestamp if it's null
           const timestamp = data.timestamp ? new Date(data.timestamp.seconds * 1000) : new Date();
           return {
             _id: doc.id,
@@ -28,6 +29,7 @@ const Messages = ({ chatId }) => {
             user: {
               _id: data.senderId,
             },
+            image: data.imageUrls, 
           };
         });
         setMessages(firebaseMessages);
@@ -35,28 +37,28 @@ const Messages = ({ chatId }) => {
   
     return () => unsubscribe();
   }, [chatId]);
-  
-
 
   const handleSend = useCallback(async (newMessages = []) => {
     if (newMessages.length > 0) {
-      const message = {
-        ...newMessages[0],
+      const { text, image: imageUrls } = newMessages[0]; // Destructure text and imageUrls
+  
+      // Prepare message object
+      let messageData = {
+        text: text,
         user: { _id: currentUser.uid },
+        timestamp: firestore.FieldValue.serverTimestamp(),
       };
-
-      // Check if the message contains images
-      if (message.images && message.images.length > 0) {
-        const imageUrls = await uploadImages(message.images, chatId);
-        // Create a new message object with image URLs
-        const imageMessage = {
-          ...message,
-          image: imageUrls,
+  
+      // Check if there are image URLs
+      if (imageUrls && imageUrls.length > 0) {
+        messageData = {
+          ...messageData,
+          imageUrls: imageUrls, // Include image URLs if present
         };
-        sendMessage(imageMessage, chatId);
-      } else {
-        sendMessage(message, chatId);
       }
+  
+      // Send the message
+      sendMessage(messageData, chatId);
     }
   }, [currentUser.uid, chatId]);
 
@@ -66,13 +68,12 @@ const Messages = ({ chatId }) => {
         messages={messages}
         onSend={handleSend}
         user={{ _id: currentUser.uid }}
-        renderInputToolbar={props => (
-          <Input onSend={handleSend} chatId={chatId} />
-        )}
-        // Optionally, add a renderer for image messages
-        renderMessageImage={message => {
-          // Render the image in the message here
-        }}
+        renderInputToolbar={props => <Input onSend={handleSend} chatId={chatId} />}
+        renderMessageImage={MessageImage} 
+        renderAvatar={currentUser.photoURL}
+        renderUsernameOnMessage={true}
+
+
       />
     </View>
   );
