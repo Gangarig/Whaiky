@@ -1,5 +1,5 @@
   import React, { useState } from 'react';
-  import { View, TouchableOpacity, StyleSheet, Text ,TextInput } from 'react-native';
+  import { View, TouchableOpacity, StyleSheet, Text ,TextInput,KeyboardAvoidingView } from 'react-native';
   import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
   import ImageCropPicker from 'react-native-image-crop-picker';
   import { uploadImages , openCamera , pickImages } from './Utility';
@@ -8,6 +8,7 @@
   import Colors from '../../../../constant/Colors';
   import { shadowStyle } from '../../../../constant/Shadow';
   import { Global } from '../../../../constant/Global';
+  import { Platform } from 'react-native';
 
 
   const Input = ({ onSend , chatId }) => {
@@ -69,6 +70,11 @@
 
 
     return (
+      <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "margin" : null}
+      keyboardVerticalOffset={Platform.select({ ios: 0, android: 100 })}
+      style={{ width: '100%' }}
+    >
       <View style={styles.container}>
         <TouchableOpacity style={styles.iconButton} onPress={handleImagePick}>
           <FontAwesomeIcon icon="fa-solid fa-image" size={24} color={Colors.primary} />
@@ -76,6 +82,8 @@
         {/* <TouchableOpacity style={styles.iconButton} onPress={openCamera}>
           <FontAwesomeIcon icon="fa-solid fa-camera" size={24} color="gray" />
         </TouchableOpacity> */}
+
+          
         <TextInput
           style={styles.input}
           value={text}
@@ -109,6 +117,7 @@
         )
         }
       </View>
+      </KeyboardAvoidingView>
     );
   };
 
@@ -116,25 +125,31 @@
     container: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent : 'center',
       paddingHorizontal: 10,
       backgroundColor: Colors.background,
-      
+
     },
     iconButton: {
       marginRight: 10,
+
     },
     input: {
       flex: 1,
+      flexWrap: 'wrap',
       borderWidth: 1,
       borderColor: Colors.primary,
-      borderRadius: 20,
-      padding: 10,
+      borderRadius: 10,
+      color: Colors.black,
+      padding : 10,
+
     },
     sendButton: {
       marginLeft: 10,
     },
     sendText: {
       color: Colors.primary,
+
     },
     selectedImages: {
       flexDirection: 'row',

@@ -28,7 +28,7 @@ const ChatScreen = ({ navigation }) => {
         style={[styles.inputWrapper]}
         onPress={handleSearchButtonPress}
       >
-        <Text style={[Global.titleSecondary,Colors]}>
+        <Text style={[Global.titleSecondary]}>
           Search a User
         </Text>
       </TouchableOpacity>

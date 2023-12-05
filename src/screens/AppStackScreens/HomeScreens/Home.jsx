@@ -12,6 +12,7 @@ import { shadowStyle } from '../../../constant/Shadow';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import GradientButton from '../../../components/GradientButton';
 import { TextInput } from 'react-native-gesture-handler';
+import Colors from '../../../constant/Colors';
 
 const Home = ({ navigation }) => {
   const { currentUser, profile } = useAuth();
@@ -140,12 +141,12 @@ const Home = ({ navigation }) => {
       
       </View>
       {currentUser ? (
-        <View style={[styles.flashList,shadowStyle]}>
+        <View style={[styles.flashList]}>
         <FlashList
           data={posts}
           renderItem={renderItem}
           keyExtractor={item => item.id}
-          estimatedItemSize={100} // Set an estimated size for each item
+          estimatedItemSize={100} 
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
@@ -167,7 +168,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.background,
     width: '100%',
   },
   flashList:{

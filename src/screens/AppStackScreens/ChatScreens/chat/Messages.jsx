@@ -7,6 +7,7 @@ import Input from './Input';
 import { View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import MessageImage from './MessageImage';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Messages = ({ chatId }) => {
   const [messages, setMessages] = useState([]);
@@ -63,19 +64,15 @@ const Messages = ({ chatId }) => {
   }, [currentUser.uid, chatId]);
 
   return (
-    <View style={{flex:1}}>
+    <SafeAreaView style={{flex:0.99}}>
       <GiftedChat
         messages={messages}
         onSend={handleSend}
         user={{ _id: currentUser.uid }}
         renderInputToolbar={props => <Input onSend={handleSend} chatId={chatId} />}
         renderMessageImage={MessageImage} 
-        renderAvatar={currentUser.photoURL}
-        renderUsernameOnMessage={true}
-
-
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
