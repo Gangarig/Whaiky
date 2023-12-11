@@ -61,6 +61,7 @@
     "react-native-screens": "^3.25.0",
     "react-native-select-dropdown": "^3.4.0",
     "react-native-svg": "^14.0.0",
+    "react-native-user-avatar": "^1.0.8",
     "react-native-uuid": "^2.0.1"
   },
   "devDependencies": {

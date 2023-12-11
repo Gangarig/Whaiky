@@ -5,6 +5,7 @@ const Colors = {
     secondary: '#fff',
     lightPrimary: '#413ee6',
     background: '#FBFBFB',
+    backgroundSecondary: '#9E41F033',
     text: '#000',
     danger: '#dc3545',
     success: '#28a745',

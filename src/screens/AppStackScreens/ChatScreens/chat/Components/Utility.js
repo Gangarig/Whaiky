@@ -21,7 +21,12 @@ export const sendMessage = async (message, chatId) => {
 
     // Prepare message data for Firestore
     let messageData = {
-      text: text || '', // Ensure text is a string
+      text: text || '', 
+      user: {
+        _id: user._id,
+        name: user.name,
+        avatar: user.avatar,
+      }, 
       senderId: user._id,
       timestamp: firestore.FieldValue.serverTimestamp(),
     };

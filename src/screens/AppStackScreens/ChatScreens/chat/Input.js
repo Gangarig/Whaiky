@@ -1,8 +1,8 @@
-  import React, { useState } from 'react';
+  import React, { useState , useEffect } from 'react';
   import { View, TouchableOpacity, StyleSheet, Text ,TextInput,KeyboardAvoidingView } from 'react-native';
   import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
   import ImageCropPicker from 'react-native-image-crop-picker';
-  import { uploadImages , openCamera , pickImages } from './Utility';
+  import { uploadImages , openCamera , pickImages } from './Components/Utility';
   import { showMessage } from 'react-native-flash-message';
   import FastImage from 'react-native-fast-image';
   import Colors from '../../../../constant/Colors';
@@ -11,25 +11,42 @@
   import { Platform } from 'react-native';
 
 
-  const Input = ({ onSend , chatId }) => {
+
+  const Input = ({ onSend, chatId }) => {
     const [text, setText] = useState('');
     const [imageUrls, setImageUrls] = useState([]);
-
-    const handleTextSend = () => {  
-      // Constructing the message object
+    const [inputHeight, setInputHeight] = useState(35);
+    const [numberOfLines, setNumberOfLines] = useState(1);
+  
+    const handleTextSend = () => {
       const messageData = {
         text: text.trim(),
         user: { _id: chatId },
         image: imageUrls,
       };
-    
-      // Check if either text or image URLs are present
+  
       if (messageData.text || messageData.image.length > 0) {
         onSend([messageData]);
         setText('');
-        setImageUrls([]); // Clear the text and imageUrls after sending
+        setImageUrls([]);
       }
     };
+  
+    const handleContentSizeChange = (event) => {
+      const contentHeight = event.nativeEvent.contentSize.height;
+      const newNumberOfLines = Math.floor(contentHeight / lineHeight);
+      setNumberOfLines(newNumberOfLines);
+    };
+  
+    useEffect(() => {
+      if (numberOfLines > 1) {
+        setInputHeight((numberOfLines * lineHeight) + extraPadding);
+      } else {
+        setInputHeight(35); // Default height for single line
+      }
+    }, [numberOfLines]);
+
+
     
     
     
@@ -70,30 +87,31 @@
 
 
     return (
-      <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "margin" : null}
-      keyboardVerticalOffset={Platform.select({ ios: 0, android: 100 })}
-      style={{ width: '100%' }}
-    >
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.iconButton} onPress={handleImagePick}>
-          <FontAwesomeIcon icon="fa-solid fa-image" size={24} color={Colors.primary} />
-        </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.iconButton} onPress={openCamera}>
-          <FontAwesomeIcon icon="fa-solid fa-camera" size={24} color="gray" />
-        </TouchableOpacity> */}
+      <View style={styles.container}>     
+      
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={[styles.input, { height: Math.max(35, inputHeight) }]}
+            value={text}
+            onChangeText={setText}
+            placeholder="Type a message"
+            onSubmitEditing={handleTextSend}
+            multiline={true}
+            onContentSizeChange={handleContentSizeChange}
+          />
+        </View>
 
-          
-        <TextInput
-          style={styles.input}
-          value={text}
-          onChangeText={setText}
-          placeholder="Type a message"
-          onSubmitEditing={handleTextSend}
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={handleTextSend}>
-          <Text style={styles.sendText}>Send</Text>
+        <TouchableOpacity style={styles.iconButton} onPress={handleImagePick}>
+          <FontAwesomeIcon icon="fa-solid fa-paperclip" size={20} color={Colors.primary} />
         </TouchableOpacity>
+        {(text.trim().length > 0 || imageUrls.length > 0) && (
+          <TouchableOpacity style={styles.sendButton} onPress={handleTextSend}>
+            <FontAwesomeIcon icon="fa-solid fa-paper-plane" size={20} color={Colors.primary} />
+          </TouchableOpacity>
+        )}  
+
+
+
         {imageUrls.length > 0 && (
         <View style={styles.selectedImages}>
           {imageUrls.map((imageUrl, index) => (
@@ -117,31 +135,37 @@
         )
         }
       </View>
-      </KeyboardAvoidingView>
     );
   };
+
+  const lineHeight = 20; // Adjust based on your font size
+  const extraPadding = 50; // Extra padding for the TextInput
+
 
   const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent : 'center',
       paddingHorizontal: 10,
-      backgroundColor: Colors.background,
-
+      flex:1,
+      gap: 10,
     },
-    iconButton: {
-      marginRight: 10,
-
+    inputWrapper: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      paddingBottom: 5,
+      ...shadowStyle,
+      backgroundColor:'transparent',
     },
     input: {
-      flex: 1,
-      flexWrap: 'wrap',
-      borderWidth: 1,
-      borderColor: Colors.primary,
+      width: '100%', 
+      backgroundColor: Colors.background,  
       borderRadius: 10,
       color: Colors.black,
-      padding : 10,
+      borderColor: Colors.primary,
+      borderWidth: 1,
+      paddingHorizontal: 10,
+      fontSize: 16,
 
     },
     sendButton: {
@@ -158,7 +182,7 @@
       position: 'absolute',
       bottom: 60,
       left: 10,
-      backgroundColor: Colors.primary,
+      backgroundColor: Colors.backgroundSecondary,
       borderRadius: 13,
       ...shadowStyle,
     },
@@ -183,3 +207,5 @@
   });
 
   export default Input;
+
+
