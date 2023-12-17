@@ -1,7 +1,6 @@
   import React, { useState , useEffect } from 'react';
-  import { View, TouchableOpacity, StyleSheet, Text ,TextInput,KeyboardAvoidingView } from 'react-native';
+  import { View, TouchableOpacity, StyleSheet,ScrollView, Text ,TextInput,KeyboardAvoidingView } from 'react-native';
   import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-  import ImageCropPicker from 'react-native-image-crop-picker';
   import { uploadImages , openCamera , pickImages } from './Components/Utility';
   import { showMessage } from 'react-native-flash-message';
   import FastImage from 'react-native-fast-image';
@@ -15,9 +14,7 @@
   const Input = ({ onSend, chatId }) => {
     const [text, setText] = useState('');
     const [imageUrls, setImageUrls] = useState([]);
-    const [inputHeight, setInputHeight] = useState(35);
-    const [numberOfLines, setNumberOfLines] = useState(1);
-  
+
     const handleTextSend = () => {
       const messageData = {
         text: text.trim(),
@@ -32,24 +29,6 @@
       }
     };
   
-    const handleContentSizeChange = (event) => {
-      const contentHeight = event.nativeEvent.contentSize.height;
-      const newNumberOfLines = Math.floor(contentHeight / lineHeight);
-      setNumberOfLines(newNumberOfLines);
-    };
-  
-    useEffect(() => {
-      if (numberOfLines > 1) {
-        setInputHeight((numberOfLines * lineHeight) + extraPadding);
-      } else {
-        setInputHeight(35); // Default height for single line
-      }
-    }, [numberOfLines]);
-
-
-    
-    
-    
     const handleImagePick = () => {
       pickImages()
         .then((images) => {
@@ -82,127 +61,149 @@
       setImageUrls(newImageUrls);
     }
 
-    
 
 
 
     return (
-      <View style={styles.container}>     
-      
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={[styles.input, { height: Math.max(35, inputHeight) }]}
-            value={text}
-            onChangeText={setText}
-            placeholder="Type a message"
-            onSubmitEditing={handleTextSend}
-            multiline={true}
-            onContentSizeChange={handleContentSizeChange}
-          />
-        </View>
+      <View style={styles.container}>  
+          <View style={styles.Input}>
+            <TextInput
+              style={styles.textInput}
+              value={text}
+              onChangeText={setText}
+              placeholder="Type a message"
+              onSubmitEditing={handleTextSend}
+              multiline={true}
+              scrollEnabled={true}
+            />
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            {imageUrls.length > 0 && (
+              <View style={styles.imageContainer}>
+                {imageUrls.map((imageUrl, index) => (
+                  <View key={index} style={styles.imageWrapper}>
+                    <FastImage
+                      source={{ uri: imageUrl }}
+                      style={styles.image}
+                      resizeMode="cover"
+                      onError={(e) => console.log("Image loading error:", e)}
+                    />
+                    <TouchableOpacity      style={styles.xBtn} onPress={() => removeImage(index)}>
+                      <FontAwesomeIcon
+                        icon="fa-solid fa-x"
+                        size={20}
+                        color='#FBFBFB'
+                        style={shadowStyle}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            )
+            }
+            </ScrollView>
+          </View>
 
-        <TouchableOpacity style={styles.iconButton} onPress={handleImagePick}>
-          <FontAwesomeIcon icon="fa-solid fa-paperclip" size={20} color={Colors.primary} />
-        </TouchableOpacity>
-        {(text.trim().length > 0 || imageUrls.length > 0) && (
-          <TouchableOpacity style={styles.sendButton} onPress={handleTextSend}>
-            <FontAwesomeIcon icon="fa-solid fa-paper-plane" size={20} color={Colors.primary} />
-          </TouchableOpacity>
-        )}  
-
-
-
-        {imageUrls.length > 0 && (
-        <View style={styles.selectedImages}>
-          {imageUrls.map((imageUrl, index) => (
-            <View key={index} style={styles.imageWrapper}>
-              <FastImage
-                source={{ uri: imageUrl }}
-                style={styles.image}
-                resizeMode="cover"
-              />
-              <TouchableOpacity      style={styles.xBtn} onPress={() => removeImage(index)}>
-                <FontAwesomeIcon
-                  icon="fa-solid fa-x"
-                  size={20}
-                  color={Colors.black}
-             
-                />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-        )
-        }
+          <View style={styles.btnContainer}>
+                <TouchableOpacity onPress={handleImagePick}>
+                  <FontAwesomeIcon icon="fa-solid fa-paperclip" size={25} color={Colors.primary} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sendButton} onPress={handleTextSend} disabled={!text.trim() && imageUrls.length === 0}>
+                  <FontAwesomeIcon icon="fa-solid fa-paper-plane" size={25} color={Colors.primary} />
+                </TouchableOpacity>
+          </View>
       </View>
     );
   };
 
-  const lineHeight = 20; // Adjust based on your font size
-  const extraPadding = 50; // Extra padding for the TextInput
-
-
   const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 10,
-      flex:1,
-      gap: 10,
-    },
-    inputWrapper: {
-      flex: 1,
-      justifyContent: 'flex-end',
-      paddingBottom: 5,
-      ...shadowStyle,
-      backgroundColor:'transparent',
-    },
-    input: {
-      width: '100%', 
-      backgroundColor: Colors.background,  
-      borderRadius: 10,
-      color: Colors.black,
-      borderColor: Colors.primary,
-      borderWidth: 1,
-      paddingHorizontal: 10,
-      fontSize: 16,
-
-    },
-    sendButton: {
-      marginLeft: 10,
-    },
-    sendText: {
-      color: Colors.primary,
-
-    },
-    selectedImages: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      marginVertical: 5,
+      backgroundColor: Colors.background,
       position: 'absolute',
-      bottom: 60,
-      left: 10,
-      backgroundColor: Colors.backgroundSecondary,
-      borderRadius: 13,
+      width: '100%',
       ...shadowStyle,
+      borderTopColor: Colors.primary,
+      borderTopWidth: 0.5,
+      height: Platform.OS === 'ios' ? 50 : 60,
+      alignItems: 'center',
+      justifyContent: 'center',
+      bottom: 0,
     },
-    imageWrapper: {
-      position: 'relative',
+    Input: {
+      flexDirection: 'column',
+      width: '70%',
+      borderWidth: 0.5,
+      borderColor: Colors.primary,
+      borderRadius: 5,
+      left: 10,
+      bottom: 5,
+      position: 'absolute',
+      backgroundColor: Colors.background,
+      overflow: 'hidden',
     },
-    image: {
+    imageContainer: {
+      flexDirection: 'row',
+      backgroundColor: Colors.background,
+      gap: 10,
+      scrollEnabled: true,
+      borderTopColor: Colors.primary,
+      borderTopWidth: 0.5,
+      width: '100%',
+      padding: 10,
+    },
+    textInput: {
+      padding: 10,
+      paddingTop: 10,
+      fontSize: 16,
+      ...Global.text,
+    },
+    btnContainer: {
+      position: 'absolute',
+      right: 20,
+      flexDirection: 'row',
+      gap: 15,
+    },
+    imageScrollContainer: {
+      width: '100%',
+    },
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    image:{
       width: 100,
       height: 100,
-      borderRadius: 13,
-      margin: 5,
-      ...shadowStyle,
+      borderRadius: 5,
+      borderWidth: 0.5,
+      borderColor: Colors.primary,
     },
     xBtn: {
       position: 'absolute',
-      top: 10,
-      right: 10,
-      opacity: 1,
-      color: Colors.muted,
+      top: 5,
+      right: 5,
+      borderRadius: 50,
     },
+    
 
   });
 

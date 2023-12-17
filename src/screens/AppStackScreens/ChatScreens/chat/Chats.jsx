@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, Alert, StyleSheet } from "react-native";
+import { View, Text, FlatList, Alert, StyleSheet, Button } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useAuth } from "../../../../context/AuthContext";
 import Colors from "../../../../constant/Colors";
@@ -11,17 +11,22 @@ const Chats = ({ navigation }) => {
   const { currentUser } = useAuth();
 
   useEffect(() => {
+    let unsubscribe;
     if (currentUser?.uid) {
-      return subscribeToChats(currentUser.uid);
+      unsubscribe = subscribeToChats(currentUser.uid);
     }
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [currentUser]);
-
   const subscribeToChats = (userId) => {
     return firestore()
       .collection("userChats")
       .doc(userId)
       .onSnapshot(handleSnapshot, handleError);
   };
+  
+  
 
   const handleSnapshot = (doc) => {
     if (!doc.exists) {
@@ -125,7 +130,7 @@ const styles = StyleSheet.create({
   },
   borderBottom: {
     borderBottomColor: 'rgba(105, 105, 105, 1.0)',
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 1,
   },
   noChatsText: {
     textAlign: 'center',

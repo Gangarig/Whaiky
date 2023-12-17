@@ -47,6 +47,7 @@ export const sendMessage = async (message, chatId) => {
       .doc(chatId)
       .set({
         lastMessage: messageData,
+        
       }, { merge: true });
   } catch (error) {
     console.error("Error sending message: ", error);
