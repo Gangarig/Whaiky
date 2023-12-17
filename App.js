@@ -34,6 +34,7 @@ library.add(
 export default function App() {
   return (
     <SafeAreaProvider> 
+    <GestureHandlerRootView style={{flex:1}}>
     <AuthProvider>
     <ChatContextProvider>
     <NavigationContainer>
@@ -42,6 +43,7 @@ export default function App() {
     </NavigationContainer>
     </ChatContextProvider>
     </AuthProvider>
+    </GestureHandlerRootView>
     </SafeAreaProvider>
    
   );
