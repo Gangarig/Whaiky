@@ -26,7 +26,6 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const DocumentUpload = ({ navigation }) => {
   const { currentUser } = useAuth();
-
   const [imageFront, setImageFront] = useState(null);
   const [imageBack, setImageBack] = useState(null);
   const [country, setCountry] = useState(null);
@@ -154,6 +153,7 @@ const DocumentUpload = ({ navigation }) => {
         dateOfExpiry: dateOfExpiry,
         frontImage: frontImageUri,
         backImage: backImageUri,
+        status: 'pending',
       };
 
       // Store data in Firestore

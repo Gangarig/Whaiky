@@ -6,7 +6,7 @@ import PostDetail from '../screens/AppStackScreens/HomeScreens/PostDetail';
 import { Button } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { DrawerActions } from '@react-navigation/native';
-
+import PostSearch from '../screens/AppStackScreens/HomeScreens/PostSearch';
 const HomeStack = createStackNavigator();
 
 
@@ -16,6 +16,7 @@ function HomeStackScreen({ navigation}) {
       <HomeStack.Screen name="HomeScreen" component={Home} />
       <HomeStack.Screen name="AddPost" component={AddPost} />
       <HomeStack.Screen name="PostDetail" component={PostDetail} />
+      <HomeStack.Screen name="SearchPost" component={PostSearch} />
     </HomeStack.Navigator>
   );
 }

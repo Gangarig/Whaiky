@@ -10,6 +10,7 @@ import { categoriesData } from '../../../constant/dataStatic/categoriesData';
 import Colors from '../../../constant/Colors';
 import LinearGradient from 'react-native-linear-gradient';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+
 const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) => {
   const [openCategory, setOpenCategory] = useState(false);
   const [valueCategory, setValueCategory] = useState(null);

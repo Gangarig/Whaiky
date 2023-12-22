@@ -123,12 +123,12 @@ useEffect(() => {
       options={{
       }}
       />
-      <Drawer.Screen 
+      {/* <Drawer.Screen 
       name="Settings" 
       component={Settings} 
       options={{
       }}
-      />
+      /> */}
     </Drawer.Navigator>
   );
 }

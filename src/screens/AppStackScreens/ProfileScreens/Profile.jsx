@@ -72,6 +72,7 @@ const Profile = ({ navigation }) => {
     <ScrollView style={[styles.container]}
         contentContainerStyle={styles.ScrollView}
       >
+      <View style={styles.LinearGradientWrapper}>
       {userData && (
         <LinearGradient
           colors={['#9E41F0', '#4C7BC0']}
@@ -119,6 +120,10 @@ const Profile = ({ navigation }) => {
               <Text style={styles.infoText}>{getUserDataValue('city')}</Text>
             </View>
             <View style={styles.infoBox}>
+              <Text style={styles.infoText}>Status:</Text>
+              <Text style={styles.infoText}>{getUserDataValue('status')}</Text>
+            </View>
+            <View style={styles.infoBox}>
               <Text style={styles.infoText}>Created:</Text>
               <Text style={styles.infoText}>
                 {userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}
@@ -126,12 +131,15 @@ const Profile = ({ navigation }) => {
             </View>
           </View>
         </LinearGradient>
+        
       )}
+      </View>
       {!userData && (
         <View>
           <Text>No user data found.</Text>
         </View>
       )}
+      <View style={styles.LinearGradientWrapper}>
           <LinearGradient
           colors={['#9E41F0', '#4C7BC0']}
           start={{ x: 0, y: 0 }}
@@ -154,6 +162,7 @@ const Profile = ({ navigation }) => {
             </View>
           )}
         </LinearGradient>
+      </View>
 
     </ScrollView>
   );
@@ -176,6 +185,12 @@ const styles = StyleSheet.create({
     gap: 20,
     paddingBottom: 100,
     backgroundColor: Colors.background,
+  },
+  LinearGradientWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadowStyle
   },
   profileContainer: {
     backgroundColor: 'transparent',
@@ -221,6 +236,7 @@ const styles = StyleSheet.create({
   infoBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 40,
   },
   infoText: {
     fontSize: 16,

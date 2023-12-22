@@ -5,7 +5,6 @@ import PersonalInfo from "../screens/AppStackScreens/ProfileScreens/PersonalInfo
 import ServiceCategory from "../screens/AppStackScreens/ProfileScreens/Contractor/ServiceCategory";
 import DocumentUpload from "../screens/AppStackScreens/ProfileScreens/Contractor/DocumentUpload";
 import Certificate from "../screens/AppStackScreens/ProfileScreens/Contractor/Certificate";
-import LegalInfo from "../screens/AppStackScreens/ProfileScreens/Contractor/LegalInfo";
 import Contractor from "../screens/AppStackScreens/ProfileScreens/Contractor/Contractor";
 
 
@@ -17,7 +16,6 @@ function ContractorStackScreen() {
       <ContractorStack.Screen name="Services" component={ServiceCategory} />
       <ContractorStack.Screen name="DocumentUpload" component={DocumentUpload} />
       <ContractorStack.Screen name="Certificate" component={Certificate} />
-      <ContractorStack.Screen name="LegalInfo" component={LegalInfo} />
     </ContractorStack.Navigator>
   );
 }

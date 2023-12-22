@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, Button } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../../context/AuthContext';
-
-
+import LinearGradient from 'react-native-linear-gradient';
+import Colors from '../../../../constant/Colors';
+import { shadowStyle } from '../../../../constant/Shadow';
+import { Global } from '../../../../constant/Global';
+import FastImage from 'react-native-fast-image';
 
 const LegalInfo = ({navigation}) => {
   const { currentUser } = useAuth();
@@ -34,27 +37,33 @@ const LegalInfo = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Legal Info</Text>
       <FlatList
+        style={styles.FlatList}
         data={documents.concat(certificates)}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
+          <View style={styles.LinearGradientWrapper}>
+          <LinearGradient
+          colors={['#9E41F0', '#4C7BC0']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.itemContainer}
+        >
             {item.type ? (
               // Render documents
               <>
                 <Text style={styles.documentType}>Document Type: {item.type}</Text>
-                <Text>Document Number: {item.number}</Text>
-                <Text>Full Name: {item.fullName}</Text>
-                <Text>Country of Issue: {item.country}</Text>
-                <Text>Date of Issue: {item.dateOfIssue}</Text>
-                <Text>Date of Expiry: {item.dateOfExpiry}</Text>
+                <Text style={styles.docInfo}>Document Number: {item.number}</Text>
+                <Text style={styles.docInfo}>Full Name: {item.fullName}</Text>
+                <Text style={styles.docInfo}>Country of Issue: {item.country}</Text>
+                <Text style={styles.docInfo}>Date of Issue: {item.dateOfIssue}</Text>
+                <Text style={styles.docInfo}>Date of Expiry: {item.dateOfExpiry}</Text>
                 {/* Display images as needed */}
                 {item.frontImage && (
-                  <Image source={{ uri: item.frontImage }} style={styles.image} />
+                  <FastImage source={{ uri: item.frontImage }} style={styles.image} />
                 )}
                 {item.backImage && (
-                  <Image source={{ uri: item.backImage }} style={styles.image} />
+                  <FastImage source={{ uri: item.backImage }} style={styles.image} />
                 )}
               </>
             ) : (
@@ -64,11 +73,12 @@ const LegalInfo = ({navigation}) => {
                 <Text>Description: {item.description}</Text>
                 {/* Display certificate images as needed */}
                 {item.imageUrl && (
-                  <Image source={{ uri: item.imageUrl }} style={styles.image} />
+                  <FastImage source={{ uri: item.imageUrl }} style={styles.image} />
                 )}
               </>
             )}
-          </View>
+            </LinearGradient>
+            </View>
         )}
       />
     </View>
@@ -78,33 +88,31 @@ const LegalInfo = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  LinearGradientWrapper: {
+    ...shadowStyle
   },
   itemContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.background,
     padding: 16,
     marginBottom: 16,
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    marginTop: 20,
   },
   documentType: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
+    color: Colors.white,
   },
   certificateTitle: {
-    fontSize: 18,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.white,
+  },
+  docInfo: {
+    fontSize: 16,
+    color: Colors.white,
     fontWeight: 'bold',
   },
   image: {
@@ -112,6 +120,9 @@ const styles = StyleSheet.create({
     height: 200,
     marginVertical: 10,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.white,
+    ...shadowStyle
   },
 });
 

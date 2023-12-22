@@ -117,7 +117,9 @@ const Home = ({ navigation }) => {
       navigation.navigate('AddPost');
     }
   };
-  const Search = () => {};
+  const Search = () => {
+    navigation.navigate('SearchPost');
+  };
   const renderItem = ({ item }) => (
     <PostCard
       owner={item.ownerName}

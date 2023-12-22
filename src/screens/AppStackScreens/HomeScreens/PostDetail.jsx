@@ -82,8 +82,7 @@ const PostDetail = ({ route, navigation }) => {
         {currentUser && currentUser.uid === post?.ownerId && (
             <PrimaryButton text="Delete" onPress={confirmDelete} />
         )}
-            <PrimaryButton text='Send a Message' onPress={handleSelect}/>
-            <PrimaryButton text='Book Now' onPress={handleContact}/>
+            <PrimaryButton text='Contact' onPress={handleSelect}/>
       </View>
     </ScrollView>
   );

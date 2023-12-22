@@ -5,7 +5,6 @@ import PersonalInfo from "../screens/AppStackScreens/ProfileScreens/PersonalInfo
 import ServiceCategory from "../screens/AppStackScreens/ProfileScreens/Contractor/ServiceCategory";
 import DocumentUpload from "../screens/AppStackScreens/ProfileScreens/Contractor/DocumentUpload";
 import Certificate from "../screens/AppStackScreens/ProfileScreens/Contractor/Certificate";
-import LegalInfo from "../screens/AppStackScreens/ProfileScreens/Contractor/LegalInfo";
 
 const ProfileStack = createStackNavigator();
 function ProfileStackScreen() {
@@ -16,7 +15,6 @@ function ProfileStackScreen() {
       <ProfileStack.Screen name="Services" component={ServiceCategory} />
       <ProfileStack.Screen name="DocumentUpload" component={DocumentUpload} />
       <ProfileStack.Screen name="Certificate" component={Certificate} />
-      <ProfileStack.Screen name="LegalInfo" component={LegalInfo} />
     </ProfileStack.Navigator>
   );
 }

@@ -6,7 +6,6 @@ import Colors from '../../../constant/Colors';
 import shadowStyle from '../../../constant/Shadow';
 import { Global } from '../../../constant/Global';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-import { showMessage } from 'react-native-flash-message';
 
 const Location = React.memo(({ onSave, onClose }) => {
   const [countryOpen, setCountryOpen] = useState(false);
@@ -53,11 +52,6 @@ const Location = React.memo(({ onSave, onClose }) => {
       }));
       setStateItems(stateList);
       setCountryOpen(false);
-
-      if (stateList.length === 0) {
-        setSelectedState(selectedCountry);
-        setSelectedCity(selectedCountry);
-      }
     }
   }, [selectedCountry]);
 
@@ -74,41 +68,6 @@ const Location = React.memo(({ onSave, onClose }) => {
       }
     }
   }, [selectedCountry, selectedState]);
-
-  const Submit = useCallback(() => {
-    if (!selectedCountry) {
-      showMessage({
-        message: 'Please select a country!',
-        type: 'danger',
-      });
-      return;
-    }
-    if (!selectedState) {
-      showMessage({
-        message: 'Please select a state!',
-        type: 'danger',
-      });
-      return;
-    }
-
-    if (cityItems.length > 0 && !selectedCity) {
-      showMessage({
-        message: 'Please select a city!',
-        type: 'danger',
-      });
-      return;
-    }
-
-    const finalCity = cityItems.length > 0 ? selectedCity : selectedState;
-
-    onSave(selectedCountry, selectedState, finalCity);
-    if (onClose) onClose();
-
-    showMessage({
-      message: 'Location saved successfully!',
-      type: 'success',
-    });
-  }, [selectedCountry, selectedState, selectedCity, onSave, onClose, cityItems.length]);
 
   return (
     <View style={styles.container}>
@@ -171,8 +130,8 @@ const Location = React.memo(({ onSave, onClose }) => {
       <View style={styles.buttonBox}>
         <PrimaryButton
           style={styles.button}
-          text="Submit"
-          onPress={Submit}
+          text="Done"
+          onPress={() => onSave(selectedCountry, selectedState, selectedCity)}
         />
         <PrimaryButton
           style={styles.button}
@@ -196,7 +155,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20, 
+    marginTop: 20,
     zIndex: -1,
   },
   title: {

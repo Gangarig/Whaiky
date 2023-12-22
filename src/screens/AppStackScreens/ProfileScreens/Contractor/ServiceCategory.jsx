@@ -1,50 +1,68 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, ScrollView, TouchableOpacity, StyleSheet, Alert, Touchable } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../../context/AuthContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import LinearGradient from 'react-native-linear-gradient';
+
+// Import custom components and constants
 import ServiceCategoryPicker from '../../service/ServiceCategoryPicker';
 import { Global } from '../../../../constant/Global';
 import Colors from '../../../../constant/Colors';
-import LinearGradient from 'react-native-linear-gradient';
-import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
-import GradientButton from '../../../../components/GradientButton';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { shadowStyle } from '../../../../constant/Shadow';
-
+import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 
 const ServiceCategory = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [services, setServices] = useState([]);
   const [isPickerModalVisible, setPickerModalVisible] = useState(false);
   const [isModalBackgroundVisible, setModalBackgroundVisible] = useState(false);
-  
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    if (currentUser) {
-      const subscriber = firestore()
-        .collection('users')
-        .doc(currentUser.uid)
-        .onSnapshot(documentSnapshot => {
-          setServices(documentSnapshot.data().services || []);
-        });
-
-      // Unsubscribe from events when no longer in use
-      return () => subscriber();
-    } else {
+    if (!currentUser) {
       showMessage({
         message: 'No user is signed in',
         type: 'warning',
       });
+      return;
     }
+
+    const subscriber = firestore()
+      .collection('users')
+      .doc(currentUser.uid)
+      .onSnapshot(documentSnapshot => {
+        setServices(documentSnapshot.data().services || []);
+      });
+
+    const unsubscribe = firestore()
+      .collection('users')
+      .doc(currentUser.uid)
+      .onSnapshot(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setUserData(documentSnapshot.data());
+        }
+      }, error => {
+        console.log('Error:', error);
+        showMessage({
+          message: 'Error fetching user data.',
+          type: 'danger',
+        });
+      });
+
+    // Unsubscribe from events when no longer in use
+    return () => {
+      subscriber();
+      unsubscribe();
+    };
   }, [currentUser]);
 
   const togglePickerModal = () => {
     setPickerModalVisible(prevVisible => !prevVisible);
-    setModalBackgroundVisible(prevVisible => !prevVisible); 
+    setModalBackgroundVisible(prevVisible => !prevVisible);
   };
-  
 
   const handleDeleteService = (service) => {
     Alert.alert(
@@ -59,13 +77,13 @@ const ServiceCategory = ({ navigation }) => {
 
   const deleteService = (serviceToDelete) => {
     // First, update the local state
-    setServices(prevServices => 
+    setServices(prevServices =>
       prevServices.filter(service => service.categoryId !== serviceToDelete.categoryId)
     );
-  
+
     // Then, create a reference to the user's document
     const userDocRef = firestore().collection('users').doc(currentUser.uid);
-  
+
     // Remove the service from the user's document in Firestore
     userDocRef.update({
       services: firestore.FieldValue.arrayRemove({
@@ -75,19 +93,19 @@ const ServiceCategory = ({ navigation }) => {
         optionText: serviceToDelete.optionText,
       })
     })
-    .then(() => {
-      showMessage({
-        message: "Service deleted successfully.",
-        type: "success",
+      .then(() => {
+        showMessage({
+          message: "Service deleted successfully.",
+          type: "success",
+        });
+      })
+      .catch(error => {
+        console.error("Error removing service from Firestore: ", error);
+        showMessage({
+          message: "Error deleting service. Please try again later.",
+          type: "danger",
+        });
       });
-    })
-    .catch(error => {
-      console.error("Error removing service from Firestore: ", error);
-      showMessage({
-        message: "Error deleting service. Please try again later.",
-        type: "danger",
-      });
-    });
   };
 
   const handleSaveAndContinue = () => {
@@ -113,6 +131,7 @@ const ServiceCategory = ({ navigation }) => {
         {isModalBackgroundVisible && (
           <View style={styles.modalBackground} />
         )}
+        <View style={styles.LinearGradientWrapper}>
         <LinearGradient
             colors={['#9E41F0', '#4C7BC0']}
             start={{ x: 0, y: 0 }}
@@ -136,17 +155,20 @@ const ServiceCategory = ({ navigation }) => {
             </View>
           ))}
           </LinearGradient>
+          </View>
           <View style={styles.btnContainer}>
             <PrimaryButton
             text="Add Service"
             onPress={togglePickerModal}
             style={{marginTop: 20}}
           />
+          {userData && userData.status == 'user' ?
           <PrimaryButton 
-            text="Save" 
+            text="Skip" 
             onPress={handleSaveAndContinue} 
             style={styles.saveButton}
           />
+          : null}
           </View>
       </ScrollView>
   );
@@ -168,6 +190,12 @@ const styles = StyleSheet.create({
     gap: 20,
     paddingBottom: 100,
   },
+  LinearGradientWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadowStyle
+  }, 
   modalBackground: {
     position: 'absolute',
     top: 0,
