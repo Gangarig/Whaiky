@@ -12,10 +12,14 @@ import {
 } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { showMessage } from 'react-native-flash-message';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import { Global } from '../../../constant/Global';
+import { Global } from '../../../../constant/Global';
+import LinearGradient from 'react-native-linear-gradient';
+import { shadowStyle } from '../../../../constant/Shadow';
+import Colors from '../../../../constant/Colors';
+import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 
 const Certificate = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -114,13 +118,26 @@ const Certificate = ({ navigation }) => {
       [field]: value,
     });
   };
-
+  const SubmitDone = () => {
+    showMessage({
+      message: 'Submission successfully sent.',
+      type: 'success',
+    });
+    navigation.navigate('ProfileScreen');
+  }
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        <View style={styles.inputContainer}>
-          <Text style={Global.title}>Certificate Upload</Text>
-
+    <ScrollView 
+    style={styles.container}
+    contentContainerStyle={styles.ScrollView}
+    >
+    <View style={[styles.LinearGradientWrapper, shadowStyle]}>
+    <LinearGradient
+        colors={['#9E41F0', '#4C7BC0']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={[styles.content,shadowStyle]}
+      >
+          <Text style={[Global.title,styles.title]}>Certificate Upload</Text>
           <TouchableOpacity
             onPress={handleChooseImage}
             style={styles.imageContainer}
@@ -145,36 +162,68 @@ const Certificate = ({ navigation }) => {
             value={certificateDetails.description}
           />
           <View>
-          <Button title="Upload Certificate" onPress={uploadCertificate} />
-          <Button title='Continue or Skip' onPress={() => navigation.navigate('Complete')} />
-          <Button title="Go Back" onPress={() => navigation.goBack()} />
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      </LinearGradient>
+      </View>
+      <PrimaryButton
+        text="Upload Certificate"
+        onPress={uploadCertificate}
+        style={styles.button}
+      />
+      <PrimaryButton  
+        text='Skip'
+        onPress={SubmitDone}
+        style={styles.button}
+      />
+    </ScrollView>
   );
 };
 
 export default Certificate;
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   container: {
+    backgroundColor: Colors.background,
     flex: 1,
-    padding: 30,
+    width: '100%',
+    paddingVertical: 20,
+  },
+  ScrollView: {
+    flexGrow: 1,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%',
+    gap: 20,
+    paddingBottom: 100,
+    backgroundColor: Colors.background,
+  },
+  LinearGradientWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  content:{
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 5,
+    width: '90%',
+    ...shadowStyle
   },
   imageContainer: {
     width: '100%',
     height: 200,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    borderWidth: 1.5,
+    borderColor: Colors.black,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
     marginBottom: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: Colors.background,
+    ...shadowStyle
   },
   image: {
     width: '100%',
@@ -186,5 +235,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',  
     justifyContent: 'center', 
     gap: 20,
+  },
+  title: {
+    color: Colors.white,
   },
 });

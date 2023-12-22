@@ -71,6 +71,7 @@ const SignUp = ({ navigation }) => {
         uid: user.uid,
         displayName: formData.displayName,
         email: formData.email,
+        status: 'user',
         createdAt: new Date().getTime(),
         photoURL: '',
       });
@@ -78,6 +79,7 @@ const SignUp = ({ navigation }) => {
         uid: user.uid,
         displayName: formData.displayName,
         email: formData.email,
+        status: 'user',
         photoURL: '',
       });
       showMessage({ message: 'Account created successfully!', type: 'success' });

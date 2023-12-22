@@ -21,7 +21,6 @@ const Location = React.memo(({ onSave, onClose }) => {
   const [stateItems, setStateItems] = useState([]);
   const [cityItems, setCityItems] = useState([]);
 
-  // Memoizing the country list
   const countryList = useMemo(() => Country.getAllCountries().map((country) => ({
     label: country.name,
     value: country.isoCode,
@@ -54,6 +53,11 @@ const Location = React.memo(({ onSave, onClose }) => {
       }));
       setStateItems(stateList);
       setCountryOpen(false);
+
+      if (stateList.length === 0) {
+        setSelectedState(selectedCountry);
+        setSelectedCity(selectedCountry);
+      }
     }
   }, [selectedCountry]);
 
@@ -64,6 +68,10 @@ const Location = React.memo(({ onSave, onClose }) => {
         value: city.name,
       }));
       setCityItems(cityList);
+
+      if (cityList.length === 0) {
+        setSelectedCity(selectedState);
+      }
     }
   }, [selectedCountry, selectedState]);
 
@@ -82,30 +90,26 @@ const Location = React.memo(({ onSave, onClose }) => {
       });
       return;
     }
-  
-    if (cityItems.length > 0) {
+
+    if (cityItems.length > 0 && !selectedCity) {
       showMessage({
         message: 'Please select a city!',
         type: 'danger',
       });
       return;
-    } 
+    }
 
-    
-  
-    onSave(selectedCountry, selectedState, selectedCity);
+    const finalCity = cityItems.length > 0 ? selectedCity : selectedState;
+
+    onSave(selectedCountry, selectedState, finalCity);
     if (onClose) onClose();
-  
+
     showMessage({
       message: 'Location saved successfully!',
       type: 'success',
     });
-    console.log('Location saved successfully!');
-    console.log('Country: ', selectedCountry);
-    console.log('State: ', selectedState);
-    console.log('City: ', selectedCity);
-  }, [selectedCountry, selectedState, selectedCity, onSave, onClose, cityItems]);
-  
+  }, [selectedCountry, selectedState, selectedCity, onSave, onClose, cityItems.length]);
+
   return (
     <View style={styles.container}>
       <Text style={[Global.title, styles.title]}>Choose a Location</Text>

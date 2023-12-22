@@ -9,12 +9,7 @@ export const handleSelect = async (currentUser, selectedUser) => {
     });
     return;
   }
-
-  console.log("handleSelect started");
-
   const combinedId = currentUser.uid > selectedUser.uid ? currentUser.uid + selectedUser.uid : selectedUser.uid + currentUser.uid;
-  console.log("Combined ID:", combinedId);
-
   try {
     // Check if the chat already exists for the current user
     const currentUserChatRef = firestore().collection('userChats').doc(currentUser.uid);
@@ -31,10 +26,6 @@ export const handleSelect = async (currentUser, selectedUser) => {
 
     const chatRef = firestore().collection('chats').doc(combinedId);
     const chatDoc = await chatRef.get();
-
-    if (!chatDoc.exists) {
-      await chatRef.set({ messages: [] });
-    }
 
     const userChatData = (user, otherUser) => ({
       date: firestore.FieldValue.serverTimestamp(),

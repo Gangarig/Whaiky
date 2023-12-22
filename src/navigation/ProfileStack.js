@@ -2,13 +2,10 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Profile from "../screens/AppStackScreens/ProfileScreens/Profile";
 import PersonalInfo from "../screens/AppStackScreens/ProfileScreens/PersonalInfo";
-import ServiceCategory from "../screens/AppStackScreens/ProfileScreens/ServiceCategory";
-import DocumentUpload from "../screens/AppStackScreens/service/DocumentUpload";
-import Certificate from "../screens/AppStackScreens/service/Certificate";
-import LegalInfo from "../screens/AppStackScreens/ProfileScreens/Legalinfo";
-import Contractor from "../screens/AppStackScreens/service/Contractor";
-import Complete from "../screens/AppStackScreens/service/Complete";
-
+import ServiceCategory from "../screens/AppStackScreens/ProfileScreens/Contractor/ServiceCategory";
+import DocumentUpload from "../screens/AppStackScreens/ProfileScreens/Contractor/DocumentUpload";
+import Certificate from "../screens/AppStackScreens/ProfileScreens/Contractor/Certificate";
+import LegalInfo from "../screens/AppStackScreens/ProfileScreens/Contractor/LegalInfo";
 
 const ProfileStack = createStackNavigator();
 function ProfileStackScreen() {
@@ -16,6 +13,10 @@ function ProfileStackScreen() {
     <ProfileStack.Navigator screenOptions={{headerShown:false}}>
       <ProfileStack.Screen name="ProfileScreen" component={Profile} />
       <ProfileStack.Screen name="PersonalInfo" component={PersonalInfo} />
+      <ProfileStack.Screen name="Services" component={ServiceCategory} />
+      <ProfileStack.Screen name="DocumentUpload" component={DocumentUpload} />
+      <ProfileStack.Screen name="Certificate" component={Certificate} />
+      <ProfileStack.Screen name="LegalInfo" component={LegalInfo} />
     </ProfileStack.Navigator>
   );
 }

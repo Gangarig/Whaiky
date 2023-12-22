@@ -28,11 +28,10 @@ const ChatScreen = ({ navigation }) => {
         style={[styles.inputWrapper]}
         onPress={handleSearchButtonPress}
       >
-        <Text style={[Global.titleSecondary]}>
+        <Text style={[Global.text]}>
           Search a User
         </Text>
       </TouchableOpacity>
-
       <Search isVisible={searchModalVisible} onClose={handleCloseSearch} />
       <Chats navigation={navigation} onSelectChat={handleChatSelect} />
     </View>
@@ -49,7 +48,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inputWrapper: {
-    width: '100%',
+    minWidth: '100%',
     marginBottom: 10,
     borderRadius: 5,
     borderWidth: 1,

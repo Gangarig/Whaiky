@@ -7,7 +7,9 @@ import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { Global } from '../../../constant/Global';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
-
+import Colors from '../../../constant/Colors';
+import LinearGradient from 'react-native-linear-gradient';
+import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) => {
   const [openCategory, setOpenCategory] = useState(false);
   const [valueCategory, setValueCategory] = useState(null);
@@ -163,9 +165,17 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
               style={Global.Input}
             />
           )}
-          <Button title="Add Another Service" onPress={handleAddService} />
-          <Button title="Close" onPress={toggleModal} />
-        </View>
+          <View style={styles.btnContainer}>
+          <PrimaryButton
+            text="Add Service"
+            onPress={handleAddService}
+          />
+          <PrimaryButton  
+            text="Close"
+            onPress={toggleModal}
+          />
+          </View>
+          </View>
       </View>
     </Modal>
   );
@@ -176,7 +186,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   modalContent: {
     width: '80%',
@@ -205,6 +214,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     width: '100%',
     height: 'fit-content',
+  },
+  btnContainer:{
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
   },
 });
 

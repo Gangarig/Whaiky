@@ -11,17 +11,36 @@ const Chats = ({ navigation }) => {
   const { currentUser } = useAuth();
 
   useEffect(() => {
-    if (currentUser?.uid) {
-      return subscribeToChats(currentUser.uid);
-    }
-  }, [currentUser]);
+    let unsubscribeFromUserChats;
+    let unsubscribeFromChatMessages = [];
 
-  const subscribeToChats = (userId) => {
-    return firestore()
-      .collection("userChats")
-      .doc(userId)
-      .onSnapshot(handleSnapshot, handleError);
-  };
+    if (currentUser?.uid) {
+      unsubscribeFromUserChats = firestore()
+        .collection("userChats")
+        .doc(currentUser.uid)
+        .onSnapshot(doc => {
+          if (doc.exists) {
+            handleSnapshot(doc);
+            Object.keys(doc.data()).forEach(chatId => {
+              const unsubscribe = firestore()
+                .collection("chats")
+                .doc(chatId)
+                .onSnapshot(chatDoc => {
+                  if (chatDoc.exists) {
+                    updateLastMessageInState(chatId, chatDoc.data().lastMessage);
+                  }
+                }, handleError);
+              unsubscribeFromChatMessages.push(unsubscribe);
+            });
+          }
+        }, handleError);
+    }
+
+    return () => {
+      if (unsubscribeFromUserChats) unsubscribeFromUserChats();
+      unsubscribeFromChatMessages.forEach(unsubscribe => unsubscribe());
+    };
+  }, [currentUser]);
 
   const handleSnapshot = (doc) => {
     if (!doc.exists) {
@@ -32,11 +51,18 @@ const Chats = ({ navigation }) => {
     setChats(sortedChats);
   };
 
+  const updateLastMessageInState = (chatId, lastMessageData) => {
+    setChats(currentChats => currentChats.map(chat => 
+      chat.chatId === chatId ? { ...chat, lastMessage: formatMessage(lastMessageData.text) } : chat
+    ));
+  };
+
   const sortChats = (chatData) => {
     return Object.entries(chatData)
       .map(([id, chat]) => ({
         ...chat,
         chatId: id,
+        lastMessage: formatMessage(chat.lastMessage?.text || "No messages yet"),
         date: chat.date?.toDate().getTime() || 0,
       }))
       .sort((a, b) => b.date - a.date);
@@ -89,12 +115,17 @@ const Chats = ({ navigation }) => {
     }
   };
 
+  const formatMessage = (message) => {
+    const MAX_LENGTH = 30; // Adjust as needed
+    return message.length > MAX_LENGTH ? `${message.substring(0, MAX_LENGTH)}...` : message;
+  };
+
   const renderChatItem = ({ item }) => (
     <View style={styles.profileWrapper}>
       <ProfileCard
         displayName={item.userInfo.displayName || "Unknown User"}
-        lastMessage={item.lastMessage?.text || "No messages yet"}
-        avatar={item.userInfo.photoURL }
+        lastMessage={item.lastMessage}
+        avatar={item.userInfo.photoURL}
         onPress={() => handleSelect(item.chatId, item.userInfo)}
         onDeletePress={() => deleteChat(item.userInfo)}
       />
@@ -120,18 +151,17 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     width: '100%',
   },
-  profileWrapper: {
-    // Add any additional styling if needed
-  },
+
   borderBottom: {
     borderBottomColor: 'rgba(105, 105, 105, 1.0)',
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 2,
+    
   },
   noChatsText: {
     textAlign: 'center',
     marginTop: 20,
     color: 'grey',
-    fontSize: 16, // Adjusted for better readability
+    fontSize: 16,
   },
 });
 

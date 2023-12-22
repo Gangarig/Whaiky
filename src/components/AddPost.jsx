@@ -12,7 +12,6 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { Global } from '../constant/Global';
 import firestore from '@react-native-firebase/firestore';
-import LocationPicker from '../screens/AppStackScreens/service/LocationPicker';
 import CategoryPicker from '../screens/AppStackScreens/service/CategoryPicker';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { showMessage } from 'react-native-flash-message';
@@ -20,7 +19,6 @@ import firebase from '@react-native-firebase/app';
 import * as Progress from 'react-native-progress';
 import GradientButton from './GradientButton';
 import Location from '../screens/AppStackScreens/service/Location';
-import PrimaryButton from './Buttons/PrimaryButton';
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -265,6 +263,16 @@ const AddPost = ({ navigation }) => {
       });
     }
   };
+
+  const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
+    setPost({
+      ...post,
+      country: selectedCountry,
+      state: selectedState,
+      city: selectedCity,
+    });
+    closeModal();
+  };
   
 
   return (
@@ -337,17 +345,9 @@ const AddPost = ({ navigation }) => {
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={Global.modalContainer}>
           <View style={styles.modalContent}>
-            <LocationPicker
+            <Location
+              onSave={handleLocationSave}
               onClose={closeModal}
-              onSave={(selectedCountry, selectedState, selectedCity) => {
-                const updatedPost = { ...post };
-                if (selectedCountry) updatedPost.country = selectedCountry;
-                if (selectedState) updatedPost.state = selectedState;
-                if (selectedCity) updatedPost.city = selectedCity;
-
-                setPost(updatedPost);
-                closeModal();
-              }}
             />
           </View>
         </View>

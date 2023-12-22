@@ -16,6 +16,8 @@ import { Global } from '../constant/Global';
 import LinearGradient from 'react-native-linear-gradient';
 import ContractorStack from './ContractorStack';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import LegalInfo from '../screens/AppStackScreens/ProfileScreens/Contractor/LegalInfo';
+import ServiceCategory from '../screens/AppStackScreens/ProfileScreens/Contractor/ServiceCategory';
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
@@ -59,7 +61,7 @@ useEffect(() => {
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         drawerStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: '#FBFBFB',
           width: 220,
         },
         drawerInactiveTintColor: '#696969',
@@ -73,31 +75,32 @@ useEffect(() => {
     
       }}
     >
-      {/* <Drawer.Screen 
-      name="Test" 
-      component={Test} 
-      options={{
-
-      }}
-      /> */}
-
       <Drawer.Screen 
       name="Home" 
       component={HomeStackScreen} 
       />
-      <Drawer.Screen 
-      name="Contractor" 
-      component={ContractorStack} 
-      options={{
+      { userData && userData.status === 'contractor' ?
+      <>
+            <Drawer.Screen 
+            name="Legal Information" 
+            component={LegalInfo} 
+            options={{
+            }}
+            />
+            <Drawer.Screen 
+            name="Service Categories" 
+            component={ServiceCategory} 
+            options={{
+            }}
+            />
+      </>
+      : null}
 
-      }}
-      />
       
       {Dashboard ? <Drawer.Screen 
       name="Dashboard" 
       component={AdminStackScreen} 
             options={{
-
       }}
       /> : null}
 
@@ -112,22 +115,18 @@ useEffect(() => {
       name="Messages" 
       component={ChatStackScreen} 
             options={{
-
       }}
       />
       <Drawer.Screen 
       name="Profile" 
       component={ProfileStackScreen} 
-            options={{
-
+      options={{
       }}
       />
       <Drawer.Screen 
-
       name="Settings" 
       component={Settings} 
       options={{
-
       }}
       />
     </Drawer.Navigator>

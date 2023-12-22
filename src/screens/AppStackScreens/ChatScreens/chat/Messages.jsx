@@ -78,6 +78,7 @@ const Messages = ({ chatId }) => {
         renderInputToolbar={props => <Input onSend={handleSend} chatId={chatId} />}  
         renderBubble={props => <Bubble {...props} />}
         keyboardShouldPersistTaps={'never'}
+        renderAvatar={null}
       />
   );
 };

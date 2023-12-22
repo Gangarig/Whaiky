@@ -11,10 +11,14 @@ import FastImage from 'react-native-fast-image';
 import { shadowStyle } from '../../../constant/Shadow';
 import  Colors  from '../../../constant/Colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import GradientButton from '../../../components/GradientButton';
+import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+
 
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [userData, setUserData] = useState(null);
+
     useEffect(() => {
       if (currentUser?.uid) {
         const userDocRef = firestore().collection('users').doc(currentUser.uid);
@@ -34,7 +38,6 @@ const Profile = ({ navigation }) => {
     };
   
   const handleContractor = async () => {
-
     try {
       if (currentUser?.uid) {
         const querySnapshot = await firestore()
@@ -45,11 +48,9 @@ const Profile = ({ navigation }) => {
           .get();
   
         if (!querySnapshot.empty) {
-          // At least one document with status 'approved' exists, navigate to 'Contractor' screen
-          navigation.navigate('Contractor'); // Replace 'Contractor' with your actual screen name
+          navigation.navigate('Contractor'); 
         } else {
-          // No document with status 'approved' found, navigate to 'Services' screen
-          navigation.navigate('Services'); // Replace 'Services' with your actual screen name
+          navigation.navigate('Services'); 
         }
       } else {
         // Handle the case where user document does not exist
@@ -68,7 +69,9 @@ const Profile = ({ navigation }) => {
   };
   
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <ScrollView style={[styles.container]}
+        contentContainerStyle={styles.ScrollView}
+      >
       {userData && (
         <LinearGradient
           colors={['#9E41F0', '#4C7BC0']}
@@ -124,6 +127,34 @@ const Profile = ({ navigation }) => {
           </View>
         </LinearGradient>
       )}
+      {!userData && (
+        <View>
+          <Text>No user data found.</Text>
+        </View>
+      )}
+          <LinearGradient
+          colors={['#9E41F0', '#4C7BC0']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.profileContainer}
+        >
+          {currentUser.status == 'user' && (
+          <TouchableOpacity onPress={handleContractor}>
+            <Text style={[styles.btnText]}>Become a Contractor</Text>
+          </TouchableOpacity>
+          )}
+          {currentUser.status == 'contractor' && (
+            <View style={styles.contractorLinks}>
+            <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DocumentUpload')}>
+              <Text style={[styles.btnText]}>Upload Document</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('Certificate')}>
+              <Text style={[styles.btnText]}>Upload Certificate</Text>
+            </TouchableOpacity>
+            </View>
+          )}
+        </LinearGradient>
+
     </ScrollView>
   );
   
@@ -131,12 +162,20 @@ const Profile = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    padding: 30,
-    gap: 10,
-    ...shadowStyle,
+  container: {
+    backgroundColor: Colors.background,
     flex: 1,
     width: '100%',
+    paddingVertical: 20,
+  },
+  ScrollView: {
+    flexGrow: 1,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%',
+    gap: 20,
+    paddingBottom: 100,
+    backgroundColor: Colors.background,
   },
   profileContainer: {
     backgroundColor: 'transparent',
@@ -146,6 +185,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 5,
+    minWidth:300,
+  },
+  contractorLinks:{
+    gap:15,
+  } ,
+  linkWrapper:{
+    borderBottomColor:Colors.white,
+    borderBottomWidth:1,
   },
   avatar: {
     width: 114,
@@ -160,6 +207,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.white,
     paddingBottom: 10,
+  },
+  btnText:{
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.white,
   },
   infoWrapper: {
     width: '100%',

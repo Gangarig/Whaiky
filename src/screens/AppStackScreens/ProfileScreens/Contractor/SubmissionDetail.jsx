@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, FlatList, Image } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { Global } from '../../../constant/Global';
+import { Global } from '../../../../constant/Global';
 import { showMessage } from 'react-native-flash-message';
 import storage from '@react-native-firebase/storage';
 import FastImage from 'react-native-fast-image'

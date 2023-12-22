@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Modal, StyleSheet, Button } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Country } from 'country-state-city';
-import { Global } from '../../../constant/Global';
-
-const CountryPicker = ({ onSelect, value }) => {
+import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import Colors from '../../../constant/Colors';
+const CountryPicker = ({ onSelect, isModalVisible, setModalVisibility }) => {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([]);
-  const [selectedValue, setSelectedValue] = useState(null); // Track the selected value
+  const [selectedValue, setSelectedValue] = useState(null);
 
   useEffect(() => {
     const countries = Country.getAllCountries().map((country) => ({
@@ -17,50 +17,70 @@ const CountryPicker = ({ onSelect, value }) => {
     setItems(countries);
   }, []);
 
-  useEffect(() => {
-    // Update the selectedValue whenever the value prop changes
-    setSelectedValue(value);
-  }, [value]);
-
-  const handleOpen = useCallback(() => {
-    setOpen((prevState) => !prevState);
-  }, []);
+  const onValueChange = (selectedItem) => {
+    setSelectedValue(selectedItem);
+    onSelect(selectedItem); // Pass the selected country back to parent
+  };
 
   return (
-    <View style={styles.container}>
-      <DropDownPicker
-        open={open}
-        value={selectedValue}
-        items={items}
-        setOpen={handleOpen}
-        setValue={(selectedItem) => {
-          setSelectedValue(selectedItem);
-          onSelect(selectedItem);
-        }}
-        placeholder="Country of Issue"
-        placeholderStyle={{ color: 'gray' }} 
-        style={styles.dropdown}
-        dropDownContainerStyle={styles.dropdownContainer}
-        zIndex={open ? 5000 : undefined}
-        zIndexInverse={1000}
-      />
-    </View>
+    <Modal
+      transparent={true}
+      visible={isModalVisible}
+      onRequestClose={() => setModalVisibility(false)}
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <DropDownPicker
+            open={open}
+            value={selectedValue}
+            items={items}
+            setOpen={setOpen}
+            setValue={onValueChange}
+            placeholder="Country of Issue"
+            placeholderStyle={{ color: Colors.primary  }} 
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            zIndex={open ? 5000 : undefined}
+            zIndexInverse={1000}
+
+          />
+          <PrimaryButton
+            text="Close"
+            onPress={() => setModalVisibility(false)}
+          />
+        </View>
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    marginBottom: 10,
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+    gap: 10,
+    height: 350,
+    justifyContent: 'space-between',
+    borderColor: Colors.primary,
+    borderWidth: 1,
+  },
   dropdown: {
-    borderColor: 'black',
+    borderColor: Colors.primary,
     borderWidth: 1,
   },
   dropdownContainer: {
-    borderColor: '#ddd',
+    borderColor: Colors.primary,
   },
+  // ... other styles ...
 });
 
 export default CountryPicker;

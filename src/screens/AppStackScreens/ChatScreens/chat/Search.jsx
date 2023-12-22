@@ -6,10 +6,8 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
   ActivityIndicator,
   ScrollView,
-  Image
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import defaultAvatar from '../../../../assets/images/avatar/avatar.png';
@@ -19,9 +17,6 @@ import { useAuth } from '../../../../context/AuthContext';
 import { showMessage } from 'react-native-flash-message';
 import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 import Colors from '../../../../constant/Colors';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { shadowStyle } from '../../../../constant/Shadow';
-import { Global } from '../../../../constant/Global';
 
 
 const Search = ({ isVisible, onClose }) => {

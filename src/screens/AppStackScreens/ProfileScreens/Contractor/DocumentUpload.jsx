@@ -13,12 +13,16 @@ import {
 } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { showMessage } from 'react-native-flash-message';
-import CountryPicker from './CountryPicker'; 
+import CountryPicker from '../../service/CountryPicker'; 
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useAuth } from '../../../context/AuthContext';
-import { Global } from '../../../constant/Global';
+import { useAuth } from '../../../../context/AuthContext';
+import { Global } from '../../../../constant/Global';
+import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
+import Colors from '../../../../constant/Colors';
+import { shadowStyle } from '../../../../constant/Shadow';
+import LinearGradient from 'react-native-linear-gradient';
 
 const DocumentUpload = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -26,6 +30,7 @@ const DocumentUpload = ({ navigation }) => {
   const [imageFront, setImageFront] = useState(null);
   const [imageBack, setImageBack] = useState(null);
   const [country, setCountry] = useState(null);
+  const [isCountryPickerVisible, setCountryPickerVisible] = useState(false);
   const [dateOfIssue, setDateOfIssue] = useState(null);
   const [dateOfExpiry, setDateOfExpiry] = useState(null);
   const [docType, setDocType] = useState('Passport');
@@ -33,7 +38,6 @@ const DocumentUpload = ({ navigation }) => {
     number: '',
     fullName: '',
   });
-  const [modalVisible, setModalVisible] = useState(false);
 
   const handleChoosePhoto = (imageNumber) => {
     ImageCropPicker.openPicker({
@@ -187,11 +191,19 @@ const DocumentUpload = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        <View style={styles.inputContainer}>
-          <Text style={Global.title}>Document Upload</Text>
-          <View style={styles.docTypeSelection}>
+      <ScrollView style={[styles.container]}
+        contentContainerStyle={styles.ScrollView}
+      >
+        <View style={[styles.LinearGradientWrapper, shadowStyle]}>
+          <LinearGradient
+            colors={['#9E41F0', '#4C7BC0']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[shadowStyle,styles.inputContainer,
+          ]}
+          >
+          <Text style={[Global.title,styles.title]}>Document Upload</Text>
+          <View style={[styles.docTypeSelection,shadowStyle]}>
             {['Passport', 'ID', "Driver's License"].map((type) => (
               <TouchableOpacity
                 key={type}
@@ -201,7 +213,10 @@ const DocumentUpload = ({ navigation }) => {
                   docType === type && styles.activeDocTypeButton,
                 ]}
               >
-                <Text style={Global.titleSecondary}>{type}</Text>
+                <Text style={[
+                  Global.titleSecondary,styles.titleSecondary,
+                  docType === type && styles.activeDocTypeButton,
+                  ]}>{type}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -250,77 +265,78 @@ const DocumentUpload = ({ navigation }) => {
             value={docDetails.number}
           />
           <TextInput
-            style={Global.input}
+            style={[Global.input]}
             placeholder="Full Name"
             onChangeText={(text) => handleInputChange('fullName', text)}
             value={docDetails.fullName}
           />
-
-          <Button title="Country of Issue " onPress={() => setModalVisible(true)} />
-          {country && <Text style={Global.titleSecondary}>Country of Issue: {country}</Text>}
+          {country && <Text style={[Global.titleSecondary,styles.titleSecondary]}>Country of Issue: {country}</Text>}
           <View style={styles.dateBox}>
-            <Text style={Global.titleSecondary}>Date of Issue:</Text>
+            <Text style={[Global.titleSecondary,styles.titleSecondary]}>Date of Issue:</Text>
+            <View style={styles.dateWrapper}>
             <DateTimePicker
               value={dateOfIssue ? new Date(dateOfIssue) : new Date()}
               mode="date"
               display="default"
+              textColor='red'
               onChange={(event, selectedDate) => {
                 if (selectedDate) {
                   setDateOfIssue(selectedDate.toISOString().split('T')[0]);
                 }
               }}
             />
+            </View>
           </View>
           <View style={styles.dateBox}>
-            <Text style={Global.titleSecondary}>Date of Expiry:</Text>
+            <Text style={[Global.titleSecondary,styles.titleSecondary]}>Date of Expiry:</Text>
+            <View style={styles.dateWrapper}>
             <DateTimePicker
               value={dateOfExpiry ? new Date(dateOfExpiry) : new Date()}
               mode="date"
               display="default"
+              style={{color:'white'}}
               onChange={(event, selectedDate) => {
                 if (selectedDate) {
                   setDateOfExpiry(selectedDate.toISOString().split('T')[0]);
                 }
               }}
             />
-          </View>
-
-          <Button title="Save and Continue" onPress={uploadData} />
-          <Button title="Go Back" onPress={() => navigation.goBack()} />
-        </View>
-      </ScrollView>
-      {/* Country Picker Modal */}
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <View>
-              <Text style={styles.modalTitle}>Select Country</Text>
-              <CountryPicker onSelect={(country) => setCountry(country)} value={country} />
             </View>
-            <Button
-              title="Close"
-              onPress={() => setModalVisible(false)}
-              style={styles.modalCloseButton}
-            />
           </View>
+        </LinearGradient>
         </View>
-      </Modal>
-    </SafeAreaView>
+      {/* CountryPicker as a modal */}
+      <CountryPicker
+        onSelect={(selectedCountry) => setCountry(selectedCountry)}
+        isModalVisible={isCountryPickerVisible}
+        setModalVisibility={setCountryPickerVisible}
+      />
+        <PrimaryButton text="Country of Issue " onPress={() => setCountryPickerVisible(true)} />
+        <PrimaryButton text="Save and Continue" onPress={uploadData} />
+      </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   container: {
+    backgroundColor: Colors.background,
     flex: 1,
-    padding: 30,
+    width: '100%',
+    paddingVertical: 20,
+  },
+  ScrollView: {
+    flexGrow: 1,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%',
+    gap: 20,
+    paddingBottom: 100,
+    backgroundColor: Colors.background,
+  },
+  LinearGradientWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   docTypeSelection: {
     flexDirection: 'row',
@@ -331,17 +347,27 @@ const styles = StyleSheet.create({
   docTypeButton: {
     padding: 10,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: Colors.white,
     borderRadius: 5,
   },
   activeDocTypeButton: {
-    backgroundColor: '#ddd',
+    backgroundColor: Colors.background,
+    color: Colors.black,
+    borderColor: Colors.black,
+  },
+  title: {
+    color: Colors.white,
+  },
+  titleSecondary: {
+    color: Colors.white,
   },
   imageContainer: {
     width: '100%',
     height: 200,
-    borderWidth: 1,
-    backgroundColor: '#f2f2f2',
+    borderWidth: 1.5,
+    ...shadowStyle,
+    borderColor: Colors.black,
+    backgroundColor: Colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
@@ -383,10 +409,21 @@ const styles = StyleSheet.create({
     width: 300,
   },
   inputContainer: {
-    gap: 20,
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 100,
+    gap: 5,
+    width: '90%',
+  },
+  dateWrapper:{
+    borderWidth:1,
+    borderColor:Colors.black,
+    backgroundColor:Colors.white,
+    borderRadius:5,
+    width:90,
   },
 });
 
