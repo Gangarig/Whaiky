@@ -69,17 +69,15 @@ const PersonalInfo = ({ navigation }) => {
       setLocationChanged(true);
       setUserLocation({
         country: selectedCountry || 'N/A',
-        state: selectedState || 'N/A',
-        city: selectedCity || 'N/A'
+        state: selectedState || selectedCountry || 'N/A',
+        city: selectedCity || selectedState || selectedCountry || 'N/A', // Set city to state if not provided, or country if both state and city are not provided
       });
-      
     } else {
       setLocationChanged(false);
-
     }
-
-
   };
+  
+  
 
 
   const addPhoneNumber = () => {

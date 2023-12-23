@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet,Modal,TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { debounce } from 'lodash';
 import PostCard from '../../../components/PostCard';
 import Colors from '../../../constant/Colors';
-import { Global } from '../../../constant/Global';
+import {Global} from '../../../constant/Global';
 import Location from '../../AppStackScreens/service/Location';
 import CategoryPicker from '../service/CategoryPicker';
-import ServiceCategoryPicker from '../service/ServiceCategoryPicker';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-import LinearGradient from 'react-native-linear-gradient';
-import { shadowStyle } from '../../../constant/Shadow';
+import shadowStyle from '../../../constant/Shadow';
 
 const PostSearch = () => {
   const [allPosts, setAllPosts] = useState([]);
@@ -20,65 +18,98 @@ const PostSearch = () => {
   const [error, setError] = useState('');
   const [category, setCategory] = useState('');
   const [option, setOption] = useState('');
+  const [categoryId, setCategoryId] = useState('');
+  const [optionId, setOptionId] = useState('');
   const [locationModalVisible, setLocationModalVisible] = useState(false);
-  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [country, setCountry] = useState('');
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 
-
-
-
-  const fetchPosts = async () => {
-    setLoading(true);
-    try {
-      const snapshot = await firestore().collection('posts').get();
-      const fetchedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setAllPosts(fetchedPosts);
-    } catch (err) {
-      setError('Failed to fetch posts. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const isMounted = useRef(true);
 
   useEffect(() => {
     fetchPosts();
+    return () => {
+      isMounted.current = false;
+      resetStates();
+    };
   }, []);
 
-  const handleSearch = useCallback(debounce((query) => {
-    const lowerCaseQuery = query.toLowerCase();
-    const filtered = allPosts.filter(post =>
-      post.title.toLowerCase().includes(lowerCaseQuery) ||
-      post.ownerName.toLowerCase().includes(lowerCaseQuery)
-    );
-    setFilteredPosts(filtered);
-  }, 300), [allPosts]);
+  const fetchPosts = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    setFilteredPosts([]);
 
-  useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredPosts([]);
-    } else {
-      handleSearch(searchTerm);
+    try {
+      let query = firestore().collection('posts');
+      if (country) query = query.where('country', '==', country);
+      if (state) query = query.where('state', '==', state);
+      if (city) query = query.where('city', '==', city);
+      if (categoryId) query = query.where('categoryId', '==', categoryId);
+      if (optionId) query = query.where('optionId', '==', optionId);
+
+      const snapshot = await query.get();
+      const fetchedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      if (isMounted.current) {
+        setAllPosts(fetchedPosts);
+        applyFilters(fetchedPosts);
+      }
+    } catch (err) {
+      if (isMounted.current) {
+        setError(`Failed to fetch posts: ${err.message}`);
+      }
+    } finally {
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
-  }, [searchTerm, handleSearch]);
+  }, [country, state, city, categoryId, optionId]);
 
-
-  const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
-    if (
-      selectedCountry !== country ||
-      selectedState !== state ||
-      selectedCity !== city
-    ) {
-      setCountry(selectedCountry || '');
-      setState(selectedState || '');
-      setCity(selectedCity || '');
-    }
+  const resetStates = () => {
+    setAllPosts([]);
+    setFilteredPosts([]);
+    setSearchTerm('');
+    setError('');
+    // Reset other states as needed
   };
 
+  const applyFilters = useCallback((posts) => {
+    const lowerCaseQuery = searchTerm.toLowerCase();
+    const filtered = posts.filter(post =>
+      (post.title.toLowerCase().includes(lowerCaseQuery) ||
+       post.ownerName.toLowerCase().includes(lowerCaseQuery)) &&
+      (!country || post.country === country) &&
+      (!state || post.state === state) &&
+      (!city || post.city === city) &&
+      (!categoryId || post.categoryId === categoryId) &&
+      (!optionId || post.optionId === optionId)
+    );
+    setFilteredPosts(filtered);
+  }, [searchTerm, country, state, city, categoryId, optionId]);
 
+  useEffect(() => {
+    if (isMounted.current) {
+      applyFilters(allPosts);
+    }
+  }, [searchTerm, applyFilters, allPosts]);
 
+  const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
+    setCountry(selectedCountry || '');
+    setState(selectedState || '');
+    setCity(selectedCity || '');
+    fetchPosts();
+  };
 
+  const handleCategorySave = (selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText) => {
+    setCategoryId(selectedCategoryId);
+    setOptionId(selectedOptionId);
+    setCategory(selectedCategoryText);
+    setOption(selectedOptionText);
+    fetchPosts();
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.searchBox}>
@@ -96,17 +127,26 @@ const PostSearch = () => {
           <PrimaryButton text="Add Location" 
           onPress={() => setLocationModalVisible(true)} 
           />
+          {country && 
             <View style={[styles.infoContainer,shadowStyle]}>
               {country && <Text style={[Global.text,styles.white]}>Country : {country}</Text>}
               {state && <Text style={[Global.text,styles.white]}>State : {state}</Text>}
               {city && <Text style={[Global.text,styles.white]}>City : {city}</Text>}
             </View>
+          }
           </View>
+          
           <View style={styles.categoryBtn}>
-          <PrimaryButton text="Add Category" onPress={() => console.log('Filter pressed')} />
+          <PrimaryButton text="Add Category" 
+          onPress={() => setCategoryModalVisible(true)}
+          />
           <View style={styles.chosenCategory}>
-          {category && <Text style={Global.text}>{category}</Text>}
-          {option && <Text style={Global.text}>{option}</Text>}
+            {category && 
+              <View style={[styles.infoContainer,shadowStyle]}>
+              {category && <Text style={[Global.text,styles.white]}>{category}</Text>}
+              {option && <Text style={[Global.text,styles.white]}>{option}</Text>}
+              </View>
+            }
           </View>
           </View>
         </View>
@@ -150,6 +190,32 @@ const PostSearch = () => {
               />
             </View>
           </Modal>
+          {/* Category Picker Modal */}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={categoryModalVisible}
+            onRequestClose={() => {
+              setCategoryModalVisible(false);
+            }}
+          >
+            <View style={styles.fullScreenModal}>
+              <TouchableOpacity
+                style={styles.modalOverlay}
+                activeOpacity={1}
+                onPressOut={() => {
+                  setCategoryModalVisible(false);
+                }}
+              />
+            <CategoryPicker
+              onSave={(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText) => {
+                handleCategorySave(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText);
+              }}
+              onClose={() => setCategoryModalVisible(false)}
+            />
+            </View>
+          </Modal>
+
     </View>
   );
 };
@@ -177,7 +243,6 @@ const styles = StyleSheet.create({
   },
   btnContainer:{
     width: '100%',
-
     flexDirection: 'column',
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -191,7 +256,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryLight,
     marginTop: 10,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 5,
     width: 296,
   },
   white:{

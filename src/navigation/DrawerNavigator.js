@@ -79,23 +79,6 @@ useEffect(() => {
       name="Home" 
       component={HomeStackScreen} 
       />
-      { userData && userData.status === 'contractor' ?
-      <>
-            <Drawer.Screen 
-            name="Legal Information" 
-            component={LegalInfo} 
-            options={{
-            }}
-            />
-            <Drawer.Screen 
-            name="Service Categories" 
-            component={ServiceCategory} 
-            options={{
-            }}
-            />
-      </>
-      : null}
-
       
       {Dashboard ? <Drawer.Screen 
       name="Dashboard" 
@@ -123,6 +106,25 @@ useEffect(() => {
       options={{
       }}
       />
+
+
+      { userData && userData.status === 'contractor' ?
+      <>
+            <Drawer.Screen 
+            name="Legal Information" 
+            component={LegalInfo} 
+            options={{
+            }}
+            />
+            <Drawer.Screen 
+            name="Service Categories" 
+            component={ServiceCategory} 
+            options={{
+            }}
+            />
+      </>
+      : null}
+
       {/* <Drawer.Screen 
       name="Settings" 
       component={Settings} 

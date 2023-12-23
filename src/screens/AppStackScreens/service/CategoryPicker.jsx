@@ -3,6 +3,11 @@ import { View, Text, Button, TextInput, StyleSheet, Modal } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
 import { Global } from '../../../constant/Global';
+import Colors from '../../../constant/Colors';
+import LinearGradient from 'react-native-linear-gradient';
+import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import { showMessage } from 'react-native-flash-message';
+
 
 const CategoryPicker = ({ onSave, onClose }) => {
   const [openCategory, setOpenCategory] = useState(false);
@@ -33,22 +38,29 @@ const CategoryPicker = ({ onSave, onClose }) => {
       (category) => category.id === parseInt(selectedCategory)
     ).text;
     
-    const selectedOptionText = selectedCategory
-      ? categoriesData
-          .find((category) => category.id === parseInt(selectedCategory))
-          .options.find((option) => option.optionId === parseInt(selectedOption))
-          .text
-      : null;
-
+    let selectedOptionText = null;
+    if (selectedCategory) {
+      const selectedCategoryData = categoriesData.find(
+        (category) => category.id === parseInt(selectedCategory)
+      );
+      if (selectedCategoryData && selectedOption) {
+        const selectedOptionData = selectedCategoryData.options.find(
+          (option) => option.optionId === parseInt(selectedOption)
+        );
+        if (selectedOptionData) {
+          selectedOptionText = selectedOptionData.text;
+        }
+      }
+    }
+  
     onSave(selectedCategory, selectedOption, selectedCategoryText, selectedOptionText);
     onClose();
   };
+  
 
   return (
-    <Modal transparent={true} visible={true}>
-      <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={Global.title}>Select Category</Text>
+          <Text style={Global.titleSecondary}>Select Category</Text>
           <DropDownPicker
             open={openCategory}
             value={selectedCategory}
@@ -62,7 +74,7 @@ const CategoryPicker = ({ onSave, onClose }) => {
 
           {selectedCategory && (
             <>
-              <Text style={Global.title}>Select Option</Text>
+              <Text style={Global.titleSecondary}>Select Option</Text>
               <DropDownPicker
                 open={openOption}
                 value={selectedOption}
@@ -75,33 +87,37 @@ const CategoryPicker = ({ onSave, onClose }) => {
               />
             </>
           )}
-
-          <Button title="Save" onPress={handleSave} />
-          <Button title="Close" onPress={() => onClose()} />
+            <View style={styles.btnContainer}>
+            <PrimaryButton text="Done" onPress={handleSave} />
+            <PrimaryButton text="Cancel" onPress={onClose} />
+            </View>
         </View>
-      </View>
-    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    width: '100%',
-  },
   modalContent: {
-    height: '80%',
-    width: '80%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: '100%',
+    backgroundColor: Colors.background,
+    padding: 20,
+    borderRadius: 10,
     gap: 10,
   },
   dropDown: {
+    borderColor: Colors.primary,
+    borderWidth: 1,
+    borderRadius: 10,
     marginBottom: 10,
   },
+  btnContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    gap: 10,
+  },
+
+
 });
 
 export default CategoryPicker;

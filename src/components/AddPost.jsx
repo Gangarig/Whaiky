@@ -19,6 +19,7 @@ import firebase from '@react-native-firebase/app';
 import * as Progress from 'react-native-progress';
 import GradientButton from './GradientButton';
 import Location from '../screens/AppStackScreens/service/Location';
+import Colors from '../constant/Colors';
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -44,11 +45,13 @@ const AddPost = ({ navigation }) => {
     ownerAvatar: currentUser.photoURL,
     postType: postType,
   });
-
+  const [optionReminderVisible, setOptionReminderVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
@@ -105,19 +108,41 @@ const AddPost = ({ navigation }) => {
   };
 
   const handleCategorySave = (category, option, categoryText, optionText) => {
+    // Set the selected category and option
     setSelectedCategory(category);
     setSelectedOption(option);
-    setPost({ ...post, categoryText, optionText });
+  
+    // Update the post state with new values
+    setPost({ 
+      ...post,
+      categoryText: categoryText,
+      optionText: optionText,
+      categoryId: category, // Make sure this is the ID, not the entire object
+      optionId: option, // Same here, ensure it's the ID
+    });
+  
     closeModal();
+  
+    // Check if option is selected
+    if (!option) {
+      showMessage({
+        message: 'Please select an option for the chosen category.',
+        type: 'warning',
+        duration: 3000,
+      });
+    }
   };
+  
+  
+  
 
   const handleCategoryPickerSave = (categoryId, optionId, categoryText, optionText) => {
     setModalVisible(false);
 
     setPost({
       ...post,
-      categoryId: categoryId || 11,
-      optionId: optionId || 41,
+      categoryId: categoryId || null,
+      optionId: optionId || null,
       categoryText,
       optionText,
     });
@@ -211,6 +236,14 @@ const AddPost = ({ navigation }) => {
       return;
     }
   
+    if (!post.categoryId || !post.optionId) {
+      showMessage({
+        message: 'Please select a category and option.',
+        type: 'warning',
+      });
+      return;
+    }
+  
     const newPostRef = firestore().collection('posts').doc();
   
     try {
@@ -263,6 +296,8 @@ const AddPost = ({ navigation }) => {
       });
     }
   };
+  
+  
 
   const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
     setPost({
@@ -352,13 +387,27 @@ const AddPost = ({ navigation }) => {
           </View>
         </View>
       </Modal>
-      <Modal animationType="slide" transparent={true} visible={categoryModalVisible}>
-        <View style={Global.modalContainer}>
-          <View style={styles.modalContent}>
-            <CategoryPicker onSave={handleCategoryPickerSave} onClose={closeCategoryModal} />
-          </View>
-        </View>
-      </Modal>
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={categoryModalVisible}
+        onRequestClose={() => {
+          setCategoryModalVisible(false);
+        }} >
+            <View style={styles.fullScreenModal}>
+              <TouchableOpacity
+                style={styles.modalOverlay}
+                activeOpacity={1}
+                onPressOut={() => {
+                  setCategoryModalVisible(false);
+                }}
+              />
+              <CategoryPicker
+                onSave={handleCategorySave}
+                onClose={closeCategoryModal}
+              />
+            </View>
+          </Modal>
     </View>
   );
 };
@@ -368,9 +417,16 @@ const styles = StyleSheet.create({
     padding: 10,
     gap: 10,
   },
-  modalContent: {
-    height: '85%',
-    width: '80%',
+  fullScreenModal: {
+    height: 450,
+    width: '100%',
+    bottom: 0,
+    position: 'absolute',
+    borderTopColor: Colors.primary,
+    borderTopWidth: 2,
+    backgroundColor: Colors.background,
+    paddingTop: 30,
+    alignItems: 'center',
   },
   location: {
     flexDirection: 'row',
