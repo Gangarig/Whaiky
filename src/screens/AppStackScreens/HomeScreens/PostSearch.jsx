@@ -1,105 +1,107 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { debounce } from 'lodash';
 import PostCard from '../../../components/PostCard';
 import Colors from '../../../constant/Colors';
-import {Global} from '../../../constant/Global';
+import { Global } from '../../../constant/Global';
 import Location from '../../AppStackScreens/service/Location';
 import CategoryPicker from '../service/CategoryPicker';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import shadowStyle from '../../../constant/Shadow';
+import { showMessage } from 'react-native-flash-message';
+import debounce from 'lodash/debounce'; // Import debounce function
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+
 
 const PostSearch = () => {
-  const [allPosts, setAllPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [category, setCategory] = useState('');
-  const [option, setOption] = useState('');
-  const [categoryId, setCategoryId] = useState('');
-  const [optionId, setOptionId] = useState('');
   const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [country, setCountry] = useState('');
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
-  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [categoryId, setCategoryId] = useState('');
+  const [optionId, setOptionId] = useState('');
+  const [category, setCategory] = useState('');
+  const [option, setOption] = useState('');
 
-  const isMounted = useRef(true);
-
-  useEffect(() => {
-    fetchPosts();
-    return () => {
-      isMounted.current = false;
-      resetStates();
-    };
-  }, []);
-
-  const fetchPosts = useCallback(async () => {
+  const debouncedSearch = useCallback(
+    debounce((newSearchTerm) => {
+      setSearchTerm(newSearchTerm);
+      if (newSearchTerm || country || state || city || categoryId) {
+        fetchPosts();
+      }
+    }, 500),
+    [country, state, city, categoryId]
+  );
+  const fetchPosts = async () => {
     setLoading(true);
     setError('');
-    setFilteredPosts([]);
-
+    console.log('Fetching posts with:', searchTerm, country, state, city, categoryId);
     try {
       let query = firestore().collection('posts');
-      if (country) query = query.where('country', '==', country);
-      if (state) query = query.where('state', '==', state);
-      if (city) query = query.where('city', '==', city);
-      if (categoryId) query = query.where('categoryId', '==', categoryId);
-      if (optionId) query = query.where('optionId', '==', optionId);
-
-      const snapshot = await query.get();
-      const fetchedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-      if (isMounted.current) {
-        setAllPosts(fetchedPosts);
-        applyFilters(fetchedPosts);
+  
+      // Search by Post Title or Poster Name
+      if (searchTerm) {
+        query = query.where('title', '==', searchTerm)
       }
-    } catch (err) {
-      if (isMounted.current) {
-        setError(`Failed to fetch posts: ${err.message}`);
+      if (searchTerm) {
+        query = query.where('ownerName', '==', searchTerm)
       }
+  
+      // Filter by Location
+      if (country ) {
+        query = query.where('country', '==', country);
+      }
+      if ( state ) {
+        query = query.where('state', '==', state);
+      }
+      if ( city) {
+        query = query.where('city', '==', city);
+      }
+  
+      // Filter by Category
+      if (categoryId) {
+        query = query.where('categoryId', '==', categoryId);
+      }
+
+      if (optionId) {
+        query = query.where('optionId', '==', optionId);
+      }
+  
+      // Execute the query
+      const querySnapshot = await query.get();
+      const posts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+      setFilteredPosts(posts);
+    } catch (error) {
+      setError('Error fetching posts');
+      console.error(error);
     } finally {
-      if (isMounted.current) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
-  }, [country, state, city, categoryId, optionId]);
-
-  const resetStates = () => {
-    setAllPosts([]);
-    setFilteredPosts([]);
-    setSearchTerm('');
-    setError('');
-    // Reset other states as needed
   };
 
-  const applyFilters = useCallback((posts) => {
-    const lowerCaseQuery = searchTerm.toLowerCase();
-    const filtered = posts.filter(post =>
-      (post.title.toLowerCase().includes(lowerCaseQuery) ||
-       post.ownerName.toLowerCase().includes(lowerCaseQuery)) &&
-      (!country || post.country === country) &&
-      (!state || post.state === state) &&
-      (!city || post.city === city) &&
-      (!categoryId || post.categoryId === categoryId) &&
-      (!optionId || post.optionId === optionId)
-    );
-    setFilteredPosts(filtered);
-  }, [searchTerm, country, state, city, categoryId, optionId]);
 
   useEffect(() => {
-    if (isMounted.current) {
-      applyFilters(allPosts);
+    if (searchTerm || country || state || city || categoryId) {
+      fetchPosts();
     }
-  }, [searchTerm, applyFilters, allPosts]);
+  }, [searchTerm, country, state, city, categoryId]);
+  
+
+  
+
+  
+  const fetchMore = async () => {};
 
   const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
     setCountry(selectedCountry || '');
     setState(selectedState || '');
     setCity(selectedCity || '');
-    fetchPosts();
   };
 
   const handleCategorySave = (selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText) => {
@@ -107,7 +109,6 @@ const PostSearch = () => {
     setOptionId(selectedOptionId);
     setCategory(selectedCategoryText);
     setOption(selectedOptionText);
-    fetchPosts();
   };
   
   return (
@@ -118,9 +119,10 @@ const PostSearch = () => {
         <TextInput
           placeholder="Search"
           style={Global.input}
-          onChangeText={setSearchTerm}
+          onChangeText={(text) => debouncedSearch(text)}
           value={searchTerm}
         />
+
         </View>
         <View style={styles.btnContainer}>
           <View style={styles.locationBtn}>
@@ -129,9 +131,32 @@ const PostSearch = () => {
           />
           {country && 
             <View style={[styles.infoContainer,shadowStyle]}>
-              {country && <Text style={[Global.text,styles.white]}>Country : {country}</Text>}
-              {state && <Text style={[Global.text,styles.white]}>State : {state}</Text>}
-              {city && <Text style={[Global.text,styles.white]}>City : {city}</Text>}
+              {country &&
+              <View style={styles.subInfo}>
+              <Text style={[Global.text,styles.white]}>Country : {country}</Text>
+              <TouchableOpacity onPress={() => setCountry('')}>
+              <FontAwesomeIcon color={Colors.white} size={22} icon="fa-solid fa-delete-left" />
+              </TouchableOpacity>
+              </View>
+              }
+              
+              {state &&
+              <View style={styles.subInfo}>
+              <Text style={[Global.text,styles.white]}>State : {state}</Text>
+              <TouchableOpacity onPress={() => setState('')}>
+              <FontAwesomeIcon color={Colors.white} size={22} icon="fa-solid fa-delete-left" />
+              </TouchableOpacity>
+              </View>
+              }
+              
+              {city &&
+              <View style={styles.subInfo}>
+              <Text style={[Global.text,styles.white]}>City : {city}</Text>
+              <TouchableOpacity onPress={() => setCity('')}>
+              <FontAwesomeIcon color={Colors.white} size={22} icon="fa-solid fa-delete-left" />
+              </TouchableOpacity>
+              </View>
+              }
             </View>
           }
           </View>
@@ -143,19 +168,33 @@ const PostSearch = () => {
           <View style={styles.chosenCategory}>
             {category && 
               <View style={[styles.infoContainer,shadowStyle]}>
-              {category && <Text style={[Global.text,styles.white]}>{category}</Text>}
-              {option && <Text style={[Global.text,styles.white]}>{option}</Text>}
+                  {category && 
+                  <View style={styles.subInfo}>
+                    <Text style={[Global.text,styles.white]}>{category}</Text>
+                    <TouchableOpacity onPress={() => setCategory('')}>
+                    <FontAwesomeIcon color={Colors.white} size={22} icon="fa-solid fa-delete-left" />
+                    </TouchableOpacity>
+                  </View>
+                  }
+                  {option && 
+                  <View style={styles.subInfo}>
+                  <Text style={[Global.text,styles.white]}>{option}</Text>
+                  <TouchableOpacity onPress={() => setOption('')}>
+                  <FontAwesomeIcon color={Colors.white} size={22} icon="fa-solid fa-delete-left" />
+                  </TouchableOpacity>
+                  </View>
+                  }
               </View>
             }
           </View>
           </View>
         </View>
       </View>
-      {loading && <ActivityIndicator size="large" color={Colors.primary} />}
+      {/* {loading && <ActivityIndicator size="large" color={Colors.primary} />} */}
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <FlatList
-        data={filteredPosts.length > 0 ? filteredPosts : allPosts}
-        keyExtractor={(item) => item.id.toString()}
+        data={filteredPosts}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <PostCard 
             owner={item.ownerName} 
@@ -215,7 +254,11 @@ const PostSearch = () => {
             />
             </View>
           </Modal>
-
+          <View style={styles.more}>
+              <TouchableOpacity onPress={fetchMore}>
+                <FontAwesomeIcon icon="fa-solid fa-chevron-down" />
+              </TouchableOpacity>
+          </View>
     </View>
   );
 };
@@ -272,6 +315,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     backgroundColor: Colors.background,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  subInfo:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
 

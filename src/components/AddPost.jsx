@@ -378,13 +378,11 @@ const AddPost = ({ navigation }) => {
         <Button title='Cancel' onPress={() => navigation.goBack()} />
       </View>
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <View style={Global.modalContainer}>
-          <View style={styles.modalContent}>
+        <View style={styles.fullScreenModal}>
             <Location
               onSave={handleLocationSave}
               onClose={closeModal}
             />
-          </View>
         </View>
       </Modal>
       <Modal
