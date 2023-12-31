@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Image, Button, FlatList, SafeAreaView, RefreshControl, StyleSheet } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
+import { Global } from '../../../constant/Global';
+import { shadowStyle } from '../../../constant/Shadow';
+import { Colors } from '../../../constant/Colors';
 
 const CategoryDetail = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
@@ -43,14 +46,17 @@ const CategoryDetail = ({ navigation, route }) => {
   );
 
   return (
-    <SafeAreaView>
-      <Button title='Go Back' onPress={() => navigation.goBack()} />
+    <SafeAreaView style={{flex:1}}>
       <FlatList
         data={posts}
         renderItem={renderItem}
         keyExtractor={item => item.id.toString()}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchData} />}
-        ListEmptyComponent={<Text>No posts available in this category.</Text>}
+        refreshControl={<RefreshControl refreshing={refreshing} oCnRefresh={fetchData} />}
+        ListEmptyComponent={
+        <View style={styles.NoPosts}>
+        <Text style={Global.titleSecondary}>No posts available in this category.</Text>
+        </View>
+      }
       />
     </SafeAreaView>
   );
@@ -75,5 +81,10 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     height: 100
+  },
+    NoPosts:{
+    height:400,
+    justifyContent:'center',
+    alignItems:'center',
   }
 });
