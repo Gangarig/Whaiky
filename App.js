@@ -29,7 +29,8 @@ library.add(
   faPaperclip,
   faTrash,
   faDeleteLeft,
-  faChevronDown
+  faChevronDown,
+  faMagnifyingGlass
   )
 
 

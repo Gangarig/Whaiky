@@ -20,6 +20,7 @@ import * as Progress from 'react-native-progress';
 import GradientButton from './GradientButton';
 import Location from '../screens/AppStackScreens/service/Location';
 import Colors from '../constant/Colors';
+import PrimaryButton from './Buttons/PrimaryButton';
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -29,6 +30,7 @@ const AddPost = ({ navigation }) => {
   const [documentApproved, setDocumentApproved] = useState(false); // Track if the document is approved
 
   const [post, setPost] = useState({
+    postId: '',
     title: '',
     description: '',
     country: currentUser.country,
@@ -132,9 +134,8 @@ const AddPost = ({ navigation }) => {
       });
     }
   };
-  
-  
-  
+
+
 
   const handleCategoryPickerSave = (categoryId, optionId, categoryText, optionText) => {
     setModalVisible(false);
@@ -259,8 +260,8 @@ const AddPost = ({ navigation }) => {
       const postData = {
         ...post,
         images: imageUrls,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        updatedAt: firestore.FieldValue.serverTimestamp(),
+        timestamp: firestore.FieldValue.serverTimestamp(),
+        postId: newPostRef.id,
       };
   
       await newPostRef.set(postData);
@@ -416,7 +417,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   fullScreenModal: {
-    height: 450,
+    height: 500,
     width: '100%',
     bottom: 0,
     position: 'absolute',

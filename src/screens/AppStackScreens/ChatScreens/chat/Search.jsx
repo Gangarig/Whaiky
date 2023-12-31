@@ -19,6 +19,7 @@ import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 import Colors from '../../../../constant/Colors';
 
 
+
 const Search = ({ isVisible, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [allUsers, setAllUsers] = useState([]);
@@ -66,7 +67,6 @@ const Search = ({ isVisible, onClose }) => {
     if (currentUser) {
       await handleSelect(currentUser, selectedUser)
         .then(() => {
-
         })
         .catch(error => {
           console.error("Error in handleSelectUser:", error.message);
