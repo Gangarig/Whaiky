@@ -20,6 +20,8 @@ import * as Progress from 'react-native-progress';
 import GradientButton from './GradientButton';
 import Location from '../screens/AppStackScreens/service/Location';
 import Colors from '../constant/Colors';
+import { shadowStyle } from '../constant/Shadow';
+import FastImage from 'react-native-fast-image';
 import PrimaryButton from './Buttons/PrimaryButton';
 
 const AddPost = ({ navigation }) => {
@@ -312,12 +314,29 @@ const AddPost = ({ navigation }) => {
   
 
   return (
-    <View style={Global.container}>
+    <View style={styles.container}>
       <Text style={Global.title}>Create a Post</Text>
-      <View style={Global.postContainer}>
-        <Button title={subTitle} style={Global.postTypeButton} onPress={changeType} />
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={Global.input}
+          placeholder="Title"
+          onChangeText={(text) => setPost({ ...post, title: text })}
+        />
+        <TextInput
+          style={Global.input}
+          placeholder="Description"
+          onChangeText={(text) => setPost({ ...post, description: text })}
+          multiline={true}
+        />
+        <TextInput
+          style={Global.input}
+          placeholder="Price"
+          onChangeText={(text) => setPost({ ...post, price: text })}
+          keyboardType="numeric"
+        />
       </View>
-      <View style={styles.imageContainer}>
+      <View style={styles.imageInput}>
         {post.images.map((image, index) => (
           <TouchableOpacity
             key={index}
@@ -339,44 +358,38 @@ const AddPost = ({ navigation }) => {
           <Progress.Bar progress={uploadProgress / 100} width={null} />
         </View>
       )}
-
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={Global.input}
-          placeholder="Title"
-          onChangeText={(text) => setPost({ ...post, title: text })}
-        />
-        <TextInput
-          style={Global.input}
-          placeholder="Description"
-          onChangeText={(text) => setPost({ ...post, description: text })}
-        />
-        <TextInput
-          style={Global.input}
-          placeholder="Price"
-          onChangeText={(text) => setPost({ ...post, price: text })}
-        />
-      </View>
+      <View style={styles.postDetails}>
+        <View style={styles.postType}>
+        <TouchableOpacity onPress={changeType}>
+            <Text style={Global.titleSecondary}>
+              Post Type : {subTitle}
+            </Text>
+          </TouchableOpacity>
+        </View>
       {post.country && (
-        <View style={styles.location}>
+        <View style={styles.locationInfo}>
           <Text style={Global.titleSecondary}>Country: {post.country}</Text>
           <Text style={Global.titleSecondary}>State: {post.state}</Text>
           <Text style={Global.titleSecondary}>City: {post.city}</Text>
         </View>
       )}
       {post.categoryId && (
-        <View style={styles.box}>
+        <View style={styles.categoryInfo}>
           <Text style={Global.titleSecondary}>Category: {post.categoryText}</Text>
           <Text style={Global.titleSecondary}>Option: {post.optionText}</Text>
         </View>
       )}
-      <View style={styles.buttonBox}>
-        <Button title="Select a Location" onPress={() => setModalVisible(true)} />
-        <Button title="Select Category" onPress={openCategoryModal} />
       </View>
-      <View>
-        <GradientButton text={'Post'} onPress={handlePost} />
-        <Button title='Cancel' onPress={() => navigation.goBack()} />
+      
+      <View style={styles.buttonBox}>
+        <View style={styles.buttonBoxSecondary}>
+        <PrimaryButton text="Select a Location" onPress={() => setModalVisible(true)} />
+        <PrimaryButton text="Select Category" onPress={openCategoryModal} />
+        </View>
+        <View style={styles.buttonBoxSecondary}>
+        <PrimaryButton text="Post" onPress={handlePost} />
+        <PrimaryButton text="Cancel" onPress={() => navigation.goBack()} />
+        </View>
       </View>
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.fullScreenModal}>
@@ -412,10 +425,6 @@ const AddPost = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  inputContainer: {
-    padding: 10,
-    gap: 10,
-  },
   fullScreenModal: {
     height: 500,
     width: '100%',
@@ -427,60 +436,18 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     alignItems: 'center',
   },
-  location: {
-    flexDirection: 'row',
-    gap: 10,
-    padding: 5,
-  },
-  buttonBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
     padding: 10,
-  },
-  box: {
-    justifyContent: 'space-around',
-    padding: 10,
-  },
-  imageContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-  },
-  imageWrapper: {
-    width: '30%',
-    marginBottom: 10,
-    position: 'relative',
-  },
-  image: {
-    width: '100%',
-    height: 100,
-    borderRadius: 5,
-  },
-  deleteText: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    color: 'white',
-    padding: 5,
-    borderRadius: 5,
-  },
-  addImageWrapper: {
-    width: '30%',
-    marginBottom: 10,
-    backgroundColor: '#f2f2f2',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 5,
+    gap: 10,
   },
-  addImageText: {
-    color: '#333',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  progressBarContainer: {
-    width: '90%',
+  inputContainer: {
+    width: '100%',
+    gap: 10,
+    alignItems: 'center',
   },
 });
 

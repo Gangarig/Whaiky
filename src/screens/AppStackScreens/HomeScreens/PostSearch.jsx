@@ -38,7 +38,7 @@ const PostSearch = ({ navigation }) => {
       let query = firestore()
         .collection('posts')
         .orderBy('timestamp', 'desc')
-        .limit(1); // Set limit to 1 for testing
+        .limit(50); // Set limit to 1 for testing
 
       if (lastVisible) {
         query = query.startAfter(lastVisible);
@@ -47,7 +47,7 @@ const PostSearch = ({ navigation }) => {
       const snapshot = await query.get();
       const fetchedPosts = snapshot.docs.map(doc => doc.data());
 
-      if (fetchedPosts.length > 0) {
+      if (fetchedPosts.length > 50) {
         setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
         setAllPosts(prevPosts => [...prevPosts, ...fetchedPosts]);
         setShowLoadMore(true); // Show 'Load More' button if more posts are available

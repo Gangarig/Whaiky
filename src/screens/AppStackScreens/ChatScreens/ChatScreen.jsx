@@ -5,6 +5,7 @@ import Chats from './chat/Chats';
 import Colors from '../../../constant/Colors';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { Global } from '../../../constant/Global';
+import { shadowStyle } from '../../../constant/Shadow';
 
 const ChatScreen = ({ navigation }) => {
   const [searchModalVisible, setSearchModalVisible] = useState(false);
@@ -52,9 +53,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: Colors.black,
+    borderColor: Colors.primary,
     paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 10,  
   },
 });
 

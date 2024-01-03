@@ -6421,10 +6421,10 @@ react-native-communications@2.2.1:
   resolved "https://registry.npmjs.org/react-native-communications/-/react-native-communications-2.2.1.tgz"
   integrity sha512-5+C0X9mopI0+qxyQHzOPEi5v5rxNBQjxydPPiKMQSlX1RBIcJ8uTcqUPssQ9Mo8p6c1IKIWJUSqCj4jAmD0qVQ==
 
-react-native-date-picker@^4.3.3:
-  version "4.3.3"
-  resolved "https://registry.npmjs.org/react-native-date-picker/-/react-native-date-picker-4.3.3.tgz"
-  integrity sha512-Lq2hGZkwoyCMsxi/uw4KVGu4/xdPZ8AHEx2SU5KY2mipHFpX+r4n5/gXa+rpCRkARJaTFYPZ7S59bT9KMh7fGw==
+react-native-date-picker@^4.3.5:
+  version "4.3.5"
+  resolved "https://registry.npmjs.org/react-native-date-picker/-/react-native-date-picker-4.3.5.tgz"
+  integrity sha512-jKOGCM2AUkRJb+tXYiwFHLfbB1Jh7OWXH4TxhLsuh7DWMXpWgUN3cGlFr3vl7G4wy45raAyPqmsZNSqmMr/98g==
 
 react-native-dropdown-picker@^5.4.6:
   version "5.4.6"

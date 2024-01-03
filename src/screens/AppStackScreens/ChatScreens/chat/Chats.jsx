@@ -5,6 +5,7 @@ import { useAuth } from "../../../../context/AuthContext";
 import Colors from "../../../../constant/Colors";
 import ProfileCard from "../../../../components/ProfileCard";
 import showMessage from "react-native-flash-message";
+import { shadowStyle } from "../../../../constant/Shadow";
 
 const Chats = ({ navigation }) => {
   const [chats, setChats] = useState([]);
@@ -153,9 +154,8 @@ const styles = StyleSheet.create({
   },
 
   borderBottom: {
-    borderBottomColor: 'rgba(105, 105, 105, 1.0)',
-    borderBottomWidth: 2,
-    
+    borderBottomColor: Colors.primary,
+    borderBottomWidth: 1,
   },
   noChatsText: {
     textAlign: 'center',

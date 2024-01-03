@@ -12,8 +12,8 @@ const ProfileCard = ({ displayName, lastMessage,avatar, onPress }) => {
     return (
       <View style={styles.profileCardWrapper}>
         <TouchableOpacity onPress={onPress} style={styles.profileCard}>
-          <View style={styles.profileImageWrapper}>
-            <FastImage source={avatarImage} style={styles.profileImage} />
+          <View style={[styles.profileImageWrapper]}>
+            <FastImage source={avatarImage} style={[styles.profileImage]} />
           </View>
           
           <View style={styles.profileCardInfo}>

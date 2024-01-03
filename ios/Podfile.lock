@@ -1166,7 +1166,7 @@ PODS:
   - React-jsinspector (0.72.3)
   - React-logger (0.72.3):
     - glog
-  - react-native-date-picker (4.3.3):
+  - react-native-date-picker (4.3.5):
     - React-Core
   - react-native-safe-area-context (4.7.2):
     - React-Core
@@ -1652,7 +1652,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 59d1eb03af7d30b7d66589c410f13151271e8006
   React-jsinspector: b511447170f561157547bc0bef3f169663860be7
   React-logger: c5b527272d5f22eaa09bb3c3a690fee8f237ae95
-  react-native-date-picker: 1d61c76315098a6ad4c643a356f005916c7d4875
+  react-native-date-picker: 90d1d60802a20085125657940b944f2bb4e5c113
   react-native-safe-area-context: 7aa8e6d9d0f3100a820efb1a98af68aa747f9284
   React-NativeModulesApple: 96f50c180e696f2ff8f1d05151a95f03114072d2
   React-perflogger: 6bd153e776e6beed54c56b0847e1220a3ff92ba5

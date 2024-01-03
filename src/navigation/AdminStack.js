@@ -9,6 +9,7 @@ function AdminStackScreen() {
     <AdminStack.Navigator screenOptions={{headerShown:false}}>
       <AdminStack.Screen name="DashBoard" component={DashBoard} />
       <AdminStack.Screen name="SubmitDetail" component={SubmissionDetail} />
+      
     </AdminStack.Navigator>
   );
 }

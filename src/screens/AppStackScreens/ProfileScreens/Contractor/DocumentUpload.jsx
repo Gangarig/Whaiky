@@ -23,6 +23,7 @@ import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 import Colors from '../../../../constant/Colors';
 import { shadowStyle } from '../../../../constant/Shadow';
 import LinearGradient from 'react-native-linear-gradient';
+import DatePicker from 'react-native-date-picker'
 
 const DocumentUpload = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -158,6 +159,15 @@ const DocumentUpload = ({ navigation }) => {
 
       // Store data in Firestore
       await userDocRef.collection('documents').add(docData);
+      // Save the submission in the 'submission' collection with the user's userId as the submission ID
+      await firestore().collection('submission').doc(currentUser.uid).set({
+        userId: currentUser.uid,
+        type: docType,
+        timeStamp: firestore.FieldValue.serverTimestamp(),
+        status: 'pending',
+      });
+
+
 
       showMessage({
         message: 'Document uploaded successfully.',
@@ -418,13 +428,16 @@ const styles = StyleSheet.create({
     gap: 5,
     width: '90%',
   },
-  dateWrapper:{
-    borderWidth:1,
-    borderColor:Colors.black,
-    backgroundColor:Colors.white,
-    borderRadius:5,
-    width:90,
-  },
+  dateWrapper: {
+    width: 150,
+      height: 50,
+      backgroundColor: '#e7e7e8',
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...shadowStyle,
+    },
+    
 });
 
 export default DocumentUpload;

@@ -37,6 +37,9 @@ const LegalInfo = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+            <View style={styles.titleWrapper}>
+              <Text style={styles.title}>Uploaded Documents</Text>
+            </View>
       <FlatList
         style={styles.FlatList}
         data={documents.concat(certificates)}
@@ -123,6 +126,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.white,
     ...shadowStyle
+  },
+  titleWrapper: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  title: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: Colors.lightPrimary,
   },
 });
 

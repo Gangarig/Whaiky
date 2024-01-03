@@ -179,8 +179,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     flex: 1,
     width: '100%',
-    paddingVertical: 20,
-
   },
   ScrollView: {
     flexGrow: 1,
@@ -194,7 +192,8 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadowStyle
+    ...shadowStyle,
+    marginTop: 20,
   }, 
   modalBackground: {
     position: 'absolute',
@@ -202,8 +201,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    zIndex:9 // 50% opacity black
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex:9, // 50% opacity black
   },
   content:{
     backgroundColor: 'transparent',
