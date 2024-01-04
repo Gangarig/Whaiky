@@ -48,7 +48,7 @@ const Home = ({ navigation }) => {
       let query = firestore()
         .collection('posts')
         .orderBy('timestamp', 'desc')
-        .limit(5); // Keep this as 1 for now
+        .limit(10); // Keep this as 1 for now
   
       if (loadMore && lastFetchedPost.current) {
         query = query.startAfter(lastFetchedPost.current);

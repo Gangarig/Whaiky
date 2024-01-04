@@ -145,7 +145,7 @@ const Profile = ({ navigation }) => {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.profileContainer}
-        >
+        > 
           {currentUser.status == 'user' && (
           <TouchableOpacity onPress={handleContractor}>
             <Text style={[styles.btnText]}>Become a Contractor</Text>
@@ -161,6 +161,14 @@ const Profile = ({ navigation }) => {
             </TouchableOpacity>
             </View>
           )}
+          {currentUser.status == 'admin' && (
+             <View style={styles.contractorLinks}>
+              <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DashBoard')}>
+                <Text style={[styles.btnText]}>DashBoard</Text>
+              </TouchableOpacity>
+              </View>
+            )  
+          }
         </LinearGradient>
       </View>
 

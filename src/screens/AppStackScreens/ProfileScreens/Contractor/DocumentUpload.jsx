@@ -165,6 +165,7 @@ const DocumentUpload = ({ navigation }) => {
         type: docType,
         timeStamp: firestore.FieldValue.serverTimestamp(),
         status: 'pending',
+
       });
 
 

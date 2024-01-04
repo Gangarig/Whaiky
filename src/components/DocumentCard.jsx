@@ -4,8 +4,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import Colors from '../constant/Colors';
 import { shadowStyle } from '../constant/Shadow';
+import PrimaryButton from './Buttons/PrimaryButton';
 
-const DocumentCard = ({ item }) => {
+const DocumentCard = ({ item ,onApprove , onDeny}) => {
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -44,6 +45,12 @@ const DocumentCard = ({ item }) => {
           </>
         )}
       </LinearGradient>
+      {item.status === 'pending' && (
+      <View style={styles.btnContainer}>
+      <PrimaryButton text="Approve" onPress={() => onApprove(item.docId)} />
+      <PrimaryButton text="Deny" onPress={() => onDeny(item.docId)} />
+      </View>
+      )}
     </View>
   );
 };
@@ -58,6 +65,7 @@ const styles = StyleSheet.create({
   gradient: {
     backgroundColor: Colors.background,
     padding: 16,
+    borderRadius: 8,
   },
   title: {
     fontSize: 20,
@@ -79,6 +87,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.white,
     ...shadowStyle,
+  },
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
   },
 });
 
