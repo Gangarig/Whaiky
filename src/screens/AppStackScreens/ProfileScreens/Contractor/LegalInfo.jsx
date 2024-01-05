@@ -37,9 +37,6 @@ const LegalInfo = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-            <View style={styles.titleWrapper}>
-              <Text style={styles.title}>Uploaded Documents</Text>
-            </View>
       <FlatList
         style={styles.FlatList}
         data={documents.concat(certificates)}
@@ -91,7 +88,7 @@ const LegalInfo = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    padding: 20,
   },
   LinearGradientWrapper: {
     ...shadowStyle
@@ -102,6 +99,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 8,
     marginTop: 20,
+    width: '100%',
   },
   documentType: {
     fontSize: 20,

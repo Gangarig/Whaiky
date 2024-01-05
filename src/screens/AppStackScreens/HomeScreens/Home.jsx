@@ -127,9 +127,7 @@ const Home = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <PostCard
-      owner={item.ownerName}
-      postTitle={item.title}
-      postImageSource={item.images && item.images[0] ? item.images[0] : null}
+      post={item}
       onPress={() => navigateToPostDetail(item.id)}
     />
   );

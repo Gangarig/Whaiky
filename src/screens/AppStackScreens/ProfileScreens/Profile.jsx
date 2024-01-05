@@ -46,12 +46,10 @@ const Profile = ({ navigation }) => {
           .collection('documents')
           .where('status', '==', 'approved')
           .get();
-  
         if (!querySnapshot.empty) {
-          navigation.navigate('Contractor'); 
-        } else {
+          console.log('User has already submitted documents.');
           navigation.navigate('Services'); 
-        }
+        } 
       } else {
         // Handle the case where user document does not exist
         showMessage({

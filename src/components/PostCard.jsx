@@ -6,7 +6,7 @@ import Default from '../assets/images/default.png';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 
-const PostCard = ({ owner,postTitle, postImageSource,onPress }) => {
+const PostCard = ({ post, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.postCardContainer]}>
       <LinearGradient
@@ -16,13 +16,13 @@ const PostCard = ({ owner,postTitle, postImageSource,onPress }) => {
         style={styles.postCardWrapper}
       >
         <View style={styles.postImageWrapper}>
-            {postImageSource === null ? (
+            {post.images.length === 0 ? (
                 <View style={styles.noImage}>
                   <Text style={[Global.titleSecondary,styles.black]}>No Image</Text>
                 </View>
                 ) : (
                     <FastImage 
-                        source={{uri:postImageSource}}
+                        source={{uri:post.images[0]}}
                         style={styles.postImage}
                         resizeMode={FastImage.resizeMode.cover}
                     />
@@ -30,8 +30,9 @@ const PostCard = ({ owner,postTitle, postImageSource,onPress }) => {
             }
         </View>
         <View style={styles.postText}>
-          <Text style={[styles.postTitle,Global.titleSecondary]}>Posted by: {owner}</Text>
-          <Text style={[styles.postTitle,Global.titleSecondary]}>Title: {postTitle}</Text>
+          <Text style={[styles.postTitle,Global.titleSecondary]}>Posted by: {post.ownerName}</Text>
+          <Text style={[styles.postTitle,Global.titleSecondary]}>Title: {post.title}</Text>
+  
         </View>
       </LinearGradient>
     </TouchableOpacity>

@@ -30,6 +30,8 @@ const PostSearch = ({ navigation }) => {
   const [option, setOption] = useState('');
   const [lastVisible, setLastVisible] = useState(null);
   const [showLoadMore, setShowLoadMore] = useState(false);
+  const isSearchActive = searchTerm.trim() !== '' || country || state || city || categoryId || optionId;
+
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -38,7 +40,7 @@ const PostSearch = ({ navigation }) => {
       let query = firestore()
         .collection('posts')
         .orderBy('timestamp', 'desc')
-        .limit(50); // Set limit to 1 for testing
+        .limit(10); // Set limit to 1 for testing
 
       if (lastVisible) {
         query = query.startAfter(lastVisible);
@@ -47,7 +49,7 @@ const PostSearch = ({ navigation }) => {
       const snapshot = await query.get();
       const fetchedPosts = snapshot.docs.map(doc => doc.data());
 
-      if (fetchedPosts.length > 50) {
+      if (fetchedPosts.length > 0) {
         setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
         setAllPosts(prevPosts => [...prevPosts, ...fetchedPosts]);
         setShowLoadMore(true); // Show 'Load More' button if more posts are available
@@ -262,16 +264,14 @@ const PostSearch = ({ navigation }) => {
        <Text style={[Global.titleSecondary,styles.errorText,]}>{error}</Text> 
       </View>
        : null}
-
+      <View style={styles.flatListWrapper}>
       <FlatList
         data={filteredPosts}
         keyExtractor={(item, index) => item.id || index.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigation.navigate('PostDetail', { postId: item.id })}>
             <PostCard 
-              owner={item.ownerName} 
-              postTitle={item.title} 
-              postImageSource={item.images && item.images.length > 0 ? item.images[0] : null}
+              post={item}
               onPress={() => navigateToPostDetail(item.postId)}
             />
           </TouchableOpacity>
@@ -280,6 +280,16 @@ const PostSearch = ({ navigation }) => {
         ListEmptyComponent={searchTerm && !loading && filteredPosts.length === 0 && 
         <Text>No posts found</Text>}
       />
+
+        {showLoadMore && isSearchActive && (
+            <TouchableOpacity 
+              style={styles.loadMoreBtn} 
+              onPress={fetchPosts}
+            >
+              <FontAwesomeIcon color={Colors.primary} size={25} icon="fa-solid fa-chevron-down" />
+            </TouchableOpacity>
+        )}
+      </View>
 
 
           {/* Location Picker Modal */}
@@ -331,15 +341,6 @@ const PostSearch = ({ navigation }) => {
             />
             </View>
           </Modal>
-        {/* Load More Button */}
-        {showLoadMore && (
-        <TouchableOpacity 
-          style={styles.loadMoreBtn} 
-          onPress={fetchPosts}
-        >
-          <FontAwesomeIcon color={Colors.primary} size={25} icon="fa-solid fa-chevron-down" />
-        </TouchableOpacity>
-      )}
     </View>
   );
 };
@@ -424,14 +425,16 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   loadMoreBtn: {
-    width: '100%',
-    height: 50,
+    
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.white,
-    borderRadius: 5,
-    marginBottom: 10,
-    ...shadowStyle
+    backgroundColor: 'transparent',
+    ...shadowStyle,
+  },
+  flatListWrapper :{
+    width: '100%',
+    flex: 1,
+    paddingBottom: 10
   },
 });
 
