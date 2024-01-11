@@ -11,9 +11,6 @@ import FastImage from 'react-native-fast-image';
 import { shadowStyle } from '../../../constant/Shadow';
 import  Colors  from '../../../constant/Colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import GradientButton from '../../../components/GradientButton';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-
 
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -31,7 +28,7 @@ const Profile = ({ navigation }) => {
         return () => unsubscribe();
       }
     }, [currentUser]);
-
+  console.log(userData);
   
     const getUserDataValue = (key, defaultValue = 'N/A') => {
       return userData && userData[key] ? userData[key] : defaultValue;
@@ -144,12 +141,12 @@ const Profile = ({ navigation }) => {
           end={{ x: 1, y: 0 }}
           style={styles.profileContainer}
         > 
-          {currentUser.status == 'user' && (
+          {userData && userData.status === 'user' && (
           <TouchableOpacity onPress={handleContractor}>
             <Text style={[styles.btnText]}>Become a Contractor</Text>
           </TouchableOpacity>
           )}
-          {currentUser.status == 'contractor' && (
+          {userData && userData.status === 'contractor' && (
             <View style={styles.contractorLinks}>
             <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DocumentUpload')}>
               <Text style={[styles.btnText]}>Upload Document</Text>
@@ -159,13 +156,13 @@ const Profile = ({ navigation }) => {
             </TouchableOpacity>
             </View>
           )}
-          {currentUser.status == 'admin' && (
+          {userData && userData.status === 'admin' && (
              <View style={styles.contractorLinks}>
               <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DashBoard')}>
                 <Text style={[styles.btnText]}>DashBoard</Text>
               </TouchableOpacity>
               </View>
-            )  
+            )
           }
         </LinearGradient>
       </View>

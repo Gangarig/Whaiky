@@ -16,7 +16,7 @@ const Colors = {
     dark: '#343a40',
     muted: '#6c757d',
     white: '#FBFBFB',
+  
   };
   
 export default Colors;
-  

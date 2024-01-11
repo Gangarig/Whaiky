@@ -7,63 +7,36 @@ import Colors from '../constant/Colors';
 import { Global } from '../constant/Global';
 import { shadowStyle } from '../constant/Shadow';
 import defaultAvatar from '../assets/images/avatar/avatar.png';
+import FastImage from 'react-native-fast-image';
+import LinearGradient from 'react-native-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import DrawerFooter from './DrawerComponents/DrawerFooter';
+import DrawerHeader from './DrawerComponents/DrawerHeader';
+import DrawerItems from './DrawerComponents/DrawerItems';
+import UserTheme from '../constant/Theme';
+function CustomDrawerContent(navigation) {
+  const { currentUser } = useAuth();
 
-function CustomDrawerContent(props) {
-    const { currentUser } = useAuth();
-    
     return (
-      <DrawerContentScrollView 
-      contentContainerStyle={{flex:1,justifyContent:'space-between'}}
-      {...props}>
-        <View style={styles.menu}> 
-          <View style={styles.profileBox}>
-          <Image
-            source={currentUser?.photoURL ? { uri: currentUser.photoURL } : defaultAvatar}
-            style={styles.profileImage}
-          />
-          <Text style={[Global.titleSecondary,styles.name]}>{currentUser.displayName}</Text>
-          </View>
-          <DrawerItemList style={styles.item} {...props} />
-        </View>
-        <View style={styles.logoutButton}>
-          <LogoutButton />
-        </View>
-
-      </DrawerContentScrollView>
+    <SafeAreaView style={{ flex: 1}}>
+    <LinearGradient
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      colors={[UserTheme.primary, UserTheme.secondary]}
+      style={styles.container}
+    >
+      <DrawerHeader />
+      <DrawerItems props={navigation} />
+      <DrawerFooter props={navigation} />
+    </LinearGradient>
+    </SafeAreaView>
     );
   }
   const styles = StyleSheet.create({
-    profileImage: {
-      width: 100,
-      height: 100,
-      borderRadius: 50,
-      alignSelf: 'center',
-      borderWidth: 2,
-      borderColor: Colors.primary,
-    },
-    logoutButton: { 
-      borderTopWidth: 1, 
-      borderTopColor: '#ccc',
-    },
-    menu: {
-      justifyContent: 'space-around',
-    },
-    name:{
-      textAlign:'center',
-      color:Colors.text,
-      fontSize:20,
-      fontWeight:'bold',
-      height:30,
-    },
-    profileBox:{
-      gap:10,
-      justifyContent:'space-around',
-      alignItems:'center',
-      height:150,
-      borderBottomWidth: 1, 
-      borderBottomColor: '#ccc',
-      marginVertical:30,
-
+    container: {
+      flex: 1,
+      backgroundColor: Colors.background,
+      justifyContent: 'space-between',
     },
   });
 
