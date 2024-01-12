@@ -11,7 +11,8 @@ import CategoryStack from './CategoryStack';
 import firestore from '@react-native-firebase/firestore';
 import {showMessage} from 'react-native-flash-message';
 import ContractorStack from './ContractorStack';
-import { width } from '@fortawesome/free-solid-svg-icons/faSquareCheck';
+import StackHeader from './ScreenComponents/StackHeader';
+import UserTheme from '../constant/Theme';
 
 const Drawer = createDrawerNavigator();
 
@@ -53,39 +54,69 @@ useEffect(() => {
   return (
     <Drawer.Navigator
       initialRouteName="Home"
-      screenOptions={
-        {
-          drawerStyle: {
-            width: 300,
-          },
-        }
-      }
-
+      screenOptions={{ drawerStyle: {
+        width: 250,
+        borderRightColor: UserTheme.black,
+        borderRightWidth: 1, 
+      },}}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen 
       name="Home" 
       component={HomeStackScreen} 
+      options={
+        {
+          headerShown: false,
+        }
+      }
       />
       <Drawer.Screen 
       name="Dashboard" 
       component={AdminStackScreen} 
+      options={
+        {
+          header: (props) => <StackHeader title="Dashboard" isHomeScreen={false} {...props}/>,
+        }
+      }
       /> 
       <Drawer.Screen 
       name="Category" 
       component={CategoryStack} 
+      options={
+        {
+          header: (props) => <StackHeader title="Category" isHomeScreen={false} {...props}/>,
+          
+        }
+      }
       />
       <Drawer.Screen 
       name="Messages" 
       component={ChatStackScreen} 
+      options={
+        {
+          header: (props) => <StackHeader title="Messages" isHomeScreen={false} {...props}/>,
+        }
+      }
+
       />
       <Drawer.Screen 
       name="Profile" 
       component={ProfileStackScreen} 
+      options={
+        {
+          header: (props) => <StackHeader title="Profile" isHomeScreen={false} {...props}/>,
+        }
+      }
+
       />
       <Drawer.Screen
         name="Contractor"
         component={ContractorStack}
+        options={
+          {
+            header: (props) => <StackHeader title="Contractor" isHomeScreen={false} {...props}/>,
+          }
+        }
       />
     </Drawer.Navigator>
   );

@@ -23,6 +23,7 @@ import Colors from '../constant/Colors';
 import { shadowStyle } from '../constant/Shadow';
 import FastImage from 'react-native-fast-image';
 import PrimaryButton from './Buttons/PrimaryButton';
+import NavigationFooter from '../navigation/NavigationFooter';
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -315,8 +316,6 @@ const AddPost = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={Global.title}>Create a Post</Text>
-
       <View style={styles.inputContainer}>
         <TextInput
           style={Global.input}
@@ -391,6 +390,7 @@ const AddPost = ({ navigation }) => {
         <PrimaryButton text="Cancel" onPress={() => navigation.goBack()} />
         </View>
       </View>
+      
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.fullScreenModal}>
             <Location
@@ -419,7 +419,8 @@ const AddPost = ({ navigation }) => {
                 onClose={closeCategoryModal}
               />
             </View>
-          </Modal>
+      </Modal>
+      <NavigationFooter navigation={navigation}/>
     </View>
   );
 };
@@ -439,10 +440,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-    padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
+    width: '100%',
   },
   inputContainer: {
     width: '100%',

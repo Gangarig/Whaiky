@@ -7,16 +7,46 @@ import { Button } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { DrawerActions } from '@react-navigation/native';
 import PostSearch from '../screens/AppStackScreens/HomeScreens/PostSearch';
+import StackHeader from './ScreenComponents/StackHeader';
+
+
 const HomeStack = createStackNavigator();
-
-
 function HomeStackScreen({ navigation}) {
   return (
-    <HomeStack.Navigator screenOptions={{headerShown:false}}>
-      <HomeStack.Screen name="HomeScreen" component={Home} />
-      <HomeStack.Screen name="AddPost" component={AddPost} />
-      <HomeStack.Screen name="PostDetail" component={PostDetail} />
-      <HomeStack.Screen name="SearchPost" component={PostSearch} />
+    <HomeStack.Navigator>
+      <HomeStack.Screen 
+      name="HomeScreen" 
+      component={Home} 
+      options={
+        {
+          header: (props) => <StackHeader title="Home" isHomeScreen={true} {...props}  />,
+        }
+      }
+      />
+      <HomeStack.Screen 
+      name="AddPost" component={AddPost} 
+      options={
+        {
+          header: (props) => <StackHeader title="Create Post" isHomeScreen={false} {...props}  />,
+        }
+      }
+      />
+      <HomeStack.Screen
+      name="PostDetail"
+      component={PostDetail} 
+      options={
+        {
+        header: (props) => <StackHeader title="Post Detail" isHomeScreen={false} {...props}  />,
+        }
+        }
+       />
+      <HomeStack.Screen name="SearchPost" component={PostSearch}
+      options={
+        {
+        header: (props) => <StackHeader title="Search" isHomeScreen={false} {...props}  />,
+        }
+        }
+      />
     </HomeStack.Navigator>
   );
 }

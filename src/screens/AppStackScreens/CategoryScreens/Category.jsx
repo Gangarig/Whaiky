@@ -1,33 +1,35 @@
-import React, { useState } from 'react';
-import { View, Text,Image, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, { useState, useRef } from 'react';
+import { View, Text, Image, TouchableOpacity, SafeAreaView, StyleSheet, FlatList } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useRef } from 'react';
 import { Dimensions } from 'react-native';
 import { Global } from '../../../constant/Global';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
 import { shadowStyle } from '../../../constant/Shadow';
+import NavigationFooter from '../../../navigation/NavigationFooter';
+
 const Category = ({ navigation, route }) => {
   const [openCategories, setOpenCategories] = useState([]);
-  const scrollViewRef = useRef(); 
+  const flatListRef = useRef();
   const [layout, setLayout] = useState({});
   const screenHeight = Dimensions.get('window').height;
-  const itemHeight = styles.mainCategory.height; 
+  const itemHeight = styles.mainCategory.height;
   const someValue = (screenHeight / 2) - (itemHeight / 2);
+
   const toggleCategory = (categoryId) => {
     if (openCategories.includes(categoryId)) {
       setOpenCategories(openCategories.filter(id => id !== categoryId));
     } else {
       setOpenCategories([...openCategories, categoryId]);
-      scrollViewRef.current?.scrollTo({
-        y: layout[categoryId] - (someValue), 
+      flatListRef.current?.scrollToIndex({
+        index: categoriesData.findIndex(category => category.id === categoryId),
         animated: true,
+        viewPosition: 0.5, // Adjust this value as needed
       });
     }
   };
-  
+
   const onLayout = (id) => (event) => {
-    const {y} = event.nativeEvent.layout;
+    const { y } = event.nativeEvent.layout;
     setLayout(prev => ({
       ...prev,
       [id]: y,
@@ -38,43 +40,50 @@ const Category = ({ navigation, route }) => {
     navigation.navigate('CategoryDetail', { optionId });
   };
 
-  return (
-    <ScrollView style={styles.container}
-      contentContainerStyle={[styles.contentContainerStyle, styles.bottomPadding]}
-      ref={scrollViewRef}
+  const renderItem = ({ item }) => (
+    <View
+      onLayout={onLayout(item.id)}
+      style={shadowStyle}
     >
-      {categoriesData.map(category => (
-        <View key={category.id}
-          onLayout={onLayout(category.id)}
-          style={shadowStyle}
-          >
-          <LinearGradient
-          start={{x: 0, y: 0}} 
-          end={{x: 1, y: 0}}
-          colors={['rgb(158, 66, 240)', 'rgb(95, 109, 203)']}
-          style={[styles.mainCategory]}
-          >
-            <TouchableOpacity style={styles.mainCategory} onPress={() => toggleCategory(category.id)}>
-            <Image source={category.icon} style={styles.icon} />
-            <Text style={[Global.titleSecondary,styles.title]}>{category.text}</Text>
-            </TouchableOpacity>
-          </LinearGradient>
-          {openCategories.includes(category.id) && (
-            <View style={styles.optionsContainer}>
-              {category.options.map(option => (
-                <TouchableOpacity
-                  key={option.optionId}
-                  onPress={() => navigateToDetail(option.optionId)}
-                >
+      <LinearGradient
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        colors={['rgb(158, 66, 240)', 'rgb(95, 109, 203)']}
+        style={[styles.mainCategory]}
+      >
+        <TouchableOpacity style={styles.mainCategory} onPress={() => toggleCategory(item.id)}>
+          <Image source={item.icon} style={styles.icon} />
+          <Text style={[Global.titleSecondary, styles.title]}>{item.text}</Text>
+        </TouchableOpacity>
+      </LinearGradient>
+      {openCategories.includes(item.id) && (
+        <View style={styles.optionsContainer}>
+          {item.options.map(option => (
+            <TouchableOpacity
+              key={option.optionId}
+              onPress={() => navigateToDetail(option.optionId)}
+            >
               <Text style={styles.optionText}>{`\u2022 ${option.text}`}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-          <View style={styles.border}></View>
+            </TouchableOpacity>
+          ))}
         </View>
-      ))}
-    </ScrollView>
+      )}
+      <View style={styles.border}></View>
+    </View>
+  );
+
+  return (
+    <View style={{flex:1}}>
+    <FlatList
+      style={styles.container}
+      contentContainerStyle={[styles.contentContainerStyle, styles.bottomPadding]}
+      data={categoriesData}
+      renderItem={renderItem}
+      keyExtractor={item => item.id.toString()}
+      ref={flatListRef}
+    />
+    <NavigationFooter navigation={navigation}/>
+    </View>
   );
 };
 
@@ -98,7 +107,6 @@ const styles = StyleSheet.create({
     gap: 16,
     flexDirection: 'row',
     alignItems: 'center',
-
   },
   title: {
     color: '#FFF',
@@ -120,7 +128,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     color: '#FFF',
   },
-  icon : {
+  icon: {
     width: 60,
     height: 60,
   },

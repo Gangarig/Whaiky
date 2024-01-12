@@ -42,7 +42,7 @@ export default DrawerHeader
 
 const style = StyleSheet.create({
     container:{
-        height:170,
+        height:150,
         justifyContent:'center',
         alignItems:'center',
         borderBottomColor:UserTheme.black,
@@ -52,23 +52,23 @@ const style = StyleSheet.create({
         flexDirection:'row',
     },
     headerInfo:{
-        padding:10,
+
         justifyContent:'center',
         alignItems:'center',
     },
     avatar:{
-        width:100,
-        height:100,
-        borderRadius:50,
+        width:80,
+        height:80,
+        borderRadius:40,
         borderWidth:1.5,
         borderColor:UserTheme.white,
     },
     headerName:{
         fontFamily: Fonts.primary,
-        fontSize: 27,
+        fontSize: 20,
         fontWeight: "500",
         fontStyle: "normal",
-        lineHeight: 27,
+        lineHeight: 20,
         color: UserTheme.white,     
     },
     headerText:{

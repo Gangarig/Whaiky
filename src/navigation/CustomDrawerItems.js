@@ -18,7 +18,6 @@ function CustomDrawerContent(navigation) {
   const { currentUser } = useAuth();
 
     return (
-    <SafeAreaView style={{ flex: 1}}>
     <LinearGradient
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
@@ -29,7 +28,6 @@ function CustomDrawerContent(navigation) {
       <DrawerItems props={navigation} />
       <DrawerFooter props={navigation} />
     </LinearGradient>
-    </SafeAreaView>
     );
   }
   const styles = StyleSheet.create({

@@ -5,7 +5,7 @@ import Chats from './chat/Chats';
 import Colors from '../../../constant/Colors';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { Global } from '../../../constant/Global';
-import { shadowStyle } from '../../../constant/Shadow';
+import NavigationFooter from '../../../navigation/NavigationFooter';
 
 const ChatScreen = ({ navigation }) => {
   const [searchModalVisible, setSearchModalVisible] = useState(false);
@@ -25,6 +25,7 @@ const ChatScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.ChatScreen}>
       <TouchableOpacity
         style={[styles.inputWrapper]}
         onPress={handleSearchButtonPress}
@@ -35,6 +36,8 @@ const ChatScreen = ({ navigation }) => {
       </TouchableOpacity>
       <Search isVisible={searchModalVisible} onClose={handleCloseSearch} />
       <Chats navigation={navigation} onSelectChat={handleChatSelect} />
+      </View>
+      <NavigationFooter navigation={navigation}/>
     </View>
   );
 };
@@ -42,11 +45,15 @@ const ChatScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    paddingHorizontal: 10,
     backgroundColor: Colors.background,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  ChatScreen:{
+    flex:1,
+    width:'100%',
+    paddingHorizontal:10,
+    padding:10,
   },
   inputWrapper: {
     minWidth: '100%',

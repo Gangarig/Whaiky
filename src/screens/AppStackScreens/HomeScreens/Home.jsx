@@ -7,12 +7,8 @@ import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
 import { useAuth } from '../../../context/AuthContext';
 import PostCard from '../../../components/PostCard';
-import { Global } from '../../../constant/Global';
-import { shadowStyle } from '../../../constant/Shadow';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-import GradientButton from '../../../components/GradientButton';
-import { TextInput } from 'react-native-gesture-handler';
 import Colors from '../../../constant/Colors';
+import NavigationFooter from '../../../navigation/NavigationFooter';
 
 
 const Home = ({ navigation }) => {
@@ -134,17 +130,6 @@ const Home = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.createPost}>
-      <View
-        style={styles.buttonBox}
-      >
-        <PrimaryButton text="Create a Post" onPress={checkAccountStatus} />
-        <View style={styles.searchButtonBox}>
-        <PrimaryButton text="Search" onPress={()=>navigation.navigate('SearchPost')} />
-        </View>
-      </View>
-      
-      </View>
       {currentUser ? (
         <View style={[styles.flashList]}>
         <FlatList
@@ -162,7 +147,7 @@ const Home = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
         />
-
+        <NavigationFooter navigation={navigation}/>
         </View>
       ) : (
         <Text>Please sign in to see posts.</Text>
@@ -181,9 +166,6 @@ const styles = StyleSheet.create({
   },
   flashList:{
     flex:1,
-    paddingHorizontal:10,
-    borderWidth:1,
-    borderColor:'#ccc'
   },
   buttonBox:{
     backgroundColor:'#FBFBFB',

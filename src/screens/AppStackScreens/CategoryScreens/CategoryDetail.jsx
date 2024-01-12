@@ -5,7 +5,6 @@ import { showMessage } from 'react-native-flash-message';
 import { Global } from '../../../constant/Global';
 import { shadowStyle } from '../../../constant/Shadow';
 import { Colors } from '../../../constant/Colors';
-
 const CategoryDetail = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -46,7 +45,7 @@ const CategoryDetail = ({ navigation, route }) => {
   );
 
   return (
-    <SafeAreaView style={{flex:1}}>
+    <View style={{flex:1}}>
       <FlatList
         data={posts}
         renderItem={renderItem}
@@ -58,7 +57,7 @@ const CategoryDetail = ({ navigation, route }) => {
         </View>
       }
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
