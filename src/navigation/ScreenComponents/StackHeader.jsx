@@ -4,8 +4,11 @@ import GradientText from '../../components/GradientText'
 import UserTheme from '../../constant/Theme'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { shadowStyle } from '../../constant/Shadow'
+import { CommonActions } from '@react-navigation/native';
+
 
 const StackHeader = ({title,navigation,isHomeScreen}) => {
+  
   return (
     <View style={styles.container}>
       <TouchableOpacity 
@@ -13,7 +16,8 @@ const StackHeader = ({title,navigation,isHomeScreen}) => {
             if (isHomeScreen) {
               navigation.toggleDrawer();
             } else {
-              navigation.goBack();
+              navigation.dispatch(CommonActions.goBack());
+
             }
           }}
       >

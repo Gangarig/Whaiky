@@ -23,7 +23,6 @@ import Colors from '../constant/Colors';
 import { shadowStyle } from '../constant/Shadow';
 import FastImage from 'react-native-fast-image';
 import PrimaryButton from './Buttons/PrimaryButton';
-import NavigationFooter from '../navigation/NavigationFooter';
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -420,7 +419,6 @@ const AddPost = ({ navigation }) => {
               />
             </View>
       </Modal>
-      <NavigationFooter navigation={navigation}/>
     </View>
   );
 };

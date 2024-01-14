@@ -4,7 +4,6 @@ import DrawerNavigator from "./DrawerNavigator";
 import { useAuth } from "../context/AuthContext";
 import Loading from "../components/Loading";
 import { View, StyleSheet } from "react-native";
-import { FooterProvider } from "../context/FooterContext";
 
 function Main() {
     const { currentUser, setCurrentUser, loading } = useAuth();
@@ -14,7 +13,6 @@ function Main() {
     }
   
     return (  
-      <FooterProvider>
         <>
           { currentUser ?
             <DrawerNavigator style={style.appContent}/>
@@ -23,7 +21,6 @@ function Main() {
           <AuthStackScreens />
           }
         </>
-      </FooterProvider>
     );
   }
 

@@ -43,11 +43,8 @@ const DrawerItems = (navigation) => {
 
   return (
     <View style={[drawerItem.container, shadowStyle]}>
-      <DrawerItem item='Home' icon="fa-solid fa-house" label="Home" />
       <DrawerItem item='Dashboard' icon="fa-solid fa-desktop" label="Dashboard" />
-      <DrawerItem item='Profile' icon="fa-regular fa-address-card" label="Profile" />
       <DrawerItem item='myPosts' icon="fa-regular fa-file-lines" label="My Posts" />
-      <DrawerItem item='Messages' icon="fa-regular fa-message" label="Messages" />
       <DrawerItem item='Contractor' icon="fa-regular fa-address-book" label="Contractor" />
     </View>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, Button, Image, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
@@ -12,7 +12,6 @@ import { shadowStyle } from '../../../constant/Shadow';
 import Colors from '../../../constant/Colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
-import NavigationFooter from '../../../navigation/NavigationFooter';
 
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -67,7 +66,7 @@ const Profile = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.LinearGradientWrapper}>
         {userData && (
           <LinearGradient
@@ -134,8 +133,7 @@ const Profile = ({ navigation }) => {
           <Text>No user data found.</Text>
         </View> 
       )}
-      <NavigationFooter navigation={navigation}/>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -145,13 +143,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     paddingVertical: 20,
-
   },
   LinearGradientWrapper: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     ...shadowStyle,
+    paddingBottom: 100,
   },
   profileContainer: {
     backgroundColor: 'transparent',

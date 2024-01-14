@@ -13,39 +13,47 @@ import StackHeader from './ScreenComponents/StackHeader';
 const HomeStack = createStackNavigator();
 function HomeStackScreen({ navigation}) {
   return (
-    <HomeStack.Navigator>
+    <HomeStack.Navigator 
+    screenOptions={
+      {
+        headerShown: true,
+      }
+    }
+    >
       <HomeStack.Screen 
       name="HomeScreen" 
       component={Home} 
       options={
-        {
-          header: (props) => <StackHeader title="Home" isHomeScreen={true} {...props}  />,
-        }
+        ({navigation}) => ({
+          header: (props) => <StackHeader title="Home" navigation={navigation} isHomeScreen={true} {...props}  />,
+        })
       }
       />
-      <HomeStack.Screen 
+      {/* <HomeStack.Screen 
       name="AddPost" component={AddPost} 
       options={
-        {
-          header: (props) => <StackHeader title="Create Post" isHomeScreen={false} {...props}  />,
-        }
+        ({navigation}) => ({
+          header: (props) => <StackHeader title="Add Post" navigation={navigation} isHomeScreen={false} {...props}  />,
+        })
       }
-      />
+      /> */}
       <HomeStack.Screen
       name="PostDetail"
       component={PostDetail} 
       options={
-        {
-        header: (props) => <StackHeader title="Post Detail" isHomeScreen={false} {...props}  />,
-        }
-        }
+        ({navigation}) => ({
+          header: (props) => <StackHeader title="Post Detail" navigation={navigation} isHomeScreen={false} {...props}  />,
+        })
+      }
        />
-      <HomeStack.Screen name="SearchPost" component={PostSearch}
+      <HomeStack.Screen 
+      name="SearchPost" 
+      component={PostSearch}
       options={
-        {
-        header: (props) => <StackHeader title="Search" isHomeScreen={false} {...props}  />,
-        }
-        }
+        ({navigation}) => ({
+          header: (props) => <StackHeader title="Search Post" navigation={navigation} isHomeScreen={false} {...props}  />,
+        })
+      }
       />
     </HomeStack.Navigator>
   );

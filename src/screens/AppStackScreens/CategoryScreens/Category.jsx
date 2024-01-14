@@ -5,7 +5,6 @@ import { Dimensions } from 'react-native';
 import { Global } from '../../../constant/Global';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
 import { shadowStyle } from '../../../constant/Shadow';
-import NavigationFooter from '../../../navigation/NavigationFooter';
 
 const Category = ({ navigation, route }) => {
   const [openCategories, setOpenCategories] = useState([]);
@@ -82,7 +81,6 @@ const Category = ({ navigation, route }) => {
       keyExtractor={item => item.id.toString()}
       ref={flatListRef}
     />
-    <NavigationFooter navigation={navigation}/>
     </View>
   );
 };
