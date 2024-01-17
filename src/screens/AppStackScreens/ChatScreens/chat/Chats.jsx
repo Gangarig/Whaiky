@@ -77,7 +77,7 @@ const Chats = ({ navigation }) => {
   };
 
   const handleSelect = (chatId, userInfo) => {
-    navigation.navigate("Chat", {
+    navigation.navigate("Message", {
       chatId,
       userInfo,
     });
@@ -129,7 +129,7 @@ const Chats = ({ navigation }) => {
         avatar={item.userInfo.photoURL}
         onPress={() => handleSelect(item.chatId, item.userInfo)}
         onDeletePress={() => deleteChat(item.userInfo)}
-      />
+    />
       <View style={styles.borderBottom}></View>
     </View>
   );

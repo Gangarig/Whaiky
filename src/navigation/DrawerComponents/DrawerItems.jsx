@@ -5,14 +5,15 @@ import LinearGradient from 'react-native-linear-gradient';
 import UserTheme from '../../constant/Theme';
 import Fonts from '../../constant/Fonts';
 import { shadowStyle } from '../../constant/Shadow';
+import { useAuth } from '../../context/AuthContext';
 
 
-const DrawerItems = (navigation) => {
+const DrawerItems = ({navigation}) => {
   const [activeItem, setActiveItem] = useState('Home');
-
+  const  {currentUser}  = useAuth();
   const handlePress = (item) => {
     setActiveItem(item);
-    navigation.props.navigation.navigate(item);
+    navigation.navigate(item);
   };
 
   const DrawerItem = ({ item, icon, label }) => {
@@ -43,9 +44,14 @@ const DrawerItems = (navigation) => {
 
   return (
     <View style={[drawerItem.container, shadowStyle]}>
+      <DrawerItem item='MyPosts' icon="fa-regular fa-file-lines" label="My Posts" />
+      {currentUser && currentUser.status === 'admin' ?(
       <DrawerItem item='Dashboard' icon="fa-solid fa-desktop" label="Dashboard" />
-      <DrawerItem item='myPosts' icon="fa-regular fa-file-lines" label="My Posts" />
+      ):null}
+      {currentUser && currentUser.status === 'contractor' ?(
       <DrawerItem item='Contractor' icon="fa-regular fa-address-book" label="Contractor" />
+      ):null}
+      <DrawerItem item='Settings' icon="fa-solid fa-gear" label="Settings "/>
     </View>
   );
 };

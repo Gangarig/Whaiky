@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image'; // Ensure this is imported
 import Messages from "./Messages";
 import Colors from "../../../../constant/Colors";
 import defaultAvatar from '../../../../assets/images/avatar/avatar.png'; // Assuming you have a default avatar image
-
+import UserTheme from "../../../../constant/Theme";
 const Chat = ({ navigation, route }) => {
   const { chatId, userInfo } = route.params;
 
@@ -35,8 +35,9 @@ const styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
     backgroundColor: Colors.background,
-    
-  },
+    borderTopColor: UserTheme.black,
+    borderTopWidth: .5,
+  }, 
   headerTitle: {
     flexDirection: "row",
     alignItems: "center",

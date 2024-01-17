@@ -70,6 +70,7 @@ const style = StyleSheet.create({
         fontStyle: "normal",
         lineHeight: 20,
         color: UserTheme.white,     
+        width:100,
     },
     headerText:{
         fontFamily: Fonts.primary,

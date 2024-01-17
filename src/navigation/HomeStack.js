@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/AppStackScreens/HomeScreens/Home';
-import AddPost from '../components/AddPost';
+import AddPost from '../screens/AppStackScreens/AddPost';
 import PostDetail from '../screens/AppStackScreens/HomeScreens/PostDetail';
 import { Button } from 'react-native';
 import { Icon } from 'react-native-elements';
@@ -25,24 +25,16 @@ function HomeStackScreen({ navigation}) {
       component={Home} 
       options={
         ({navigation}) => ({
-          header: (props) => <StackHeader title="Home" navigation={navigation} isHomeScreen={true} {...props}  />,
+          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={true} {...props}  />,
         })
       }
       />
-      {/* <HomeStack.Screen 
-      name="AddPost" component={AddPost} 
-      options={
-        ({navigation}) => ({
-          header: (props) => <StackHeader title="Add Post" navigation={navigation} isHomeScreen={false} {...props}  />,
-        })
-      }
-      /> */}
       <HomeStack.Screen
       name="PostDetail"
       component={PostDetail} 
       options={
         ({navigation}) => ({
-          header: (props) => <StackHeader title="Post Detail" navigation={navigation} isHomeScreen={false} {...props}  />,
+          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
         })
       }
        />
@@ -51,7 +43,7 @@ function HomeStackScreen({ navigation}) {
       component={PostSearch}
       options={
         ({navigation}) => ({
-          header: (props) => <StackHeader title="Search Post" navigation={navigation} isHomeScreen={false} {...props}  />,
+          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
         })
       }
       />

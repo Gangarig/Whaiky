@@ -75,7 +75,7 @@ export const categoriesData = [
     icon: thermometer,
     options: [
       { optionId: 21, text: 'Residential and commercial cleaning' },
-      { optionId: 22, text: 'Carpet and upholstery cleaning' },
+      { optionId: 22, text: 'Carpet and upholstery cleaning' }  ,
       { optionId: 23, text: 'Cabinet refinishing and painting' },
       { optionId: 24, text: 'Deck and fence painting and staining' },
     ],

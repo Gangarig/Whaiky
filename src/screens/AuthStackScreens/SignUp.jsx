@@ -7,10 +7,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { Global } from '../../constant/Global';
 import { showMessage } from 'react-native-flash-message';
-import GradientButton from '../../components/GradientButton';
+import GradientButton from '../../components/Buttons/GradientButton';
 import signInWithGoogle from './SocialSignIn/Google';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { shadowStyle } from '../../constant/Shadow';
+import UserTheme from '../../constant/Theme';
 
 const InputField = ({ label, value, onChangeText, secureTextEntry }) => (
   <View>
@@ -72,7 +73,7 @@ const SignUp = ({ navigation }) => {
         displayName: formData.displayName,
         email: formData.email,
         status: 'user',
-        createdAt: new Date().getTime(),
+        timeStamp: new Date().getTime(),
         photoURL: '',
       });
       setCurrentUser({
@@ -81,6 +82,7 @@ const SignUp = ({ navigation }) => {
         email: formData.email,
         status: 'user',
         photoURL: '',
+        timeStamp: new Date().getTime(),
       });
       showMessage({ message: 'Account created successfully!', type: 'success' });
     } catch (error) {
@@ -158,7 +160,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    backgroundColor: '#fff',
+    backgroundColor: UserTheme.white,
   },
   gradient: {
     height: '50%',
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     marginTop: 20,
     borderRadius: 10,
-    backgroundColor: '#fff',
+    backgroundColor: UserTheme.white,
     borderWidth: .5,
     borderColor: '#3d3d3d',
     gap: 7,
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
     width: 248,
     height: 48,
     borderRadius: 4,
-    backgroundColor: 'fff',
+    backgroundColor: UserTheme.white,
 
   },
 });

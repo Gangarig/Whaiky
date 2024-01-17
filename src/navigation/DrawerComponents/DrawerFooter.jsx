@@ -7,15 +7,16 @@ import Fonts from '../../constant/Fonts'
 import auth from '@react-native-firebase/auth';
 
 
-const DrawerFooter = (navigation) => {
+const DrawerFooter = ({navigation}) => {
+
   const {currentUser} = useAuth();
   return (
     <View style={style.container}>
-      <TouchableOpacity
-     
-      >
+      {currentUser && currentUser.status === 'contractor' ?
+      null:
+      (<TouchableOpacity onPress={()=>navigation.navigate('Services')}>
         <GradientText text='Become a Contrator' size={20} underline={true}/>
-      </TouchableOpacity>
+      </TouchableOpacity>)}
         <View style={style.footerLinks}>
             <TouchableOpacity 
             onPress={()=>navigation.props.navigation.navigate('Support')}

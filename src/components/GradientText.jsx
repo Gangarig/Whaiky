@@ -27,9 +27,11 @@ const GradientText = ({ text, size, underline }) => {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         colors={[UserTheme.primary, UserTheme.secondary]}
+
       >
         <Text style={[styles.GradientText, { opacity: 0, fontSize }]}>{text}</Text>
       </LinearGradient>
+
     </MaskedView>
   );
 };

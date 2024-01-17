@@ -27,8 +27,9 @@ const signInWithGoogle = async (setCurrentUser) => {
         uid: user.uid,
         displayName: user.displayName || 'Anonymous',
         email: user.email,
-        createdAt: new Date().getTime(),
+        timeStamp: new Date().getTime(),
         photoURL: user.photoURL || '', 
+        status : 'user',
       });
       showMessage({ message: 'Account created and signed in with Google successfully!', type: 'success' });
     } else {

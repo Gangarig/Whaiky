@@ -13,18 +13,18 @@ function ChatStackScreen({navigation}) {
        component={ChatScreen} 
         options={
           ({navigation}) => ({
-            header: (props) => <StackHeader title="Chat" navigation={navigation} isHomeScreen={false} {...props}  />,
+            header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
           })
         }
        />
       <ChatStack.Screen
-       name="Chat" 
+       name="Message" 
        component={Chat}
-        options={
-          ({navigation}) => ({
-            header: (props) => <StackHeader title="Chat" navigation={navigation} isHomeScreen={false} {...props}  />,
-          })
-        }
+       options={
+        ({navigation}) => ({
+          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
+        })
+       }  
        />
     </ChatStack.Navigator>
   );

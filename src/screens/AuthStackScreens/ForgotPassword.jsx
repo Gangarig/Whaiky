@@ -6,8 +6,6 @@ import Logo from '../../assets/logo/logo.png';
 import { Global } from '../../constant/Global';
 import LinearGradient from 'react-native-linear-gradient';
 import { shadowStyle } from '../../constant/Shadow';
-import SecondaryButton from '../../components/Buttons/SecondaryButton';
-import SuccessButton from '../../components/Buttons/SuccessButton';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 
 const ForgotPassword = ({ navigation }) => {
@@ -104,7 +102,7 @@ const ForgotPassword = ({ navigation }) => {
 
             <View style={[Global.row,styles.ButtonBox,styles.ios]}>
             <PrimaryButton text="Reset" onPress={handlePasswordReset} />
-            <SecondaryButton text="Back" onPress={() => navigation.navigate('login')} />
+            <PrimaryButton text="Back" onPress={() => navigation.navigate('login')} />
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -126,7 +124,7 @@ const ForgotPassword = ({ navigation }) => {
 
           <View style={[Global.row,styles.ButtonBox]}>
             <PrimaryButton text="Reset" onPress={handlePasswordReset} />
-            <SecondaryButton text="Back" onPress={() => navigation.navigate('login')} />
+            <PrimaryButton text="Back" onPress={() => navigation.navigate('login')} />
           </View>
         </View>
       )}

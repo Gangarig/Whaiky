@@ -10,7 +10,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Logo from '../../assets/logo/logo.png';
 import { Global } from '../../constant/Global';
 import { showMessage } from 'react-native-flash-message';
-import GradientButton from '../../components/GradientButton';
+import GradientButton from '../../components/Buttons/GradientButton';
 import { shadowStyle } from '../../constant/Shadow';
 
 const Login = ({ navigation }) => {

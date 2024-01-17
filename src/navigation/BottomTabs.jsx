@@ -1,19 +1,16 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import DrawerNavigator from './DrawerNavigator';
 import CategoryStack from './CategoryStack';
 import ChatStackScreen from './ChatStack';
 import HomeStackScreen from './HomeStack';
 import ProfileStackScreen from './ProfileStack';
-import Settings from '../screens/AppStackScreens/Settings';
-import { Button } from 'react-native';
-import { DrawerActions } from '@react-navigation/native';
 import StackHeader from './ScreenComponents/StackHeader';
 import UserTheme from '../constant/Theme';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { shadowStyle } from '../constant/Shadow';
-import AddPost from '../components/AddPost';
+import AddPost from '../screens/AppStackScreens/AddPost';
 import { View ,StyleSheet} from 'react-native';
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 const Tab = createBottomTabNavigator();
 
 function BottomTabs({navigation}) {
@@ -23,7 +20,7 @@ function BottomTabs({navigation}) {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
-          height: 50,
+          height: 55,
           backgroundColor: UserTheme.primary,
           ...shadowStyle,
         },
@@ -58,14 +55,14 @@ function BottomTabs({navigation}) {
       name="Home"
       component={HomeStackScreen} 
       options={({navigation}) => ({
-        header: (props) => <StackHeader title="Home" navigation={navigation} isHomeScreen={true} {...props}  />,
+        header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={true} {...props}  />,
       })}
       />
       <Tab.Screen
       name="Category"
       component={CategoryStack} 
       options={({navigation}) => ({
-        header: (props) => <StackHeader title="Category" navigation={navigation} isHomeScreen={false} {...props}  />,
+        header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
       })}
       />
       <Tab.Screen
@@ -73,21 +70,21 @@ function BottomTabs({navigation}) {
       component={AddPost}
       options={({navigation}) => ({
         headerShown: true,
-        header: (props) => <StackHeader title="Add Post" navigation={navigation} isHomeScreen={false} {...props}  />,
+        header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
       })}
       />
       <Tab.Screen
       name="Chat"
       component={ChatStackScreen} 
       options={({navigation}) => ({
-        header: (props) => <StackHeader title="Chat" navigation={navigation} isHomeScreen={false} {...props}  />,
+        header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
       })}
       />
       <Tab.Screen
       name="Profile"
       component={ProfileStackScreen} 
       options={({navigation}) => ({
-        header: (props) => <StackHeader title="Profile" navigation={navigation} isHomeScreen={false} {...props}  />,
+        header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
       })}
       />
     </Tab.Navigator>

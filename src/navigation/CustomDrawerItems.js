@@ -14,9 +14,9 @@ import DrawerFooter from './DrawerComponents/DrawerFooter';
 import DrawerHeader from './DrawerComponents/DrawerHeader';
 import DrawerItems from './DrawerComponents/DrawerItems';
 import UserTheme from '../constant/Theme';
-function CustomDrawerContent(navigation) {
-  const { currentUser } = useAuth();
 
+function CustomDrawerContent({navigation}) {
+  
     return (
     <LinearGradient
       start={{ x: 0, y: 0 }}
@@ -25,8 +25,8 @@ function CustomDrawerContent(navigation) {
       style={styles.container}
     >
       <DrawerHeader />
-      <DrawerItems props={navigation} />
-      <DrawerFooter props={navigation} />
+      <DrawerItems navigation={navigation} />
+      <DrawerFooter navigation={navigation} />
     </LinearGradient>
     );
   }

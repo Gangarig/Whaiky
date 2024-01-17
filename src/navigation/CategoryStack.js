@@ -12,7 +12,7 @@ function CategoryStack({ navigation}) {
       component={Category} 
       options={
         ({navigation}) => ({
-          header: (props) => <StackHeader title="Category" navigation={navigation} isHomeScreen={false} {...props}  />,
+          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
         })
       }
       />
@@ -22,7 +22,7 @@ function CategoryStack({ navigation}) {
       component={CategoryDetail} 
       options={
         ({navigation}) => ({
-          header: (props) => <StackHeader title="Category Detail" navigation={navigation} isHomeScreen={false} {...props}  />,
+          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
         })
       }
       />
