@@ -8,7 +8,7 @@ import { ChatContextProvider } from './src/context/ChatContext';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
-import {  faArrowRight, faArrowUp, faBars, faCamera, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faChevronDown, faChevronUp, faDeleteLeft, faDesktop, faGear, faHouse, faIdCard, faImage, faList, faMagnifyingGlass, faMinus, faPaperPlane, faPaperclip, faTrash, faX } from '@fortawesome/free-solid-svg-icons'
+import {  faArrowRight, faArrowUp, faBars, faCamera, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faDeleteLeft, faDesktop, faGear, faHouse, faIdCard, faImage, faList, faMagnifyingGlass, faMinus, faPaperPlane, faPaperclip, faTrash, faX } from '@fortawesome/free-solid-svg-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ServiceCategory from './src/screens/AppStackScreens/ProfileScreens/Contractor/ServiceCategory';
 import DocumentUpload from './src/screens/AppStackScreens/ProfileScreens/Contractor/DocumentUpload';
@@ -36,11 +36,13 @@ library.add(
   faTrash,
   faDeleteLeft,
   faChevronDown,faChevronUp,
+  faChevronLeft,faChevronRight,
   faMagnifyingGlass,
   faCaretRight,faCaretUp,faCaretDown,
   faHouse,
   faIdCard,faDesktop,faCommentDots,faPenToSquare,
-  faUser,faGear,faCheck
+  faUser,faGear,faCheck,faX,
+  faImage,
   );
 export default function App() {
   return (

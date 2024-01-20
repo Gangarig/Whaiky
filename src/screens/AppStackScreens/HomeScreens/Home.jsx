@@ -135,6 +135,7 @@ const Home = ({ navigation }) => {
           data={posts}
           renderItem={renderItem}
           keyExtractor={item => item.id}
+          numColumns={2}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
@@ -162,6 +163,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
     width: '100%',
+    paddingVertical:10,
   },
   flashList:{
     flex:1,

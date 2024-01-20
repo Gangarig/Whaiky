@@ -8,7 +8,7 @@ import StackHeader from './ScreenComponents/StackHeader';
 import UserTheme from '../constant/Theme';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { shadowStyle } from '../constant/Shadow';
-import AddPost from '../screens/AppStackScreens/AddPost';
+import AddPost from '../screens/AppStackScreens/Post/AddPost';
 import { View ,StyleSheet} from 'react-native';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 const Tab = createBottomTabNavigator();

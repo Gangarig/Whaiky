@@ -5,21 +5,24 @@ import {Global} from '../constant/Global';
 import Default from '../assets/images/default.png';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
+import { shadowStyle } from '../constant/Shadow';
+import UserTheme from '../constant/Theme';
+import Fonts from '../constant/Fonts';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 const PostCard = ({ post, onPress }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.postCardContainer]}>
+    <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
       <LinearGradient
-        colors={['#9E41F0', '#4C7BC0']}
+        colors={['#9E42F0', '#423EE7']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.postCardWrapper}
+        style={[styles.postCardContainer]}
       >
-        <View style={styles.postImageWrapper}>
             {post.images.length === 0 ? (
-                <View style={styles.noImage}>
-                  <Text style={[Global.titleSecondary,styles.black]}>No Image</Text>
-                </View>
+              <View style={[styles.noImage,]}>
+                <Text style={[styles.noImageText,shadowStyle]} >No Image</Text>
+              </View>
                 ) : (
                     <FastImage 
                         source={{uri:post.images[0]}}
@@ -28,12 +31,10 @@ const PostCard = ({ post, onPress }) => {
                     />
                 )
             }
-        </View>
-        <View style={styles.postText}>
-          <Text style={[styles.postTitle,Global.titleSecondary]}>Posted by: {post.ownerName}</Text>
-          <Text style={[styles.postTitle,Global.titleSecondary]}>Title: {post.title}</Text>
-  
-        </View>
+            <View style={styles.postInfo}>
+              <Text style={styles.title}>{post.title}</Text>
+              <Text style={styles.price}>{post.price}$</Text>
+            </View>
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -41,8 +42,11 @@ const PostCard = ({ post, onPress }) => {
 
 const styles = StyleSheet.create({
   postCardContainer: {
-    width: '100%',
-    padding: 10,
+    width: 180,
+    marginVertical: 3,
+    marginHorizontal: 3,
+    position: 'relative',
+    borderRadius: 7,
   },
   noImage:{
     justifyContent:'center',
@@ -52,47 +56,68 @@ const styles = StyleSheet.create({
     borderColor:'#ccc',
     borderRadius:4,
   },
-  postCardWrapper: {
-    flexDirection: 'row',
-    borderRadius:10,
-    height: 140,
-    alignItems: 'center',
-    paddingHorizontal: 10,
-  },
-  postImageWrapper: {
-    height: 120,
-    borderRadius: 4,
-    width: 120,
-    padding: 5,
-    backgroundColor: Colors.white,
-    shadowOffset: { width: 0, height: 2 },
-    shadowColor: Colors.white,
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-    
-  },
   postImage: {
     width: '100%',
-    height: '100%',
-    borderRadius: 4,
+    height: 120,
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
+    backgroundColor: UserTheme.white,
   },
-  postText: {
+  noImage:{
+    height: 120,
+    padding: 10,
+    backgroundColor: UserTheme.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: UserTheme.querternary,
+    borderWidth: 2,
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
+  },
+  postInfo: {
+    paddingVertical: 7,
+    paddingHorizontal: 8,
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 100,
-    alignItems: 'flex-end',
-    flex: 1,
-    paddingHorizontal: 10,
+    height: 50,
+    alignItems: 'center',
   },
-  postTitle: {
-    fontSize: 16,
-    color: Colors.white,
+  title: {
+    fontSize: 14,
     fontWeight: 'bold',
+    color: UserTheme.white,
+    fontFamily: Fonts.primary,
+    width: '60%',
   },
-  black:{
-    color:Colors.black,
-  }
+  price: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: UserTheme.white,
+    fontFamily: Fonts.primary,
+    width: '30%',
+  },
+  noImageIconWrapper:{
+    backgroundColor: UserTheme.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 120,
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
+    borderWidth: 1,
+    borderColor: UserTheme.querternary,
+  },
+  noImageText:{
+    fontFamily: Fonts.primary,
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: UserTheme.gray,
+    borderWidth: 2,
+    borderColor: UserTheme.gray,
+    padding: 20,
+    borderRadius: 7,
+  },
 
-});
+
+})
 
 export default PostCard;

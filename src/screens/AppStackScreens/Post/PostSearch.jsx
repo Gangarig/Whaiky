@@ -5,7 +5,7 @@ import debounce from 'lodash/debounce';
 import PostCard from '../../../components/PostCard';
 import Colors from '../../../constant/Colors';
 import { Global } from '../../../constant/Global';
-import Location from '../../AppStackScreens/service/Location';
+import Location from '../service/Location';
 import CategoryPicker from '../service/CategoryPicker';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import shadowStyle from '../../../constant/Shadow';

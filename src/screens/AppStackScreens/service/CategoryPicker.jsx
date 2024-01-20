@@ -7,6 +7,8 @@ import Colors from '../../../constant/Colors';
 import LinearGradient from 'react-native-linear-gradient';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import { showMessage } from 'react-native-flash-message';
+import UserTheme from '../../../constant/Theme';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 
 const CategoryPicker = ({ onSave, onClose }) => {
@@ -59,7 +61,7 @@ const CategoryPicker = ({ onSave, onClose }) => {
   
 
   return (
-        <View style={styles.modalContent}>
+        <View style={styles.container}>
           <Text style={Global.titleSecondary}>Select Category</Text>
           <DropDownPicker
             open={openCategory}
@@ -68,7 +70,12 @@ const CategoryPicker = ({ onSave, onClose }) => {
             setOpen={setOpenCategory}
             setValue={setSelectedCategory}
             setItems={() => {}}
-            style={styles.dropDown}
+            style={styles.dropdown}
+            textStyle={styles.textStyle}
+            dropDownContainerStyle={styles.dropdownContainer}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-down" />}
+            TickIconComponent={() => <FontAwesomeIcon size={20} color={UserTheme.primary} icon="fa-solid fa-check" />}
             zIndex={1000}
           />
 
@@ -82,42 +89,55 @@ const CategoryPicker = ({ onSave, onClose }) => {
                 setOpen={setOpenOption}
                 setValue={setSelectedOption}
                 setItems={() => {}}
-                style={styles.dropDown}
+                style={styles.dropdown}
+                textStyle={styles.textStyle}
+                dropDownContainerStyle={styles.dropdownContainer}
+                ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-up" />}
+                ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-down" />}
+                TickIconComponent={() => <FontAwesomeIcon size={20} color={UserTheme.primary} icon="fa-solid fa-check" />}
                 zIndex={500}
               />
             </>
           )}
             <View style={styles.btnContainer}>
-            <PrimaryButton text="Done" onPress={handleSave} />
-            <PrimaryButton text="Cancel" onPress={onClose} />
+              <PrimaryButton text="Done" onPress={handleSave} />
+              <PrimaryButton text="Cancel" onPress={onClose} />
             </View>
         </View>
   );
 };
 
-const styles = StyleSheet.create({
-  modalContent: {
-    width: '100%',
-    backgroundColor: Colors.background,
-    padding: 20,
-    borderRadius: 10,
-    gap: 10,
-  },
-  dropDown: {
-    borderColor: Colors.primary,
-    borderWidth: 1,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  btnContainer: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-    gap: 10,
-  },
-
-
-});
-
 export default CategoryPicker;
+
+const styles = StyleSheet.create({
+  container:{
+    width:'100%',
+    margin:0,
+    gap:10,
+    backgroundColor:UserTheme.white,
+    zIndex: 9999,
+    padding:10,
+  },
+  dropdown: {
+    borderColor: UserTheme.primary,
+    borderradius:10,
+    borderWidth: 2.5,
+    zIndex: 99,
+  },
+  textStyle: {
+    fontSize: 17,
+  },
+  dropdownContainer: {
+    backgroundColor: UserTheme.white,
+    borderColor: UserTheme.primary,
+    borderWidth: 2.5,
+  },
+  btnContainer:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    width:'100%',
+    gap:10,
+    marginTop:10,
+  },
+});

@@ -7,6 +7,7 @@ import { useAuth } from '../../../context/AuthContext';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import PostCardDetail from '../../../components/PostCardDetail';
 import { showMessage } from 'react-native-flash-message';
+import UserTheme from '../../../constant/Theme';
 
 const PostDetail = ({ route, navigation }) => {
   const currentUser = useAuth(); 
@@ -31,17 +32,10 @@ const PostDetail = ({ route, navigation }) => {
     fetchData();
   }, [id]);
 
-
-  const handleContact = () => {
-
-  };
-
   return (
     <ScrollView style={styles.container}>
       {post ? <PostCardDetail post={post}/> : <Text>Loading...</Text>}
-      <View style={styles.buttonBox}>
-        <PrimaryButton text='Contact' onPress={handleContact}/>
-      </View>
+      <View style={styles.padding}></View>
     </ScrollView>
   );
 };
@@ -52,12 +46,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FBFBFB',
     position: 'relative',
   },
-  buttonBox: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 10,
-    paddingBottom: 100,
-  }
+  padding: {
+    height: 100,
+  },
+
 
 
 });

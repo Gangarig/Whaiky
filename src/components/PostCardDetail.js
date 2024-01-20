@@ -4,48 +4,135 @@ import { Global } from '../constant/Global';
 import Colors from '../constant/Colors';
 import Shadow, { shadowStyle } from '../constant/Shadow';
 import FastImage from 'react-native-fast-image';
+import UserTheme from '../constant/Theme';
+import ImageView from 'react-native-image-viewing';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import Fonts from '../constant/Fonts';
+import PrimaryButton from './Buttons/PrimaryButton';
+import LinearGradient from 'react-native-linear-gradient';
+
+
+
 const PostCardDetail = ({ post }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isImageViewVisible, setImageViewVisible] = useState(false);
 
+  const postDate = post.timestamp && post.timestamp.toDate instanceof Function
+    ? post.timestamp.toDate().toLocaleDateString()
+    : '';
   const selectImage = (index) => {
-    setSelectedImageIndex(index);
+    if (index >= 0 && index < post.images.length) {
+      setSelectedImageIndex(index);
+    }
   };
 
+  const openImageView = () => {
+    setImageViewVisible(true);
+  };
+
+  const closeImageView = () => {
+    setImageViewVisible(false);
+  };
+
+  const renderImageViewer = () => {
+    return (
+      <ImageView
+        images={post.images.map((uri) => ({ uri }))}
+        imageIndex={selectedImageIndex}
+        visible={isImageViewVisible}
+        onRequestClose={closeImageView}
+      />
+    );
+  };
+  const renderDottedLine = () => {
+    const numberOfDots = 10; // Adjust the number of dots as needed
+    return Array.from({ length: numberOfDots }).map((_, index) => (
+      <View key={index} style={styles.verticalLineDot} />
+    ));
+  };
+  
+  
+
+  const handleContact = () => {};
   return (
-    <ScrollView style={styles.postContainer}>
-      {post.images.length > 0 && (
-        <View style={styles.imageWrapper}>
-            {post.images.map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => selectImage(index)}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollView}
+    >
+      <View style={styles.imageWrapper}>
+        {post.images.length > 0 && (
+          <>
+            <TouchableOpacity
+              style={styles.image}
+              onPress={openImageView}
+            >
+              <FastImage
+                source={{ uri: post.images[selectedImageIndex] }}
+                style={{ flex: 1 }}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+              <LinearGradient
+                colors={['#9E42F0', '#423EE7']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={[styles.sale]}
+              >
+              <Text style={styles.saleText}>SALE</Text>
+              <View style={{ flexDirection: 'column' }}>{renderDottedLine()}</View>
+              <View style={{ flexDirection: 'column' }}>
+                <Text style={styles.verticalText}>20</Text> 
+              </View>
+            </LinearGradient>
+          </>
+        )}
+      </View>
+      {post.images.length > 1 && (
+        <View style={styles.images}>
+          {post.images.map((image, index) => (
+            <TouchableOpacity key={index} onPress={() => selectImage(index)}>
               <FastImage
                 source={{ uri: image }}
                 style={[
-                  styles.image,
+                  styles.imagesInside,
                   index === selectedImageIndex && styles.selectedImage,
                 ]}
               />
-              </TouchableOpacity>
-            ))}
+            </TouchableOpacity>
+          ))}
         </View>
       )}
+      <View style={styles.noImage}>
+       <FontAwesomeIcon style={styles.image} size={300} color={UserTheme.gray} icon="fa-solid fa-image" />
+      </View>
       <View style={styles.postInfo}>
-        <View style={styles.postTitle}>
-          <Text style={[Global.titleSecondary, styles.title]}>{post.title}</Text>
-          <View style={styles.detail}>
-            <Text style={[Global.textSecondary, styles.date]}>{post.date}</Text>
-            <Text style={[Global.textSecondary, styles.address]}>{post.address}</Text>
+        <View style={styles.postHeader}>
+          <View style={styles.postHeaderLeft}>
+            <Text style={styles.postTitle}>{post.title}</Text>
+            <View style={styles.postSubHeader}>
+              <Text style={styles.postDate}>{postDate}</Text>
+              <View style={styles.postLocation}>
+                <Text style={styles.postAddress}>{post.country}</Text>
+                <Text style={styles.postAddress}>{post.state}</Text>
+                <Text style={styles.postAddress}>{post.city}</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.postHeaderRight}>
+            <Text style={styles.price}>{post.price}$</Text>
+            <Text style={styles.salePrice}>{post.salePrice}1231234$</Text>
           </View>
         </View>
-        <View style={styles.priceWrapper}>
-          {/* {saleprice && (
-            <Text style={[styles.priceSale, Global.titleSecondary]}>{post.saleprice} $</Text>
-          )} */}
-          <Text style={[styles.price, Global.titleSecondary]}>{post.price} $</Text>
+        <View style={styles.postBody}>
+          <Text style={styles.postDescription}>{post.description}</Text>
         </View>
+        <View style={styles.contactContainer}>
+          <PrimaryButton text="Contact" onPress={handleContact} />
+          <FastImage style={styles.avatar} source={{ uri: post.ownerAvatar }} />
+        </View>
+       
       </View>
-      <View style={[styles.postDescription]}>
-        <Text style={[Global.text, styles.desc]}>{post.description}</Text>
-      </View>
+      {renderImageViewer()}
     </ScrollView>
   );
 };
@@ -53,52 +140,177 @@ const PostCardDetail = ({ post }) => {
 export default PostCardDetail;
 
 const styles = StyleSheet.create({
-  postContainer: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: Colors.background,
-    borderRadius: 5,
-    padding: 20,
+  container: {
+    flex: 1,
+    backgroundColor: UserTheme.background,
+  },
+  scrollView: {
+    flexGrow: 1,
+    justifyContent: 'center',
+
   },
   imageWrapper: {
     width: '100%',
-    marginBottom: 20,
-    gap: 10,
-    ...shadowStyle
+    position: 'relative',
   },
   image: {
-    height: 300,
-    borderRadius: 10,
-    resizeMode: 'cover',
-    marginRight: 10, 
     width: '100%',
+    height: 300,
+  },
+  images: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...shadowStyle,
+  },
+  imagesInside: {
+    width: 50,
+    height: 50,
+  },
+  chevronLeft: {
+    position: 'absolute',
+    left: 10,
+    top: 125,
+  },
+  chevronRight: {
+    position: 'absolute',
+    right: 10,
+    top: 125,
+  },
+  selectedImage: {
+    borderColor: UserTheme.querternary, 
     borderWidth: 2,
-    borderColor: Colors.primary,
   },
   postInfo: {
-    justifyContent: 'space-between',
+    padding: 10,
+  },
+  postHeader: {
     flexDirection: 'row',
-    width: '100%',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    marginTop: 10,
+    height: 60,
+  },
+  postHeaderLeft: {
+    flexDirection: 'column',
+  },
+  postSubHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  postLocation: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  postAddress: {
+    paddingHorizontal: 3,
+  },
+  postHeaderRight: {
+    flexDirection: 'column',
+  },
+  postBody: {
+    flexDirection: 'column',
   },
   postDescription: {
-    width: '100%',
+    fontSize: 16,
+    fontFamily: Fonts.querternary,
+    paddingVertical: 20,
+    textAlign: 'justify',
+  },
+  contactContainer: {
+    alignItems: 'center',
     marginTop: 20,
-  },
-  detail: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 10,
+    justifyContent: 'space-around',
+    justifyContent: 'center',
+    gap: 40,
   },
-  title: {
+  postTitle: {
     fontSize: 20,
-    color: Colors.lightPrimary,
+    fontWeight: 'bold',
+    color: UserTheme.querternary,
+    fontFamily: Fonts.querternary,
   },
   price: {
-    color: Colors.lightPrimary,
+    fontSize: 19,
+    fontWeight: 'bold',
+    color: UserTheme.querternary,
+    fontFamily: Fonts.querternary,
   },
-  priceSale: {
-    color: Colors.lightPrimary,
-    textDecorationStyle: 'solid',
-    opacity: 0.5,
+  salePrice: {
+    fontSize: 19,
+    fontWeight: 'bold',
+    color: UserTheme.querternary,
+    fontFamily: Fonts.querternary,
+  },
+  postDate: {
+    fontSize: 12,
+    fontFamily: Fonts.querternary,
+    color: UserTheme.gray,
+    paddingTop: 10,
+  
+  },
+  postAddress: {
+    fontSize: 12,
+    fontFamily: Fonts.querternary,
+    color: UserTheme.gray,
+    paddingTop: 10,
+    paddingHorizontal: 3,
+    paddingLeft: 10,
+  },
+  sale:{
+    position:'absolute',
+    bottom:10,
+    right:10,
+    padding:5,
+    borderRadius:5,
+    height:31,
+    width:90,
+    justifyContent:'center',
+    alignItems:'center',
+    flexDirection:'row',
+    borderWidth:1,
+    borderColor:UserTheme.white,
+  },
+  saleText:{
+    fontSize:18,
+    color:UserTheme.white,
+    fontFamily:Fonts.querternary,
+    fontWeight:'bold',  
+  },
+  verticalLineDot: {
+    height: 3, 
+    width: 3,  
+    backgroundColor: UserTheme.white,
+    marginVertical: 1, 
+    marginHorizontal: 4,
+    borderRadius: 3,
+  },
+  verticalText: {
+    color: UserTheme.white,
+    fontFamily: Fonts.querternary,
+    fontWeight: 'bold',
+    fontSize: 18,
+    transform: [{ rotate: '270deg' }],
+  },
+  noImage:{
+    justifyContent:'center',
+    alignItems:'center',
+    flex:1,
+    ...shadowStyle,
+    borderBottomColor:UserTheme.gray,
+    borderBottomWidth:1,
+    opacity:0.5,
+    borderColor:UserTheme.gray,
+    borderRadius:4,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginRight: 10,
   },
 });

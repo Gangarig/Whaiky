@@ -4,12 +4,14 @@ const isAndroid = Platform.OS === 'android';
 
 const UserTheme = {
   primary: isAndroid ? shadeColor('#9E41F0', -10) : '#9E41F0',
-  lightPrimary: isAndroid ? shadeColor('#9E42F0', -10) : '#9E42F0',
+  lightPrimary: isAndroid ? shadeColor('#7B5BDC', -10) : '#7B5BDC',
   secondary: isAndroid ? shadeColor('#01AD94', -10) : '#01AD94',
   tertiary: isAndroid ? shadeColor('#4C7BC0', -10) : '#4C7BC0',
+  querternary: isAndroid ? shadeColor('#423EE7', -10) : '#423EE7',
   lightSecondary: isAndroid ? shadeColor('#01AD95', -10) : '#01AD95',
   DrawerColorPrimary: isAndroid ? shadeColor('#9E41F0', -10) : '#9E41F0',
   DrawerColorSecondary: isAndroid ? shadeColor('#01AD94', -10) : '#01AD94',
+  gray : '#7B7B7B',
   background: '#FBFBFB',
   text: '#000',
   white: '#FBFBFB',
