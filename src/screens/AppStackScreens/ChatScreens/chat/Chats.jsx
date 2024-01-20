@@ -52,11 +52,14 @@ const Chats = ({ navigation }) => {
     setChats(sortedChats);
   };
 
-  const updateLastMessageInState = (chatId, lastMessageData) => {
-    setChats(currentChats => currentChats.map(chat => 
-      chat.chatId === chatId ? { ...chat, lastMessage: formatMessage(lastMessageData.text) } : chat
-    ));
-  };
+const updateLastMessageInState = (chatId, lastMessageData) => {
+  setChats(currentChats => currentChats.map(chat => 
+    chat.chatId === chatId 
+      ? { ...chat, lastMessage: lastMessageData }
+      : chat
+  ));
+};
+  
 
   const sortChats = (chatData) => {
     return Object.entries(chatData)
@@ -124,15 +127,13 @@ const Chats = ({ navigation }) => {
   const renderChatItem = ({ item }) => (
     <View style={styles.profileWrapper}>
       <ProfileCard
-        displayName={item.userInfo.displayName || "Unknown User"}
-        lastMessage={item.lastMessage}
-        avatar={item.userInfo.photoURL}
+        item={item}
         onPress={() => handleSelect(item.chatId, item.userInfo)}
         onDeletePress={() => deleteChat(item.userInfo)}
-    />
-      <View style={styles.borderBottom}></View>
+      />
     </View>
   );
+  
 
   return (
     <View style={styles.flatList}>

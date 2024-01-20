@@ -29,6 +29,7 @@ export const sendMessage = async (message, chatId) => {
       }, 
       senderId: user._id,
       timestamp: firestore.FieldValue.serverTimestamp(),
+      read: false,
     };
 
     // Add image URLs if present
