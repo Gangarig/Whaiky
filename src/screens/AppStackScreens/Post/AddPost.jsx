@@ -269,9 +269,9 @@ const AddPost = ({ navigation }) => {
       setPost({
         title: '',
         description: '',
-        country: currentUser.country,
-        state: currentUser.state ,
-        city: currentUser.city ,
+        country: currentUser.country || '',
+        state: currentUser.state || '',
+        city: currentUser.city  || '',
         categoryId: 11,
         categoryText: 'Other',
         optionId: 41,
@@ -279,8 +279,8 @@ const AddPost = ({ navigation }) => {
         price: '',
         images: [],
         ownerId: currentUser.uid,
-        ownerName: currentUser.displayName,
-        ownerAvatar: currentUser.photoURL,
+        ownerName: currentUser.displayName || '',
+        ownerAvatar: currentUser.photoURL || '',
         postType: 'Looking For Service',
       });
   

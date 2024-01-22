@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
 import storage from '@react-native-firebase/storage';
+import { useAuth } from '../../../../context/AuthContext';
+
 
 
 export const approveDocument = async (userId, docId) => {
@@ -12,7 +14,17 @@ export const approveDocument = async (userId, docId) => {
         .collection('documents')
         .doc(docId)
         .update({ status: 'approved' });
-      // Optionally, delete related data in 'submission' collection
+        await firestore()
+        .collection('users')
+        .doc(userId)
+        .update({ status: 'contractor' });
+        await firestore()
+        .collection('contractor')
+        .doc(userId) 
+        .set({
+          userId: userId,
+          approvedDocumentId: docId,
+        });
       await firestore().collection('submission').doc(userId).delete();
   
       showMessage({

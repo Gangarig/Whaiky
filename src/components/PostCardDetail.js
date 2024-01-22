@@ -102,9 +102,11 @@ const PostCardDetail = ({ post }) => {
           ))}
         </View>
       )}
+      {post.images.length === 0 && (
       <View style={styles.noImage}>
        <FontAwesomeIcon style={styles.image} size={300} color={UserTheme.gray} icon="fa-solid fa-image" />
       </View>
+      )}
       <View style={styles.postInfo}>
         <View style={styles.postHeader}>
           <View style={styles.postHeaderLeft}>
@@ -213,6 +215,7 @@ const styles = StyleSheet.create({
   },
   postBody: {
     flexDirection: 'column',
+    minHeight: 200,
   },
   postDescription: {
     fontSize: 16,
@@ -230,7 +233,7 @@ const styles = StyleSheet.create({
   },
   postTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: 'bold', 
     color: UserTheme.querternary,
     fontFamily: Fonts.querternary,
   },

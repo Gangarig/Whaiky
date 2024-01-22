@@ -6,6 +6,7 @@ import { useAuth } from '../../../../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import LinearGradient from 'react-native-linear-gradient';
+import UserTheme from '../../../../constant/Theme';
 
 // Import custom components and constants
 import ServiceCategoryPicker from '../../service/ServiceCategoryPicker';
@@ -19,7 +20,7 @@ const ServiceCategory = ({ navigation }) => {
   const [services, setServices] = useState([]);
   const [isPickerModalVisible, setPickerModalVisible] = useState(false);
   const [isModalBackgroundVisible, setModalBackgroundVisible] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState({});
 
   useEffect(() => {
     if (!currentUser) {
@@ -162,13 +163,14 @@ const ServiceCategory = ({ navigation }) => {
             onPress={togglePickerModal}
             style={{marginTop: 20}}
           />
-          {userData && userData.status == 'user' ?
+          {currentUser.status === 'contractor' ?
+          null:(
           <PrimaryButton 
             text="Skip" 
             onPress={handleSaveAndContinue} 
             style={styles.saveButton}
           />
-          : null}
+          )}
           </View>
       </ScrollView>
   );
@@ -176,14 +178,13 @@ const ServiceCategory = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
+    backgroundColor: UserTheme.background,
     flex: 1,
     width: '100%',
   },
   ScrollView: {
     flexGrow: 1,
     justifyContent: 'space-around',
-    alignItems: 'center',
     width: '100%',
     gap: 20,
     paddingBottom: 100,
@@ -191,7 +192,6 @@ const styles = StyleSheet.create({
   LinearGradientWrapper: {
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
     ...shadowStyle,
     marginTop: 20,
   }, 
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: Colors.white,
+    color: UserTheme.white,
     textAlign: 'center',
   },
   btnContainer:{

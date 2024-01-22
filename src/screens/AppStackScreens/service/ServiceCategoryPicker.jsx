@@ -7,9 +7,9 @@ import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { Global } from '../../../constant/Global';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
-import Colors from '../../../constant/Colors';
-import LinearGradient from 'react-native-linear-gradient';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import UserTheme from '../../../constant/Theme';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) => {
   const [openCategory, setOpenCategory] = useState(false);
@@ -145,7 +145,12 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
             setOpen={setOpenCategory}
             setValue={setValueCategory}
             setItems={() => {}}
-            style={styles.dropDown}
+            style={styles.dropdown}
+            textStyle={styles.textStyle}
+            dropDownContainerStyle={styles.dropdownContainer}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-down" />}
+            TickIconComponent={() => <FontAwesomeIcon size={20} color={UserTheme.primary} icon="fa-solid fa-check" />}
             zIndex={1000}
           />
           <DropDownPicker
@@ -155,8 +160,13 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
             setOpen={setOpenOptions}
             setValue={setValueOption}
             setItems={() => {}}
-            style={styles.dropDown}
             zIndex={500}
+            style={styles.dropdown}
+            textStyle={styles.textStyle}
+            dropDownContainerStyle={styles.dropdownContainer}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-down" />}
+            TickIconComponent={() => <FontAwesomeIcon size={20} color={UserTheme.primary} icon="fa-solid fa-check" />}
           />
           {showTextInput && (
             <TextInput
@@ -185,42 +195,40 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   modalContent: {
-    width: '80%',
-    backgroundColor: 'white',
+    height: '60%',
+    width: '100%',
+    backgroundColor: UserTheme.background,
     borderRadius: 10,
     padding: 20,
-    shadowColor: '#000',
     zIndex: 99,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  dropDown: {
-    marginBottom: 10,
-  },
-  serviceItem: {
     alignItems: 'center',
-    justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 10,
-    width: '100%',
-    height: 'fit-content',
+  },
+  dropdown: {
+    borderColor: UserTheme.primary,
+    borderradius:10,
+    borderWidth: 2.5,
+    zIndex: 99,
+    marginVertical:10,
+  },
+  textStyle: {
+    fontSize: 17,
+  },
+  dropdownContainer: {
+    backgroundColor: UserTheme.white,
+    borderColor: UserTheme.primary,
+    borderWidth: 2.5,
   },
   btnContainer:{
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent:'center',
+    alignItems:'center',
     gap: 10,
+    position: 'absolute',
+    bottom: 20,
+    
   },
 });
 

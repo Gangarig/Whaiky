@@ -95,7 +95,7 @@ const Certificate = ({ navigation }) => {
         message: 'Certificate uploaded successfully.',
         type: 'success',
       });
-      navigation.navigate('Profile'); // Navigate to the Profile or any other screen as needed
+      navigation.navigate('Home');
       resetForm();
     } catch (error) {
       showMessage({
@@ -123,7 +123,7 @@ const Certificate = ({ navigation }) => {
       message: 'Submission successfully sent.',
       type: 'success',
     });
-    navigation.navigate('ProfileScreen');
+    navigation.navigate('Home');
   }
   return (
     <ScrollView 
@@ -170,11 +170,13 @@ const Certificate = ({ navigation }) => {
         onPress={uploadCertificate}
         style={styles.button}
       />
-      <PrimaryButton  
+      {currentUser && currentUser.status === 'contractor' ? 
+      null:
+      (<PrimaryButton  
         text='Skip'
         onPress={SubmitDone}
         style={styles.button}
-      />
+      />)}
     </ScrollView>
   );
 };

@@ -15,60 +15,21 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();
-  const [userData, setUserData] = useState(null);
 
-  useEffect(() => {
-    if (currentUser?.uid) {
-      const userDocRef = firestore().collection('users').doc(currentUser.uid);
-      const unsubscribe = userDocRef.onSnapshot((doc) => {
-        if (doc.exists) {
-          setUserData(doc.data());
-        }
-      });
+  
+  if (!currentUser) {
+    return (
+      <View style={styles.centered}>
+        <Text>No user data found.</Text>
+      </View>
+    );
+  }
 
-      return () => unsubscribe();
-    }
-  }, [currentUser]);
 
-  console.log(userData);
-
-  const getUserDataValue = (key, defaultValue = 'N/A') => {
-    return userData && userData[key] ? userData[key] : defaultValue;
-  };
-
-  const handleContractor = async () => {
-    try {
-      if (currentUser?.uid) {
-        const querySnapshot = await firestore()
-          .collection('users')
-          .doc(currentUser.uid)
-          .collection('documents')
-          .where('status', '==', 'approved')
-          .get();
-        if (!querySnapshot.empty) {
-          console.log('User has already submitted documents.');
-          navigation.navigate('Services');
-        }
-      } else {
-        // Handle the case where user document does not exist
-        showMessage({
-          message: 'User document not found.',
-          type: 'danger',
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-      showMessage({
-        message: 'An error occurred while fetching user data.',
-        type: 'danger',
-      });
-    }
-  };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.LinearGradientWrapper}>
-        {userData && (
           <LinearGradient
             colors={['#9E41F0', '#4C7BC0']}
             start={{ x: 0, y: 0 }}
@@ -77,58 +38,90 @@ const Profile = ({ navigation }) => {
           >
             <View style={styles.avatarWrapper}>
               <FastImage
-                source={userData.photoURL ? { uri: userData.photoURL } : defaultAvatar}
+                source={currentUser.photoURL ? { uri: currentUser.photoURL } : defaultAvatar}
                 style={styles.avatar}
               />
               <TouchableOpacity onPress={() => navigation.navigate('PersonalInfo')} style={styles.Edit}>
                 <FontAwesomeIcon icon={faPenToSquare} color='#fff' size={30} />
               </TouchableOpacity>
             </View>
-            <Text style={styles.nameText}>{getUserDataValue('displayName')}</Text>
+            <Text style={styles.nameText}>{currentUser.displayName}</Text>
             <View style={styles.infoWrapper}>
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>First Name:</Text>
-                <Text style={styles.infoText}>{getUserDataValue('firstName')}</Text>
+                <Text style={styles.infoText}>{currentUser.firstName}</Text>
               </View>
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>Last Name:</Text>
-                <Text style={styles.infoText}>{getUserDataValue('lastName')}</Text>
+                <Text style={styles.infoText}>{currentUser.lastName}</Text>
               </View>
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>Email:</Text>
-                <Text style={styles.infoText}>{getUserDataValue('email')}</Text>
+                <Text style={styles.infoText}>{currentUser.email}</Text>
               </View>
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>Phone:</Text>
-                <Text style={styles.infoText}>{getUserDataValue('phoneNumbers', []).join(', ')}</Text>
+                <Text style={styles.infoText}>{currentUser.phoneNumbers[0]}</Text>
               </View>
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>Country:</Text>
-                <Text style={styles.infoText}>{getUserDataValue('country')}</Text>
+                <Text style={styles.infoText}>{currentUser.country}</Text>
               </View>
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>State:</Text>
-                <Text style={styles.infoText}>{getUserDataValue('state')}</Text>
+                <Text style={styles.infoText}>{currentUser.state}</Text>
               </View>
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>City:</Text>
-                <Text style={styles.infoText}>{getUserDataValue('city')}</Text>
+                <Text style={styles.infoText}>{currentUser.city}</Text>
               </View>
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>Status:</Text>
-                <Text style={styles.infoText}>{getUserDataValue('status')}</Text>
+                <Text style={styles.infoText}>{currentUser.status}</Text>
               </View>
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>Created:</Text>
                 <Text style={styles.infoText}>
-                  {userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}
+                  {currentUser.timeStamp ? new Date(currentUser.timeStamp).toLocaleDateString() : ''}
                 </Text>
               </View>
             </View>
           </LinearGradient>
-        )}
+
+          <View style={styles.LinearGradientWrapper}>
+              <LinearGradient
+              colors={['#9E41F0', '#4C7BC0']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.profileContainer}
+            > 
+              {currentUser.status == 'user' && (
+              <TouchableOpacity onPress={handleContractor}>
+                <Text style={[styles.btnText]}>Become a Contractor</Text>
+              </TouchableOpacity>
+              )}
+              {currentUser.status == 'contractor' && (
+                <View style={styles.contractorLinks}>
+                <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DocumentUpload')}>
+                  <Text style={[styles.btnText]}>Upload Document</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('Certificate')}>
+                  <Text style={[styles.btnText]}>Upload Certificate</Text>
+                </TouchableOpacity>
+                </View>
+              )}
+              {currentUser.status == 'admin' && (
+                <View style={styles.contractorLinks}>
+                  <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DashBoard')}>
+                    <Text style={[styles.btnText]}>DashBoard</Text>
+                  </TouchableOpacity>
+                  </View>
+                )  
+              }
+            </LinearGradient>
+          </View>
       </View>
-      {!userData && (
+      {!currentUser && (
         <View>
           <Text>No user data found.</Text>
         </View> 
@@ -150,6 +143,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     ...shadowStyle,
     paddingBottom: 100,
+    paddingTop: 20,
   },
   profileContainer: {
     backgroundColor: 'transparent',
@@ -210,6 +204,12 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     ...shadowStyle,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
 });
 

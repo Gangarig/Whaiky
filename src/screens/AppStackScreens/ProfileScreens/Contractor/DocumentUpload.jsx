@@ -174,7 +174,12 @@ const DocumentUpload = ({ navigation }) => {
         message: 'Document uploaded successfully.',
         type: 'success',
       });
-      navigation.navigate('Certificate');
+      if( currentUser.status === 'contractor') {
+         navigation.navigate('Home');
+      } else {
+        navigation.navigate('Certificate');
+      }
+
       // After successful upload, you can reset the form.
       resetForm();
     } catch (error) {
@@ -323,7 +328,7 @@ const DocumentUpload = ({ navigation }) => {
         setModalVisibility={setCountryPickerVisible}
       />
         <PrimaryButton text="Country of Issue " onPress={() => setCountryPickerVisible(true)} />
-        <PrimaryButton text="Save and Continue" onPress={uploadData} />
+        <PrimaryButton text="Upload Document" onPress={uploadData} />
       </ScrollView>
   );
 };

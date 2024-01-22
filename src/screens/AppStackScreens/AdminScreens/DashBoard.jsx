@@ -16,8 +16,7 @@ const DashBoard = ({ navigation }) => {
 
   const fetchSubmissions = async () => {
     if (lastVisible === null && submissions.length > 0) {
-      // No more data to load
-      setLoading(false);
+      setLoading(false); 
       return;
     }
   
@@ -27,7 +26,7 @@ const DashBoard = ({ navigation }) => {
         .collection('submission')
         .orderBy('timeStamp', 'desc')
         .startAfter(lastVisible || 0)
-        .limit(10); // Adjust the limit as per your requirement
+        .limit(10); 
   
       const querySnapshot = await query.get();
   
@@ -83,7 +82,7 @@ const DashBoard = ({ navigation }) => {
         keyExtractor={(item, index) => 'submission-' + index}
         onEndReached={fetchSubmissions}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={() => loading && <Text>Loading more...</Text>}
+        ListFooterComponent={() => loading ? <Text>Loading more...</Text> : null}
       />
     </View>
   );

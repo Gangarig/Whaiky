@@ -6,7 +6,7 @@ import Loading from "../components/Loading";
 import { View, StyleSheet } from "react-native";
 
 function Main() {
-    const { currentUser, setCurrentUser, loading } = useAuth();
+    const { currentUser, loading } = useAuth();
   
     if (loading) {
       return <Loading />;

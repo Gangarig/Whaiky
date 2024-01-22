@@ -8,7 +8,7 @@ GoogleSignin.configure({
   webClientId: '1082121859527-b9t7vui6gp4gj6871i2op86eoi6bt751.apps.googleusercontent.com',
 });
 
-const signInWithGoogle = async (setCurrentUser) => {
+const signInWithGoogle = async () => {
   try {
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
     const { idToken } = await GoogleSignin.signIn();
@@ -23,25 +23,26 @@ const signInWithGoogle = async (setCurrentUser) => {
 
     if (!userDoc.exists) {
       // User does not exist, create a new document in Firestore
+      // Make sure to initialize all the fields you are tracking
       await userDocRef.set({
         uid: user.uid,
         displayName: user.displayName || 'Anonymous',
         email: user.email,
         timeStamp: new Date().getTime(),
-        photoURL: user.photoURL || '', 
-        status : 'user',
+        photoURL: user.photoURL || '',
+        status: 'user',
+        // Initialize other fields as needed
       });
       showMessage({ message: 'Account created and signed in with Google successfully!', type: 'success' });
     } else {
-      // User exists, just signed in
       showMessage({ message: 'Signed in with Google successfully!', type: 'success' });
     }
 
-    // Update the current user state
-    setCurrentUser({ uid: user.uid, displayName: user.displayName, email: user.email, photoURL: user.photoURL });
   } catch (error) {
-    showMessage({ message: 'Sign in Cancelled', type: 'warning' });
+    showMessage({ message: `Error: ${error.message}`, type: 'danger' });
+    console.error(error);
   }
 };
 
 export default signInWithGoogle;
+

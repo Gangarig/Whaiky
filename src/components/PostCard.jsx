@@ -42,7 +42,7 @@ const PostCard = ({ post, onPress }) => {
 
 const styles = StyleSheet.create({
   postCardContainer: {
-    width: 180,
+    width: '100%',
     marginVertical: 3,
     marginHorizontal: 3,
     position: 'relative',

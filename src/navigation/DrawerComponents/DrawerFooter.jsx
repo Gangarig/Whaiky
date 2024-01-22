@@ -13,13 +13,14 @@ const DrawerFooter = ({navigation}) => {
   return (
     <View style={style.container}>
       {currentUser && currentUser.status === 'contractor' ?
-      null:
-      (<TouchableOpacity onPress={()=>navigation.navigate('Services')}>
+      null:(
+      <TouchableOpacity onPress={()=>navigation.navigate('Contractor')}>
         <GradientText text='Become a Contrator' size={20} underline={true}/>
-      </TouchableOpacity>)}
+      </TouchableOpacity>
+      )}
         <View style={style.footerLinks}>
             <TouchableOpacity 
-            onPress={()=>navigation.props.navigation.navigate('Support')}
+            onPress={()=>navigation.navigate('Support')}
             >
               <Text style={style.footerText}>Support</Text>
             </TouchableOpacity>

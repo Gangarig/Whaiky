@@ -7,7 +7,7 @@ import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
 import { useAuth } from '../../../context/AuthContext';
 import PostCard from '../../../components/PostCard';
-import Colors from '../../../constant/Colors';
+import UserTheme from '../../../constant/Theme';
 
 
 const Home = ({ navigation }) => {
@@ -121,20 +121,24 @@ const Home = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => (
-    <PostCard
-      post={item}
-      onPress={() => navigateToPostDetail(item.id)}
-    />
+    <View  style={styles.postCardWrapper}>
+      <PostCard
+        post={item}
+        onPress={() => navigateToPostDetail(item.id)}
+      />
+    </View>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {currentUser ? (
-        <View style={[styles.flashList]}>
         <FlatList
           data={posts}
           renderItem={renderItem}
+          style={styles.flatList}
           keyExtractor={item => item.id}
+          ListEmptyComponent={<Text style={{ textAlign: 'center' }}>No posts available.</Text>}
+          horizontal={false}
           numColumns={2}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -147,12 +151,10 @@ const Home = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
         />
-
-        </View>
       ) : (
         <Text>Please sign in to see posts.</Text>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -161,23 +163,20 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: UserTheme.background,
     width: '100%',
-    paddingVertical:10,
+    
   },
-  flashList:{
-    flex:1,
+  flatList: {
+    flex: 1,
+    backgroundColor: UserTheme.background,
+    width: '100%',
+    paddingHorizontal:5,
   },
-  buttonBox:{
-    backgroundColor:'#FBFBFB',
-    flexDirection:'row',
-    justifyContent:'space-around',
-    alignItems:'center',
-    paddingVertical:10,
-    paddingHorizontal:10,
-    borderRadius:10,
-    marginHorizontal:10,
-  }
-  
+  postCardWrapper: {
+    flex: 1,
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+  },
 
 });

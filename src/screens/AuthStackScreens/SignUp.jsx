@@ -26,10 +26,18 @@ const InputField = ({ label, value, onChangeText, secureTextEntry }) => (
   </View>
 );
 
+
 const SignUp = ({ navigation }) => {
   const [formData, setFormData] = useState({ email: '', password: '', displayName: '' });
   const [errorMessage, setErrorMessage] = useState(null);
   const { setCurrentUser } = useContext(AuthContext);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [agreedToPolicy, setAgreedToPolicy] = useState(false);
+
+  const isEmailValid = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
 
   const isPasswordValid = () => {
     const hasMinLength = formData.password.length >= 8;
@@ -52,16 +60,20 @@ const SignUp = ({ navigation }) => {
   };
 
   const handleSignUp = async () => {
+
+    
     if (!formData.email || !formData.password || !formData.displayName) {
       setErrorMessage('Please fill in all fields');
       return;
     }
-
+    if (!isEmailValid(formData.email)) {
+      setErrorMessage('Invalid email format');
+      return;
+    }
     if (!isPasswordValid()) {
       setErrorMessage('Password must have at least 8 characters and one special character');
       return;
     }
-
     try {
       const userCredential = await auth().createUserWithEmailAndPassword(
         formData.email,
@@ -73,16 +85,13 @@ const SignUp = ({ navigation }) => {
         displayName: formData.displayName,
         email: formData.email,
         status: 'user',
-        timeStamp: new Date().getTime(),
+        timeStamp: firestore.FieldValue.serverTimestamp(),
         photoURL: '',
-      });
-      setCurrentUser({
-        uid: user.uid,
-        displayName: formData.displayName,
-        email: formData.email,
-        status: 'user',
-        photoURL: '',
-        timeStamp: new Date().getTime(),
+        country: '',
+        city: '',
+        state : '',
+        phoneNumbers: '',
+        services: [],
       });
       showMessage({ message: 'Account created successfully!', type: 'success' });
     } catch (error) {
@@ -90,15 +99,24 @@ const SignUp = ({ navigation }) => {
     }
   };
 
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-    setKeyboardVisible(true);
-  });
 
-  const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-    setKeyboardVisible(false);
-  });
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+  
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
+  
+    // Clean up function
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+  
 
   return (
     <SafeAreaView style={styles.container}>

@@ -7,6 +7,7 @@ import Colors from '../../../../constant/Colors';
 import { shadowStyle } from '../../../../constant/Shadow';
 import { Global } from '../../../../constant/Global';
 import FastImage from 'react-native-fast-image';
+import UserTheme from '../../../../constant/Theme';
 
 const LegalInfo = ({navigation}) => {
   const { currentUser } = useAuth();
@@ -52,12 +53,41 @@ const LegalInfo = ({navigation}) => {
             {item.type ? (
               // Render documents
               <>
-                <Text style={styles.documentType}>Document Type: {item.type}</Text>
-                <Text style={styles.docInfo}>Document Number: {item.number}</Text>
-                <Text style={styles.docInfo}>Full Name: {item.fullName}</Text>
-                <Text style={styles.docInfo}>Country of Issue: {item.country}</Text>
-                <Text style={styles.docInfo}>Date of Issue: {item.dateOfIssue}</Text>
-                <Text style={styles.docInfo}>Date of Expiry: {item.dateOfExpiry}</Text>
+              <View style={styles.docInfoWrapper}>
+                <Text style={styles.documentType}>Document Type:</Text>
+                <Text style={styles.docInfo}>{item.type}</Text>
+              </View>
+
+              <View style={styles.docInfoWrapper}>
+                <Text style={styles.docInfo}>Document Number:</Text>
+                <Text style={styles.docInfo}>{item.number}</Text>
+              </View>
+
+              <View style={styles.docInfoWrapper}>
+                <Text style={styles.docInfo}>Full Name:</Text>
+                <Text style={styles.docInfo}>{item.fullName}</Text>
+              </View>
+
+              <View style={styles.docInfoWrapper}>
+                <Text style={styles.docInfo}>Country of Issue:</Text>
+                <Text style={styles.docInfo}>{item.country}</Text>
+              </View>
+
+              <View style={styles.docInfoWrapper}>
+                <Text style={styles.docInfo}>Date of Issue:</Text>
+                <Text style={styles.docInfo}>{item.dateOfIssue}</Text>
+              </View>
+
+              <View style={styles.docInfoWrapper}>
+                <Text style={styles.docInfo}>Date of Expiry:</Text>
+                <Text style={styles.docInfo}>{item.dateOfExpiry}</Text>
+              </View>
+
+              <View style={styles.docInfoWrapper}>
+                <Text style={styles.docInfo}>Document Status:</Text>
+                <Text style={styles.docInfo}>{item.status}</Text>
+              </View>
+
                 {/* Display images as needed */}
                 {item.frontImage && (
                   <FastImage source={{ uri: item.frontImage }} style={styles.image} />
@@ -69,8 +99,14 @@ const LegalInfo = ({navigation}) => {
             ) : (
               // Render certificates
               <>
-                <Text style={styles.certificateTitle}>Certificate Title: {item.title}</Text>
-                <Text>Description: {item.description}</Text>
+              <View style={styles.docInfoWrapper}>
+                <Text style={styles.docInfo}>Certificate Title:</Text>
+                <Text style={styles.docInfo}>{item.title}</Text>
+              </View>             
+               <View style={styles.docInfoWrapper}>
+                <Text style={styles.docInfo}>Description:</Text>
+                <Text style={styles.docInfo}>{item.description}</Text>
+              </View>
                 {/* Display certificate images as needed */}
                 {item.imageUrl && (
                   <FastImage source={{ uri: item.imageUrl }} style={styles.image} />
@@ -88,13 +124,13 @@ const LegalInfo = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
   },
   LinearGradientWrapper: {
     ...shadowStyle
   },
   itemContainer: {
-    backgroundColor: Colors.background,
+    backgroundColor: UserTheme.background,
     padding: 16,
     marginBottom: 16,
     borderRadius: 8,
@@ -104,16 +140,16 @@ const styles = StyleSheet.create({
   documentType: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.white,
+    color: UserTheme.white,
   },
   certificateTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.white,
+    color: UserTheme.white,
   },
   docInfo: {
     fontSize: 16,
-    color: Colors.white,
+    color: UserTheme.white,
     fontWeight: 'bold',
   },
   image: {
@@ -122,7 +158,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.white,
+    borderColor: UserTheme.white,
     ...shadowStyle
   },
   titleWrapper: {
@@ -132,7 +168,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: Colors.lightPrimary,
+    color: UserTheme.lightPrimary,
+  },
+  docInfoWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 

@@ -45,12 +45,17 @@ const DrawerItems = ({navigation}) => {
   return (
     <View style={[drawerItem.container, shadowStyle]}>
       <DrawerItem item='MyPosts' icon="fa-regular fa-file-lines" label="My Posts" />
-      {currentUser && currentUser.status === 'admin' ?(
+      {currentUser.status === 'admin' ?(
       <DrawerItem item='Dashboard' icon="fa-solid fa-desktop" label="Dashboard" />
       ):null}
-      {currentUser && currentUser.status === 'contractor' ?(
-      <DrawerItem item='Contractor' icon="fa-regular fa-address-book" label="Contractor" />
+      {currentUser.status === 'contractor' ?(
+      <>
+      <DrawerItem item='Services' icon="fa-regular fa-address-book" label="Service" />
+      <DrawerItem item='LegalInfo' icon="fa-regular fa-address-book" label="Legal Info" />
+      <DrawerItem item='FeedBack' icon="fa-regular fa-address-book" label="Feed Back" />
+      </>
       ):null}
+
       <DrawerItem item='Settings' icon="fa-solid fa-gear" label="Settings "/>
     </View>
   );
