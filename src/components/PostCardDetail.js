@@ -79,8 +79,8 @@ const PostCardDetail = ({ post }) => {
                 style={[styles.sale]}
               >
               <Text style={styles.saleText}>SALE</Text>
-              <View style={{ flexDirection: 'column' }}>{renderDottedLine()}</View>
-              <View style={{ flexDirection: 'column' }}>
+                <View style={{ flexDirection: 'column' }}>{renderDottedLine()}</View>
+                <View style={{ flexDirection: 'column' }}>
                 <Text style={styles.verticalText}>20</Text> 
               </View>
             </LinearGradient>
@@ -268,7 +268,6 @@ const styles = StyleSheet.create({
     position:'absolute',
     bottom:10,
     right:10,
-    padding:5,
     borderRadius:5,
     height:31,
     width:90,
@@ -285,7 +284,7 @@ const styles = StyleSheet.create({
     fontWeight:'bold',  
   },
   verticalLineDot: {
-    height: 3, 
+    height: 1, 
     width: 3,  
     backgroundColor: UserTheme.white,
     marginVertical: 1, 

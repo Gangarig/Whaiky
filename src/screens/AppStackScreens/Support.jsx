@@ -1,10 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import PrivacyPolicy from '../AuthStackScreens/PrivacyPolicy'
+import TermsModal from '../../components/TermsModal'
 
 const Support = () => {
   return (
-      <PrivacyPolicy />
+    <View>
+      <Text>Support</Text>
+    </View>
   )
 }
 

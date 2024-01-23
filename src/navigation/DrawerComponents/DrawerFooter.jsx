@@ -5,6 +5,7 @@ import GradientText from '../../components/GradientText'
 import { useAuth } from '../../context/AuthContext'
 import Fonts from '../../constant/Fonts'
 import auth from '@react-native-firebase/auth';
+import { text } from '@fortawesome/fontawesome-svg-core'
 
 
 const DrawerFooter = ({navigation}) => {
@@ -12,12 +13,14 @@ const DrawerFooter = ({navigation}) => {
   const {currentUser} = useAuth();
   return (
     <View style={style.container}>
-      {currentUser && currentUser.status === 'contractor' ?
-      null:(
-      <TouchableOpacity onPress={()=>navigation.navigate('Contractor')}>
-        <GradientText text='Become a Contrator' size={20} underline={true}/>
-      </TouchableOpacity>
-      )}
+      {/* {currentUser && currentUser.status === 'contractor' ?
+      null:( */}
+        <GradientText colors={[UserTheme.primary, UserTheme.secondary]} style={style.text}
+        size={20} underline={true}
+        >
+          Become a contractor
+        </GradientText>
+      {/* )} */}
         <View style={style.footerLinks}>
             <TouchableOpacity 
             onPress={()=>navigation.navigate('Support')}
@@ -56,5 +59,8 @@ const style = StyleSheet.create({
       fontStyle: "normal",
       lineHeight: 16,
       color: UserTheme.text,
+    },
+    text:{
+      marginBottom:10,
     }
 })

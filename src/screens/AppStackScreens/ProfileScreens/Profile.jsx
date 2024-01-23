@@ -16,7 +16,7 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();
 
-  
+
   if (!currentUser) {
     return (
       <View style={styles.centered}>
@@ -24,109 +24,123 @@ const Profile = ({ navigation }) => {
       </View>
     );
   }
+  const handleContractor = () => {
+    navigation.navigate('Services');
+  }
 
+  const convertTimestampToDate = (timestamp) => {
+    if (!timestamp) {
+      return 'N/A';
+    }
+    // Convert UNIX timestamp (in milliseconds) to a Date object
+    const date = new Date(timestamp);
+    // Format the date to a readable string
+    return date.toLocaleDateString("en-US"); // Change "en-US" to your preferred locale
+  };
+  
+  
 
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.LinearGradientWrapper}>
-          <LinearGradient
-            colors={['#9E41F0', '#4C7BC0']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.profileContainer}
-          >
-            <View style={styles.avatarWrapper}>
-              <FastImage
-                source={currentUser.photoURL ? { uri: currentUser.photoURL } : defaultAvatar}
-                style={styles.avatar}
-              />
-              <TouchableOpacity onPress={() => navigation.navigate('PersonalInfo')} style={styles.Edit}>
-                <FontAwesomeIcon icon={faPenToSquare} color='#fff' size={30} />
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.nameText}>{currentUser.displayName}</Text>
-            <View style={styles.infoWrapper}>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>First Name:</Text>
-                <Text style={styles.infoText}>{currentUser.firstName}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>Last Name:</Text>
-                <Text style={styles.infoText}>{currentUser.lastName}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>Email:</Text>
-                <Text style={styles.infoText}>{currentUser.email}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>Phone:</Text>
-                <Text style={styles.infoText}>{currentUser.phoneNumbers[0]}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>Country:</Text>
-                <Text style={styles.infoText}>{currentUser.country}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>State:</Text>
-                <Text style={styles.infoText}>{currentUser.state}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>City:</Text>
-                <Text style={styles.infoText}>{currentUser.city}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>Status:</Text>
-                <Text style={styles.infoText}>{currentUser.status}</Text>
-              </View>
-              <View style={styles.infoBox}>
-                <Text style={styles.infoText}>Created:</Text>
-                <Text style={styles.infoText}>
-                  {currentUser.timeStamp ? new Date(currentUser.timeStamp).toLocaleDateString() : ''}
-                </Text>
-              </View>
-            </View>
-          </LinearGradient>
-
-          <View style={styles.LinearGradientWrapper}>
-              <LinearGradient
-              colors={['#9E41F0', '#4C7BC0']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.profileContainer}
-            > 
-              {currentUser.status == 'user' && (
-              <TouchableOpacity onPress={handleContractor}>
-                <Text style={[styles.btnText]}>Become a Contractor</Text>
-              </TouchableOpacity>
-              )}
-              {currentUser.status == 'contractor' && (
-                <View style={styles.contractorLinks}>
-                <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DocumentUpload')}>
-                  <Text style={[styles.btnText]}>Upload Document</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('Certificate')}>
-                  <Text style={[styles.btnText]}>Upload Certificate</Text>
-                </TouchableOpacity>
-                </View>
-              )}
-              {currentUser.status == 'admin' && (
-                <View style={styles.contractorLinks}>
-                  <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DashBoard')}>
-                    <Text style={[styles.btnText]}>DashBoard</Text>
-                  </TouchableOpacity>
-                  </View>
-                )  
-              }
-            </LinearGradient>
+  <ScrollView style={styles.container}>
+    <View style={styles.LinearGradientWrapper}>
+      <LinearGradient
+        colors={['#9E41F0', '#4C7BC0']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.profileContainer}
+      >
+        <View style={styles.avatarWrapper}>
+          <FastImage
+            source={currentUser.photoURL ? { uri: currentUser.photoURL } : defaultAvatar}
+            style={styles.avatar}
+          />
+          <TouchableOpacity onPress={() => navigation.navigate('PersonalInfo')} style={styles.Edit}>
+            <FontAwesomeIcon icon={faPenToSquare} color='#fff' size={30} />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.nameText}>{currentUser.displayName}</Text>
+        <View style={styles.infoWrapper}>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>First Name:</Text>
+            <Text style={styles.infoText}>{currentUser.firstName || 'N/A'}</Text>
           </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>Last Name:</Text>
+            <Text style={styles.infoText}>{currentUser.lastName || 'N/A'}</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>Email:</Text>
+            <Text style={styles.infoText}>{currentUser.email || 'N/A'}</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>Phone:</Text>
+            <Text style={styles.infoText}>{currentUser.phoneNumber || 'N/A'}</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>Country:</Text>
+            <Text style={styles.infoText}>{currentUser.country || 'N/A'}</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>State:</Text>
+            <Text style={styles.infoText}>{currentUser.state || 'N/A'}</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>City:</Text>
+            <Text style={styles.infoText}>{currentUser.city || 'N/A'}</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>Status:</Text>
+            <Text style={styles.infoText}>{currentUser.status || 'N/A'}</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>Created:</Text>
+            <Text style={styles.infoText}>
+              {convertTimestampToDate(currentUser.timeStamp)}
+            </Text>
+          </View>
+        </View>
+      </LinearGradient>
+
+      <View style={styles.LinearGradientWrapper}>
+        <LinearGradient
+          colors={['#9E41F0', '#4C7BC0']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.profileContainer}
+        >
+          {currentUser.status == 'user' && (
+            <TouchableOpacity onPress={handleContractor}>
+              <Text style={[styles.btnText]}>Become a Contractor</Text>
+            </TouchableOpacity>
+          )}
+          {currentUser.status == 'contractor' && (
+            <View style={styles.contractorLinks}>
+              <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DocumentUpload')}>
+                <Text style={[styles.btnText]}>Upload Document</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('Certificate')}>
+                <Text style={[styles.btnText]}>Upload Certificate</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {currentUser.status == 'admin' && (
+            <View style={styles.contractorLinks}>
+              <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DashBoard')}>
+                <Text style={[styles.btnText]}>DashBoard</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </LinearGradient>
       </View>
-      {!currentUser && (
-        <View>
-          <Text>No user data found.</Text>
-        </View> 
-      )}
-    </ScrollView>
+    </View>
+    {!currentUser && (
+      <View>
+        <Text>No user data found.</Text>
+      </View>
+    )}
+  </ScrollView>
+
   );
 };
 

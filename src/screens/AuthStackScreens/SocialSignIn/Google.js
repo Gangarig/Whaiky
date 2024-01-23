@@ -23,7 +23,6 @@ const signInWithGoogle = async () => {
 
     if (!userDoc.exists) {
       // User does not exist, create a new document in Firestore
-      // Make sure to initialize all the fields you are tracking
       await userDocRef.set({
         uid: user.uid,
         displayName: user.displayName || 'Anonymous',
@@ -31,7 +30,7 @@ const signInWithGoogle = async () => {
         timeStamp: new Date().getTime(),
         photoURL: user.photoURL || '',
         status: 'user',
-        // Initialize other fields as needed
+        TermsAndConditions: 'agreed',
       });
       showMessage({ message: 'Account created and signed in with Google successfully!', type: 'success' });
     } else {
@@ -39,10 +38,15 @@ const signInWithGoogle = async () => {
     }
 
   } catch (error) {
-    showMessage({ message: `Error: ${error.message}`, type: 'danger' });
-    console.error(error);
+    if (error.code === '12501' || error.message.includes('The user canceled the sign-in flow')) {
+      // User cancelled the sign-in, handle it or ignore it
+      console.log('User cancelled the Google Sign-In');
+    } else {
+      // Handle other errors differently
+      showMessage({ message: `Error: ${error.message}`, type: 'danger' });
+      console.error('Google Sign-In error:', error);
+    }
   }
 };
 
 export default signInWithGoogle;
-

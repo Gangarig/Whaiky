@@ -1,5 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, Keyboard, Platform } from 'react-native';
+import {
+  View, Text, TextInput, StyleSheet, ScrollView,
+  Keyboard, Modal, Platform
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from '../../context/AuthContext';
@@ -12,6 +15,7 @@ import signInWithGoogle from './SocialSignIn/Google';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { shadowStyle } from '../../constant/Shadow';
 import UserTheme from '../../constant/Theme';
+import TermsModal from '../../components/TermsModal';
 
 const InputField = ({ label, value, onChangeText, secureTextEntry }) => (
   <View>
@@ -26,42 +30,26 @@ const InputField = ({ label, value, onChangeText, secureTextEntry }) => (
   </View>
 );
 
-
 const SignUp = ({ navigation }) => {
   const [formData, setFormData] = useState({ email: '', password: '', displayName: '' });
   const [errorMessage, setErrorMessage] = useState(null);
   const { setCurrentUser } = useContext(AuthContext);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [agreedToPolicy, setAgreedToPolicy] = useState(false);
+  const [termsModalVisible, setTermsModalVisible] = useState(false);
+  const [googleUser , setGoogleUser] = useState(null);
 
-  const isEmailValid = (email) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
+  const handleInputChange = (name, value) => {
+    setFormData(prevState => ({ ...prevState, [name]: value }));
   };
 
+  const isEmailValid = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isPasswordValid = () => {
     const hasMinLength = formData.password.length >= 8;
     const hasSpecialChar = /[~!@#\$%\^&\*\(\)_+\-=\[\]{}|;:'",.<>\\?]/.test(formData.password);
     return hasMinLength && hasSpecialChar;
   };
 
-  useEffect(() => {
-    if (errorMessage) {
-      showMessage({ message: errorMessage, type: 'danger' });
-    }
-    return () => {
-      setFormData({ email: '', password: '', displayName: '' });
-      setErrorMessage(null);
-    };
-  }, [errorMessage]);
-
-  const handleInputChange = (name, value) => {
-    setFormData((prevState) => ({ ...prevState, [name]: value }));
-  };
-
-  const handleSignUp = async () => {
-
-    
+  const handleSignUp = () => {
     if (!formData.email || !formData.password || !formData.displayName) {
       setErrorMessage('Please fill in all fields');
       return;
@@ -74,10 +62,24 @@ const SignUp = ({ navigation }) => {
       setErrorMessage('Password must have at least 8 characters and one special character');
       return;
     }
+    setTermsModalVisible(true);
+  };
+
+  const handleTermsAccept = async () => {
+    setTermsModalVisible(false);
+    if (googleUser) {
+      try {
+        // Proceed with Google Sign-In
+        await signInWithGoogle(setCurrentUser);
+      } catch (error) {
+        showMessage({ message: `Error: ${error.message}`, type: 'danger' });
+      }
+      setGoogleUser(null); // Reset Google user state
+    } else {
+
     try {
       const userCredential = await auth().createUserWithEmailAndPassword(
-        formData.email,
-        formData.password
+        formData.email, formData.password
       );
       const user = userCredential.user;
       await firestore().collection('users').doc(user.uid).set({
@@ -89,34 +91,52 @@ const SignUp = ({ navigation }) => {
         photoURL: '',
         country: '',
         city: '',
-        state : '',
+        state: '',
         phoneNumbers: '',
         services: [],
+        TermsAndConditions: 'agreed',
       });
       showMessage({ message: 'Account created successfully!', type: 'success' });
     } catch (error) {
       setErrorMessage(error.message);
     }
+    }
+  
   };
 
+  const handleTermsClose = () => {
+    setTermsModalVisible(false);
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setGoogleUser(true); 
+      setTermsModalVisible(true); 
+    } catch (error) {
+      showMessage({ message: `Google Sign-In Error: ${error.message}`, type: 'danger' });
+    }
+  };
 
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisible(true);
     });
-  
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardVisible(false);
     });
-  
-    // Clean up function
+
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
   }, []);
-  
+
+  useEffect(() => {
+    if (errorMessage) {
+      showMessage({ message: errorMessage, type: 'danger' });
+    }
+  }, [errorMessage]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -130,44 +150,35 @@ const SignUp = ({ navigation }) => {
         contentContainerStyle={styles.scrollView}
         style={{ marginBottom: keyboardVisible ? 0 : 100 }}
       >
-        <View style={[styles.content,shadowStyle]}>
+        <View style={[styles.content, shadowStyle]}>
           <Text style={[Global.title, styles.title]}>Create new account</Text>
-          <InputField
-            label="User name"
-            value={formData.displayName}
-            onChangeText={(text) => handleInputChange('displayName', text)}
-          />
-          <InputField
-            label="Email address"
-            value={formData.email}
-            onChangeText={(text) => handleInputChange('email', text)}
-          />
-          <InputField
-            label="Password"
-            value={formData.password}
-            onChangeText={(text) => handleInputChange('password', text)}
-            secureTextEntry={true}
-          />
+          <InputField label="User name" value={formData.displayName} onChangeText={text => handleInputChange('displayName', text)} />
+          <InputField label="Email address" value={formData.email} onChangeText={text => handleInputChange('email', text)} />
+          <InputField label="Password" value={formData.password} onChangeText={text => handleInputChange('password', text)} secureTextEntry={true} />
         </View>
         <View style={[styles.Buttons, Global.center]}>
           <GradientButton text="CONTINUE" onPress={handleSignUp} />
           <Text style={Global.text}>or</Text>
           <GoogleSigninButton
-            style={[styles.googleButton,shadowStyle]}
+            style={[styles.googleButton, shadowStyle]}
             size={GoogleSigninButton.Size.Wide}
             color={GoogleSigninButton.Color.Dark}
-            onPress={() => signInWithGoogle(setCurrentUser)}
+            onPress={handleGoogleSignIn}
           />
           <Text style={Global.text}>
             Already have an account?{' '}
             <Text onPress={() => navigation.navigate('login')} style={Global.link}>
-              {' '}
               Sign-in
             </Text>{' '}
             instead
           </Text>
         </View>
       </ScrollView>
+      <TermsModal 
+        visible={termsModalVisible} 
+        onAccept={handleTermsAccept} 
+        onClose={handleTermsClose} 
+      />
     </SafeAreaView>
   );
 };
@@ -215,7 +226,6 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 4,
     backgroundColor: UserTheme.white,
-
   },
 });
 

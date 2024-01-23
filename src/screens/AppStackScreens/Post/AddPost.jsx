@@ -29,6 +29,7 @@ import { shadowStyle } from '../../../constant/Shadow';
 import FastImage from 'react-native-fast-image';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import ImageView from "react-native-image-viewing";
+import Fonts from '../../../constant/Fonts';
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -309,7 +310,6 @@ const AddPost = ({ navigation }) => {
     });
     closeModal();
   };
-  
 
   return (
     <ScrollView style={styles.container}
@@ -346,23 +346,33 @@ const AddPost = ({ navigation }) => {
       )}
         {post.images.length < 1 && (
         <TouchableOpacity onPress={pickImages} style={styles.imageInput}>
-            <GradientText size={25} text="UPLOAD" />
-            <GradientText size={25} text="IMAGE" />
+              <GradientText colors={[UserTheme.primary, UserTheme.secondary]} style={styles.GradientText}
+              size={25}
+              >
+                UPLOAD
+            </GradientText>
+            <GradientText colors={[UserTheme.primary, UserTheme.secondary]} style={styles.GradientText}
+              size={25}
+              >
+                IMAGES
+            </GradientText>
         </TouchableOpacity>
         )} 
-          {post.images.map((image, index) => (
-            <View style={styles.imageInput}>
-            <View key={index} style={styles.imageWrapper}>
-              <FastImage source={{ uri: image.path }} style={styles.image} />
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={() => handleImageDelete(index)}
-              >
-                <FontAwesomeIcon icon='fa-solid fa-x' size={25} color={UserTheme.white} />
-              </TouchableOpacity>
-            </View>
+        
+        {post.images && post.images.length > 0 && post.images.map((image, index) => (
+            <View style={styles.imageInput} key={index}>
+              <View style={styles.imageWrapper}>
+                <FastImage source={{ uri: image.path }} style={styles.image} />
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={() => handleImageDelete(index)}
+                >
+                  <FontAwesomeIcon icon='fa-solid fa-x' size={25} color={UserTheme.white} />
+                </TouchableOpacity>
+              </View>
             </View>
           ))}
+
         <TextInput
           style={styles.title}
           placeholder="Title"
@@ -389,15 +399,15 @@ const AddPost = ({ navigation }) => {
       <View style={styles.postDetails}>
       {post.country && (
         <View style={styles.locationInfo}>
-          <Text style={[Global.titleSecondary,{color:UserTheme.white}]}>Country: {post.country}</Text>
-          <Text style={[Global.titleSecondary,{color:UserTheme.white}]}>State: {post.state}</Text>
-          <Text style={[Global.titleSecondary,{color:UserTheme.white}]}>City: {post.city}</Text>
+          <Text style={[styles.postInfo,{color:UserTheme.white}]}>Country: {post.country}</Text>
+          <Text style={[styles.postInfo,{color:UserTheme.white}]}>State: {post.state}</Text>
+          <Text style={[styles.postInfo,{color:UserTheme.white}]}>City: {post.city}</Text>
         </View>
       )}
       {post.categoryId && (
         <View style={styles.categoryInfo}>
-          <Text style={[Global.titleSecondary,{color:UserTheme.white}]}>Category: {post.categoryText}</Text>
-          <Text style={[Global.titleSecondary,{color:UserTheme.white}]}>Option: {post.optionText}</Text>
+          <Text style={[styles.postInfo,{color:UserTheme.white}]}>Category: {post.categoryText}</Text>
+          <Text style={[styles.postInfo,{color:UserTheme.white}]}>Option: {post.optionText}</Text>
         </View>
       )}
       </View>
@@ -609,7 +619,17 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
   },
-
+  postInfo: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: UserTheme.text,
+  },
+  GradientText:{
+    fontSize:20,
+    fontWeight:'bold',
+    textAlign:'center',
+    color:UserTheme.primary,
+  },
 
 
 });

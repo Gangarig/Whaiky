@@ -29,7 +29,7 @@ const DrawerItems = ({navigation}) => {
             end={{ x: 1, y: 0 }}
             colors={[UserTheme.primary, UserTheme.secondary]}
           >
-            <FontAwesomeIcon icon={icon} size={isActive ? 20 : 24} color={UserTheme.white} />
+            <FontAwesomeIcon icon={icon} size={isActive ? 25 : 25} color={UserTheme.white} />
             <Text style={[drawerItem.text, { color: UserTheme.white }]}>{label}</Text>
           </LinearGradient>
         ) : (
@@ -50,9 +50,9 @@ const DrawerItems = ({navigation}) => {
       ):null}
       {currentUser.status === 'contractor' ?(
       <>
-      <DrawerItem item='Services' icon="fa-regular fa-address-book" label="Service" />
-      <DrawerItem item='LegalInfo' icon="fa-regular fa-address-book" label="Legal Info" />
-      <DrawerItem item='FeedBack' icon="fa-regular fa-address-book" label="Feed Back" />
+      <DrawerItem item='Services'  icon="fa-solid fa-icons"  label="Service" />
+      <DrawerItem item='LegalInfo' icon="fa-solid fa-id-card"  label="Legal Info" />
+      <DrawerItem item='FeedBack' icon="fa-solid fa-envelopes-bulk"  label="Feed Back" />
       </>
       ):null}
 

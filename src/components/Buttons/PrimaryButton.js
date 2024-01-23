@@ -6,14 +6,10 @@ import UserTheme from '../../constant/Theme';
 const PrimaryButton = ({
   text,
   onPress,
-
 }) => {
-  const TouchableComponent =
-    Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
-
   return (
 
-    <TouchableComponent onPress={onPress} style={[shadowStyle]}>
+    <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
         <LinearGradient
           colors={['#9E42F0', '#4C7BC0']}
           start={{ x: 0, y: 0 }}
@@ -22,7 +18,7 @@ const PrimaryButton = ({
         >
           <Text style={[styles.text]}>{text}</Text>
         </LinearGradient>
-    </TouchableComponent>
+    </TouchableOpacity>
   );
 };
 
@@ -34,6 +30,7 @@ const styles = StyleSheet.create({
     height:30,
     borderRadius: 5,
     backgroundColor: UserTheme.primary,
+    ...shadowStyle,
   },
   text: {
     fontSize: 15,

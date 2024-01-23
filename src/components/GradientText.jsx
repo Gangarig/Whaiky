@@ -1,37 +1,23 @@
-import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
-import LinearGradient from 'react-native-linear-gradient';
+import {Text} from 'react-native';
 import MaskedView from '@react-native-masked-view/masked-view';
-import UserTheme from '../constant/Theme';
+import LinearGradient from 'react-native-linear-gradient';
+import { StyleSheet } from 'react-native';
+import Fonts from '../constant/Fonts';
 
-const GradientText = ({ text, size, underline }) => {
-  const fontSize = size || 20; 
 
-  const renderText = () => {
-    if (underline) {
-      return (
-        <Text style={[styles.GradientText, { fontSize }]}>
-          <Text style={{ textDecorationLine: 'underline' }}>{text}</Text>
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={[styles.GradientText, { fontSize }]}>{text}</Text>
-      );
-    }
-  };
+const GradientText = ({ colors, size = 20, underline = false, style, ...rest }) => {
+  const textStyle = [
+    styles.text,
+    style,
+    { fontSize: size, textDecorationLine: underline ? 'underline' : 'none' },
+  ];
 
   return (
-    <MaskedView maskElement={renderText()}>
-      <LinearGradient
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        colors={[UserTheme.primary, UserTheme.secondary]}
-
-      >
-        <Text style={[styles.GradientText, { opacity: 0, fontSize }]}>{text}</Text>
+    <MaskedView maskElement={<Text {...rest} style={textStyle} />}>
+      <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+        <Text {...rest} style={[...textStyle, styles.hiddenText]} />
       </LinearGradient>
-
     </MaskedView>
   );
 };
@@ -39,10 +25,12 @@ const GradientText = ({ text, size, underline }) => {
 export default GradientText;
 
 const styles = StyleSheet.create({
-  GradientText: {
-    fontFamily: 'Arial Rounded MT Bold',
-    fontWeight: '400',
-    fontStyle: 'normal',
-    lineHeight: 36,
+  text: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    fontFamily:Fonts.primary,
+  },
+  hiddenText: {
+    opacity: 0, 
   },
 });
