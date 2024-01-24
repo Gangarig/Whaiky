@@ -30,7 +30,7 @@ const ProfileCard = ({ item, onPress }) => {
   return (
       <TouchableOpacity onPress={onPress} style={[styles.profileCard,shadowStyle]}>
         <View style={[styles.profileImageWrapper]}>
-          <FastImage source={avatarImage} style={[styles.profileImage]} />
+          <FastImage source={avatarImage} style={[styles.profileImage,shadowStyle]} />
         </View>
         <View style={styles.profileCardInfo}>
           <Text style={styles.name}>{userName}</Text>

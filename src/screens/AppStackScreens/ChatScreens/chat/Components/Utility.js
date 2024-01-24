@@ -4,7 +4,8 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import uuid from 'react-native-uuid';
 
-export const sendMessage = async (message, chatId) => {
+export const sendMessage = async (message, chatId, recipientUser) => {
+  console.log("sendMessage: ", message, chatId);
   try {
     // Destructuring message object
     const { text, user, imageUrls } = message;
@@ -22,12 +23,17 @@ export const sendMessage = async (message, chatId) => {
     // Prepare message data for Firestore
     let messageData = {
       text: text || '', 
-      user: {
+      user: { // Sender's information
         _id: user._id,
         name: user.name,
         avatar: user.avatar,
       }, 
-      senderId: user._id,
+      recipient: { // Recipient's information
+        _id: recipientUser._id,
+        name: recipientUser.name,
+        avatar: recipientUser.avatar,
+      },
+      senderId: user._id, // ID of the sender
       timestamp: firestore.FieldValue.serverTimestamp(),
       read: false,
     };

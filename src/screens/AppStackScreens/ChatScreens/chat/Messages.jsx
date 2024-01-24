@@ -75,7 +75,13 @@ const Messages = ({ chatId }) => {
         messages={messages}
         onSend={handleSend}
         user={{ _id: currentUser.uid }}
-        renderInputToolbar={props => <Input onSend={handleSend} chatId={chatId} />}  
+        renderInputToolbar={props =>
+          <Input 
+          onSend={handleSend} 
+          chatId={chatId}
+          senderUser={currentUserDetails}
+          recipientUser={chatRecipientDetails}
+          />}  
         renderBubble={props => <Bubble {...props} />}
         keyboardShouldPersistTaps={'never'}
         renderAvatar={null}

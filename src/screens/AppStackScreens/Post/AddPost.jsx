@@ -229,7 +229,6 @@ const AddPost = ({ navigation }) => {
   };
 
   const handlePost = async () => {
-    console.log('Post:', post);
     if (!post.title || !post.price || !post.description) {
       showMessage({
         message: 'Please ensure the title, price, and description are filled out.',
@@ -257,15 +256,27 @@ const AddPost = ({ navigation }) => {
           imageUrls.push(downloadURL);
         }
       }
-  
       const postData = {
         ...post,
         images: imageUrls,
         timestamp: firestore.FieldValue.serverTimestamp(),
         postId: newPostRef.id,
       };
-  
       await newPostRef.set(postData);
+      // Update the user's document with the postId
+      await firestore()
+      .collection('users')
+      .doc(currentUser.uid)
+      .collection('myPosts')
+      .doc(newPostRef.id)
+      .set({ 
+        postId: newPostRef.id,
+        timestamp: firestore.FieldValue.serverTimestamp(),
+       });
+
+ 
+
+
   
       setPost({
         title: '',
@@ -376,17 +387,20 @@ const AddPost = ({ navigation }) => {
         <TextInput
           style={styles.title}
           placeholder="Title"
+          value={post.title}
           onChangeText={(text) => setPost({ ...post, title: text })}
         />
           <TextInput
           style={styles.price}
           placeholder="Price"
+          value={post.price}
           onChangeText={(text) => setPost({ ...post, price: text })}
           keyboardType="numeric"
         />
         <TextInput
           style={styles.description}
           placeholder="Description"
+          value={post.description}
           onChangeText={(text) => setPost({ ...post, description: text })}
           multiline={true}
         />

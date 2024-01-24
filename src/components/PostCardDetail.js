@@ -10,12 +10,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Fonts from '../constant/Fonts';
 import PrimaryButton from './Buttons/PrimaryButton';
 import LinearGradient from 'react-native-linear-gradient';
+import { useAuth } from '../context/AuthContext';
+import { DeletePost,AddSale,EditPost } from '../screens/AppStackScreens/Post/PostUtility';
+
 
 
 
 const PostCardDetail = ({ post }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isImageViewVisible, setImageViewVisible] = useState(false);
+  const { currentUser } = useAuth();
 
   const postDate = post.timestamp && post.timestamp.toDate instanceof Function
     ? post.timestamp.toDate().toLocaleDateString()
@@ -128,10 +132,21 @@ const PostCardDetail = ({ post }) => {
         <View style={styles.postBody}>
           <Text style={styles.postDescription}>{post.description}</Text>
         </View>
-        <View style={styles.contactContainer}>
-          <PrimaryButton text="Contact" onPress={handleContact} />
-          <FastImage style={styles.avatar} source={{ uri: post.ownerAvatar }} />
+
+        {currentUser.uid === post.ownerId ? (
+              <View style={styles.postEdit}>
+                <PrimaryButton text='Delete' onPress={()=>DeletePost(post)} />
+                <PrimaryButton text='Edit' onPress={()=>EditPost(post)} />
+                <PrimaryButton text='Add Sale' onPress={()=>AddSale(post)} />
+              </View>
+        ):
+        <View style={styles.contactContainerWrapper}>
+          <View style={styles.contactContainer}>
+            <PrimaryButton text="Contact" onPress={handleContact} />
+            <FastImage style={styles.avatar} source={{ uri: post.ownerAvatar }} />
+          </View>
         </View>
+        }
        
       </View>
       {renderImageViewer()}
@@ -215,21 +230,30 @@ const styles = StyleSheet.create({
   },
   postBody: {
     flexDirection: 'column',
-    minHeight: 200,
   },
   postDescription: {
     fontSize: 16,
     fontFamily: Fonts.querternary,
     paddingVertical: 20,
     textAlign: 'justify',
+    marginBottom: 30,
+  },
+  contactContainerWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    paddingVertical: 10,
   },
   contactContainer: {
-    alignItems: 'center',
-    marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    justifyContent: 'center',
-    gap: 40,
+    alignItems: 'center',
+    paddingVertical: 10,
+    width: '90%',
+    borderColor: UserTheme.primary,
+    borderWidth: 1,
+    ...shadowStyle,
+    borderRadius: 10,
   },
   postTitle: {
     fontSize: 20,
@@ -314,5 +338,16 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginRight: 10,
+  },
+  postEdit:{
+    flexDirection:'row',
+    justifyContent:'space-around',
+    alignItems:'center',
+    paddingVertical:10,
+    width:'100%',
+    borderColor:UserTheme.primary,
+    borderWidth:1,
+    ...shadowStyle,
+    borderRadius:10,
   },
 });

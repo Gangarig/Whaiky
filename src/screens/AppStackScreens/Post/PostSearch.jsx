@@ -11,6 +11,7 @@ import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import shadowStyle from '../../../constant/Shadow';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { showMessage } from 'react-native-flash-message';
+import UserTheme from '../../../constant/Theme';
 
 const PostSearch = ({ navigation }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -301,7 +302,7 @@ const PostSearch = ({ navigation }) => {
               setLocationModalVisible(false);
             }}
           >
-            <View style={styles.fullScreenModal}>
+            <View style={styles.locationModal}>
               <TouchableOpacity 
                 style={styles.modalOverlay} 
                 activeOpacity={1} 
@@ -325,7 +326,7 @@ const PostSearch = ({ navigation }) => {
               setCategoryModalVisible(false);
             }}
           >
-            <View style={styles.fullScreenModal}>
+            <View style={styles.categoryModal}>
               <TouchableOpacity
                 style={styles.modalOverlay}
                 activeOpacity={1}
@@ -347,7 +348,7 @@ const PostSearch = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
+    backgroundColor: UserTheme.background,
     flex: 1,
     paddingHorizontal: 10,
   },
@@ -360,43 +361,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    backgroundColor : Colors.background,
-    borderColor : Colors.primary,
+    backgroundColor : UserTheme.background,
+    borderColor : UserTheme.primary,
     borderWidth : 1,
     borderRadius : 10,
     marginTop: 10,
   },
   btnContainer:{
-    width: '100%',
     flexDirection: 'column',
     paddingHorizontal: 20,
     paddingVertical: 10,
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    width: '100%',
     gap: 10,
   },
   searchLabel:{
     marginBottom: 10,
   },
   infoContainer:{
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: UserTheme.primaryLight,
     marginTop: 10,
     padding: 10,
     borderRadius: 5,
     width: 296,
   },
   white:{
-    color: Colors.white,
+    color: UserTheme.white,
     fontWeight: 'bold',
   },
-  fullScreenModal: {
+  locationModal: {
     height: 450,
     width: '100%',
     bottom: 0,
     position: 'absolute',
     borderTopColor: '#696969',
     borderTopWidth: 2,
-    backgroundColor: Colors.background,
+    backgroundColor: UserTheme.background,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  categoryModal: {
+    height: 350,
+    width: '100%',
+    bottom: 0,
+    position: 'absolute',
+    borderTopColor: '#696969',
+    borderTopWidth: 2,
+    backgroundColor: UserTheme.background,
+    paddingTop: 20,
     alignItems: 'center',
   },
   subInfo:{
@@ -408,7 +421,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center',
-    backgroundColor: Colors.white,
+    backgroundColor: UserTheme.white,
     borderRadius: 5,
   },
   more:{

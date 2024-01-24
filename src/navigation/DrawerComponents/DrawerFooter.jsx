@@ -13,14 +13,18 @@ const DrawerFooter = ({navigation}) => {
   const {currentUser} = useAuth();
   return (
     <View style={style.container}>
-      {/* {currentUser && currentUser.status === 'contractor' ?
-      null:( */}
-        <GradientText colors={[UserTheme.primary, UserTheme.secondary]} style={style.text}
-        size={20} underline={true}
+    {
+      currentUser && !(currentUser.status === 'contractor' || currentUser.status === 'admin') && (
+        <GradientText 
+          colors={[UserTheme.primary, UserTheme.secondary]} 
+          style={style.text}
+          size={20} 
+          underline={true}
         >
           Become a contractor
         </GradientText>
-      {/* )} */}
+      )
+    }
         <View style={style.footerLinks}>
             <TouchableOpacity 
             onPress={()=>navigation.navigate('Support')}

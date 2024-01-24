@@ -58,16 +58,18 @@ const DashBoard = ({ navigation }) => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
+      <View style={{...shadowStyle}}>
       <LinearGradient
         colors={['#9E41F0', '#4C7BC0']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={styles.gradient}
+        style={[styles.gradient,]}
       >
         <Text style={[Global.title, styles.white]}>Dashboard</Text>
         <Text style={[Global.titleSecondary, styles.white]}>Document submissions</Text>
       </LinearGradient>
+      </View>
       <FlatList
         data={submissions}
         renderItem={({ item }) => (

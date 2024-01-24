@@ -9,8 +9,13 @@ import { shadowStyle } from '../constant/Shadow';
 import UserTheme from '../constant/Theme';
 import Fonts from '../constant/Fonts';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useAuth } from '../context/AuthContext';
+import PrimaryButton from './Buttons/PrimaryButton';
 
 const PostCard = ({ post, onPress }) => {
+  const { currentUser } = useAuth();
+  console.log(post);
+  console.log(currentUser);
   return (
     <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
       <LinearGradient
@@ -42,11 +47,14 @@ const PostCard = ({ post, onPress }) => {
 
 const styles = StyleSheet.create({
   postCardContainer: {
+    maxWidth: 180,
     width: '100%',
     marginVertical: 3,
     marginHorizontal: 3,
     position: 'relative',
     borderRadius: 7,
+    borderWidth: 2,
+    borderColor: UserTheme.querternary,
   },
   noImage:{
     justifyContent:'center',
@@ -70,7 +78,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: UserTheme.querternary,
-    borderWidth: 2,
+    borderWidth: .5,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
   },

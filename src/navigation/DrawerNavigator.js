@@ -9,14 +9,14 @@ import { showMessage } from 'react-native-flash-message';
 import StackHeader from './ScreenComponents/StackHeader';
 import UserTheme from '../constant/Theme';
 import BottomTabs from './BottomTabs';
-import MyPosts from '../screens/AppStackScreens/MyPosts';
+import MyPosts from '../screens/AppStackScreens/Post/MyPosts';
 import Support from '../screens/AppStackScreens/Support';
 import Services from '../screens/AppStackScreens/ProfileScreens/Contractor/ServiceCategory';
 import LegalInfo from '../screens/AppStackScreens/ProfileScreens/Contractor/LegalInfo';
 import DocumentUpload from '../screens/AppStackScreens/ProfileScreens/Contractor/DocumentUpload';
 import Certificate from '../screens/AppStackScreens/ProfileScreens/Contractor/Certificate';
 import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedback';
-
+import PostStackScreen from './PostStack';
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
@@ -44,12 +44,12 @@ function DrawerNavigator() {
         }
       />
       <Drawer.Screen
-        name="MyPosts"
-        component={MyPosts}
-        options={{
-          headerShown: true,
-          header: props => <StackHeader title="MyPosts"  isHomeScreen={false} {...props} />,
-        }}
+        name="MyPostsScreen"
+        component={PostStackScreen}
+        options={({ navigation }) => ({
+          headerShown: false,
+          header: props => <StackHeader title="MyPosts" navigation={navigation}  isHomeScreen={false} {...props} />,
+        })}
       />
       {currentUser && currentUser.status === 'admin' ? (
         <Drawer.Screen

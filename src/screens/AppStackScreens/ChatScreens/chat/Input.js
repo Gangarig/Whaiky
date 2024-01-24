@@ -11,15 +11,24 @@ import { Platform } from 'react-native';
 
 
 
-const Input = ({ onSend, chatId }) => {
+const Input = ({ onSend, chatId, senderUser, recipientUser }) => {
   const [text, setText] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
 
   const handleTextSend = () => {
     const messageData = {
       text: text.trim(),
-      user: { _id: chatId },
-      image: imageUrls,
+      user: { 
+        _id: senderUser._id, 
+        name: senderUser.name,
+        avatar: senderUser.avatar
+      },
+      recipient: { 
+        _id: recipientUser._id, 
+        name: recipientUser.name,
+        avatar: recipientUser.avatar
+      },
+      imageUrls: imageUrls,
     };
 
     if (messageData.text || messageData.image.length > 0) {
