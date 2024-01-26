@@ -14,8 +14,6 @@ import PrimaryButton from './Buttons/PrimaryButton';
 
 const PostCard = ({ post, onPress }) => {
   const { currentUser } = useAuth();
-  console.log(post);
-  console.log(currentUser);
   return (
     <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
       <LinearGradient

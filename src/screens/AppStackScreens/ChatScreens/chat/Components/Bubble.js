@@ -35,14 +35,10 @@ const Bubble = (props) => {
           ) : (
             <FastImage
               source={avatar}
-              style={{ width: 30, height: 30, borderRadius: 50 , borderWidth: 1, borderColor: Colors.black,
-              backgroundColor: Colors.background,
-              }}
+              style={{ width: 30, height: 30, borderRadius: 50, borderWidth: 1, borderColor: Colors.black, backgroundColor: Colors.background }}
               resizeMode="cover"
               onError={(e) => {
                 console.log("Image loading error:", e);
-                // You can provide a fallback image or take other actions here
-                // For example, you can set a default image or display an error message
               }}
             />
           )}
@@ -116,6 +112,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     marginBottom: 15,
+    paddingHorizontal: 10,
+    width: '100%',
   },
   textContainer: {
     backgroundColor: Colors.backgroundSecondary,
@@ -125,7 +123,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     borderColor: "rgba(158, 65, 240, 0.5)",
     margin: 10,
-    width: '90%',
+    maxWidth: '80%',
   },
   otherTextContainer: {
     backgroundColor: Colors.background,
@@ -135,7 +133,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     borderColor: "rgba(2, 173, 148, 0.5)",
     margin: 10,
-    width: '90%',
+    maxWidth: '80%',
   },
   avatarWrapper: {
     position: 'absolute',

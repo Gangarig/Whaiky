@@ -16,7 +16,6 @@ function Main() {
         <>
           { currentUser ?
             <DrawerNavigator style={style.appContent}/>
-
           :
           <AuthStackScreens />
           }

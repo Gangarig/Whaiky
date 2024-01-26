@@ -5,6 +5,7 @@ import Messages from "./Messages";
 import Colors from "../../../../constant/Colors";
 import defaultAvatar from '../../../../assets/images/avatar/avatar.png'; // Assuming you have a default avatar image
 import UserTheme from "../../../../constant/Theme";
+
 const Chat = ({ navigation, route }) => {
   const { chatId, userInfo } = route.params;
 
@@ -26,7 +27,7 @@ const Chat = ({ navigation, route }) => {
 
   return (
     <View style={styles.chatContainer}>
-      <Messages chatId={chatId} />
+      <Messages chatId={chatId} userInfo={userInfo}/>
     </View>
   );
 };
@@ -34,7 +35,7 @@ const Chat = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: UserTheme.background,
     borderTopColor: UserTheme.black,
     borderTopWidth: .5,
   }, 

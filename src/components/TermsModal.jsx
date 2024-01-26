@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderTopColor: UserTheme.gray,
-    borderTopWidth: 1,
+    borderTopWidth: .5,
     ...shadowStyle,
     width: '100%',
     padding: 10,

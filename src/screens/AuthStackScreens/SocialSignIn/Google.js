@@ -23,6 +23,7 @@ const signInWithGoogle = async () => {
 
     if (!userDoc.exists) {
       // User does not exist, create a new document in Firestore
+      // Make sure to initialize all the fields you are tracking
       await userDocRef.set({
         uid: user.uid,
         displayName: user.displayName || 'Anonymous',
@@ -30,7 +31,7 @@ const signInWithGoogle = async () => {
         timeStamp: new Date().getTime(),
         photoURL: user.photoURL || '',
         status: 'user',
-        TermsAndConditions: 'agreed',
+        // Initialize other fields as needed
       });
       showMessage({ message: 'Account created and signed in with Google successfully!', type: 'success' });
     } else {

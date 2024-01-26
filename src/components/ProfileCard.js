@@ -6,14 +6,55 @@ import defaultImage from '../assets/images/avatar/avatar.png'
 import { shadowStyle } from '../constant/Shadow'
 import UserTheme from '../constant/Theme'
 import Fonts from '../constant/Fonts'
+import { useAuth } from '../context/AuthContext'
+import firestore from '@react-native-firebase/firestore';
+import { useEffect,useState } from 'react'
+
 
 const ProfileCard = ({ item, onPress }) => {
-  // Check if item, lastMessage, and user are defined
-  const avatarImage = item?.lastMessage?.user?.avatar ? { uri: item.lastMessage.user.avatar } : defaultImage;
-  const userName = item?.lastMessage?.user?.name || 'Unknown User';
-  const lastMessage = item?.lastMessage?.text || 'No message available';
+  const [lastMessage, setLastMessage] = useState('No message available');
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    const fetchLastMessage = async () => {
+      try {
+        const chatDocRef = firestore().collection('chats').doc(item.chatId);
+        const chatDocSnapshot = await chatDocRef.get();
+
+        if (chatDocSnapshot.exists) {
+          const chatData = chatDocSnapshot.data();
+          const lastMessagesMap = chatData.lastMessages;
+
+          if (lastMessagesMap && lastMessagesMap[item.userInfo.uid]) {
+            const userLastMessage = lastMessagesMap[item.userInfo.uid];
+            setLastMessage(userLastMessage.text); 
+            // console.log("Last message:", userLastMessage.text);
+          } else {
+            console.log("No last message found for this user.");
+          }
+        } else {
+          console.log("No such chat document!");
+        }
+      } catch (error) {
+        console.error("Error fetching document:", error);
+      }
+    };
+
+    fetchLastMessage(); // Call the function to fetch the last message
+  }, [item.chatId, item.userInfo.uid]);
+
+
+  
+  
+
+ 
+
+
+
+  const avatarImage = item?.userInfo?.photoURL ? { uri: item?.userInfo?.photoURL } : defaultImage;
+  const userName = item?.userInfo?.displayName || 'No name available';
   const isRead = item?.lastMessage?.read || false;
-  const firebaseTimestamp = item?.lastMessage?.timestamp; // Firebase Timestamp
+  const firebaseTimestamp = item?.lastMessage?.timestamp; 
   const date = firebaseTimestamp ? firebaseTimestamp.toDate() : new Date();
   const formatDate = (date) => {
     const hours = date.getHours();
@@ -28,9 +69,9 @@ const ProfileCard = ({ item, onPress }) => {
   
 
   return (
-      <TouchableOpacity onPress={onPress} style={[styles.profileCard,shadowStyle]}>
+        <TouchableOpacity onPress={onPress} style={[styles.profileCard,shadowStyle]}>
         <View style={[styles.profileImageWrapper]}>
-          <FastImage source={avatarImage} style={[styles.profileImage,shadowStyle]} />
+          <FastImage source={avatarImage} style={[styles.profileImage]} />
         </View>
         <View style={styles.profileCardInfo}>
           <Text style={styles.name}>{userName}</Text>
@@ -39,7 +80,7 @@ const ProfileCard = ({ item, onPress }) => {
           numberOfLines={3} 
           ellipsizeMode='tail'
         >
-          {item?.lastMessage?.text || 'No message available'}
+          {lastMessage}
         </Text>
           <View style={styles.status}>
             <Text style={styles.date}>{formattedDate}</Text>
@@ -47,6 +88,7 @@ const ProfileCard = ({ item, onPress }) => {
           </View>
         </View>
       </TouchableOpacity>
+
   );
 };
 
@@ -64,6 +106,7 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         alignItems:'center',
         paddingHorizontal:5,
+        paddingVertical:5,
         marginVertical:2,
     },
     profileImageWrapper:{
@@ -74,13 +117,16 @@ const styles = StyleSheet.create({
         backgroundColor:UserTheme.background,
         justifyContent:'center',
         alignItems:'center',
-        ...shadowStyle
+        ...shadowStyle,
+        // borderWidth:1,
     },
     profileImage:{
         width:71,
         height:71,
         borderRadius:4,
         resizeMode:'cover',
+        ...shadowStyle,
+        borderWidth:1,
     },
     profileCardInfo:{
       paddingHorizontal:5,

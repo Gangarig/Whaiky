@@ -102,37 +102,39 @@ const Profile = ({ navigation }) => {
         </View>
       </LinearGradient>
 
-      <View style={styles.LinearGradientWrapper}>
-        <LinearGradient
-          colors={['#9E41F0', '#4C7BC0']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.profileContainer}
-        >
           {currentUser.status == 'user' && (
-            <TouchableOpacity onPress={handleContractor}>
-              <Text style={[styles.btnText]}>Become a Contractor</Text>
-            </TouchableOpacity>
+            <View style={styles.LinearGradientWrapper}>
+            <LinearGradient
+              colors={['#9E41F0', '#4C7BC0']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.profileContainer}
+              >
+                <TouchableOpacity onPress={handleContractor}>
+                  <Text style={[styles.btnText]}>Become a Contractor</Text>
+                </TouchableOpacity>
+            </LinearGradient>
+            </View>
           )}
           {currentUser.status == 'contractor' && (
-            <View style={styles.contractorLinks}>
-              <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DocumentUpload')}>
-                <Text style={[styles.btnText]}>Upload Document</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('Certificate')}>
-                <Text style={[styles.btnText]}>Upload Certificate</Text>
-              </TouchableOpacity>
+            <View style={styles.LinearGradientWrapper}>
+            <LinearGradient
+              colors={['#9E41F0', '#4C7BC0']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.profileContainer}
+              >
+                  <View style={styles.contractorLinks}>
+                    <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DocumentUpload')}>
+                      <Text style={[styles.btnText]}>Upload Document</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('Certificate')}>
+                      <Text style={[styles.btnText]}>Upload Certificate</Text>
+                    </TouchableOpacity>
+                  </View>
+            </LinearGradient>
             </View>
           )}
-          {currentUser.status == 'admin' && (
-            <View style={styles.contractorLinks}>
-              <TouchableOpacity style={styles.linkWrapper} onPress={()=>navigation.navigate('DashBoard')}>
-                <Text style={[styles.btnText]}>DashBoard</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </LinearGradient>
-      </View>
     </View>
     {!currentUser && (
       <View>
@@ -168,6 +170,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 5,
     minWidth: 300,
+
   },
   contractorLinks: {
     gap: 15,

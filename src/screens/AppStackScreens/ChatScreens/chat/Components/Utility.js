@@ -4,11 +4,10 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import uuid from 'react-native-uuid';
 
-export const sendMessage = async (message, chatId, recipientUser) => {
-  console.log("sendMessage: ", message, chatId);
+export const sendMessage = async (message, chatId ,userInfo) => {
   try {
     // Destructuring message object
-    const { text, user, imageUrls } = message;
+    const { text, senderInfo, recipentInfo, imageUrls } = message;
 
     // Check if at least text or imageUrls is present
     if (!text && (!imageUrls || imageUrls.length === 0)) {
@@ -16,26 +15,24 @@ export const sendMessage = async (message, chatId, recipientUser) => {
     }
 
     // Check for user ID
-    if (!user || !user._id) {
+    if (!senderInfo || !senderInfo._id) {
       throw new Error("User ID is undefined.");
     }
 
     // Prepare message data for Firestore
     let messageData = {
       text: text || '', 
-      user: { // Sender's information
-        _id: user._id,
-        name: user.name,
-        avatar: user.avatar,
+      senderInfo: {
+        _id: senderInfo._id,
+        name: senderInfo.name,
+        avatar: senderInfo.avatar,
       }, 
-      recipient: { // Recipient's information
-        _id: recipientUser._id,
-        name: recipientUser.name,
-        avatar: recipientUser.avatar,
+      recipentInfo: {
+        _id: userInfo.uid,
+        name: userInfo.displayName,
+        avatar: userInfo.photoURL,
       },
-      senderId: user._id, // ID of the sender
       timestamp: firestore.FieldValue.serverTimestamp(),
-      read: false,
     };
 
     // Add image URLs if present
@@ -49,12 +46,20 @@ export const sendMessage = async (message, chatId, recipientUser) => {
       .doc(chatId)
       .collection('messages')
       .add(messageData);
-    firestore()
+      firestore()
       .collection('chats')
       .doc(chatId)
       .set({
-        lastMessage: messageData,
+        lastMessages: {
+          [senderInfo._id]: {
+            text: text,
+            read: false,
+            timestamp: firestore.FieldValue.serverTimestamp(),
+          },
+        }
       }, { merge: true });
+    
+    
   } catch (error) {
     console.error("Error sending message: ", error);
     showMessage({

@@ -8,7 +8,7 @@ import { Button, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Bubble from './Components/Bubble';
-const Messages = ({ chatId }) => {
+const Messages = ({ chatId,userInfo }) => {
   const [messages, setMessages] = useState([]);
   const { currentUser } = useAuth();
 
@@ -25,15 +25,21 @@ const Messages = ({ chatId }) => {
           return {
             _id: doc.id,
             text: data.text,
-            createdAt: timestamp,
+            timestamp: timestamp,
             user: {
-              _id: data.senderId,
-              name: data.user.name,
-              avatar: data.user.avatar,
+              _id: data.senderInfo._id,
+              name: data.senderInfo.name,
+              avatar: data.senderInfo.avatar,
+            },
+            recipentInfo: {
+              _id: data.recipentInfo._id,
+              name: data.recipentInfo.name,
+              avatar: data.recipentInfo.avatar,
             },
             image: data.imageUrls, 
           };
         });
+        
         setMessages(firebaseMessages);
       });
   
@@ -47,12 +53,16 @@ const Messages = ({ chatId }) => {
       // Prepare message object
       let messageData = {
         text: text,
-        senderId: currentUser.uid,
-        user: {
+        senderInfo: {
            _id: currentUser.uid,
             name: currentUser.displayName,
             avatar:currentUser.photoURL,
           },
+        recipentInfo: {
+          _id: userInfo.uid,
+          name: userInfo.displayName,
+          avatar: userInfo.photoURL,
+        },
         timestamp: firestore.FieldValue.serverTimestamp(),
       };
   
@@ -63,9 +73,7 @@ const Messages = ({ chatId }) => {
           imageUrls: imageUrls, // Include image URLs if present
         };
       }
-  
-      // Send the message
-      sendMessage(messageData, chatId,);
+      sendMessage(messageData, chatId,userInfo);
     }
   }, [currentUser.uid, chatId]);
 
@@ -75,13 +83,7 @@ const Messages = ({ chatId }) => {
         messages={messages}
         onSend={handleSend}
         user={{ _id: currentUser.uid }}
-        renderInputToolbar={props =>
-          <Input 
-          onSend={handleSend} 
-          chatId={chatId}
-          senderUser={currentUserDetails}
-          recipientUser={chatRecipientDetails}
-          />}  
+        renderInputToolbar={props => <Input onSend={handleSend} chatId={chatId} />}  
         renderBubble={props => <Bubble {...props} />}
         keyboardShouldPersistTaps={'never'}
         renderAvatar={null}

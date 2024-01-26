@@ -36,7 +36,6 @@ const SignUp = ({ navigation }) => {
   const { setCurrentUser } = useContext(AuthContext);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [termsModalVisible, setTermsModalVisible] = useState(false);
-  const [googleUser , setGoogleUser] = useState(null);
 
   const handleInputChange = (name, value) => {
     setFormData(prevState => ({ ...prevState, [name]: value }));
@@ -67,15 +66,6 @@ const SignUp = ({ navigation }) => {
 
   const handleTermsAccept = async () => {
     setTermsModalVisible(false);
-    if (googleUser) {
-      try {
-        // Proceed with Google Sign-In
-        await signInWithGoogle(setCurrentUser);
-      } catch (error) {
-        showMessage({ message: `Error: ${error.message}`, type: 'danger' });
-      }
-      setGoogleUser(null); // Reset Google user state
-    } else {
 
     try {
       const userCredential = await auth().createUserWithEmailAndPassword(
@@ -100,21 +90,11 @@ const SignUp = ({ navigation }) => {
     } catch (error) {
       setErrorMessage(error.message);
     }
-    }
   
   };
 
   const handleTermsClose = () => {
     setTermsModalVisible(false);
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      setGoogleUser(true); 
-      setTermsModalVisible(true); 
-    } catch (error) {
-      showMessage({ message: `Google Sign-In Error: ${error.message}`, type: 'danger' });
-    }
   };
 
 
@@ -160,10 +140,10 @@ const SignUp = ({ navigation }) => {
           <GradientButton text="CONTINUE" onPress={handleSignUp} />
           <Text style={Global.text}>or</Text>
           <GoogleSigninButton
-            style={[styles.googleButton, shadowStyle]}
+            style={[styles.googleButton,shadowStyle]}
             size={GoogleSigninButton.Size.Wide}
             color={GoogleSigninButton.Color.Dark}
-            onPress={handleGoogleSignIn}
+            onPress={() => signInWithGoogle(setCurrentUser)}
           />
           <Text style={Global.text}>
             Already have an account?{' '}

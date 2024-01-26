@@ -128,7 +128,6 @@ const updateLastMessageInState = (chatId, lastMessageData) => {
     <View style={styles.profileWrapper}>
       <ProfileCard
         item={item}
-        otherUserId={item.userInfo.uid}
         onPress={() => handleSelect(item.chatId, item.userInfo)}
         onDeletePress={() => deleteChat(item.userInfo)}
       />
