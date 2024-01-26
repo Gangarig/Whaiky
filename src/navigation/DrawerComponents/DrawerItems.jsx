@@ -45,6 +45,7 @@ const DrawerItems = ({navigation}) => {
   return (
     <View style={[drawerItem.container, shadowStyle]}>
       <DrawerItem item='MyPostsScreen' icon="fa-regular fa-file-lines" label="My Posts" />
+      <DrawerItem item='Contractor' icon="fa-solid fa-clipboard-list" label="Contractors" />
       {currentUser.status === 'admin' ?(
       <DrawerItem item='Dashboard' icon="fa-solid fa-desktop" label="Dashboard" />
       ):null}

@@ -17,6 +17,7 @@ import DocumentUpload from '../screens/AppStackScreens/ProfileScreens/Contractor
 import Certificate from '../screens/AppStackScreens/ProfileScreens/Contractor/Certificate';
 import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedback';
 import PostStackScreen from './PostStack';
+import Contractor from '../screens/AppStackScreens/ProfileScreens/Contractor/Contractor';
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
@@ -60,8 +61,14 @@ function DrawerNavigator() {
           }}
         />
       ) : null}
-      {currentUser && currentUser.status === 'contractor' ? (
-      <>
+      <Drawer.Screen
+          name="Contractor"
+          component={Contractor}
+          options={{
+            headerShown: true,
+            header: props => <StackHeader title="Contractors" isHomeScreen={false} {...props} />,
+          }}
+      />
       <Drawer.Screen
         name="Services"
         component={Services}
@@ -102,8 +109,6 @@ function DrawerNavigator() {
           header: props => <StackHeader title="Certificates" isHomeScreen={false} {...props} />,
         }}
         />
-      </>
-      ) : null}
       <Drawer.Screen
         name="Settings"
         component={Settings}

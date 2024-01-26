@@ -15,14 +15,16 @@ const DrawerFooter = ({navigation}) => {
     <View style={style.container}>
     {
       currentUser && !(currentUser.status === 'contractor' || currentUser.status === 'admin') && (
-        <GradientText 
-          colors={[UserTheme.primary, UserTheme.secondary]} 
-          style={style.text}
-          size={20} 
-          underline={true}
-        >
-          Become a contractor
-        </GradientText>
+        <TouchableOpacity onPress={()=>navigation.navigate('Services')}>
+          <GradientText 
+            colors={[UserTheme.primary, UserTheme.secondary]} 
+            style={style.text}
+            size={20} 
+            underline={true}
+          >
+            Become a contractor
+          </GradientText>
+        </TouchableOpacity>
       )
     }
         <View style={style.footerLinks}>

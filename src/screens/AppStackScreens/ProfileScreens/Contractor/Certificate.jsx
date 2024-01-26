@@ -173,7 +173,7 @@ const Certificate = ({ navigation }) => {
       {currentUser && currentUser.status === 'contractor' ? 
       null:
       (<PrimaryButton  
-        text='Skip'
+        text='Continue'
         onPress={SubmitDone}
         style={styles.button}
       />)}

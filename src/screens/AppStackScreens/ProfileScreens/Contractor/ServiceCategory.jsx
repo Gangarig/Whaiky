@@ -166,7 +166,7 @@ const ServiceCategory = ({ navigation }) => {
           {currentUser.status === 'contractor' ?
           null:(
           <PrimaryButton 
-            text="Skip" 
+            text="Continue" 
             onPress={handleSaveAndContinue} 
             style={styles.saveButton}
           />

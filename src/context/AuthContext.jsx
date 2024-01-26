@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
 
     return () => unsubscribeAuth();
   }, []);
-
+  
   const handleAcceptTerms = async () => {
     // Update Firestore to reflect that the user has accepted the terms
     const user = auth().currentUser;
