@@ -37,13 +37,11 @@ const Home = ({ navigation }) => {
     if (loadingMore && !loadMore) return;
     setLoadingMore(true);
   
-    console.log("Fetching posts, load more:", loadMore); // Debugging log
-  
     try {
       let query = firestore()
         .collection('posts')
         .orderBy('timestamp', 'desc')
-        .limit(10); // Keep this as 1 for now
+        .limit(10); // Increase this limit if you want more posts per fetch
   
       if (loadMore && lastFetchedPost.current) {
         query = query.startAfter(lastFetchedPost.current);
@@ -55,7 +53,7 @@ const Home = ({ navigation }) => {
       if (fetchedPosts.length > 0) {
         lastFetchedPost.current = snapshot.docs[snapshot.docs.length - 1];
         setPosts(prevPosts => loadMore ? [...prevPosts, ...fetchedPosts] : fetchedPosts);
-        setHasMore(fetchedPosts.length === 5); // Update to match your limit
+        setHasMore(fetchedPosts.length === 10); // Check if fetched posts are equal to the limit
       } else {
         setHasMore(false);
       }
@@ -66,6 +64,7 @@ const Home = ({ navigation }) => {
       setRefreshing(false);
     }
   };
+  
   
   
 

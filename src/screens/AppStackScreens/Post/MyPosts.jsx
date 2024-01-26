@@ -11,6 +11,7 @@ const MyPosts = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
   const [myPostIds, setMyPostIds] = useState([]);
+  const [refreshing , setRefreshing] = useState(false);
 
   useEffect(() => {
     const fetchPostIds = async () => {
@@ -44,8 +45,11 @@ const MyPosts = ({ navigation }) => {
           id: doc.id,
           ...doc.data()
         }));
+
+        fetchedPosts.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
   
         setPosts(fetchedPosts);
+        console.log("Fetched posts:", fetchedPosts);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
@@ -55,6 +59,24 @@ const MyPosts = ({ navigation }) => {
       fetchPosts();
     }
   }, [myPostIds]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const querySnapshot = await firestore()
+        .collection('users')
+        .doc(currentUser.uid)
+        .collection('myPosts')
+        .get();
+  
+      const fetchedPostIds = querySnapshot.docs.map(doc => doc.data().postId);
+      setMyPostIds(fetchedPostIds);
+    } catch (error) {
+      console.error('Error fetching post ids:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [currentUser.uid]);
   
   
   const navigateToPostDetail = (postId) => {
@@ -63,26 +85,25 @@ const MyPosts = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-        <FlatList
-          data={posts}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.postCardWrapper}>
-              <PostCard post={item} navigation={navigation} onPress={() => navigateToPostDetail(item.id)}/>
-            </TouchableOpacity>
-          )}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.flatList}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-
-      
-          numColumns={2}
-          ListEmptyComponent={() => (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ fontSize: 25, color: UserTheme.text }}>No posts found</Text>
-            </View>
-          )}
-        />
+      <FlatList
+        data={posts}
+        renderItem={({ item }) => (
+          <View style={styles.postCardWrapper}>
+            <PostCard post={item} onPress={()=>navigateToPostDetail(item.id)}/>
+          </View>
+        )}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.flatList}
+        showsVerticalScrollIndicator={false}
+        numColumns={2}
+        ListEmptyComponent={<Text style={{ fontSize: 25, color: UserTheme.text }}>No posts found</Text>}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      />
     </View>
   );
 };
