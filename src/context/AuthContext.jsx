@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
-import TermsModal  from '../components/TermsModal';
 
 export const AuthContext = createContext({
   currentUser: null,
@@ -12,29 +11,59 @@ export const AuthContext = createContext({
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [termsModalVisible, setTermsModalVisible] = useState(false);
 
   useEffect(() => {
     const unsubscribeAuth = auth().onAuthStateChanged(async (user) => {
       if (user) {
         const userRef = firestore().collection('users').doc(user.uid);
-        const unsubscribeUserDoc = userRef.onSnapshot((docSnapshot) => {
+        const documentRef = firestore().collection('users').doc(user.uid).collection('documents');
+
+        const unsubscribeUserDoc = userRef.onSnapshot(async (docSnapshot) => {
           if (docSnapshot.exists) {
             const userData = docSnapshot.data();
-            if (userData.TermsAndConditions !== 'agreed') {
-              setTermsModalVisible(true); // Show terms modal
-            } else {
-              setCurrentUser({
-                ...userData,
-                uid: user.uid, // Ensure uid is always set
-              });
+
+            // Only update status if not admin
+            if (userData.status !== 'admin') {
+              const docSnapshot = await documentRef.where('status', '==', 'approved').get();
+              if (!docSnapshot.empty && userData.status !== 'contractor') {
+                // User has at least one approved document and is not already a contractor
+                await userRef.update({ status: 'contractor' });
+                userData.status = 'contractor';
+              }
             }
+
+            setCurrentUser({ ...userData, uid: user.uid });
           } else {
-            console.log('User does not exist in Firestore');
-            setCurrentUser(null);
+            // User document does not exist, set default values
+            await userRef.set({
+              uid: user.uid,
+              displayName: user.displayName,
+              email: user.email,
+              status: 'user', // Default status
+              timeStamp: firestore.FieldValue.serverTimestamp(),
+              photoURL: '',
+              country: '',
+              city: '',
+              state: '',
+              phoneNumbers: '',
+              services: [],
+            });
+            setCurrentUser({
+              uid: user.uid,
+              displayName: user.displayName,
+              email: user.email,
+              status: 'user',
+              photoURL: '',
+              country: '',
+              city: '',
+              state: '',
+              phoneNumbers: '',
+              services: [],
+            });
           }
           setLoading(false);
         });
+
         return () => unsubscribeUserDoc();
       } else {
         setCurrentUser(null);
@@ -44,16 +73,6 @@ export const AuthProvider = ({ children }) => {
 
     return () => unsubscribeAuth();
   }, []);
-  
-  const handleAcceptTerms = async () => {
-    // Update Firestore to reflect that the user has accepted the terms
-    const user = auth().currentUser;
-    if (user) {
-      await firestore().collection('users').doc(user.uid).set({ TermsAndConditions: 'agreed' }, { merge: true });
-      setTermsModalVisible(false);
-      showMessage({ message: 'Terms and Conditions accepted', type: 'success' });
-    }
-  };
 
   const handleSignOut = async () => {
     try {
@@ -64,20 +83,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-
   return (
     <AuthContext.Provider value={{ currentUser, loading, setCurrentUser }}>
       {children}
-      {termsModalVisible && (
-        <TermsModal
-        visible={termsModalVisible}
-        onAccept={handleAcceptTerms}
-        onClose={() => {
-          setTermsModalVisible(false);
-          handleSignOut(); 
-        }}
-      />
-      )}
     </AuthContext.Provider>
   );
 };

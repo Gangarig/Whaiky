@@ -23,7 +23,6 @@ import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 
 const Certificate = ({ navigation }) => {
   const { currentUser } = useAuth();
-
   const [certificateImage, setCertificateImage] = useState(null);
   const [certificateDetails, setCertificateDetails] = useState({
     title: '',

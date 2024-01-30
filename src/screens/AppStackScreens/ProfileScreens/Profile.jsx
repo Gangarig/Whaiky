@@ -15,8 +15,6 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();
-
-
   if (!currentUser) {
     return (
       <View style={styles.centered}>
@@ -37,9 +35,6 @@ const Profile = ({ navigation }) => {
     // Format the date to a readable string
     return date.toLocaleDateString("en-US"); // Change "en-US" to your preferred locale
   };
-  
-  
-
 
   return (
   <ScrollView style={styles.container}>
@@ -170,7 +165,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 5,
     minWidth: 300,
-
+    width: '90%',
   },
   contractorLinks: {
     gap: 15,
@@ -202,11 +197,14 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 5,
     paddingBottom: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
   },
   infoBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 40,
+    width: '100%',
   },
   infoText: {
     fontSize: 16,

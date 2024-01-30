@@ -16,7 +16,6 @@ const LegalInfo = ({navigation}) => {
 
   useEffect(() => {
     const userDocRef = firestore().collection('users').doc(currentUser.uid);
-
     // Subscribe to real-time updates for documents
     const documentsListener = userDocRef.collection('documents').onSnapshot((querySnapshot) => {
       const documentsData = querySnapshot.docs.map((doc) => doc.data());

@@ -49,7 +49,7 @@ export const sendMessage = async (message, chatId ,userInfo) => {
       firestore()
       .collection('chats')
       .doc(chatId)
-      .set({
+      .set({ 
         lastMessages: {
           [senderInfo._id]: {
             text: text,

@@ -308,9 +308,7 @@ const AddPost = ({ navigation }) => {
         type: 'danger',
       });
     }
-  };
-  
-  
+  };  
 
   const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
     setPost({

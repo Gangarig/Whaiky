@@ -14,7 +14,13 @@ function AdminStackScreen() {
         header: props => <StackHeader title="Contractor" isHomeScreen={false} {...props} />,
       }}
       />
-      <AdminStack.Screen name="SubmitDetail" component={SubmissionDetail} />
+      <AdminStack.Screen
+      name="SubmitDetail"
+      component={SubmissionDetail}
+      options={{
+        header: props => <StackHeader title="Submission" isHomeScreen={false} {...props} />,
+      }}
+      />
     </AdminStack.Navigator>
   );
 }

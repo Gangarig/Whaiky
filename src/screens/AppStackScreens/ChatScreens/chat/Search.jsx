@@ -52,12 +52,11 @@ const Search = ({ isVisible, onClose }) => {
     if (searchTerm.trim() === '') {
       setFilteredUsers([]);
     } else {
-      const lowerCaseSearchTerm = searchTerm.toLowerCase();
       const filtered = allUsers.filter(user =>
-        user.displayName.toLowerCase().includes(lowerCaseSearchTerm) ||
-        (user.firstName && user.firstName.toLowerCase().includes(lowerCaseSearchTerm)) ||
-        (user.lastName && user.lastName.toLowerCase().includes(lowerCaseSearchTerm)) ||
-        user.email.toLowerCase().includes(lowerCaseSearchTerm)
+        user.displayName ||
+        (user.firstName && user.firstName) ||
+        (user.lastName && user.lastName) ||
+        user.email
       );
       setFilteredUsers(filtered);
     }

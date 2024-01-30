@@ -25,11 +25,13 @@ const StackHeader = ({title,navigation,isHomeScreen}) => {
         <FontAwesomeIcon icon={isHomeScreen ? "fa-solid fa-bars" : "fa-solid fa-caret-left" }
         size={20} color={UserTheme.primary} />
       </TouchableOpacity>
+      <TouchableOpacity onPress={()=>navigation.navigate('Home')} style={styles.Whaiky}>
       <GradientText colors={[UserTheme.primary, UserTheme.secondary]} style={styles.text}
       size={25}
       >
         {title}
       </GradientText>
+      </TouchableOpacity>
       <TouchableOpacity onPress={()=>navigation.navigate('SearchPost')}>
       <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" size={20}  color={UserTheme.primary}/>
       </TouchableOpacity>
@@ -50,12 +52,15 @@ const styles = StyleSheet.create({
     paddingHorizontal:20,
     borderBottomColor:UserTheme.black,
     borderBottomWidth:0,
-    ...shadowStyle
+
   },
   text:{
     fontSize:25,
     fontWeight:'bold',
     textAlign:'center',
     color:UserTheme.primary,
-  } 
+  } ,
+  Whaiky:{
+    backgroundColor:UserTheme.white,
+  }
 })

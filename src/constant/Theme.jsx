@@ -1,8 +1,10 @@
 import { Platform } from "react-native";
+import { useAuth } from "../context/AuthContext";
 
 const isAndroid = Platform.OS === 'android';
 
 const UserTheme = {
+
   primary: isAndroid ? shadeColor('#9E41F0', -10) : '#9E41F0',
   lightPrimary: isAndroid ? shadeColor('#7B5BDC', -10) : '#7B5BDC',
   secondary: isAndroid ? shadeColor('#01AD94', -10) : '#01AD94',
@@ -19,6 +21,8 @@ const UserTheme = {
   transparent: 'transparent',
 };
 
+//#01AD94
+// contractor color 
 // Function to adjust the color by a specified percentage
 function shadeColor(color, percent) {
   var num = parseInt(color.slice(1), 16),

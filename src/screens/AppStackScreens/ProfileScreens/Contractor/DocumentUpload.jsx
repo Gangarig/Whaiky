@@ -175,7 +175,7 @@ const DocumentUpload = ({ navigation }) => {
         type: 'success',
       });
       if( currentUser.status === 'contractor') {
-         navigation.navigate('Home');
+        navigation.navigate('Home');
       } else {
         navigation.navigate('Certificate');
       }

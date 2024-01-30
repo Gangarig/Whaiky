@@ -17,7 +17,7 @@ const Contractor = () => {
         fetchedContractors.forEach(async (contractor) => {
           const userSnapshot = await firestore().collection('users').doc(contractor.userId).get();
           const userData = userSnapshot.data();
-          console.log(`User Data for contractor ${contractor.id}:`, userData); // Console log user data
+          // console.log(`User Data for contractor ${contractor.id}:`, userData); // Console log user data
         });
       } catch (error) {
         console.error("Error fetching contractors:", error);
@@ -29,8 +29,7 @@ const Contractor = () => {
     fetchContractors();
   }, []);
 
-  console.log("Contractors:", contractors); // Console log contractors
-  
+
 
   if (loading) {
     return <ActivityIndicator size="large" />;

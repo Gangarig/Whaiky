@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import FlashMessage from "react-native-flash-message";
@@ -22,6 +23,10 @@ import { faUser } from '@fortawesome/free-regular-svg-icons/faUser';
 import GradientText from './src/screens/Test';
 import { View,StyleSheet } from 'react-native';
 import Contractor from './src/screens/AppStackScreens/ProfileScreens/Contractor/Contractor';
+
+
+
+
 library.add(
   fab, faAddressCard,faAddressBook,faFileLines,
   faSquareCheck,faMagnifyingGlass,faBars,
@@ -46,6 +51,12 @@ library.add(
   faUser,faGear,faCheck,faX,faIdCard,faEnvelopesBulk,
   faImage,faIcons,faClipboardList,
   );
+
+  LogBox.ignoreLogs([
+    'View # of type RCTView has a shadow set',
+    "Sending `onAnimatedValueUpdate` with no listeners registered."
+  ]);
+  
 export default function App() {
   return (
     <SafeAreaProvider>
