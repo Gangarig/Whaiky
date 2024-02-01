@@ -23,6 +23,7 @@ import { faUser } from '@fortawesome/free-regular-svg-icons/faUser';
 import GradientText from './src/screens/Test';
 import { View,StyleSheet } from 'react-native';
 import Contractor from './src/screens/AppStackScreens/ProfileScreens/Contractor/Contractor';
+import { ThemeProvider } from './src/context/ThemeContext';
 
 
 
@@ -56,13 +57,14 @@ library.add(
     'View # of type RCTView has a shadow set',
     "Sending `onAnimatedValueUpdate` with no listeners registered."
   ]);
-  
+
 export default function App() {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>    
         <AuthProvider>
             <ChatContextProvider>
+              <ThemeProvider>
               <SafeAreaView style={{ flex: 1 }}>
                 <NavigationContainer>
                   <Main />
@@ -71,6 +73,7 @@ export default function App() {
                   <FlashMessage position="top" style={{zIndex:9999}}/>
                 </NavigationContainer>
               </SafeAreaView>
+              </ThemeProvider>
             </ChatContextProvider>
           </AuthProvider>
       </GestureHandlerRootView>

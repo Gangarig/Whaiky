@@ -52,13 +52,31 @@ const SubmissionDetail = ({ navigation, route }) => {
   }, []);
 
   const handleApprove = async (docId) => {
-    await approveDocument(id, docId);
-    navigation.navigate('Dashboard');
+    try {
+      await approveDocument(id, docId);
+      navigation.navigate('Dashboard');
+    } catch (error) {
+      console.error('Error in approval:', error);
+      showMessage({
+        message: 'Error approving document.',
+        type: 'danger',
+      });
+    }
   };
+  
   const handleDeny = async (docId) => {
-    await denyDocument(id, docId);
-    navigation.navigate('Dashboard');
-  }
+    try {
+      await denyDocument(id, docId);
+      navigation.navigate('Dashboard');
+    } catch (error) {
+      console.error('Error in denying:', error);
+      showMessage({
+        message: 'Error denying document.',
+        type: 'danger',
+      });
+    }
+  };
+  
 
 
   return (
