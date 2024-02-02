@@ -32,7 +32,6 @@ const DrawerHeader = () => {
                     showRating={false}
                 />
                 {/* )} */}
-
             <Text style={style.headerText}>Sea my social Profile</Text>
             </View>
         </View>

@@ -57,7 +57,7 @@ const PostCardDetail = ({ post }) => {
   
   
 
-  const handleContact = () => {};
+  const handleContact = (id) => {};
   return (
     <ScrollView
       style={styles.container}

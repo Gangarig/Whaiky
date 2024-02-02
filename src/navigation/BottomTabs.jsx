@@ -11,6 +11,7 @@ import { shadowStyle } from '../constant/Shadow';
 import AddPost from '../screens/AppStackScreens/Post/AddPost';
 import { View ,StyleSheet} from 'react-native';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
+import Test from '../screens/Test';
 const Tab = createBottomTabNavigator();
 
 function BottomTabs({navigation}) {

@@ -24,7 +24,7 @@ import GradientText from './src/screens/Test';
 import { View,StyleSheet } from 'react-native';
 import Contractor from './src/screens/AppStackScreens/ProfileScreens/Contractor/Contractor';
 import { ThemeProvider } from './src/context/ThemeContext';
-
+import ContractorDetail from './src/screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
 
 
 
@@ -70,6 +70,7 @@ export default function App() {
                   <Main />
                   {/* <Test /> */}
                   {/* <Contractor /> */}
+                  {/* <ContractorDetail /> */}
                   <FlashMessage position="top" style={{zIndex:9999}}/>
                 </NavigationContainer>
               </SafeAreaView>

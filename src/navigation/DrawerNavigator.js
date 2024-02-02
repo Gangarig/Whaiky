@@ -15,9 +15,11 @@ import Services from '../screens/AppStackScreens/ProfileScreens/Contractor/Servi
 import LegalInfo from '../screens/AppStackScreens/ProfileScreens/Contractor/LegalInfo';
 import DocumentUpload from '../screens/AppStackScreens/ProfileScreens/Contractor/DocumentUpload';
 import Certificate from '../screens/AppStackScreens/ProfileScreens/Contractor/Certificate';
-import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedback';
 import PostStackScreen from './PostStack';
-import Contractor from '../screens/AppStackScreens/ProfileScreens/Contractor/Contractor';
+import ContractorStackScreen from './ContractorStack';
+
+
+
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
@@ -62,12 +64,12 @@ function DrawerNavigator() {
         />
       ) : null}
       <Drawer.Screen
-          name="Contractor"
-          component={Contractor}
-          options={{
-            headerShown: true,
-            header: props => <StackHeader title="Contractors" isHomeScreen={false} {...props} />,
-          }}
+          name="ContractorScreen"
+          component={ContractorStackScreen}
+          options={({ navigation }) => ({
+            headerShown: false,
+            header: props => <StackHeader title="Contractors"  isHomeScreen={false} navigation={navigation} {...props} />,
+          })}
       />
       <Drawer.Screen
         name="Services"
@@ -77,20 +79,12 @@ function DrawerNavigator() {
           header: props => <StackHeader title="Contractor" isHomeScreen={false} {...props} />,
         }}
       />
-        <Drawer.Screen
-          name="LegalInfo"
+      <Drawer.Screen
+      name="LegalInfo"
           component={LegalInfo}
           options={{
             headerShown: true,
             header: props => <StackHeader title="Legal Information" isHomeScreen={false} {...props} />,
-          }}
-        />
-        <Drawer.Screen
-          name="FeedBack"
-          component={Feedback}
-          options={{
-            headerShown: true,
-            header: props => <StackHeader title="FeedBacks" isHomeScreen={false} {...props} />,
           }}
         />
         <Drawer.Screen
