@@ -1,18 +1,15 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  View, Text, TouchableOpacity, Button,
-  RefreshControl, SafeAreaView, FlatList, StyleSheet,ActivityIndicator
+  View, Text, ScrollView, RefreshControl, StyleSheet, ActivityIndicator
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { showMessage } from 'react-native-flash-message';
 import { useAuth } from '../../../context/AuthContext';
 import PostCard from '../../../components/PostCard';
-import UserTheme from '../../../constant/Theme';
 import PostCardSecondary from '../../../components/PostCardSecondary';
-
+import UserTheme from '../../../constant/Theme';
 
 const Home = ({ navigation }) => {
-  const { currentUser, profile } = useAuth();
+  const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -21,40 +18,29 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     fetchPosts();
-    return () => {
-      setPosts([]);
-    };
   }, []);
 
-  const onEndReached = () => {
-    console.log("onEndReached called"); // Debugging log
-    if (!loadingMore && hasMore) {
-      fetchPosts(true);
-    }
-  };
-
-  
   const fetchPosts = async (loadMore = false) => {
     if (loadingMore && !loadMore) return;
     setLoadingMore(true);
-  
+
     try {
       let query = firestore()
         .collection('posts')
         .orderBy('timestamp', 'desc')
-        .limit(10); // Increase this limit if you want more posts per fetch
-  
+        .limit(10);
+
       if (loadMore && lastFetchedPost.current) {
         query = query.startAfter(lastFetchedPost.current);
       }
-  
+
       const snapshot = await query.get();
       const fetchedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  
+
       if (fetchedPosts.length > 0) {
         lastFetchedPost.current = snapshot.docs[snapshot.docs.length - 1];
         setPosts(prevPosts => loadMore ? [...prevPosts, ...fetchedPosts] : fetchedPosts);
-        setHasMore(fetchedPosts.length === 10); // Check if fetched posts are equal to the limit
+        setHasMore(fetchedPosts.length === 10);
       } else {
         setHasMore(false);
       }
@@ -62,13 +48,9 @@ const Home = ({ navigation }) => {
       console.error("Error fetching posts:", error);
     } finally {
       setLoadingMore(false);
-      setRefreshing(false);
+      if (!loadMore) setRefreshing(false);
     }
   };
-  
-  
-  
-
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -76,81 +58,47 @@ const Home = ({ navigation }) => {
     fetchPosts();
   };
 
-
-  const checkPostExistence = async (postId) => {
-    try {
-      const doc = await firestore().collection('posts').doc(postId).get();
-      if (!doc.exists) {
-        showMessage({
-          message: 'This post is no longer available',
-          type: "danger",
-        });
-        return false;
-      }
-      return true;
-    } catch (error) {
-      showMessage({
-        message: error.message || 'Error checking post existence',
-        type: "danger",
-      });
-      return false;
+  const handleLoadMore = () => {
+    if (hasMore && !loadingMore) {
+      fetchPosts(true);
     }
   };
-  const navigateToPostDetail = async (postId) => {
-    const exists = await checkPostExistence(postId);
-    if (exists) {
-      navigation.navigate('PostDetail', { id: postId });
-    }
-  };
-
-  const checkAccountStatus = () => {
-    if (!currentUser) {
-      showMessage({
-        message: 'Please sign in to create a post.',
-        type: "danger",
-      });
-    } else if (profile !== 'completed') {
-      showMessage({
-        message: 'Please complete your profile to create a post.',
-        type: "danger",
-      });
-      navigation.navigate('PersonalInfo');
-    } else {
-      navigation.navigate('AddPost');
-    }
-  };
-
-  const renderItem = ({ item }) => (
-    <View  style={styles.postCardWrapper}>
-      <PostCard
-        post={item}
-        onPress={() => navigateToPostDetail(item.id)}
-      />
-    </View>
-  );
 
   return (
     <View style={styles.container}>
       {currentUser ? (
-        <FlatList
-          data={posts}
-          renderItem={renderItem}
-          style={styles.flatList}
-          keyExtractor={item => item.id}
-          ListEmptyComponent={<Text style={{ textAlign: 'center' }}>No posts available.</Text>}
-          horizontal={false}
-          numColumns={2}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          onEndReached={onEndReached}
-          onEndReachedThreshold={0.2} 
-          ListFooterComponent={
-            loadingMore && <ActivityIndicator size="large" color="#0000ff" />
-          }
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        />
+        <ScrollView
+          contentContainerStyle={styles.scrollViewContent}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          onScroll={({ nativeEvent }) => {
+            if (isCloseToBottom(nativeEvent)) {
+              handleLoadMore();
+            }
+          }}
+          scrollEventThrottle={400}
+        >
+          <View style={styles.postsWrapper}>
+            {posts.map(post => (
+              <View 
+                style={post.sale ? styles.postWrapperSale : styles.postWrapper} 
+                key={post.id}
+              >
+                {post.sale ? (
+                  <PostCardSecondary
+                    post={post}
+                    onPress={() => navigation.navigate('PostDetail', { id: post.id })}
+                  />
+                ) : (
+                  <PostCard
+                    post={post}
+                    onPress={() => navigation.navigate('PostDetail', { id: post.id })}
+                  />
+                )}
+              </View>
+            ))}
+          </View>
+          {loadingMore && <ActivityIndicator size="large" color="#0000ff" />}
+        </ScrollView>
       ) : (
         <Text>Please sign in to see posts.</Text>
       )}
@@ -158,22 +106,32 @@ const Home = ({ navigation }) => {
   );
 };
 
-export default Home;
+const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: UserTheme.background,
-    width: '100%',
   },
-  flatList: {
-    backgroundColor: UserTheme.background,
-    width: '100%',
-    paddingHorizontal:5,
+  scrollViewContent: {
+    alignItems: 'center',
   },
-  postCardWrapper: {
-    padding: 5,
+  postsWrapper: {
+    width: '100%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  postWrapper: {
     width: '50%',
+    padding: 5,
   },
-
+  postWrapperSale: {
+    width: '100%',
+    padding: 5,
+  },
 });
+
+export default Home;

@@ -27,6 +27,7 @@
     "@react-native-google-signin/google-signin": "^10.1.0",
     "@react-native-masked-view/masked-view": "^0.2.9",
     "@react-native-picker/picker": "^2.5.1",
+    "@react-native-seoul/masonry-list": "^1.4.2",
     "@react-navigation/bottom-tabs": "^6.5.8",
     "@react-navigation/drawer": "^6.6.3",
     "@react-navigation/native": "^6.1.7",

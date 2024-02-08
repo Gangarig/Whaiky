@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   postCardContainer: {
     width: '100%',
     position: 'relative',
-    borderRadius: 7,
+    borderRadius: 15,
     borderWidth: 2,
     borderColor: UserTheme.querternary,
   },
