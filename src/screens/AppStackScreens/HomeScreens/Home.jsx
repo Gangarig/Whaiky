@@ -23,24 +23,31 @@ const Home = ({ navigation }) => {
   const fetchPosts = async (loadMore = false) => {
     if (loadingMore && !loadMore) return;
     setLoadingMore(true);
-
+    console.log('Fetching posts...');
     try {
       let query = firestore()
         .collection('posts')
         .orderBy('timestamp', 'desc')
-        .limit(10);
-
+        .limit(20);
+  
       if (loadMore && lastFetchedPost.current) {
         query = query.startAfter(lastFetchedPost.current);
       }
-
+  
       const snapshot = await query.get();
-      const fetchedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-      if (fetchedPosts.length > 0) {
+      let fetchedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+      // Apply rearrangement here for both initial load and loading more
+      let newPosts = rearrangePosts(fetchedPosts);
+  
+      if (newPosts.length > 0) {
+        if (loadMore) {
+          // When loading more, combine with existing posts
+          newPosts = [...posts, ...newPosts];
+        }
         lastFetchedPost.current = snapshot.docs[snapshot.docs.length - 1];
-        setPosts(prevPosts => loadMore ? [...prevPosts, ...fetchedPosts] : fetchedPosts);
-        setHasMore(fetchedPosts.length === 10);
+        setPosts(newPosts);
+        setHasMore(newPosts.length === 20);
       } else {
         setHasMore(false);
       }
@@ -51,6 +58,8 @@ const Home = ({ navigation }) => {
       if (!loadMore) setRefreshing(false);
     }
   };
+  
+  
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -62,6 +71,59 @@ const Home = ({ navigation }) => {
     if (hasMore && !loadingMore) {
       fetchPosts(true);
     }
+  };
+  const rearrangePosts = (originalPosts) => {
+    // Separate sale and normal posts into different arrays
+    const normalPosts = originalPosts.filter(post => !post.sale);
+    const salePosts = originalPosts.filter(post => post.sale);
+  
+    let rearrangedPosts = [];
+    let salePostIndex = 0;
+  
+    for (let i = 0; i < normalPosts.length; i++) {
+      // Add normal posts to the rearranged array
+      rearrangedPosts.push(normalPosts[i]);
+  
+      // Check the conditions to insert a sale post next
+      if (salePostIndex < salePosts.length) {
+        // Check if it's the right moment to add a sale post
+        // We add a sale post after every 1 or 2 normal posts, depending on the situation
+        if (i % 2 === 1 || (i % 2 === 0 && i + 1 === normalPosts.length)) { // Adjusted logic for when to insert sale posts
+          rearrangedPosts.push(salePosts[salePostIndex++]);
+        }
+      }
+    }
+  
+    // If there are any remaining sale posts, add them to the end
+    while (salePostIndex < salePosts.length) {
+      rearrangedPosts.push(salePosts[salePostIndex++]);
+    }
+  
+    return rearrangedPosts;
+  };
+  
+
+  // Call the rearrangePosts function before rendering
+  const arrangedPosts = rearrangePosts(posts);
+  const renderPosts = () => {
+    return arrangedPosts.map(post => (
+      <View
+        style={post.sale ? styles.postWrapperSale : styles.postWrapper}
+        key={post.id}
+      >
+        {post.sale ? (
+          <PostCardSecondary
+            post={post}
+            onPress={() => navigation.navigate('PostDetail', { id: post.id })}
+          />
+        ) : (
+          <PostCard
+            post={post}
+            onPress={() => navigation.navigate('PostDetail', { id: post.id })}
+          />
+        )}
+      </View>
+    ));
   };
 
   return (
@@ -78,24 +140,7 @@ const Home = ({ navigation }) => {
           scrollEventThrottle={400}
         >
           <View style={styles.postsWrapper}>
-            {posts.map(post => (
-              <View 
-                style={post.sale ? styles.postWrapperSale : styles.postWrapper} 
-                key={post.id}
-              >
-                {post.sale ? (
-                  <PostCardSecondary
-                    post={post}
-                    onPress={() => navigation.navigate('PostDetail', { id: post.id })}
-                  />
-                ) : (
-                  <PostCard
-                    post={post}
-                    onPress={() => navigation.navigate('PostDetail', { id: post.id })}
-                  />
-                )}
-              </View>
-            ))}
+            {renderPosts()}
           </View>
           {loadingMore && <ActivityIndicator size="large" color="#0000ff" />}
         </ScrollView>

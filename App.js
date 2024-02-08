@@ -67,11 +67,11 @@ export default function App() {
         <AuthProvider>
             <ChatContextProvider>
               <ThemeProvider>
+              <FlashMessage position="top" style={{zIndex:9999}}/>
               <SafeAreaView style={{ flex: 1 }}>
                 <NavigationContainer>
                   <MenuProvider>
                       <Main />
-                      <FlashMessage position="top" style={{zIndex:9999}}/>
                   </MenuProvider>
                 </NavigationContainer>
               </SafeAreaView>

@@ -15,10 +15,17 @@ import PrimaryButton from './Buttons/PrimaryButton';
 const PostCardSecondary = ({ post, onPress }) => {
   const { currentUser } = useAuth();
   const hasImages = post.images && post.images.length > 0;
+
+  const renderDottedLine = () => {
+    const numberOfDots = 10; // Adjust the number of dots as needed
+    return Array.from({ length: numberOfDots }).map((_, index) => (
+      <View key={index} style={styles.verticalLineDot} />
+    ));
+  };
   return (
     <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
       <LinearGradient
-        colors={['#9E42F0', '#423EE7']}
+        colors={[UserTheme.primary, UserTheme.tertiary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.postCardContainer]}
@@ -36,8 +43,20 @@ const PostCardSecondary = ({ post, onPress }) => {
         )}
             <View style={styles.postInfo}>
               <Text style={styles.title}>{post.title}</Text>
-              <Text style={styles.price}>{post.price}$</Text>
+              <Text style={[styles.price,{textAlign:'right'}]}>{post.price}$</Text>
             </View>
+            <LinearGradient
+                colors={['#9E42F0', '#423EE7']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={[styles.sale]}
+              >
+              <Text style={styles.saleText}>SALE</Text>
+                <View style={{ flexDirection: 'column' }}>{renderDottedLine()}</View>
+                <View style={{ flexDirection: 'column' }}>
+                <Text style={styles.verticalText}>{post?.sale}</Text> 
+              </View>
+            </LinearGradient>
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -50,6 +69,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 2,
     borderColor: UserTheme.querternary,
+    height: 200,
   },
   noImage:{
     justifyContent:'center',
@@ -61,13 +81,13 @@ const styles = StyleSheet.create({
   },
   postImage: {
     width: '100%',
-    height: 120,
+    height: 140,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
     backgroundColor: UserTheme.white,
   },
   noImage:{
-    height: 120,
+    height: 140,
     padding: 10,
     backgroundColor: UserTheme.white,
     justifyContent: 'center',
@@ -82,7 +102,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 50,
+    height: 60,
     alignItems: 'center',
   },
   title: {
@@ -118,6 +138,41 @@ const styles = StyleSheet.create({
     borderColor: UserTheme.gray,
     padding: 20,
     borderRadius: 7,
+  },
+  sale:{
+    position:'absolute',
+    bottom:40,
+    right:10,
+    borderRadius:5,
+    height:31,
+    width:90,
+    justifyContent:'center',
+    alignItems:'center',
+    flexDirection:'row',
+    borderWidth:1,
+    borderColor:UserTheme.white,
+  },
+  saleText:{
+    fontSize:18,
+    color:UserTheme.white,
+    fontFamily:Fonts.querternary,
+    fontWeight:'bold',  
+  },
+  verticalLineDot: {
+    height: 1, 
+    width: 3,  
+    backgroundColor: UserTheme.white,
+    marginVertical: 1, 
+    marginHorizontal: 5,
+    borderRadius: 3,
+  },
+  verticalText: {
+    color: UserTheme.white,
+    fontFamily: Fonts.querternary,
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'center',
+    transform: [{ rotate: '270deg' }],
   },
 
 

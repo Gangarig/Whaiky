@@ -39,7 +39,7 @@ const PostCard = ({ post, onPress }) => {
               <Text
               numberOfLines={1}
               ellipsizeMode='tail'
-              style={styles.price}>{post.price}$</Text>
+              style={[styles.price,{textAlign:'right'}]}>{post.price}$</Text>
             </View>
       </LinearGradient>
     </TouchableOpacity>

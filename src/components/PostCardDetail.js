@@ -1,5 +1,5 @@
 import React, { useState , useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image,TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { Global } from '../constant/Global';
 import Colors from '../constant/Colors';
 import Shadow, { shadowStyle } from '../constant/Shadow';
@@ -16,6 +16,8 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { handleSelect } from '../screens/AppStackScreens/service/ChatService';
 import ContractorCard from './ContractorCard';
 import firestore from '@react-native-firebase/firestore';
+import Dialog from "react-native-dialog";
+
 
 
 const PostCardDetail = ({ navigation , post }) => {
@@ -23,7 +25,10 @@ const PostCardDetail = ({ navigation , post }) => {
   const [isImageViewVisible, setImageViewVisible] = useState(false);
   const { currentUser } = useAuth();
   const [contractor, setContractor] = useState(null);
-
+  const [salePrice, setSalePrice] = useState('');
+  const [dialog, setDialog] = useState(false);
+  
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -76,18 +81,22 @@ const PostCardDetail = ({ navigation , post }) => {
       <View key={index} style={styles.verticalLineDot} />
     ));
   };
-  
-  
 
   const handleContact = (currentUser,contractor) => {
     handleSelect(currentUser,contractor);
     navigation.navigate('Chat');
   };
+
+  const handleSale = (post,salePrice) => {
+    AddSale(post,salePrice);
+    setDialog(false);
+    navigation.goBack();
+  }
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.scrollView}
-    >
+    > 
       <View style={styles.imageWrapper}>
         {post.images.length > 0 && (
           <>
@@ -101,18 +110,6 @@ const PostCardDetail = ({ navigation , post }) => {
                 resizeMode="cover"
               />
             </TouchableOpacity>
-              <LinearGradient
-                colors={['#9E42F0', '#423EE7']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={[styles.sale]}
-              >
-              <Text style={styles.saleText}>SALE</Text>
-                <View style={{ flexDirection: 'column' }}>{renderDottedLine()}</View>
-                <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.verticalText}>20</Text> 
-              </View>
-            </LinearGradient>
           </>
         )}
       </View>
@@ -128,6 +125,7 @@ const PostCardDetail = ({ navigation , post }) => {
                 ]}
               />
             </TouchableOpacity>
+            
           ))}
         </View>
       )}
@@ -150,19 +148,20 @@ const PostCardDetail = ({ navigation , post }) => {
             </View>
           </View>
           <View style={styles.postHeaderRight}>
-            <Text style={styles.price}>{post.price}$</Text>
-            <Text style={styles.salePrice}>{post.salePrice}1231234$</Text>
+            <Text style={[styles.price, post.sale && { opacity: 0.5 }]}>{post.price}$</Text>
+            <Text style={styles.salePrice}>
+              {post.sale ? `${(post.price * ((100 - post.sale) / 100)).toFixed(1)}$` : ""}
+            </Text>
           </View>
         </View>
         <View style={styles.postBody}>
           <Text style={styles.postDescription}>{post.description}</Text>
-          <Text style={styles.postDescription}>{post.postId}</Text>
         </View>
 
         {currentUser.uid === post.ownerId ? (
               <View style={styles.postEdit}>
                 <PrimaryButton text='Delete' onPress={()=>DeletePost(post)} />
-                <PrimaryButton text='Add Sale' onPress={()=>AddSale(post)} />
+                <PrimaryButton text='Add Sale' onPress={()=>setDialog(true)} />
               </View>
         ):
         <View style={styles.contactContainerWrapper}>
@@ -187,7 +186,27 @@ const PostCardDetail = ({ navigation , post }) => {
           </View>
         </View>
         }
-
+      </View>
+      <View>
+        <Dialog.Container visible={dialog}>
+          <Dialog.Title>Sale %</Dialog.Title>
+          <Dialog.Description>
+            Do you want to add sale to this post?
+          </Dialog.Description>
+          <View style={styles.saleInputWrapper}>
+          <TextInput
+            style={styles.saleInput}
+            value={salePrice}
+            onChangeText={(text) => {
+              const numericText = text.replace(/[^0-9]/g, ''); // Allow only numbers
+              setSalePrice(numericText.substring(0, 2)); // Limit to two digits
+            }}
+            keyboardType="number-pad"
+          />
+          </View>
+          <Dialog.Button label="Cancel" onPress={()=>setDialog(false)} />
+          <Dialog.Button label="Add" onPress={()=>handleSale(post,salePrice)} />
+        </Dialog.Container>
       </View>
       {renderImageViewer()}
     </ScrollView>
@@ -330,16 +349,17 @@ const styles = StyleSheet.create({
   },
   sale:{
     position:'absolute',
-    bottom:10,
+    top:285,
     right:10,
     borderRadius:5,
-    height:31,
-    width:90,
+    height:35,
+    width:95,
     justifyContent:'center',
     alignItems:'center',
     flexDirection:'row',
     borderWidth:1,
     borderColor:UserTheme.white,
+    zIndex:1,
   },
   saleText:{
     fontSize:18,
@@ -369,9 +389,9 @@ const styles = StyleSheet.create({
     ...shadowStyle,
     borderBottomColor:UserTheme.gray,
     borderBottomWidth:1,
-    opacity:0.5,
     borderColor:UserTheme.gray,
     borderRadius:4,
+    opacity:.5,
   },
   avatar: {
     width: 100,
@@ -395,5 +415,19 @@ const styles = StyleSheet.create({
   avatarWrapper: {
     borderRadius: 5,
     padding: 5, 
+  },
+  saleInput: {
+    height: 50,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+    fontSize: 30,
+    borderBottomColor: UserTheme.gray1,
+    borderBottomWidth: 1,
+  },
+  saleInputWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
