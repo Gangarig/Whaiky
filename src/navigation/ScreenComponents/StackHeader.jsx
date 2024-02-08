@@ -50,9 +50,8 @@ const styles = StyleSheet.create({
     backgroundColor:UserTheme.white,
     justifyContent:'space-between',
     paddingHorizontal:20,
-    borderBottomColor:UserTheme.black,
-    borderBottomWidth:0,
-
+    borderBottomColor:UserTheme.gray,
+    ...shadowStyle,
   },
   text:{
     fontSize:25,

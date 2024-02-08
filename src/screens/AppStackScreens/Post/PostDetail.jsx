@@ -34,7 +34,7 @@ const PostDetail = ({ route, navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-      {post ? <PostCardDetail post={post}/> : <Text>Loading...</Text>}
+      {post ? <PostCardDetail navigation={navigation} post={post}/> : <Text>Loading...</Text>}
       <View style={styles.padding}></View>
     </ScrollView>
   );

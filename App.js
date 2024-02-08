@@ -25,6 +25,8 @@ import { View,StyleSheet } from 'react-native';
 import Contractor from './src/screens/AppStackScreens/ProfileScreens/Contractor/Contractor';
 import { ThemeProvider } from './src/context/ThemeContext';
 import ContractorDetail from './src/screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
+import { MenuProvider } from 'react-native-popup-menu';
+
 
 
 
@@ -67,11 +69,10 @@ export default function App() {
               <ThemeProvider>
               <SafeAreaView style={{ flex: 1 }}>
                 <NavigationContainer>
-                  <Main />
-                  {/* <Test /> */}
-                  {/* <Contractor /> */}
-                  {/* <ContractorDetail /> */}
-                  <FlashMessage position="top" style={{zIndex:9999}}/>
+                  <MenuProvider>
+                      <Main />
+                      <FlashMessage position="top" style={{zIndex:9999}}/>
+                  </MenuProvider>
                 </NavigationContainer>
               </SafeAreaView>
               </ThemeProvider>

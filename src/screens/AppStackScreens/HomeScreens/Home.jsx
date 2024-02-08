@@ -8,6 +8,7 @@ import { showMessage } from 'react-native-flash-message';
 import { useAuth } from '../../../context/AuthContext';
 import PostCard from '../../../components/PostCard';
 import UserTheme from '../../../constant/Theme';
+import PostCardSecondary from '../../../components/PostCardSecondary';
 
 
 const Home = ({ navigation }) => {
@@ -164,18 +165,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: UserTheme.background,
     width: '100%',
-    
   },
   flatList: {
-    flex: 1,
     backgroundColor: UserTheme.background,
     width: '100%',
     paddingHorizontal:5,
   },
   postCardWrapper: {
-    flex: 1,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
+    padding: 5,
+    width: '50%',
   },
 
 });

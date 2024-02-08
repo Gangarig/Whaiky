@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useAuth } from '../context/AuthContext';
 import PrimaryButton from './Buttons/PrimaryButton';
 
-const PostCard = ({ post, onPress }) => {
+const PostCardSecondary = ({ post, onPress }) => {
   const { currentUser } = useAuth();
   const hasImages = post.images && post.images.length > 0;
   return (
@@ -36,10 +36,7 @@ const PostCard = ({ post, onPress }) => {
         )}
             <View style={styles.postInfo}>
               <Text style={styles.title}>{post.title}</Text>
-              <Text
-              numberOfLines={1}
-              ellipsizeMode='tail'
-              style={styles.price}>{post.price}$</Text>
+              <Text style={styles.price}>{post.price}$</Text>
             </View>
       </LinearGradient>
     </TouchableOpacity>
@@ -53,7 +50,6 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     borderWidth: 2,
     borderColor: UserTheme.querternary,
-    maxWidth: 180,
   },
   noImage:{
     justifyContent:'center',
@@ -127,4 +123,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default PostCard;
+export default PostCardSecondary;

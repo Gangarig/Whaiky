@@ -11,6 +11,10 @@ import { showMessage } from 'react-native-flash-message';
 import ContractorCard from '../../../../components/ContractorCard';
 import { FlatList } from 'react-native';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import { ActivityIndicator } from 'react-native';
+
+
+
 const Feedback = ({navigation,route}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -20,50 +24,78 @@ const Feedback = ({navigation,route}) => {
   const [rating, setRating] = useState(null);
   const [feedbacks, setFeedbacks] = useState([]);
   const [summary, setSummary] = useState('');
-
-  const getSummary = (feedbacks) => {
-    const total = feedbacks.length;
-    const sum = feedbacks.reduce((acc, feedback) => acc + feedback.rating, 0);
-    const avg = sum / total;
-    setSummary(`Rating: ${avg.toFixed(1)} (${total} reviews)`);
-  }
+  const [lastVisible, setLastVisible] = useState(null); 
+  const [loading, setLoading] = useState(false); 
+  const [hasMore, setHasMore] = useState(true); 
 
 
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const feedbacksRef = firestore()
+  const fetchAndSetFeedbacks = async () => {
+    if (!hasMore) return;
+    setLoading(true);
+    try {
+      let query = firestore()
         .collection('users')
         .doc(contractor.uid)
         .collection('feedbacks')
-        .orderBy('timestamp', 'desc');
-        const snapshot = await feedbacksRef.get();
-        const feedbacks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setFeedbacks(feedbacks);
-      } catch (error) {
-        console.error('Error fetching feedbacks:', error);
-        showMessage({
-          message: "Failed to fetch feedbacks",
-          type: "danger",
-        });
+        .orderBy('timestamp', 'desc')
+        .limit(10); // Fetch in batches of 10
+      if (lastVisible) {
+        query = query.startAfter(lastVisible);
       }
-    };
-    fetchData();
-    getSummary(feedbacks);
-    
-  }, [contractor.uid]);
+
+      const snapshot = await query.get();
+      if (!snapshot.empty) {
+        const newFeedbacks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setFeedbacks(prevFeedbacks => [...prevFeedbacks, ...newFeedbacks]);
+        setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+        setHasMore(snapshot.docs.length >= 10);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error fetching feedbacks:', error);
+      showMessage({
+        message: "Failed to fetch feedbacks",
+        type: "danger",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAndSetFeedbacks();
+  }, [contractor.uid]); 
+
+  const handleLoadMore = () => {
+    console.log("Loading more feedbacks...");
+    if (!loading) {
+      fetchAndSetFeedbacks();
+    }
+  };
+
+  const calculateSummary = (feedbacks) => {
+    const total = feedbacks.length;
+    const sum = feedbacks.reduce((acc, feedback) => acc + feedback.rating, 0);
+    const avg = total > 0 ? sum / total : 0; 
+    setSummary(`Rating: ${avg.toFixed(1)} (${total} reviews)`);
+  };
 
 
-  const handleSubmit = async (currentUser) => {
-    if(!rating){
+  const reset = () => {
+    setComment('');
+    setRating(null);
+  };
+
+  const handleSubmit = async () => {
+    if (!rating) {
       showMessage({
         message: "Please rate the contractor",
         type: "danger",
       });
       return;
     }
-    if(!comment){
+    if (!comment) {
       showMessage({
         message: "Please write a feedback",
         type: "danger",
@@ -71,46 +103,69 @@ const Feedback = ({navigation,route}) => {
       return;
     }
     try {
+      // Add the individual feedback
       await firestore()
-      .collection('users')
-      .doc(contractor.uid)
-      .collection('feedbacks')
-      .add({
-        contractorId: contractor.uid,
-        userId: currentUser.uid,
-        rating: rating,
-        comment: comment,
-        timestamp: firestore.FieldValue.serverTimestamp(),
+        .collection('users')
+        .doc(contractor.uid)
+        .collection('feedbacks')
+        .add({
+          contractorId: contractor.uid,
+          userId: currentUser.uid,
+          rating: rating,
+          comment: comment,
+          timestamp: firestore.FieldValue.serverTimestamp(),
+        });
+  
+      // Fetch the contractor's current aggregate rating data
+      const contractorRef = firestore().collection('users').doc(contractor.uid);
+      const contractorDoc = await contractorRef.get();
+  
+      let newRatingCount = 1;
+      let newRatingSum = rating;
+
+      if (contractorDoc.exists) {
+        const data = contractorDoc.data();
+        newRatingCount = (data.ratingCount || 0) + 1;
+        newRatingSum = (data.ratingSum || 0) + rating;
+      }
+
+      // Update the contractor's document with new sum and count
+      await contractorRef.update({
+        ratingCount: newRatingCount,
+        ratingSum: newRatingSum,
+        averageRating: newRatingSum / newRatingCount,
       });
+  
       showMessage({
-        message: "Feedback submitted",
+        message: "Feedback submitted successfully",
         type: "success",
       });
-      // navigation.goBack();
+      await fetchAndSetFeedbacks();
+      reset();
+      navigation.goBack();
     } catch (error) {
-      console.error('Error adding feedback:', error);
+      console.error('Error submitting feedback:', error);
       showMessage({
         message: "Failed to submit feedback",
         type: "danger",
       });
     }
-  }
+};
+
   
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <ContractorCard props={contractor} onPress={()=>{}}/>
-        <Text style={{...Fonts.title,marginVertical:10}}>{summary}</Text>
       </View>
       <View style={styles.feedBackInput}>
         <TextInput
-          style={styles.input}
+          style={[styles.input]}
           placeholder="Write your feedback"
           multiline
-          numberOfLines={4}
+          numberOfLines={2}
           value={comment}
           onChangeText={setComment}
-
         />
         <View style={styles.rating}>
         <AirbnbRating
@@ -126,13 +181,14 @@ const Feedback = ({navigation,route}) => {
       <View style={styles.feedBacks}>
         <FlatList
           data={feedbacks}
+          style={styles.flatList}
           renderItem={({ item }) => (
             <View style={styles.feedBack}>
               <Text style={styles.feedBackText}>{item.comment}</Text>
               <Rating
                 type='star'
                 ratingCount={5}
-                imageSize={10}
+                imageSize={12}
                 startingValue={item.rating}
                 readonly
               />
@@ -140,6 +196,9 @@ const Feedback = ({navigation,route}) => {
           )}
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5} // How far from the end to trigger the load more
+          ListFooterComponent={() => loading && hasMore ? <ActivityIndicator size="large" /> : null}
         />
       </View>
     </View>
@@ -152,15 +211,15 @@ const getStyles = (theme) => {
       flex: 1,
       backgroundColor: theme.white,
       alignItems: 'center',
-
     },
     feedBackInput:{
       width:'100%',
       alignItems:'flex-end',
       justifyContent:'center',
-      marginTop:20,
-      ...shadowStyle,
       paddingHorizontal:20,
+      borderBottomColor:theme.primary,
+      borderBottomWidth:1,
+      paddingBottom:10,
     } ,
     input:{
       width:'100%', 
@@ -168,7 +227,7 @@ const getStyles = (theme) => {
       borderWidth:1,
       borderColor:theme.primary,
       borderRadius:5,
-      height:150,
+      height:50,
       padding:10,
       marginBottom:20,
     },
@@ -181,7 +240,33 @@ const getStyles = (theme) => {
     header: {
       width : '100%',
       padding: 10,
-    } 
+    },
+    feedBacks: {
+      flex: 1,
+      width: '100%',
+    },
+    flatList: {
+      flex: 1,
+      paddingHorizontal: 10,
+    },
+    feedBack: {
+      width: '100%',
+      padding: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      borderBottomWidth: 1,
+      borderBottomColor: theme.primary,
+      alignItems: 'center',
+    },
+    feedBackText: {
+      fontFamily: Fonts.primary,
+      fontSize: 15,
+      fontWeight: "400",
+      fontStyle: "normal",
+      color: theme.text,
+      marginBottom: 5,
+      width: '80%',
+    },
   });
 }
 

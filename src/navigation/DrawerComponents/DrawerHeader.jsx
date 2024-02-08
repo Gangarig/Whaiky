@@ -10,8 +10,21 @@ import Fonts from '../../constant/Fonts';
 import { shadowStyle } from '../../constant/Shadow'
 import defaultAvatar from '../../assets/images/avatar/avatar.png'
 
-const DrawerHeader = () => {
+const DrawerHeader = ({navigation}) => {
     const {currentUser} = useAuth();
+    const getDisplayName = () => {
+        if (currentUser.displayName) {
+            return currentUser.displayName;
+        } else if (currentUser.firstName && currentUser.lastName) {
+            return `${currentUser.firstName} ${currentUser.lastName}`;
+        } else if (currentUser.firstName) {
+            return currentUser.firstName;
+        } else if (currentUser.lastName) {
+            return currentUser.lastName;
+        } else {
+            return 'No Name';
+        }
+    };
     const avatarImage = currentUser?.photoURL ? { uri: currentUser?.photoURL } : defaultAvatar;
   return (
     <View style={[style.container]}>
@@ -22,17 +35,31 @@ const DrawerHeader = () => {
                 resizeMode={FastImage.resizeMode.cover}
             />
             <View style={style.headerInfo}>
-            <Text style={style.headerName}>{currentUser.displayName}</Text>
-            <Text style={style.headerText}>Lorem Ipsum</Text>
-            {/* {currentUser.status === 'contractor' && ( */}
-                <AirbnbRating
-                    count={5}
-                    defaultRating={3}
-                    size={15}
-                    showRating={false}
-                />
-                {/* )} */}
-            <Text style={style.headerText}>Sea my social Profile</Text>
+            <Text
+            ellipsizeMode='tail'
+            numberOfLines={1}
+            style={style.headerName}>{getDisplayName()}</Text>
+            <Text
+            ellipsizeMode='tail'
+            numberOfLines={1}
+            style={style.headerText}>Status : {currentUser.status}</Text>
+            {currentUser.status === 'contractor' && (
+                currentUser.averageRating && currentUser.averageRating > 0 ? (
+                    <AirbnbRating
+                        count={5}
+                        defaultRating={currentUser.averageRating}
+                        size={15}
+                        showRating={false}
+                    />
+                ) : (
+                    <Text style={style.headerText}>No Rating</Text>
+                )
+            )}
+            <Text 
+            onPress={() => navigation.navigate('Profile')}
+            numberOfLines={1}
+            ellipsizeMode='tail'
+            style={style.headerText}>Sea my social Profile</Text>
             </View>
         </View>
     </View>
@@ -53,8 +80,10 @@ const style = StyleSheet.create({
         flexDirection:'row',
     },
     headerInfo:{
+        width:'60%',
         justifyContent:'center',
         alignItems:'center',
+        marginLeft:5,
     },
     avatar:{
         width:80,

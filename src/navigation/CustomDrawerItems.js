@@ -24,7 +24,7 @@ function CustomDrawerContent({navigation}) {
       colors={[UserTheme.primary, UserTheme.secondary]}
       style={styles.container}
     >
-      <DrawerHeader />
+      <DrawerHeader navigation={navigation} />
       <DrawerItems navigation={navigation} />
       <DrawerFooter navigation={navigation} />
     </LinearGradient>

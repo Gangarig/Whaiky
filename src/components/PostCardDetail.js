@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { Global } from '../constant/Global';
 import Colors from '../constant/Colors';
@@ -12,14 +12,36 @@ import PrimaryButton from './Buttons/PrimaryButton';
 import LinearGradient from 'react-native-linear-gradient';
 import { useAuth } from '../context/AuthContext';
 import { DeletePost,AddSale,EditPost } from '../screens/AppStackScreens/Post/PostUtility';
+import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { handleSelect } from '../screens/AppStackScreens/service/ChatService';
+import ContractorCard from './ContractorCard';
+import firestore from '@react-native-firebase/firestore';
 
 
-
-
-const PostCardDetail = ({ post }) => {
+const PostCardDetail = ({ navigation , post }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isImageViewVisible, setImageViewVisible] = useState(false);
   const { currentUser } = useAuth();
+  const [contractor, setContractor] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const docSnap = await firestore().collection('users').doc(post.ownerId).get();
+        if (docSnap.exists) {
+          setContractor({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          console.log('No such document!');
+        }
+      }
+      catch (error) {
+        console.error('Error fetching post:', error);
+      }
+    };
+    fetchData();
+  }, [post.ownerId]);
+
+
 
   const postDate = post.timestamp && post.timestamp.toDate instanceof Function
     ? post.timestamp.toDate().toLocaleDateString()
@@ -57,7 +79,10 @@ const PostCardDetail = ({ post }) => {
   
   
 
-  const handleContact = (id) => {};
+  const handleContact = (currentUser,contractor) => {
+    handleSelect(currentUser,contractor);
+    navigation.navigate('Chat');
+  };
   return (
     <ScrollView
       style={styles.container}
@@ -131,23 +156,38 @@ const PostCardDetail = ({ post }) => {
         </View>
         <View style={styles.postBody}>
           <Text style={styles.postDescription}>{post.description}</Text>
+          <Text style={styles.postDescription}>{post.postId}</Text>
         </View>
 
         {currentUser.uid === post.ownerId ? (
               <View style={styles.postEdit}>
                 <PrimaryButton text='Delete' onPress={()=>DeletePost(post)} />
-                <PrimaryButton text='Edit' onPress={()=>EditPost(post)} />
                 <PrimaryButton text='Add Sale' onPress={()=>AddSale(post)} />
               </View>
         ):
         <View style={styles.contactContainerWrapper}>
           <View style={styles.contactContainer}>
-            <PrimaryButton text="Contact" onPress={handleContact} />
-            <FastImage style={styles.avatar} source={{ uri: post.ownerAvatar }} />
+            <View style={styles.btnContainer}>
+              <PrimaryButton text="Contact" onPress={()=>handleContact(currentUser,contractor)} />
+              <PrimaryButton text="Show Profile" onPress={()=>navigation.navigate('ContractorDetail',{id:post.ownerId})} />
+            </View>
+            <View style={styles.avatarWrapper}>
+            {
+              post.ownerAvatar ? (
+                <FastImage
+                  source={{ uri: post.ownerAvatar }}
+                  style={styles.avatar}
+                  resizeMode="cover"
+                />
+              ) : (
+                <FontAwesomeIcon icon={faUser} size={60} color={UserTheme.black} />
+              )
+            }
+          </View>
           </View>
         </View>
         }
-       
+
       </View>
       {renderImageViewer()}
     </ScrollView>
@@ -338,6 +378,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginRight: 10,
+    backgroundColor: UserTheme.white,
   },
   postEdit:{
     flexDirection:'row',
@@ -345,9 +386,14 @@ const styles = StyleSheet.create({
     alignItems:'center',
     paddingVertical:10,
     width:'100%',
-    borderColor:UserTheme.primary,
-    borderWidth:1,
     ...shadowStyle,
     borderRadius:10,
+  },
+  btnContainer:{
+    gap:10,
+  },
+  avatarWrapper: {
+    borderRadius: 5,
+    padding: 5, 
   },
 });

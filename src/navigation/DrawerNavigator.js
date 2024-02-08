@@ -17,6 +17,7 @@ import DocumentUpload from '../screens/AppStackScreens/ProfileScreens/Contractor
 import Certificate from '../screens/AppStackScreens/ProfileScreens/Contractor/Certificate';
 import PostStackScreen from './PostStack';
 import ContractorStackScreen from './ContractorStack';
+import ContractorDetail from '../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
 
 
 
@@ -119,6 +120,8 @@ function DrawerNavigator() {
           header: props => <StackHeader title="Support" isHomeScreen={false} {...props} />,
         }}
       />
+
+
     </Drawer.Navigator>
   );
 }

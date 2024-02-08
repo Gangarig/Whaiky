@@ -96,7 +96,7 @@ const MyPosts = ({ navigation }) => {
         contentContainerStyle={styles.flatList}
         showsVerticalScrollIndicator={false}
         numColumns={2}
-        ListEmptyComponent={<Text style={{ fontSize: 25, color: UserTheme.text }}>No posts found</Text>}
+        ListEmptyComponent={<Text style={{ fontSize: 25, color: UserTheme.text,paddingTop:30 }}>No posts found</Text>}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -115,10 +115,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: UserTheme.background,
     width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   postCardWrapper: {
-    flex: 1,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
+    width: '50%',
+    padding: 5,
   },
 });

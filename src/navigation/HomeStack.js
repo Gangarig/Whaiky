@@ -8,7 +8,8 @@ import { Icon } from 'react-native-elements';
 import { DrawerActions } from '@react-navigation/native';
 import PostSearch from '../screens/AppStackScreens/Post/PostSearch';
 import StackHeader from './ScreenComponents/StackHeader';
-
+import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedback';
+import ContractorDetail from '../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
 
 const HomeStack = createStackNavigator();
 function HomeStackScreen({ navigation}) {
@@ -41,6 +42,24 @@ function HomeStackScreen({ navigation}) {
       <HomeStack.Screen 
       name="SearchPost" 
       component={PostSearch}
+      options={
+        ({navigation}) => ({
+          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
+        })
+      }
+      />
+      <HomeStack.Screen 
+      name="ContractorDetail" 
+      component={ContractorDetail}
+      options={
+        ({navigation}) => ({
+          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
+        })
+      }
+      />
+      <HomeStack.Screen 
+      name="FeedBack" 
+      component={Feedback}
       options={
         ({navigation}) => ({
           header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,

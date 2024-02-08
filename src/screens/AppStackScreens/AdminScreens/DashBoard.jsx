@@ -12,7 +12,7 @@ const DashBoard = ({ navigation }) => {
   const [submissions, setSubmissions] = useState([]);
   const [lastVisible, setLastVisible] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const { currentUser } = useAuth();
 
   const fetchSubmissions = async () => {
     if (lastVisible === null && submissions.length > 0) {

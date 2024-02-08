@@ -7,6 +7,7 @@ import Contractor from '../screens/AppStackScreens/ProfileScreens/Contractor/Con
 import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedback';
 import ContractorDetail from '../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
 import StackHeader from './ScreenComponents/StackHeader';
+import PostDetail from '../screens/AppStackScreens/Post/PostDetail';
 
 
 
@@ -36,6 +37,15 @@ function ContractorStackScreen({ navigation}) {
       options={
         ({navigation}) => ({
           header: (props) => <StackHeader title="Contractor Info " navigation={navigation} isHomeScreen={false} {...props}  />,
+        })
+      }
+       />
+      <ContractorStack.Screen
+      name="PostDetail"
+      component={PostDetail} 
+      options={
+        ({navigation}) => ({
+          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
         })
       }
        />

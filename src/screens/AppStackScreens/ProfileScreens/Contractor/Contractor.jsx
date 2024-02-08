@@ -26,28 +26,49 @@ const Contractor = ({navigation}) => {
   }
     , []);
 
-    const fetchContractor = async () => {
-      try {
-        setRefreshing(true);
-        const contractorRef = firestore().collection('contractor');
-        const snapshot = await contractorRef.limit(30).get();
-        const userData = await Promise.all(snapshot.docs.map(async doc => {
-          const contractor = doc.data();
-          const userSnapshot = await firestore().collection('users').doc(contractor.userId).get();
-          return userSnapshot.exists ? userSnapshot.data() : null;
-        }));
+    const fetchContractor = async (loadMore = false) => {
+      if (loadMore && !hasMore) return; 
     
-        setContractorData(userData.filter(user => user !== null)); 
+      try {
+        setLoadingMore(loadMore); 
+        setRefreshing(!loadMore); 
+    
+        let query = firestore().collection('contractor').orderBy('userId').limit(10);
+        if (loadMore && lastFetchedContractor.current) {
+          query = query.startAfter(lastFetchedContractor.current);
+        }
+    
+        const snapshot = await query.get();
+        const userData = await Promise.all(
+          snapshot.docs.map(async doc => {
+            const contractor = doc.data();
+            const userSnapshot = await firestore().collection('users').doc(contractor.userId).get();
+            return userSnapshot.exists ? { ...userSnapshot.data(), id: userSnapshot.id } : null;
+          })
+        );
+    
+        if (loadMore) {
+          setContractorData(prev => [...prev, ...userData.filter(user => user !== null)]);
+        } else {
+          setContractorData(userData.filter(user => user !== null));
+        }
+    
         lastFetchedContractor.current = snapshot.docs[snapshot.docs.length - 1];
+        setHasMore(snapshot.docs.length > 0);
+        setLoadingMore(false);
         setRefreshing(false);
       } catch (error) {
         console.error("Error fetching contractors:", error);
+        setLoadingMore(false);
         setRefreshing(false);
       }
     };
+    
+    
     const navigateToContractorProfile = (uid) => {
       navigation.navigate('ContractorDetail', { id: uid});
     }
+
     const renderItem = ({ item }) => {
       return (
         <ContractorCard props={item} onPress={()=>navigateToContractorProfile(item.uid)}/>
@@ -62,10 +83,17 @@ const Contractor = ({navigation}) => {
         data={contractorData}
         renderItem={renderItem}
         keyExtractor={(item, index) => item.id || index.toString()}
+        onEndReached={() => fetchContractor(true)}
         onEndReachedThreshold={0.5}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => fetchContractor()}
+          />
+        }
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        />
+      />
     </View>
   );
 };
@@ -75,7 +103,8 @@ const getStyles = (theme) => {
     container: {
       flex: 1,
       backgroundColor: theme.backgroundColor,
-      padding: 10,
+      paddingHorizontal: 10,
+      paddingBottom: 10,
       justifyContent: 'center',
       alignItems: 'center',
     },
