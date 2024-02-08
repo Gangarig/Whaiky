@@ -53,11 +53,11 @@ const DrawerItems = ({navigation}) => {
       <>
       <DrawerItem item='Services'  icon="fa-solid fa-icons"  label="Service" />
       <DrawerItem item='LegalInfo' icon="fa-solid fa-id-card"  label="Legal Info" />
-      <DrawerItem item='FeedBack' icon="fa-solid fa-envelopes-bulk"  label="Feed Back" />
+      <DrawerItem item='Reviews' icon="fa-solid fa-envelopes-bulk"  label="Reviews" />
       </>
       ):null}
 
-      <DrawerItem item='Settings' icon="fa-solid fa-gear" label="Settings "/>
+      {/* <DrawerItem item='Settings' icon="fa-solid fa-gear" label="Settings "/> */}
     </View>
   );
 };

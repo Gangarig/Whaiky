@@ -8,6 +8,7 @@ import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedb
 import ContractorDetail from '../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
 import StackHeader from './ScreenComponents/StackHeader';
 import PostDetail from '../screens/AppStackScreens/Post/PostDetail';
+import Reviews from '../screens/AppStackScreens/ProfileScreens/Contractor/Reviews';
 
 
 
@@ -58,6 +59,7 @@ function ContractorStackScreen({ navigation}) {
         })
       }
       />
+
     </ContractorStack.Navigator>
   );
 }

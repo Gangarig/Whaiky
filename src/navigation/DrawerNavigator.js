@@ -18,6 +18,7 @@ import Certificate from '../screens/AppStackScreens/ProfileScreens/Contractor/Ce
 import PostStackScreen from './PostStack';
 import ContractorStackScreen from './ContractorStack';
 import ContractorDetail from '../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
+import Reviews from '../screens/AppStackScreens/ProfileScreens/Contractor/Reviews';
 
 
 
@@ -104,6 +105,14 @@ function DrawerNavigator() {
           header: props => <StackHeader title="Certificates" isHomeScreen={false} {...props} />,
         }}
         />
+        <Drawer.Screen
+        name="Reviews"
+        component={Reviews}
+        options={{
+          headerShown: true,
+          header: props => <StackHeader title="Reviews" isHomeScreen={false} {...props} />,
+        }}
+      />
       <Drawer.Screen
         name="Settings"
         component={Settings}
