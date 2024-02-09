@@ -127,10 +127,13 @@ const Home = ({ navigation }) => {
   };
 
   return (
+    <View style={styles.wrapper}>
     <View style={styles.container}>
       {currentUser ? (
         <ScrollView
           contentContainerStyle={styles.scrollViewContent}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           onScroll={({ nativeEvent }) => {
             if (isCloseToBottom(nativeEvent)) {
@@ -148,6 +151,7 @@ const Home = ({ navigation }) => {
         <Text>Please sign in to see posts.</Text>
       )}
     </View>
+    </View>
   );
 };
 
@@ -157,9 +161,16 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: UserTheme.background,
+  },
   container: {
     flex: 1,
     backgroundColor: UserTheme.background,
+    maxWidth: 500,
   },
   scrollViewContent: {
     alignItems: 'center',

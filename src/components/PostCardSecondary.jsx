@@ -23,6 +23,7 @@ const PostCardSecondary = ({ post, onPress }) => {
     ));
   };
   return (
+    <View style={styles.border}>
     <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
       <LinearGradient
         colors={[UserTheme.primary, UserTheme.tertiary]}
@@ -59,6 +60,7 @@ const PostCardSecondary = ({ post, onPress }) => {
             </LinearGradient>
       </LinearGradient>
     </TouchableOpacity>
+    </View>
   );
 };
 
@@ -66,36 +68,33 @@ const styles = StyleSheet.create({
   postCardContainer: {
     width: '100%',
     position: 'relative',
-    borderRadius: 15,
-    borderWidth: 2,
-    borderColor: UserTheme.querternary,
+    borderRadius: 12,
     height: 200,
+    borderWidth: 0,
+    borderColor: UserTheme.querternary,
+    padding: 0,
   },
   noImage:{
     justifyContent:'center',
     alignItems:'center',
     flex:1,
-    borderWidth:1,
-    borderColor:'#ccc',
-    borderRadius:4,
+    borderRadius:15,
   },
   postImage: {
     width: '100%',
     height: 140,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
-    backgroundColor: UserTheme.white,
+
   },
   noImage:{
     height: 140,
     padding: 10,
+    borderTopLeftRadius: 13,
+    borderTopRightRadius: 13,
     backgroundColor: UserTheme.white,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: UserTheme.querternary,
-    borderWidth: .5,
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
   },
   postInfo: {
     paddingVertical: 7,
@@ -104,6 +103,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 60,
     alignItems: 'center',
+    borderRadius: 15,
+
   },
   title: {
     fontSize: 14,
@@ -174,6 +175,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     transform: [{ rotate: '270deg' }],
   },
+  border:{
+    borderWidth:2,
+    borderColor:UserTheme.querternary,
+    borderRadius:15,
+  }
 
 
 })

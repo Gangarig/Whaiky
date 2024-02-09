@@ -349,11 +349,6 @@ const getStyles = (theme) => {
         FlatList: {
             width: '100%',
         },
-        postWrapper: {
-            width: '100%',
-            paddingHorizontal: 10,
-            paddingVertical: 5,
-        },
     })
 }
 

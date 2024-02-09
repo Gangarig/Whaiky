@@ -17,9 +17,6 @@ export const EditPost = (post) => {
     }
 
 export const AddSale = (post,saleValue) => {
-    console.log("Add Sale")
-    console.log(post.postId)
-    console.log(saleValue)
     try {
         firestore()
         .collection('posts')

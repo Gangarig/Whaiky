@@ -69,7 +69,8 @@ const ProfileCard = ({ item, onPress }) => {
   
 
   return (
-        <TouchableOpacity onPress={onPress} style={[styles.profileCard,shadowStyle]}>
+    <View style={styles.profileCardWrapper}>
+        <TouchableOpacity onPress={onPress} style={[styles.profileCard]}>
         <View style={[styles.profileImageWrapper]}>
           <FastImage source={avatarImage} style={[styles.profileImage]} />
         </View>
@@ -88,6 +89,7 @@ const ProfileCard = ({ item, onPress }) => {
           </View>
         </View>
       </TouchableOpacity>
+      </View>
 
   );
 };
@@ -98,6 +100,12 @@ const ProfileCard = ({ item, onPress }) => {
 export default ProfileCard
 
 const styles = StyleSheet.create({
+    profileCardWrapper:{
+        width:'100%',
+        ...shadowStyle,
+        marginVertical:5,
+        height:90,
+    },
     profileCard:{
         width:'100%',
         height: 90,

@@ -164,8 +164,8 @@ const PostCardDetail = ({ navigation , post }) => {
                 <PrimaryButton text='Add Sale' onPress={()=>setDialog(true)} />
               </View>
         ):
-        <View style={styles.contactContainerWrapper}>
-          <View style={styles.contactContainer}>
+        <View style={[styles.contactContainerWrapper]}>
+          <View style={[styles.contactContainer]}>
             <View style={styles.btnContainer}>
               <PrimaryButton text="Contact" onPress={()=>handleContact(currentUser,contractor)} />
               <PrimaryButton text="Show Profile" onPress={()=>navigation.navigate('ContractorDetail',{id:post.ownerId})} />
@@ -311,7 +311,6 @@ const styles = StyleSheet.create({
     width: '90%',
     borderColor: UserTheme.primary,
     borderWidth: 1,
-    ...shadowStyle,
     borderRadius: 10,
   },
   postTitle: {
@@ -406,7 +405,6 @@ const styles = StyleSheet.create({
     alignItems:'center',
     paddingVertical:10,
     width:'100%',
-    ...shadowStyle,
     borderRadius:10,
   },
   btnContainer:{

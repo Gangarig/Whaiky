@@ -16,12 +16,14 @@ const PostCard = ({ post, onPress }) => {
   const { currentUser } = useAuth();
   const hasImages = post.images && post.images.length > 0;
   return (
+   
     <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
       <LinearGradient
         colors={['#9E42F0', '#423EE7']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.postCardContainer]}
+        style={[styles.postCardContainer, { borderRadius: 10, 
+        borderWidth: 2, borderColor: UserTheme.querternary, overflow: 'hidden' }]}
       >
         {hasImages ? (
           <FastImage 
@@ -50,25 +52,17 @@ const styles = StyleSheet.create({
   postCardContainer: {
     width: '100%',
     position: 'relative',
-    borderRadius: 7,
-    borderWidth: 2,
-    borderColor: UserTheme.querternary,
     maxWidth: 180,
+    backgroundColor: UserTheme.querternary,
   },
   noImage:{
     justifyContent:'center',
     alignItems:'center',
     flex:1,
-    borderWidth:1,
-    borderColor:'#ccc',
-    borderRadius:4,
   },
   postImage: {
     width: '100%',
     height: 120,
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
-    backgroundColor: UserTheme.white,
   },
   noImage:{
     height: 120,
@@ -76,10 +70,6 @@ const styles = StyleSheet.create({
     backgroundColor: UserTheme.white,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: UserTheme.querternary,
-    borderWidth: .5,
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
   },
   postInfo: {
     paddingVertical: 7,
@@ -108,10 +98,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 120,
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
-    borderWidth: 1,
-    borderColor: UserTheme.querternary,
   },
   noImageText:{
     fontFamily: Fonts.primary,
@@ -121,9 +107,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: UserTheme.gray,
     padding: 20,
-    borderRadius: 7,
+    borderRadius: 5,
   },
-
 
 })
 

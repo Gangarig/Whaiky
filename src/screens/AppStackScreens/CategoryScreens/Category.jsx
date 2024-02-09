@@ -5,6 +5,7 @@ import { Dimensions } from 'react-native';
 import { Global } from '../../../constant/Global';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
 import { shadowStyle } from '../../../constant/Shadow';
+import PostCard from '../../../components/PostCard';
 
 const Category = ({ navigation, route }) => {
   const [openCategories, setOpenCategories] = useState([]);
@@ -18,15 +19,16 @@ const Category = ({ navigation, route }) => {
     if (openCategories.includes(categoryId)) {
       setOpenCategories(openCategories.filter(id => id !== categoryId));
     } else {
-      setOpenCategories([...openCategories, categoryId]);
+     
+      setOpenCategories([categoryId]);
       flatListRef.current?.scrollToIndex({
         index: categoriesData.findIndex(category => category.id === categoryId),
         animated: true,
-        viewPosition: 0.5, // Adjust this value as needed
+        viewPosition: 0.5, 
       });
     }
   };
-
+  
   const onLayout = (id) => (event) => {
     const { y } = event.nativeEvent.layout;
     setLayout(prev => ({

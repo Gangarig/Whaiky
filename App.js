@@ -26,6 +26,7 @@ import Contractor from './src/screens/AppStackScreens/ProfileScreens/Contractor/
 import { ThemeProvider } from './src/context/ThemeContext';
 import ContractorDetail from './src/screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
 import { MenuProvider } from 'react-native-popup-menu';
+import UserTheme from './src/constant/Theme';
 
 
 
@@ -71,7 +72,9 @@ export default function App() {
               <SafeAreaView style={{ flex: 1 }}>
                 <NavigationContainer>
                   <MenuProvider>
+                     
                       <Main />
+                   
                   </MenuProvider>
                 </NavigationContainer>
               </SafeAreaView>
@@ -83,3 +86,5 @@ export default function App() {
    
   );
 }
+
+
