@@ -1,40 +1,37 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, SafeAreaView, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { Dimensions } from 'react-native';
-import { Global } from '../../../constant/Global';
+import { useTheme } from '../../../context/ThemeContext';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
 import { shadowStyle } from '../../../constant/Shadow';
-import PostCard from '../../../components/PostCard';
 
-const Category = ({ navigation, route }) => {
+const Category = ({ navigation }) => {
   const [openCategories, setOpenCategories] = useState([]);
   const flatListRef = useRef();
-  const [layout, setLayout] = useState({});
+  const theme = useTheme();
+  const styles = getStyles(theme);
   const screenHeight = Dimensions.get('window').height;
-  const itemHeight = styles.mainCategory.height;
+  const [itemHeight, setItemHeight] = useState(85); 
+  useEffect(() => {
+    setItemHeight(styles.mainCategory.height);
+  }, [styles.mainCategory.height]);
+
   const someValue = (screenHeight / 2) - (itemHeight / 2);
 
   const toggleCategory = (categoryId) => {
     if (openCategories.includes(categoryId)) {
       setOpenCategories(openCategories.filter(id => id !== categoryId));
     } else {
-     
       setOpenCategories([categoryId]);
-      flatListRef.current?.scrollToIndex({
-        index: categoriesData.findIndex(category => category.id === categoryId),
-        animated: true,
-        viewPosition: 0.5, 
-      });
+      const index = categoriesData.findIndex(category => category.id === categoryId);
+      if (index !== -1) {
+        flatListRef.current?.scrollToIndex({
+          index,
+          animated: true,
+          viewPosition: 0.5, 
+        });
+      }
     }
-  };
-  
-  const onLayout = (id) => (event) => {
-    const { y } = event.nativeEvent.layout;
-    setLayout(prev => ({
-      ...prev,
-      [id]: y,
-    }));
   };
 
   const navigateToDetail = (optionId) => {
@@ -42,24 +39,21 @@ const Category = ({ navigation, route }) => {
   };
 
   const renderItem = ({ item }) => (
-    <View
-      onLayout={onLayout(item.id)}
-      style={shadowStyle}
-    >
+    <View style={styles.shadowContainer}>
       <LinearGradient
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        colors={['rgb(158, 66, 240)', 'rgb(95, 109, 203)']}
-        style={[styles.mainCategory]}
+        colors={[theme.primary, theme.secondary]}
+        style={styles.mainCategory}
       >
-        <TouchableOpacity style={styles.mainCategory} onPress={() => toggleCategory(item.id)}>
+        <TouchableOpacity onPress={() => toggleCategory(item.id)} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
           <Image source={item.icon} style={styles.icon} />
-          <Text style={[Global.titleSecondary, styles.title]}>{item.text}</Text>
+          <Text style={styles.title}>{item.text}</Text>
         </TouchableOpacity>
       </LinearGradient>
       {openCategories.includes(item.id) && (
         <View style={styles.optionsContainer}>
-          {item.options.map(option => (
+          {item.options.map((option) => (
             <TouchableOpacity
               key={option.optionId}
               onPress={() => navigateToDetail(option.optionId)}
@@ -69,76 +63,55 @@ const Category = ({ navigation, route }) => {
           ))}
         </View>
       )}
-      <View style={styles.border}></View>
     </View>
   );
 
   return (
-    <View style={{flex:1}}>
     <FlatList
-      style={styles.container}
-      contentContainerStyle={[styles.contentContainerStyle, styles.bottomPadding]}
       data={categoriesData}
       renderItem={renderItem}
       keyExtractor={item => item.id.toString()}
       ref={flatListRef}
+      contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
     />
-    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-  },
-  contentContainerStyle: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    gap: 16,
-    paddingVertical: 16,
+const getStyles = (theme) => StyleSheet.create({
+  shadowContainer: {
+    marginBottom: 16,
+    borderRadius: 10,
+    overflow: 'hidden', 
   },
   mainCategory: {
     width: 350,
     height: 85,
     borderRadius: 10,
     paddingLeft: 5,
-    gap: 16,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
-    color: '#FFF',
+    color: theme.white,
     fontSize: 24,
-    height: 30,
   },
   optionsContainer: {
-    marginLeft: 16,
-    marginBottom: 16,
-    backgroundColor: '#7b7b7b',
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    width: 320,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    backgroundColor: theme.gray,
+    padding: 10,
+    width: '90%',
   },
   optionText: {
+    color: theme.white,
     fontSize: 16,
     marginBottom: 4,
-    color: '#FFF',
   },
   icon: {
     width: 60,
     height: 60,
-  },
-  bottomPadding: {
-    paddingBottom: 100,
-  },
-  border: {
-    borderBottomWidth: 1,
-    borderBottomColor: 'black',
-    marginTop: 16,
+    marginRight: 10,
   },
 });
 

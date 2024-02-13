@@ -1,13 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import FastImage from 'react-native-fast-image'; // Ensure this is imported
+import FastImage from 'react-native-fast-image'; 
 import Messages from "./Messages";
-import Colors from "../../../../constant/Colors";
-import defaultAvatar from '../../../../assets/images/avatar/avatar.png'; // Assuming you have a default avatar image
-import UserTheme from "../../../../constant/Theme";
+import defaultAvatar from '../../../../assets/images/avatar/avatar.png'; 
+import { useTheme } from "../../../../context/ThemeContext";
 
 const Chat = ({ navigation, route }) => {
   const { chatId, userInfo } = route.params;
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -21,7 +22,7 @@ const Chat = ({ navigation, route }) => {
         </View>
       ),
       headerBackTitleVisible: false,
-      headerTintColor: Colors.primary,
+      headerTintColor: theme.primary,
     });
   }, [navigation, userInfo]);
 
@@ -32,11 +33,11 @@ const Chat = ({ navigation, route }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   chatContainer: {
     flex: 1,
-    backgroundColor: UserTheme.background,
-    borderTopColor: UserTheme.black,
+    backgroundColor: theme.background,
+    borderTopColor: theme.black,
     borderTopWidth: .5,
   }, 
   headerTitle: {
@@ -51,8 +52,9 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontWeight: "bold",
-    color: Colors.text, 
+    color: theme.text, 
   },
 });
+
 
 export default Chat;

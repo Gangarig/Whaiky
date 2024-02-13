@@ -18,7 +18,7 @@ import storage from '@react-native-firebase/storage';
 import { Global } from '../../../../constant/Global';
 import LinearGradient from 'react-native-linear-gradient';
 import { shadowStyle } from '../../../../constant/Shadow';
-import Colors from '../../../../constant/Colors';
+import { useTheme } from '../../../../context/ThemeContext';
 import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 
 const Certificate = ({ navigation }) => {
@@ -28,6 +28,8 @@ const Certificate = ({ navigation }) => {
     title: '',
     description: '',
   });
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const handleChooseImage = () => {
     ImageCropPicker.openPicker({
@@ -131,9 +133,9 @@ const Certificate = ({ navigation }) => {
     >
     <View style={[styles.LinearGradientWrapper, shadowStyle]}>
     <LinearGradient
-        colors={['#9E41F0', '#4C7BC0']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
+        colors={[theme.primary, theme.secondary]}
+        start={{ x: 0, y:0 }}
+        end={{ x: 1, y: 1 }}
         style={[styles.content,shadowStyle]}
       >
           <Text style={[Global.title,styles.title]}>Certificate Upload</Text>
@@ -149,13 +151,13 @@ const Certificate = ({ navigation }) => {
           </TouchableOpacity>
 
           <TextInput
-            style={Global.input}
+            style={[Global.input,{backgroundColor:theme.backgroundSecondary}]}
             placeholder="Certificate Title"
             onChangeText={(text) => handleInputChange('title', text)}
             value={certificateDetails.title}
           />
           <TextInput
-            style={Global.input}
+            style={[Global.input,{backgroundColor:theme.backgroundSecondary}]}
             placeholder="Description"
             onChangeText={(text) => handleInputChange('description', text)}
             value={certificateDetails.description}
@@ -182,9 +184,9 @@ const Certificate = ({ navigation }) => {
 
 export default Certificate;
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     flex: 1,
     width: '100%',
     paddingVertical: 20,
@@ -196,7 +198,7 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 20,
     paddingBottom: 100,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
   },
   LinearGradientWrapper: {
     width: '100%',
@@ -218,12 +220,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
     borderWidth: 1.5,
-    borderColor: Colors.black,
+    borderColor: theme.primary,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
     marginBottom: 20,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.backgroundSecondary,
     ...shadowStyle
   },
   image: {
@@ -238,6 +240,10 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   title: {
-    color: Colors.white,
+    color: theme.white,
+  },
+  placeholderText: {
+    color: theme.text,
+    fontSize: 16,
   },
 });

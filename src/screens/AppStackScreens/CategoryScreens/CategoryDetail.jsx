@@ -102,7 +102,7 @@ const CategoryDetail = ({ navigation, route }) => {
         data={posts}
         renderItem={renderItem}
         numColumns={2}
-        keyExtractor={(item, index) => `${item.id}-${index}`} // Ensure unique keys
+        keyExtractor={(item, index) => `${item.id}-${index}`} 
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}

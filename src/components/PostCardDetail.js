@@ -1,22 +1,19 @@
 import React, { useState , useEffect } from 'react';
 import { View, Text, StyleSheet, Image,TextInput, ScrollView, TouchableOpacity } from 'react-native';
-import { Global } from '../constant/Global';
-import Colors from '../constant/Colors';
-import Shadow, { shadowStyle } from '../constant/Shadow';
+import { shadowStyle } from '../constant/Shadow';
 import FastImage from 'react-native-fast-image';
 import UserTheme from '../constant/Theme';
 import ImageView from 'react-native-image-viewing';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import Fonts from '../constant/Fonts';
 import PrimaryButton from './Buttons/PrimaryButton';
-import LinearGradient from 'react-native-linear-gradient';
 import { useAuth } from '../context/AuthContext';
 import { DeletePost,AddSale,EditPost } from '../screens/AppStackScreens/Post/PostUtility';
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { handleSelect } from '../screens/AppStackScreens/service/ChatService';
-import ContractorCard from './ContractorCard';
 import firestore from '@react-native-firebase/firestore';
 import Dialog from "react-native-dialog";
+import { useTheme } from '../context/ThemeContext';
 
 
 
@@ -27,6 +24,9 @@ const PostCardDetail = ({ navigation , post }) => {
   const [contractor, setContractor] = useState(null);
   const [salePrice, setSalePrice] = useState('');
   const [dialog, setDialog] = useState(false);
+  const theme = useTheme();
+  const styles = getStyles(theme);
+
   
   
   useEffect(() => {
@@ -131,7 +131,7 @@ const PostCardDetail = ({ navigation , post }) => {
       )}
       {post.images.length === 0 && (
       <View style={styles.noImage}>
-       <FontAwesomeIcon style={styles.image} size={300} color={UserTheme.gray} icon="fa-solid fa-image" />
+       <FontAwesomeIcon style={styles.image} size={300} color={theme.gray} icon="fa-solid fa-image" />
       </View>
       )}
       <View style={styles.postInfo}>
@@ -179,7 +179,7 @@ const PostCardDetail = ({ navigation , post }) => {
                   resizeMode="cover"
                 />
               ) : (
-                <FontAwesomeIcon icon={faUser} size={60} color={UserTheme.black} />
+                <FontAwesomeIcon icon={faUser} size={60} color={theme.black} />
               )
             }
           </View>
@@ -215,10 +215,11 @@ const PostCardDetail = ({ navigation , post }) => {
 
 export default PostCardDetail;
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
   },
   scrollView: {
     flexGrow: 1,
@@ -255,7 +256,7 @@ const styles = StyleSheet.create({
     top: 125,
   },
   selectedImage: {
-    borderColor: UserTheme.querternary, 
+    borderColor: theme.querternary, 
     borderWidth: 2,
   },
   postInfo: {
@@ -309,39 +310,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     width: '90%',
-    borderColor: UserTheme.primary,
+    borderColor: theme.primary,
     borderWidth: 1,
     borderRadius: 10,
   },
   postTitle: {
     fontSize: 20,
     fontWeight: 'bold', 
-    color: UserTheme.querternary,
+    color: theme.querternary,
     fontFamily: Fonts.querternary,
   },
   price: {
     fontSize: 19,
     fontWeight: 'bold',
-    color: UserTheme.querternary,
+    color: theme.querternary,
     fontFamily: Fonts.querternary,
   },
   salePrice: {
     fontSize: 19,
     fontWeight: 'bold',
-    color: UserTheme.querternary,
+    color: theme.querternary,
     fontFamily: Fonts.querternary,
   },
   postDate: {
     fontSize: 12,
     fontFamily: Fonts.querternary,
-    color: UserTheme.gray,
+    color: theme.gray,
     paddingTop: 10,
   
   },
   postAddress: {
     fontSize: 12,
     fontFamily: Fonts.querternary,
-    color: UserTheme.gray,
+    color: theme.gray,
     paddingTop: 10,
     paddingHorizontal: 3,
     paddingLeft: 10,
@@ -357,25 +358,25 @@ const styles = StyleSheet.create({
     alignItems:'center',
     flexDirection:'row',
     borderWidth:1,
-    borderColor:UserTheme.white,
+    borderColor:theme.white,
     zIndex:1,
   },
   saleText:{
     fontSize:18,
-    color:UserTheme.white,
+    color:theme.white,
     fontFamily:Fonts.querternary,
     fontWeight:'bold',  
   },
   verticalLineDot: {
     height: 1, 
     width: 3,  
-    backgroundColor: UserTheme.white,
+    backgroundColor: theme.white,
     marginVertical: 1, 
     marginHorizontal: 4,
     borderRadius: 3,
   },
   verticalText: {
-    color: UserTheme.white,
+    color: theme.white,
     fontFamily: Fonts.querternary,
     fontWeight: 'bold',
     fontSize: 18,
@@ -386,9 +387,9 @@ const styles = StyleSheet.create({
     alignItems:'center',
     flex:1,
     ...shadowStyle,
-    borderBottomColor:UserTheme.gray,
+    borderBottomColor:theme.gray,
     borderBottomWidth:1,
-    borderColor:UserTheme.gray,
+    borderColor:theme.gray,
     borderRadius:4,
     opacity:.5,
   },
@@ -397,7 +398,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginRight: 10,
-    backgroundColor: UserTheme.white,
+    backgroundColor: theme.white,
   },
   postEdit:{
     flexDirection:'row',
@@ -420,7 +421,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 20,
     fontSize: 30,
-    borderBottomColor: UserTheme.gray1,
+    borderBottomColor: theme.gray1,
     borderBottomWidth: 1,
   },
   saleInputWrapper: {
@@ -429,3 +430,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+}

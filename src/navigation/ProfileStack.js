@@ -7,6 +7,7 @@ import DocumentUpload from "../screens/AppStackScreens/ProfileScreens/Contractor
 import Certificate from "../screens/AppStackScreens/ProfileScreens/Contractor/Certificate";
 import Support from "../screens/AppStackScreens/Support";
 import StackHeader from "./ScreenComponents/StackHeader";
+
 const ProfileStack = createStackNavigator();
 function ProfileStackScreen({ navigation}) {
   return (

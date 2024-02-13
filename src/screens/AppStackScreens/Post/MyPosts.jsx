@@ -3,12 +3,14 @@ import { View, FlatList, TouchableOpacity, ActivityIndicator, Text, RefreshContr
 import PostCard from '../../../components/PostCard';
 import { useAuth } from '../../../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
-import UserTheme from '../../../constant/Theme';
+import { useTheme } from '../../../context/ThemeContext';
 import { StyleSheet } from 'react-native';
 import { showMessage } from "react-native-flash-message";
 
 const MyPosts = ({ navigation }) => {
   const { currentUser } = useAuth();
+  const theme = useTheme();
+  const styles = getStyles(theme);
   const [posts, setPosts] = useState([]);
   const [myPostIds, setMyPostIds] = useState([]);
   const [refreshing , setRefreshing] = useState(false);
@@ -96,7 +98,7 @@ const MyPosts = ({ navigation }) => {
         contentContainerStyle={styles.flatList}
         showsVerticalScrollIndicator={false}
         numColumns={2}
-        ListEmptyComponent={<Text style={{ fontSize: 25, color: UserTheme.text,paddingTop:30 }}>No posts found</Text>}
+        ListEmptyComponent={<Text style={{ fontSize: 25, color: theme.text,paddingTop:30 }}>No posts found</Text>}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -110,10 +112,10 @@ const MyPosts = ({ navigation }) => {
 
 export default MyPosts;
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, FlatList, Image } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { Global } from '../../../constant/Global';
 import { showMessage } from 'react-native-flash-message';
-import storage from '@react-native-firebase/storage';
-import FastImage from 'react-native-fast-image'
-import { shadowStyle } from '../../../constant/Shadow';
-import Colors from '../../../constant/Colors';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import DocumentCard from '../../../components/DocumentCard';
 import { denyDocument,approveDocument ,UpdateStatus} from './Utility';
 

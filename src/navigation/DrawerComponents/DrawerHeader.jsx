@@ -1,17 +1,17 @@
 import { View, Text,StyleSheet } from 'react-native'
 import React from 'react'
 import FastImage from 'react-native-fast-image'
-import UserTheme from '../../constant/Theme'
 import { useAuth } from '../../context/AuthContext' 
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Global } from '../../constant/Global'
-import { Rating, AirbnbRating } from 'react-native-ratings';
+import { AirbnbRating } from 'react-native-ratings';
 import Fonts from '../../constant/Fonts';
 import { shadowStyle } from '../../constant/Shadow'
 import defaultAvatar from '../../assets/images/avatar/avatar.png'
+import { useTheme } from '../../context/ThemeContext'
 
 const DrawerHeader = ({navigation}) => {
     const {currentUser} = useAuth();
+    const theme = useTheme();
+    const style = getStyles(theme);
     const getDisplayName = () => {
         if (currentUser.displayName) {
             return currentUser.displayName;
@@ -68,12 +68,13 @@ const DrawerHeader = ({navigation}) => {
 
 export default DrawerHeader
 
-const style = StyleSheet.create({
+const getStyles = (theme) => {
+    return StyleSheet.create({
     container:{
         height:150,
         justifyContent:'center',
         alignItems:'center',
-        borderBottomColor:UserTheme.black,
+        borderBottomColor:theme.black,
         borderBottomWidth:1,
     },
     info:{
@@ -90,8 +91,8 @@ const style = StyleSheet.create({
         height:80,
         borderRadius:40,
         borderWidth:1,
-        borderColor:UserTheme.black,
-        backgroundColor:UserTheme.background,
+        borderColor:theme.black,
+        backgroundColor:theme.background,
         ...shadowStyle,
     },
     headerName:{
@@ -100,7 +101,7 @@ const style = StyleSheet.create({
         fontWeight: "500",
         fontStyle: "normal",
         lineHeight: 20,
-        color: UserTheme.white,     
+        color: theme.white,     
         width:100,
         textAlign:'center',
     },
@@ -110,6 +111,7 @@ const style = StyleSheet.create({
         fontWeight: "500",
         fontStyle: "normal",
         lineHeight: 15,
-        color: UserTheme.white,
+        color: theme.white,
     }
-})
+});
+}

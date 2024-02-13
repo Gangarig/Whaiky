@@ -13,15 +13,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import DrawerFooter from './DrawerComponents/DrawerFooter';
 import DrawerHeader from './DrawerComponents/DrawerHeader';
 import DrawerItems from './DrawerComponents/DrawerItems';
-import UserTheme from '../constant/Theme';
+import { useTheme } from '../context/ThemeContext';
 
 function CustomDrawerContent({navigation}) {
+  const theme = useTheme();
+  const styles = getStyles(theme);
   
     return (
     <LinearGradient
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
-      colors={[UserTheme.primary, UserTheme.secondary]}
+      colors={[theme.primary, theme.secondary]}
       style={styles.container}
     >
       <DrawerHeader navigation={navigation} />
@@ -30,12 +32,16 @@ function CustomDrawerContent({navigation}) {
     </LinearGradient>
     );
   }
-  const styles = StyleSheet.create({
+
+  const getStyles = (theme) =>
+  StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: Colors.background,
       justifyContent: 'space-between',
     },
   });
+
+  
 
 export default CustomDrawerContent;

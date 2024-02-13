@@ -1,19 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import Colors from '../constant/Colors';
-import {Global} from '../constant/Global';
-import Default from '../assets/images/default.png';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import { shadowStyle } from '../constant/Shadow';
-import UserTheme from '../constant/Theme';
 import Fonts from '../constant/Fonts';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useAuth } from '../context/AuthContext';
-import PrimaryButton from './Buttons/PrimaryButton';
+import { useTheme } from '../context/ThemeContext';
 
 const PostCardSecondary = ({ post, onPress }) => {
   const { currentUser } = useAuth();
+  const theme = useTheme();
+  console.log('theme', theme.primary);
+  const styles = getStyles(theme);
   const hasImages = post.images && post.images.length > 0;
 
   const renderDottedLine = () => {
@@ -26,7 +24,7 @@ const PostCardSecondary = ({ post, onPress }) => {
     <View style={styles.border}>
     <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
       <LinearGradient
-        colors={[UserTheme.primary, UserTheme.tertiary]}
+        colors={[theme.primary, theme.tertiary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.postCardContainer]}
@@ -47,7 +45,7 @@ const PostCardSecondary = ({ post, onPress }) => {
               <Text style={[styles.price,{textAlign:'right'}]}>{post.price}$</Text>
             </View>
             <LinearGradient
-                colors={['#9E42F0', '#423EE7']}
+                colors={[theme.primary, theme.secondary]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={[styles.sale]}
@@ -64,14 +62,15 @@ const PostCardSecondary = ({ post, onPress }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   postCardContainer: {
     width: '100%',
     position: 'relative',
     borderRadius: 12,
     height: 200,
     borderWidth: 0,
-    borderColor: UserTheme.querternary,
+    borderColor: theme.querternary,
     padding: 0,
   },
   noImage:{
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderTopLeftRadius: 13,
     borderTopRightRadius: 13,
-    backgroundColor: UserTheme.white,
+    backgroundColor: theme.white,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -109,34 +108,34 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: UserTheme.white,
+    color: theme.white,
     fontFamily: Fonts.primary,
     width: '60%',
   },
   price: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: UserTheme.white,
+    color: theme.white,
     fontFamily: Fonts.primary,
     width: '30%',
   },
   noImageIconWrapper:{
-    backgroundColor: UserTheme.white,
+    backgroundColor: theme.white,
     justifyContent: 'center',
     alignItems: 'center',
     height: 120,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
     borderWidth: 1,
-    borderColor: UserTheme.querternary,
+    borderColor: theme.querternary,
   },
   noImageText:{
     fontFamily: Fonts.primary,
     fontSize: 25,
     fontWeight: 'bold',
-    color: UserTheme.gray,
+    color: theme.gray,
     borderWidth: 2,
-    borderColor: UserTheme.gray,
+    borderColor: theme.gray,
     padding: 20,
     borderRadius: 7,
   },
@@ -151,24 +150,24 @@ const styles = StyleSheet.create({
     alignItems:'center',
     flexDirection:'row',
     borderWidth:1,
-    borderColor:UserTheme.white,
+    borderColor:theme.white,
   },
   saleText:{
     fontSize:18,
-    color:UserTheme.white,
+    color:theme.white,
     fontFamily:Fonts.querternary,
     fontWeight:'bold',  
   },
   verticalLineDot: {
     height: 1, 
     width: 3,  
-    backgroundColor: UserTheme.white,
+    backgroundColor: theme.white,
     marginVertical: 1, 
     marginHorizontal: 5,
     borderRadius: 3,
   },
   verticalText: {
-    color: UserTheme.white,
+    color: theme.white,
     fontFamily: Fonts.querternary,
     fontWeight: 'bold',
     fontSize: 16,
@@ -177,11 +176,12 @@ const styles = StyleSheet.create({
   },
   border:{
     borderWidth:2,
-    borderColor:UserTheme.querternary,
+    borderColor:theme.primary,
     borderRadius:15,
   }
 
 
 })
+}
 
 export default PostCardSecondary;

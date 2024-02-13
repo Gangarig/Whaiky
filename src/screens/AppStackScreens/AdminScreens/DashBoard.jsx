@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import { Global } from '../../../constant/Global';
-import Colors from '../../../constant/Colors';
+import { useTheme } from '../../../context/ThemeContext';
 import { shadowStyle } from '../../../constant/Shadow';
 import LinearGradient from 'react-native-linear-gradient';
 import SubmissionCard from '../../../components/SubmissionCard';
@@ -13,6 +13,8 @@ const DashBoard = ({ navigation }) => {
   const [lastVisible, setLastVisible] = useState(null);
   const [loading, setLoading] = useState(false);
   const { currentUser } = useAuth();
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const fetchSubmissions = async () => {
     if (lastVisible === null && submissions.length > 0) {
@@ -61,7 +63,7 @@ const DashBoard = ({ navigation }) => {
     <View style={[styles.container]}>
       <View style={{...shadowStyle}}>
       <LinearGradient
-        colors={['#9E41F0', '#4C7BC0']}
+        colors={[theme.primary, theme.secondary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={[styles.gradient,]}
@@ -92,10 +94,10 @@ const DashBoard = ({ navigation }) => {
 
 export default DashBoard;
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     padding: 10,
   },
   gradient: {
@@ -104,6 +106,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   white: {
-    color: Colors.white,
+    color: theme.white,
   },
 });

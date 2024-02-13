@@ -7,11 +7,9 @@ import { View, StyleSheet } from "react-native";
 
 function Main() {
     const { currentUser, loading } = useAuth();
-  
     if (loading) {
       return <Loading />;
     }
-  
     return (  
         <>
           { currentUser ?

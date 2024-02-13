@@ -2,11 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../../context/AuthContext';
-import { sendMessage, uploadImages } from './Components/Utility';
+import { sendMessage } from './Components/Utility';
 import Input from './Input'; 
-import { Button, View } from 'react-native';
-import FastImage from 'react-native-fast-image';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Bubble from './Components/Bubble';
 const Messages = ({ chatId,userInfo }) => {
   const [messages, setMessages] = useState([]);
@@ -48,9 +45,8 @@ const Messages = ({ chatId,userInfo }) => {
 
   const handleSend = useCallback(async (newMessages = []) => {
     if (newMessages.length > 0) {
-      const { text, image: imageUrls } = newMessages[0]; // Destructure text and imageUrls
-  
-      // Prepare message object
+      const { text, image: imageUrls } = newMessages[0]; 
+      
       let messageData = {
         text: text,
         senderInfo: {
@@ -65,12 +61,10 @@ const Messages = ({ chatId,userInfo }) => {
         },
         timestamp: firestore.FieldValue.serverTimestamp(),
       };
-  
-      // Check if there are image URLs
       if (imageUrls && imageUrls.length > 0) {
         messageData = {
           ...messageData,
-          imageUrls: imageUrls, // Include image URLs if present
+          imageUrls: imageUrls, 
         };
       }
       sendMessage(messageData, chatId,userInfo);

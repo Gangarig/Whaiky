@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {shadowStyle} from '../../constant/Shadow';
-
+import { useTheme } from '../../context/ThemeContext';
+import { shadowStyle } from '../../constant/Shadow';
 const GradientButton = ({ text, onPress }) => {
+  const theme = useTheme();
+  const styles = getStyles(theme);
   const TouchableComponent =
     Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
@@ -11,7 +13,7 @@ const GradientButton = ({ text, onPress }) => {
     <TouchableComponent onPress={onPress}>
       <View style={[styles.shadowContainer,shadowStyle]}>
         <LinearGradient
-          colors={['rgb(158, 66, 240)', 'rgb(2, 173, 148)']}
+          colors={[theme.primary, theme.secondary]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.button}
@@ -23,15 +25,16 @@ const GradientButton = ({ text, onPress }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
+
   shadowContainer: {
     width: 243,
     height: 48,
     borderRadius: 4,
-    backgroundColor: '#fff',
-    borderColor:'#ddd',
-    borderRadius: 4,
-    borderWidth: 1,
+    backgroundColor: theme.white,
+    borderColor:theme.gray,
+    borderWidth: .5,
 
   },
   button: {
@@ -40,17 +43,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%', // Use '100%' to fill the shadow container width
-    height: '100%', // Use '100%' to fill the shadow container height
+    width: '100%',
+    height: '100%', 
     borderWidth: .5,
   },
   getStarted: {
-    color: '#ffffff',
+    color: theme.white,
     fontFamily: 'Montserrat-Bold, Helvetica',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
     letterSpacing: 0,
   },
 });
+}
 
 export default GradientButton;

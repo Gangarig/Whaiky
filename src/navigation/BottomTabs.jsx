@@ -5,16 +5,18 @@ import ChatStackScreen from './ChatStack';
 import HomeStackScreen from './HomeStack';
 import ProfileStackScreen from './ProfileStack';
 import StackHeader from './ScreenComponents/StackHeader';
-import UserTheme from '../constant/Theme';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { shadowStyle } from '../constant/Shadow';
 import AddPost from '../screens/AppStackScreens/Post/AddPost';
 import { View ,StyleSheet} from 'react-native';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import Test from '../screens/Test';
+import { useTheme } from '../context/ThemeContext';
 const Tab = createBottomTabNavigator();
 
 function BottomTabs({navigation}) {
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   return (
     <Tab.Navigator 
@@ -22,14 +24,14 @@ function BottomTabs({navigation}) {
         headerShown: false,
         tabBarStyle: {
           height: 55,
-          backgroundColor: UserTheme.primary,
+          backgroundColor: theme.primary,
           ...shadowStyle,
         },
         tabBarLabelStyle: {
           display: 'none',
         },
-        tabBarActiveTintColor: UserTheme.white,
-        tabBarInactiveTintColor: UserTheme.white,
+        tabBarActiveTintColor: theme.white,
+        tabBarInactiveTintColor: theme.white,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === 'Home') {
@@ -94,12 +96,13 @@ function BottomTabs({navigation}) {
 
 export default BottomTabs;
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
+
   BottomTabsIcon: {
     paddingBottom: 5,
   },
   FocusedIcon: {
-    borderBottomColor: UserTheme.white,
+    borderBottomColor: theme.white,
     borderBottomWidth: 2,
   },
-});
+})

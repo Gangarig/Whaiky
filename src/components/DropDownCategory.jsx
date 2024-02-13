@@ -4,12 +4,15 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { categoriesData } from '../constant/dataStatic/categoriesData';
 import UserTheme from '../constant/Theme';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useTheme } from '../context/ThemeContext';
 
 const DropDownCategory = ({ onSave, onClose }) => {
   const [openCategory, setOpenCategory] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [openOption, setOpenOption] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const categoryItems = categoriesData.map((category) => ({
     label: category.text,
@@ -95,16 +98,17 @@ const DropDownCategory = ({ onSave, onClose }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   container:{
     width:'100%',
     margin:0,
     gap:10,
-    backgroundColor:UserTheme.white,
+    backgroundColor:theme.white,
     zIndex: 9999,
   },
   dropdown: {
-    borderColor: UserTheme.primary,
+    borderColor: theme.primary,
     borderWidth: 2.5,
     zIndex: 99,
   },
@@ -112,10 +116,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   dropdownContainer: {
-    backgroundColor: UserTheme.white,
-    borderColor: UserTheme.primary,
+    backgroundColor: theme.white,
+    borderColor: theme.primary,
     borderWidth: 2.5,
   },
 })
-
+}
 export default DropDownCategory;

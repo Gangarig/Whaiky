@@ -10,19 +10,20 @@ const UserTheme = {
   secondary: isAndroid ? shadeColor('#01AD94', -10) : '#01AD94',
   tertiary: isAndroid ? shadeColor('#4C7BC0', -10) : '#4C7BC0',
   querternary: isAndroid ? shadeColor('#423EE7', -10) : '#423EE7',
+  quenary : isAndroid ? shadeColor('#5F6DCB', -10) : '#5F6DCB',
   lightSecondary: isAndroid ? shadeColor('#01AD95', -10) : '#01AD95',
   DrawerColorPrimary: isAndroid ? shadeColor('#9E41F0', -10) : '#9E41F0',
   DrawerColorSecondary: isAndroid ? shadeColor('#01AD94', -10) : '#01AD94',
+
   gray : '#7B7B7B',
   background: '#FBFBFB',
+  backgroundContractor: '#F5F5F5',
   text: '#000',
   white: '#FBFBFB',
   black: '#000',
   transparent: 'transparent',
 };
 
-//#01AD94
-// contractor color 
 // Function to adjust the color by a specified percentage
 function shadeColor(color, percent) {
   var num = parseInt(color.slice(1), 16),

@@ -3,7 +3,6 @@ import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, Modal, 
 import firestore from '@react-native-firebase/firestore';
 import debounce from 'lodash/debounce';
 import PostCard from '../../../components/PostCard';
-import Colors from '../../../constant/Colors';
 import { Global } from '../../../constant/Global';
 import Location from '../service/Location';
 import CategoryPicker from '../service/CategoryPicker';
@@ -11,7 +10,7 @@ import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import shadowStyle from '../../../constant/Shadow';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { showMessage } from 'react-native-flash-message';
-import UserTheme from '../../../constant/Theme';
+import { useTheme } from '../../../context/ThemeContext';
 
 const PostSearch = ({ navigation }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,7 +31,8 @@ const PostSearch = ({ navigation }) => {
   const [lastVisible, setLastVisible] = useState(null);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const isSearchActive = searchTerm.trim() !== '' || country || state || city || categoryId || optionId;
-
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -191,7 +191,7 @@ const PostSearch = ({ navigation }) => {
               <TouchableOpacity onPress={
                 ()=>clearCountry()
               }>
-              <FontAwesomeIcon color={Colors.white} size={22} icon="fa-solid fa-delete-left" />
+              <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
               </TouchableOpacity>
               </View>
               }
@@ -202,7 +202,7 @@ const PostSearch = ({ navigation }) => {
               <TouchableOpacity onPress={
                 ()=>clearState()
               }>
-              <FontAwesomeIcon color={Colors.white} size={22} icon="fa-solid fa-delete-left" />
+              <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
               </TouchableOpacity>
               </View>
               }
@@ -213,7 +213,7 @@ const PostSearch = ({ navigation }) => {
               <TouchableOpacity onPress={
                 ()=>clearCity()
               }>
-              <FontAwesomeIcon color={Colors.white} size={22} icon="fa-solid fa-delete-left" />
+              <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
               </TouchableOpacity>
               </View>
               }
@@ -234,7 +234,7 @@ const PostSearch = ({ navigation }) => {
                     <TouchableOpacity onPress={
                       ()=>clearCategory()
                     }>
-                    <FontAwesomeIcon color={Colors.white} size={22} icon="fa-solid fa-delete-left" />
+                    <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
                     </TouchableOpacity>
                   </View>
                   }
@@ -244,7 +244,7 @@ const PostSearch = ({ navigation }) => {
                   <TouchableOpacity onPress={
                     ()=>clearOption()
                   }>
-                  <FontAwesomeIcon color={Colors.white} size={22} icon="fa-solid fa-delete-left" />
+                  <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
                   </TouchableOpacity>
                   </View>
                   }
@@ -257,7 +257,7 @@ const PostSearch = ({ navigation }) => {
 
       {loading && 
       <View style={styles.statusMSG}>
-      <ActivityIndicator size="large" color={Colors.primary} />
+      <ActivityIndicator size="large" color={theme.primary} />
       </View>
       }
       {error ?
@@ -270,7 +270,7 @@ const PostSearch = ({ navigation }) => {
         data={filteredPosts}
         keyExtractor={(item, index) => item.id || index.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigation.navigate('PostDetail', { postId: item.id })}>
+          <TouchableOpacity style={styles.postWrapper} onPress={() => navigation.navigate('PostDetail', { postId: item.id })}>
             <PostCard 
               post={item}
               onPress={() => navigateToPostDetail(item.postId)}
@@ -278,6 +278,9 @@ const PostSearch = ({ navigation }) => {
           </TouchableOpacity>
         )}
         refreshing={isRefreshing}
+        numColumns={2}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={searchTerm && !loading && filteredPosts.length === 0 && 
         <Text>No posts found</Text>}
       />
@@ -287,7 +290,7 @@ const PostSearch = ({ navigation }) => {
               style={styles.loadMoreBtn} 
               onPress={fetchPosts}
             >
-              <FontAwesomeIcon color={Colors.primary} size={25} icon="fa-solid fa-chevron-down" />
+              <FontAwesomeIcon color={theme.primary} size={25} icon="fa-solid fa-chevron-down" />
             </TouchableOpacity>
         )}
       </View>
@@ -346,9 +349,9 @@ const PostSearch = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
     flex: 1,
     paddingHorizontal: 10,
   },
@@ -361,14 +364,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    backgroundColor : UserTheme.background,
-    borderColor : UserTheme.primary,
+    backgroundColor : theme.background,
+    borderColor : theme.primary,
     borderWidth : 1,
     borderRadius : 10,
     marginTop: 10,
   },
   btnContainer:{
-    flexDirection: 'column',
+    flexDirection: 'row',
     paddingHorizontal: 20,
     paddingVertical: 10,
     justifyContent: 'space-between',
@@ -380,14 +383,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   infoContainer:{
-    backgroundColor: UserTheme.primaryLight,
+    backgroundColor: theme.primaryLight,
     marginTop: 10,
     padding: 10,
     borderRadius: 5,
     width: 296,
   },
   white:{
-    color: UserTheme.white,
+    color: theme.white,
     fontWeight: 'bold',
   },
   locationModal: {
@@ -397,7 +400,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderTopColor: '#696969',
     borderTopWidth: 2,
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -408,7 +411,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderTopColor: '#696969',
     borderTopWidth: 2,
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
     paddingTop: 20,
     alignItems: 'center',
   },
@@ -421,7 +424,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center',
-    backgroundColor: UserTheme.white,
+    backgroundColor: theme.white,
     borderRadius: 5,
   },
   more:{
@@ -438,7 +441,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   loadMoreBtn: {
-    
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
@@ -448,6 +450,10 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     paddingBottom: 10
+  },
+  postWrapper:{
+    width: '50%',
+    padding: 2.5,
   },
 });
 

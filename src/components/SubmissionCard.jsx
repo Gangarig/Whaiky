@@ -2,12 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Colors from '../constant/Colors';
 import {Global} from '../constant/Global';
-import Default from '../assets/images/default.png';
-import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { useTheme } from '../context/ThemeContext';
 
 const SubmissionCard = ({ id,type, status,date, onPress }) => {
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
     const convertedDate = date ? date.toDate() : new Date();
 
@@ -21,7 +22,7 @@ const SubmissionCard = ({ id,type, status,date, onPress }) => {
 
   return (
       <LinearGradient
-        colors={['#9E41F0', '#4C7BC0']}
+        colors={[theme.primary, theme.secondary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
@@ -35,15 +36,16 @@ const SubmissionCard = ({ id,type, status,date, onPress }) => {
             </View>
         </View>
         <TouchableOpacity style={styles.btn} onPress={onPress}>
-            <FontAwesomeIcon icon="fa-solid fa-caret-right" size={50} color={Colors.white}/>
+            <FontAwesomeIcon icon="fa-solid fa-caret-right" size={50} color={theme.white}/>
         </TouchableOpacity>
       </LinearGradient>
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
     white: {
-        color: Colors.white,
+        color: theme.white,
       },
     gradient: {
         width:'100%',
@@ -62,5 +64,6 @@ const styles = StyleSheet.create({
 
  
 });
+}
 
 export default SubmissionCard;

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { uploadImages , openCamera , pickImages } from './Components/Utility';
 import { showMessage } from 'react-native-flash-message';
 import FastImage from 'react-native-fast-image';
-import Colors from '../../../../constant/Colors';
+import { useTheme } from '../../../../context/ThemeContext';
 import { shadowStyle } from '../../../../constant/Shadow';
 import { Global } from '../../../../constant/Global';
 import { Platform } from 'react-native';
@@ -14,6 +14,8 @@ import { Platform } from 'react-native';
 const Input = ({ onSend, chatId }) => {
   const [text, setText] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const handleTextSend = () => {
     const messageData = {
@@ -105,24 +107,25 @@ const Input = ({ onSend, chatId }) => {
 
         <View style={styles.btnContainer}>
               <TouchableOpacity onPress={handleImagePick}>
-                <FontAwesomeIcon icon="fa-solid fa-paperclip" size={25} color={Colors.primary} />
+                <FontAwesomeIcon icon="fa-solid fa-paperclip" size={25} color={theme.primary} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.sendButton} onPress={handleTextSend} disabled={!text.trim() && imageUrls.length === 0}>
-                <FontAwesomeIcon icon="fa-solid fa-paper-plane" size={25} color={Colors.primary} />
+                <FontAwesomeIcon icon="fa-solid fa-paper-plane" size={25} color={theme.primary} />
               </TouchableOpacity>
         </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     position: 'absolute',
     width: '100%',
     ...shadowStyle,
-    borderTopColor: Colors.primary,
+    borderTopColor: theme.primary,
     borderTopWidth: 0.5,
     height: Platform.OS === 'ios' ? 50 : 60,
     alignItems: 'center',
@@ -133,20 +136,20 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: '70%',
     borderWidth: 0.5,
-    borderColor: Colors.primary,
+    borderColor: theme.primary,
     borderRadius: 5,
     left: 10,
     bottom: 5,
     position: 'absolute',
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     overflow: 'hidden',
   },
   imageContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     gap: 10,
     scrollEnabled: true,
-    borderTopColor: Colors.primary,
+    borderTopColor: theme.primary,
     borderTopWidth: 0.5,
     width: '100%',
     padding: 10,
@@ -156,6 +159,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     fontSize: 16,
     ...Global.text,
+    maxHeight: 300,
   },
   btnContainer: {
     position: 'absolute',
@@ -166,36 +170,12 @@ const styles = StyleSheet.create({
   imageScrollContainer: {
     width: '100%',
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   image:{
     width: 100,
     height: 100,
     borderRadius: 5,
     borderWidth: 0.5,
-    borderColor: Colors.primary,
+    borderColor: theme.primary,
   },
   xBtn: {
     position: 'absolute',
@@ -206,5 +186,6 @@ const styles = StyleSheet.create({
   
 
 });
+}
 
 export default Input;

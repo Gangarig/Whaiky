@@ -18,11 +18,10 @@ import { showMessage } from 'react-native-flash-message';
 import firebase from '@react-native-firebase/app';
 import * as Progress from 'react-native-progress';
 import Location from '../service/LocationPicker';
-import Colors from '../../../constant/Colors';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import PrimaryGradientButton from '../../../components/Buttons/PrimaryGradientButton';
 import firestore from '@react-native-firebase/firestore';
-import UserTheme from '../../../constant/Theme';
+import theme from '../../../constant/Theme';
 import GradientText from '../../../components/GradientText';
 import PostDetail from './PostDetail';
 import { shadowStyle } from '../../../constant/Shadow';
@@ -30,9 +29,13 @@ import FastImage from 'react-native-fast-image';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import ImageView from "react-native-image-viewing";
 import Fonts from '../../../constant/Fonts';
+import { useTheme } from '../../../context/ThemeContext';
+
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const [postType, setPostType] = useState('Looking For Service');
   const [subTitle, setSubTitle] = useState('Looking For Service');
@@ -355,12 +358,12 @@ const AddPost = ({ navigation }) => {
       )}
         {post.images.length < 1 && (
         <TouchableOpacity onPress={pickImages} style={styles.imageInput}>
-              <GradientText colors={[UserTheme.primary, UserTheme.secondary]} style={styles.GradientText}
+              <GradientText colors={[theme.primary, theme.secondary]} style={styles.GradientText}
               size={25}
               >
                 UPLOAD
             </GradientText>
-            <GradientText colors={[UserTheme.primary, UserTheme.secondary]} style={styles.GradientText}
+            <GradientText colors={[theme.primary, theme.secondary]} style={styles.GradientText}
               size={25}
               >
                 IMAGES
@@ -376,7 +379,7 @@ const AddPost = ({ navigation }) => {
                   style={styles.deleteButton}
                   onPress={() => handleImageDelete(index)}
                 >
-                  <FontAwesomeIcon icon='fa-solid fa-x' size={25} color={UserTheme.white} />
+                  <FontAwesomeIcon icon='fa-solid fa-x' size={25} color={theme.white} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -409,19 +412,19 @@ const AddPost = ({ navigation }) => {
         </View>
       )}
       <View style={styles.postDetails}>
-      {post.country && (
-        <View style={styles.locationInfo}>
-          <Text style={[styles.postInfo,{color:UserTheme.white}]}>Country: {post.country}</Text>
-          <Text style={[styles.postInfo,{color:UserTheme.white}]}>State: {post.state}</Text>
-          <Text style={[styles.postInfo,{color:UserTheme.white}]}>City: {post.city}</Text>
-        </View>
-      )}
-      {post.categoryId && (
-        <View style={styles.categoryInfo}>
-          <Text style={[styles.postInfo,{color:UserTheme.white}]}>Category: {post.categoryText}</Text>
-          <Text style={[styles.postInfo,{color:UserTheme.white}]}>Option: {post.optionText}</Text>
-        </View>
-      )}
+        {post.country && (
+          <View style={styles.locationInfo}>
+            <Text style={[styles.postInfo,{color:theme.text}]}>Country: {post.country}</Text>
+            <Text style={[styles.postInfo,{color:theme.text}]}>State: {post.state}</Text>
+            <Text style={[styles.postInfo,{color:theme.text}]}>City: {post.city}</Text>
+          </View>
+        )}
+        {post.categoryId && (
+          <View style={styles.categoryInfo}>
+            <Text style={[styles.postInfo,{color:theme.text}]}>Category: {post.categoryText}</Text>
+            <Text style={[styles.postInfo,{color:theme.text}]}>Option: {post.optionText}</Text>
+          </View>
+        )}
       </View>
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.fullScreenModal}>
@@ -463,10 +466,10 @@ const AddPost = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
     paddingHorizontal: 20,
     paddingTop: 20,
   
@@ -483,9 +486,9 @@ const styles = StyleSheet.create({
     width: '100%',
     bottom: 0,
     position: 'absolute',
-    borderTopColor: Colors.primary,
+    borderTopColor: theme.primary,
     borderTopWidth: 2,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     paddingTop: 30,
     alignItems: 'center',
   },
@@ -494,9 +497,9 @@ const styles = StyleSheet.create({
     width: '100%',
     bottom: 0,
     position: 'absolute',
-    borderTopColor: Colors.primary,
+    borderTopColor: theme.primary,
     borderTopWidth: 2,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     paddingTop: 30,
     alignItems: 'center',
   },
@@ -508,42 +511,46 @@ const styles = StyleSheet.create({
   imageInput:{
     height:200,
     width:'100%',
-    backgroundColor:UserTheme.lightgrey,
+    backgroundColor:theme.backgroundSecondary,
+    borderWidth:2.5,
     borderRadius:10,
     justifyContent:'center',
     alignItems:'center',
-    borderWidth:2.5,
-    borderColor:UserTheme.primary
+    backgroundColor:theme.backgroundSecondary,
+    borderColor:theme.primary
   },
   title:{
     width:'100%',
     height:40,
-    borderColor:UserTheme.primary,
+    borderColor:theme.primary,
     borderWidth:2.5,
+    backgroundColor:theme.backgroundSecondary,
     borderRadius:10,
     fontSize:17,
     paddingHorizontal:10,
-    color:UserTheme.text,
+    color:theme.text,
   },
   price:{
     width:'100%',
     height:40,
-    borderColor:UserTheme.primary,
+    borderColor:theme.primary,
     borderWidth:2.5,
+    backgroundColor:theme.backgroundSecondary,
     borderRadius:10,
     fontSize:17,
     paddingHorizontal:10,
-    color:UserTheme.text,
+    color:theme.text,
   },
   description:{
     width:'100%',
     height:150,
-    borderColor:UserTheme.primary,
+    borderColor:theme.primary,
     borderWidth:2.5,
+    backgroundColor:theme.backgroundSecondary,
     borderRadius:10,
     fontSize:17,
     paddingHorizontal:10,
-    color:UserTheme.text,
+    color:theme.text,
     marginBottom:10,
     textAlignVertical:'top',
   },
@@ -565,10 +572,12 @@ const styles = StyleSheet.create({
     marginTop:30,
   },
   postDetails: {
-    backgroundColor: UserTheme.lightPrimary, 
+    backgroundColor: theme.lightPrimary, 
     width: '100%',
     borderRadius: 10,
     padding: 10,
+    borderWidth:2.5,
+    borderColor:theme.primary,
   },
   postTypeBox:{
     flexDirection:'row',
@@ -577,14 +586,14 @@ const styles = StyleSheet.create({
     width:'100%',
     marginTop:20,
     marginBottom:20,
-    borderColor:UserTheme.primary,
+    borderColor:theme.primary,
     borderWidth:2.5,
     ...shadowStyle,
     borderRadius:2,
     padding:2,
   },
   activePostType:{
-    backgroundColor:UserTheme.primary,
+    backgroundColor:theme.primary,
     width:'50%',
     padding:10,
     borderRadius:2,
@@ -594,7 +603,7 @@ const styles = StyleSheet.create({
     height:50,
   },
   inActivePostType:{
-    backgroundColor:UserTheme.white,
+    backgroundColor:theme.white,
     width:'50%',
     padding:10,
     borderRadius:2,
@@ -604,12 +613,12 @@ const styles = StyleSheet.create({
     height:50,
   }, 
   activePostText:{
-    color:UserTheme.white,
+    color:theme.white,
     fontSize:15,
     fontWeight:'bold',
   },
   inActivePostText:{
-    color:UserTheme.text,
+    color:theme.text,
     fontSize:15,
     fontWeight:'bold',
   },
@@ -634,13 +643,13 @@ const styles = StyleSheet.create({
   postInfo: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: UserTheme.text,
+    color: theme.text,
   },
   GradientText:{
     fontSize:20,
     fontWeight:'bold',
     textAlign:'center',
-    color:UserTheme.primary,
+    color:theme.primary,
   },
 
 

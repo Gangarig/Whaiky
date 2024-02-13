@@ -1,19 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { shadowStyle } from '../../constant/Shadow';
 import LinearGradient from 'react-native-linear-gradient';
-import UserTheme from '../../constant/Theme';
-const PrimaryButton = ({
-  text,
-  onPress,
-}) => {
+import { useTheme } from '../../context/ThemeContext';
+const PrimaryButton = ({ text, onPress }) => {
+  const theme = useTheme();
+  const styles = getStyles(theme);
   return (
 
     <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
         <LinearGradient
-          colors={['#9E42F0', '#4C7BC0']}
+          colors={[theme.primary, theme.secondary]}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
+          end={{ x: 1, y: 4 }}
           style={[styles.button]}
         >
           <Text style={[styles.text]}>{text}</Text>
@@ -22,22 +21,24 @@ const PrimaryButton = ({
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
+
   button: {
     justifyContent: 'center',
     alignItems: 'center', 
     paddingHorizontal: 20,
     height:30,
     borderRadius: 5,
-    backgroundColor: UserTheme.primary,
+    backgroundColor: theme.primary,
     ...shadowStyle,
   },
   text: {
     fontSize: 15,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: UserTheme.white,
+    color: theme.white,
   },
 });
-
+}
 export default PrimaryButton;

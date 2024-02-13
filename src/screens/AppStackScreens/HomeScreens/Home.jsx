@@ -6,7 +6,8 @@ import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import PostCard from '../../../components/PostCard';
 import PostCardSecondary from '../../../components/PostCardSecondary';
-import UserTheme from '../../../constant/Theme';
+
+import { useTheme } from '../../../context/ThemeContext';
 
 const Home = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -15,6 +16,8 @@ const Home = ({ navigation }) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const lastFetchedPost = useRef(null);
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     fetchPosts();
@@ -145,7 +148,7 @@ const Home = ({ navigation }) => {
           <View style={styles.postsWrapper}>
             {renderPosts()}
           </View>
-          {loadingMore && <ActivityIndicator size="large" color="#0000ff" />}
+          {loadingMore && <ActivityIndicator size="large" color={theme.primary} />}
         </ScrollView>
       ) : (
         <Text>Please sign in to see posts.</Text>
@@ -160,16 +163,16 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
   return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   wrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
   },
   container: {
     flex: 1,
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
     maxWidth: 500,
   },
   scrollViewContent: {

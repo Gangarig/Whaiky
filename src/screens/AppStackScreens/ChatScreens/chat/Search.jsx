@@ -16,11 +16,12 @@ import { handleSelect } from '../../service/ChatService';
 import { useAuth } from '../../../../context/AuthContext';
 import { showMessage } from 'react-native-flash-message';
 import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
-import Colors from '../../../../constant/Colors';
-
+import { useTheme } from '../../../../context/ThemeContext';
 
 
 const Search = ({ isVisible, onClose }) => {
+  const theme = useTheme();
+  const styles = getStyles(theme);
   const [searchTerm, setSearchTerm] = useState('');
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -103,7 +104,7 @@ const Search = ({ isVisible, onClose }) => {
         </View>
 
         {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" style={styles.loading} />
+          <ActivityIndicator size="large" color={theme.primary} style={styles.loading} />
         ) : (
           <ScrollView style={styles.usersList}>
             {filteredUsers.map(user => (
@@ -139,17 +140,17 @@ const Search = ({ isVisible, onClose }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = theme => StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 50,
     paddingHorizontal: 10,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
   },
   textInput: {
     width: '100%',
     height: 40,
-    borderColor: 'gray',
+    borderColor: theme.primary,
     borderWidth: 1,
     marginBottom: 10,
     borderRadius: 5,
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },

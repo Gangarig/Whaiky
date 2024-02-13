@@ -5,7 +5,6 @@ import {
 import React, { useState, useEffect ,useRef} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import { useTheme } from '../../../../context/ThemeContext';
-import { useAuth } from '../../../../context/AuthContext';
 import ContractorCard from '../../../../components/ContractorCard';
 
 

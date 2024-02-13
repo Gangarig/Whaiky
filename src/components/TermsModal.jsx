@@ -3,10 +3,12 @@ import { View, Modal, StyleSheet } from 'react-native';
 import Pdf from 'react-native-pdf';
 import { showMessage } from 'react-native-flash-message';
 import PrimaryButton from './Buttons/PrimaryButton';
-import UserTheme from '../constant/Theme';
+import { useTheme } from '../context/ThemeContext';
 import { shadowStyle } from '../constant/Shadow';
 
 const TermsModal = ({ visible, onAccept, onClose }) => {
+  const theme = useTheme();
+  const styles = getStyles(theme);
   return (
     <View style={styles.container}>
       <Modal
@@ -39,7 +41,8 @@ const TermsModal = ({ visible, onAccept, onClose }) => {
 
 export default TermsModal;
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -59,10 +62,11 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    borderTopColor: UserTheme.gray,
+    borderTopColor: theme.gray,
     borderTopWidth: .5,
     ...shadowStyle,
     width: '100%',
     padding: 10,
   },
 });
+}

@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, Alert, StyleSheet } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useAuth } from "../../../../context/AuthContext";
-import Colors from "../../../../constant/Colors";
 import ProfileCard from "../../../../components/ProfileCard";
 import showMessage from "react-native-flash-message";
-import { shadowStyle } from "../../../../constant/Shadow";
+import { useTheme } from "../../../../context/ThemeContext";
 
 const Chats = ({ navigation }) => {
   const [chats, setChats] = useState([]);
   const { currentUser } = useAuth();
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     let unsubscribeFromUserChats;
@@ -147,15 +148,15 @@ const updateLastMessageInState = (chatId, lastMessageData) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = theme => StyleSheet.create({
   flatList: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     width: '100%',
   },
 
   borderBottom: {
-    borderBottomColor: Colors.primary,
+    borderBottomColor: theme.primary,
     borderBottomWidth: 1,
   },
   noChatsText: {

@@ -5,8 +5,11 @@ import FastImage from 'react-native-fast-image';
 import Colors from '../constant/Colors';
 import { shadowStyle } from '../constant/Shadow';
 import PrimaryButton from './Buttons/PrimaryButton';
+import { useTheme } from '../context/ThemeContext';
 
 const DocumentCard = ({ item ,onApprove , onDeny}) => {
+  const theme = useTheme();
+  const styles = getStyles(theme);
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -55,7 +58,8 @@ const DocumentCard = ({ item ,onApprove , onDeny}) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   container: {
     marginVertical: 20,
     borderRadius: 8,
@@ -63,19 +67,19 @@ const styles = StyleSheet.create({
     ...shadowStyle,
   },
   gradient: {
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     padding: 16,
     borderRadius: 8,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.white,
+    color: theme.white,
     marginBottom: 5,
   },
   info: {
     fontSize: 16,
-    color: Colors.white,
+    color: theme.white,
     fontWeight: 'bold',
     marginBottom: 5,
   },
@@ -85,7 +89,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.white,
+    borderColor: theme.white,
     ...shadowStyle,
   },
   btnContainer: {
@@ -94,5 +98,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
-
+}
 export default DocumentCard;

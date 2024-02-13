@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useAuth } from '../context/AuthContext';
 import AdminStackScreen from './AdminStack';
 import Settings from '../screens/AppStackScreens/Settings';
 import CustomDrawerContent from './CustomDrawerItems';
-import firestore from '@react-native-firebase/firestore';
-import { showMessage } from 'react-native-flash-message';
 import StackHeader from './ScreenComponents/StackHeader';
-import UserTheme from '../constant/Theme';
 import BottomTabs from './BottomTabs';
-import MyPosts from '../screens/AppStackScreens/Post/MyPosts';
 import Support from '../screens/AppStackScreens/Support';
 import Services from '../screens/AppStackScreens/ProfileScreens/Contractor/ServiceCategory';
 import LegalInfo from '../screens/AppStackScreens/ProfileScreens/Contractor/LegalInfo';
@@ -17,8 +13,8 @@ import DocumentUpload from '../screens/AppStackScreens/ProfileScreens/Contractor
 import Certificate from '../screens/AppStackScreens/ProfileScreens/Contractor/Certificate';
 import PostStackScreen from './PostStack';
 import ContractorStackScreen from './ContractorStack';
-import ContractorDetail from '../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
 import Reviews from '../screens/AppStackScreens/ProfileScreens/Contractor/Reviews';
+import { useTheme } from '../context/ThemeContext';
 
 
 
@@ -26,7 +22,7 @@ const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
   const { currentUser } = useAuth();
-
+  const theme = useTheme();
   return ( 
     <Drawer.Navigator
       initialRouteName="Home"
@@ -34,7 +30,7 @@ function DrawerNavigator() {
         headerShown: false,
         drawerStyle: {
           width: 250,
-          borderRightColor: UserTheme.black,
+          borderRightColor: theme.black,
           borderRightWidth: 1,
         },
       }}

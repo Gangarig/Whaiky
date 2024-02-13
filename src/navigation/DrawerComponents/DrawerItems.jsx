@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import LinearGradient from 'react-native-linear-gradient';
-import UserTheme from '../../constant/Theme';
+import { useTheme } from '../../context/ThemeContext';
 import Fonts from '../../constant/Fonts';
 import { shadowStyle } from '../../constant/Shadow';
 import { useAuth } from '../../context/AuthContext';
@@ -11,6 +11,9 @@ import { useAuth } from '../../context/AuthContext';
 const DrawerItems = ({navigation}) => {
   const [activeItem, setActiveItem] = useState('Home');
   const  {currentUser}  = useAuth();
+  const theme = useTheme();
+  const drawerItem = getStyles(theme);
+  const styles = getStyle(theme);
   const handlePress = (item) => {
     setActiveItem(item);
     navigation.navigate(item);
@@ -26,15 +29,15 @@ const DrawerItems = ({navigation}) => {
           <LinearGradient
             style={[drawerItem.gradientWrapper]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            colors={[UserTheme.primary, UserTheme.secondary]}
+            end={{ x: 1.5, y: 0 }}
+            colors={[theme.primary, theme.secondary]}
           >
-            <FontAwesomeIcon icon={icon} size={isActive ? 25 : 25} color={UserTheme.white} />
-            <Text style={[drawerItem.text, { color: UserTheme.white }]}>{label}</Text>
+            <FontAwesomeIcon icon={icon} size={isActive ? 25 : 25} color={theme.white} />
+            <Text style={[drawerItem.text, { color: theme.white }]}>{label}</Text>
           </LinearGradient>
         ) : (
           <View style={drawerItem.default}>
-            <FontAwesomeIcon icon={icon} size={24} color={UserTheme.text} />
+            <FontAwesomeIcon icon={icon} size={24} color={theme.text} />
             <Text style={drawerItem.text}>{label}</Text>
           </View>
         )}
@@ -64,10 +67,10 @@ const DrawerItems = ({navigation}) => {
 
 export default DrawerItems;
 
-const styles = StyleSheet.create({
+const getStyle= (theme) => StyleSheet.create({
   activeShadow: Platform.select({
     ios: {
-      shadowColor: 'black',
+      shadowColor: theme.black,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.3,
       shadowRadius: 1.5,
@@ -80,10 +83,13 @@ const styles = StyleSheet.create({
 
 
 
-const drawerItem = StyleSheet.create({
+
+const getStyles = (theme) => {
+  return StyleSheet.create({
+
   container: {
     flex: 1,
-    backgroundColor: UserTheme.white,
+    backgroundColor: theme.white,
     gap: 10,
     alignItems: 'center',
     paddingVertical: 20,
@@ -101,7 +107,7 @@ const drawerItem = StyleSheet.create({
     fontWeight: "600",
     fontStyle: "normal",
     paddingTop: 2,
-    color: UserTheme.text,
+    color: theme.text,
   },
   gradientWrapper: {
     flexDirection: 'row',
@@ -111,7 +117,7 @@ const drawerItem = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderColor: UserTheme.black,
+    borderColor: theme.black,
     borderWidth: .5,
 
   },
@@ -125,3 +131,4 @@ const drawerItem = StyleSheet.create({
     paddingVertical: 10,
   },
 });
+}

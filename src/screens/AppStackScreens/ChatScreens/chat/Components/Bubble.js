@@ -2,17 +2,18 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import UserAvatar from 'react-native-user-avatar';
 import avatar from '../../../../../assets/images/avatar/avatar.png';
-import Colors from '../../../../../constant/Colors';
 import { Global } from '../../../../../constant/Global';
-import { shadowStyle } from '../../../../../constant/Shadow';
 import FastImage from 'react-native-fast-image';
 import ImageView from 'react-native-image-viewing';
 import { useAuth } from '../../../../../context/AuthContext';
+import { useTheme } from '../../../../../context/ThemeContext';
 
 const Bubble = (props) => {
   const { currentMessage } = props;
   const { currentUser } = useAuth();
   const [isVisible, setIsVisible] = React.useState(false);
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const isCurrentUser = currentMessage.user._id === currentUser.uid;
 
@@ -35,7 +36,7 @@ const Bubble = (props) => {
           ) : (
             <FastImage
               source={avatar}
-              style={{ width: 30, height: 30, borderRadius: 50, borderWidth: 1, borderColor: Colors.black, backgroundColor: Colors.background }}
+              style={{ width: 30, height: 30, borderRadius: 50, borderWidth: 1, borderColor: theme.black, backgroundColor: theme.background }}
               resizeMode="cover"
               onError={(e) => {
                 console.log("Image loading error:", e);
@@ -59,15 +60,12 @@ const Bubble = (props) => {
           ]}
         >
           <TouchableOpacity onPress={() => setIsVisible(true)}>
-            {/* Use FastImage for image rendering */}
             <FastImage
               source={{ uri: imageUrl }}
               style={styles.image}
               resizeMode="cover"
               onError={(e) => {
                 console.log("Image loading error:", e);
-                // You can provide a fallback image or take other actions here
-                // For example, you can set a default image or display an error message
               }}
             />
           </TouchableOpacity>
@@ -88,14 +86,12 @@ const Bubble = (props) => {
           ) : (
             <FastImage
               source={avatar}
-              style={{ width: 30, height: 30, borderRadius: 50 , borderWidth: 1, borderColor: Colors.black,
-              backgroundColor: Colors.background,
+              style={{ width: 30, height: 30, borderRadius: 50 , borderWidth: 1, borderColor: theme.black,
+              backgroundColor: theme.background,
               }}
               resizeMode="cover"
               onError={(e) => {
                 console.log("Image loading error:", e);
-                // You can provide a fallback image or take other actions here
-                // For example, you can set a default image or display an error message
               }}
             />
           )}
@@ -108,7 +104,8 @@ const Bubble = (props) => {
 
 export default Bubble;
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   container: {
     flexDirection: 'column',
     marginBottom: 15,
@@ -116,17 +113,17 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   textContainer: {
-    backgroundColor: Colors.backgroundSecondary,
+    backgroundColor: theme.lightPrimary,
     borderRadius:5,
     borderWidth: 1.2,
     padding: 5,
     paddingRight: 20,
-    borderColor: "rgba(158, 65, 240, 0.5)",
+    borderColor: theme.primary,
     margin: 10,
     maxWidth: '80%',
   },
   otherTextContainer: {
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     borderRadius:5,
     borderWidth: 1.2,
     padding: 5,
@@ -139,7 +136,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -15,
     right: -15,
-    borderColor: Colors.white,
+    borderColor: theme.white,
     borderWidth: 1,
     borderRadius: 50,
   },
@@ -147,7 +144,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -15,
     left: -15,
-    borderColor: Colors.white,
+    borderColor: theme.white,
     borderWidth: 1,
     borderRadius: 50,
   },
@@ -156,7 +153,7 @@ const styles = StyleSheet.create({
     gap: 10,
     marginVertical: 15,
     paddingHorizontal: 15,
-    backgroundColor: Colors.backgroundSecondary,
+    backgroundColor: theme.background,
     borderRadius: 5,
     borderWidth: 1.2,
     borderColor: "rgba(158, 65, 240, 0.5)",
@@ -169,10 +166,10 @@ const styles = StyleSheet.create({
     gap: 10,
     marginVertical: 15,
     paddingHorizontal: 15,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     borderRadius: 5,
     borderWidth: 1.2,
-    borderColor: "rgba(2, 173, 148, 0.5)",
+    borderColor: theme.primary,
     padding:10 ,
     position: 'relative',
     marginLeft: 10,
@@ -191,3 +188,4 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', 
   },
 });
+}

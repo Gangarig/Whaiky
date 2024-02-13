@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, Button, StyleSheet, TouchableOpacity, Alert, Modal, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../../context/AuthContext';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import PostCardDetail from '../../../components/PostCardDetail';
-import { showMessage } from 'react-native-flash-message';
-import UserTheme from '../../../constant/Theme';
+import { useTheme } from '../../../context/ThemeContext';
 
 const PostDetail = ({ route, navigation }) => {
   const currentUser = useAuth(); 
+  const theme = useTheme();
+  const styles = getStyles(theme);
   const { id } = route.params;
   const [post, setPost] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -40,18 +38,18 @@ const PostDetail = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FBFBFB',
-    position: 'relative',
-  },
-  padding: {
-    height: 100,
-  },
+  const getStyles = theme => {
+    return StyleSheet.create({
+      container: {
+        flex: 1,
+        backgroundColor: theme.background,
+        position: 'relative',
+      },
+      padding: {
+        height: 100,
+      },
+    });
+  }
 
-
-
-});
 
 export default PostDetail;

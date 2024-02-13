@@ -1,11 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/AppStackScreens/HomeScreens/Home';
-import AddPost from '../screens/AppStackScreens/Post/AddPost';
 import PostDetail from '../screens/AppStackScreens/Post/PostDetail';
-import { Button } from 'react-native';
-import { Icon } from 'react-native-elements';
-import { DrawerActions } from '@react-navigation/native';
 import PostSearch from '../screens/AppStackScreens/Post/PostSearch';
 import StackHeader from './ScreenComponents/StackHeader';
 import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedback';

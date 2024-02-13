@@ -20,10 +20,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { useAuth } from '../../../../context/AuthContext';
 import { Global } from '../../../../constant/Global';
 import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
-import Colors from '../../../../constant/Colors';
 import { shadowStyle } from '../../../../constant/Shadow';
 import LinearGradient from 'react-native-linear-gradient';
 import DatePicker from 'react-native-date-picker'
+import { useTheme } from '../../../../context/ThemeContext';
 
 const DocumentUpload = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -38,6 +38,8 @@ const DocumentUpload = ({ navigation }) => {
     number: '',
     fullName: '',
   });
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const handleChoosePhoto = (imageNumber) => {
     ImageCropPicker.openPicker({
@@ -212,7 +214,7 @@ const DocumentUpload = ({ navigation }) => {
       >
         <View style={[styles.LinearGradientWrapper, shadowStyle]}>
           <LinearGradient
-            colors={['#9E41F0', '#4C7BC0']}
+            colors={[theme.primary, theme.secondary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[shadowStyle,styles.inputContainer,
@@ -333,9 +335,10 @@ const DocumentUpload = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     flex: 1,
     width: '100%',
     paddingVertical: 20,
@@ -347,7 +350,7 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 20,
     paddingBottom: 100,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
   },
   LinearGradientWrapper: {
     width: '100%',
@@ -363,27 +366,28 @@ const styles = StyleSheet.create({
   docTypeButton: {
     padding: 10,
     borderWidth: 1,
-    borderColor: Colors.white,
+    borderColor: theme.white,
     borderRadius: 5,
+    backgroundColor: theme.primary,
   },
   activeDocTypeButton: {
-    backgroundColor: Colors.background,
-    color: Colors.black,
-    borderColor: Colors.black,
+    backgroundColor: theme.background,
+    color: theme.black,
+    borderColor: theme.black,
   },
   title: {
-    color: Colors.white,
+    color: theme.white,
   },
   titleSecondary: {
-    color: Colors.white,
+    color: theme.white,
   },
   imageContainer: {
     width: '100%',
     height: 200,
     borderWidth: 1.5,
     ...shadowStyle,
-    borderColor: Colors.black,
-    backgroundColor: Colors.background,
+    borderColor: theme.black,
+    backgroundColor: theme.background,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
@@ -443,7 +447,12 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       ...shadowStyle,
     },
+  placeholderText: {
+    color: theme.text,
+    fontSize: 16,
+  },
     
 });
+}
 
 export default DocumentUpload;

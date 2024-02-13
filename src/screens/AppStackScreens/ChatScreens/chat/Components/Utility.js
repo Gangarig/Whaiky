@@ -3,8 +3,8 @@ import { showMessage } from 'react-native-flash-message';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import uuid from 'react-native-uuid';
-
 export const sendMessage = async (message, chatId ,userInfo) => {
+
   try {
     // Destructuring message object
     const { text, senderInfo, recipentInfo, imageUrls } = message;

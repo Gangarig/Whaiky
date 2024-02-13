@@ -4,7 +4,7 @@ import { Global } from '../constant/Global'
 import FastImage from 'react-native-fast-image'
 import defaultImage from '../assets/images/avatar/avatar.png'
 import { shadowStyle } from '../constant/Shadow'
-import UserTheme from '../constant/Theme'
+import { useTheme } from '../context/ThemeContext'
 import Fonts from '../constant/Fonts'
 import { useAuth } from '../context/AuthContext'
 import firestore from '@react-native-firebase/firestore';
@@ -14,6 +14,8 @@ import { useEffect,useState } from 'react'
 const ProfileCard = ({ item, onPress }) => {
   const [lastMessage, setLastMessage] = useState('No message available');
   const { currentUser } = useAuth();
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const fetchLastMessage = async () => {
@@ -89,7 +91,7 @@ const ProfileCard = ({ item, onPress }) => {
           </View>
         </View>
       </TouchableOpacity>
-      </View>
+    </View>
 
   );
 };
@@ -99,7 +101,7 @@ const ProfileCard = ({ item, onPress }) => {
 
 export default ProfileCard
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
     profileCardWrapper:{
         width:'100%',
         ...shadowStyle,
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
     profileCard:{
         width:'100%',
         height: 90,
-        backgroundColor: UserTheme.background,
+        backgroundColor: theme.background,
         borderRadius:4,
         flexDirection:'row',
         alignItems:'center',
@@ -122,11 +124,10 @@ const styles = StyleSheet.create({
         height:'100%',
         borderRadius:4,
         overflow:'hidden',
-        backgroundColor:UserTheme.background,
+        backgroundColor:theme.background,
         justifyContent:'center',
         alignItems:'center',
         ...shadowStyle,
-        // borderWidth:1,
     },
     profileImage:{
         width:71,
@@ -135,6 +136,7 @@ const styles = StyleSheet.create({
         resizeMode:'cover',
         ...shadowStyle,
         borderWidth:1,
+        borderColor:theme.primary,
     },
     profileCardInfo:{
       paddingHorizontal:5,
@@ -146,13 +148,13 @@ const styles = StyleSheet.create({
         fontFamily:Fonts.primary,
         fontSize:16,
         fontWeight:'bold',
-        color:UserTheme.black,
+        color:theme.black,
     },
     lastMessage:{
         fontFamily:Fonts.primary,
         fontSize:12,
         fontWeight:'400',
-        color:UserTheme.black,
+        color:theme.black,
     },
     status:{
         flexDirection:'row',
@@ -163,14 +165,14 @@ const styles = StyleSheet.create({
         fontFamily:Fonts.primary,
         fontSize:14,
         fontWeight:'bold',
-        color:UserTheme.black,
+        color:theme.black,
 
     },
     read:{
         fontFamily:Fonts.primary,
         fontSize:14,
         fontWeight:'bold',
-        color:UserTheme.black,
+        color:theme.black,
     }
 
 });

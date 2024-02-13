@@ -6,18 +6,21 @@ import { useAuth } from '../../context/AuthContext'
 import Fonts from '../../constant/Fonts'
 import auth from '@react-native-firebase/auth';
 import { text } from '@fortawesome/fontawesome-svg-core'
+import { useTheme } from '../../context/ThemeContext'
 
 
 const DrawerFooter = ({navigation}) => {
 
   const {currentUser} = useAuth();
+  const theme = useTheme();
+  const style = getStyles(theme);
   return (
     <View style={style.container}>
     {
       currentUser && !(currentUser.status === 'contractor' || currentUser.status === 'admin') && (
         <TouchableOpacity onPress={()=>navigation.navigate('Services')}>
           <GradientText 
-            colors={[UserTheme.primary, UserTheme.secondary]} 
+            colors={[theme.primary, theme.secondary]} 
             style={style.text}
             size={20} 
             underline={true}
@@ -45,9 +48,9 @@ const DrawerFooter = ({navigation}) => {
 
 export default DrawerFooter
 
-const style = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
     container:{
-      backgroundColor:UserTheme.white,
+      backgroundColor:theme.white,
       justifyContent:'center',
       alignItems:'center',
     },
@@ -64,9 +67,9 @@ const style = StyleSheet.create({
       fontWeight: "300",
       fontStyle: "normal",
       lineHeight: 16,
-      color: UserTheme.text,
+      color: theme.text,
     },
     text:{
       marginBottom:10,
     }
-})
+  })
