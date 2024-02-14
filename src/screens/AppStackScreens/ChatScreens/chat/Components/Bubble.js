@@ -11,7 +11,7 @@ import { useTheme } from '../../../../../context/ThemeContext';
 const Bubble = (props) => {
   const { currentMessage } = props;
   const { currentUser } = useAuth();
-  const [isVisible, setIsVisible] = React.useState(false);x
+  const [isVisible, setIsVisible] = React.useState(false);
   const theme = useTheme();
   const styles = getStyles(theme);
 

@@ -35,7 +35,9 @@ const Profile = ({ navigation }) => {
   };
 
   return (
-  <ScrollView style={styles.container}>
+  <ScrollView style={styles.container}
+    
+  >
     <View style={styles.LinearGradientWrapper}>
       <LinearGradient
         colors={[theme.primary, theme.secondary]}
