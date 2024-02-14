@@ -180,77 +180,77 @@ const PostSearch = ({ navigation }) => {
         <View style={styles.btnContainer}>
           {/* <PrimaryButton text="Search" onPress={handleSearch} /> */}
           <View style={styles.locationBtn}>
-          <PrimaryButton text="Add Location" 
-          onPress={() => setLocationModalVisible(true)} 
-          />
-          {country && 
-            <View style={[styles.infoContainer,shadowStyle]}>
-              {country &&
-              <View style={styles.subInfo}>
-              <Text style={[Global.text,styles.white]}>Country : {country}</Text>
-              <TouchableOpacity onPress={
-                ()=>clearCountry()
-              }>
-              <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
-              </TouchableOpacity>
-              </View>
-              }
-              
-              {state &&
-              <View style={styles.subInfo}>
-              <Text style={[Global.text,styles.white]}>State : {state}</Text>
-              <TouchableOpacity onPress={
-                ()=>clearState()
-              }>
-              <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
-              </TouchableOpacity>
-              </View>
-              }
-              
-              {city &&
-              <View style={styles.subInfo}>
-              <Text style={[Global.text,styles.white]}>City : {city}</Text>
-              <TouchableOpacity onPress={
-                ()=>clearCity()
-              }>
-              <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
-              </TouchableOpacity>
-              </View>
-              }
-            </View>
-          }
-          </View>
-          
-          <View style={styles.categoryBtn}>
-          <PrimaryButton text="Add Category" 
-          onPress={() => setCategoryModalVisible(true)}
-          />
-          <View style={styles.chosenCategory}>
-            {category && 
+            <PrimaryButton text="Add Location" 
+            onPress={() => setLocationModalVisible(true)} 
+            />
+            {country && 
               <View style={[styles.infoContainer,shadowStyle]}>
-                  {category && 
-                  <View style={styles.subInfo}>
-                    <Text style={[Global.text,styles.white]}>{category} {categoryId}</Text>
-                    <TouchableOpacity onPress={
-                      ()=>clearCategory()
-                    }>
-                    <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
-                    </TouchableOpacity>
-                  </View>
-                  }
-                  {option && 
-                  <View style={styles.subInfo}>
-                  <Text style={[Global.text,styles.white]}>{option}</Text>
-                  <TouchableOpacity onPress={
-                    ()=>clearOption()
-                  }>
-                  <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
-                  </TouchableOpacity>
-                  </View>
-                  }
+                {country &&
+                <View style={styles.subInfo}>
+                <Text style={[Global.text,styles.white]}>Country : {country}</Text>
+                <TouchableOpacity onPress={
+                  ()=>clearCountry()
+                }>
+                <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
+                </TouchableOpacity>
+                </View>
+                }
+                
+                {state &&
+                <View style={styles.subInfo}>
+                <Text style={[Global.text,styles.white]}>State : {state}</Text>
+                <TouchableOpacity onPress={
+                  ()=>clearState()
+                }>
+                <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
+                </TouchableOpacity>
+                </View>
+                }
+                
+                {city &&
+                <View style={styles.subInfo}>
+                <Text style={[Global.text,styles.white]}>City : {city}</Text>
+                <TouchableOpacity onPress={
+                  ()=>clearCity()
+                }>
+                <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
+                </TouchableOpacity>
+                </View>
+                }
               </View>
             }
           </View>
+          
+          <View style={styles.categoryBtn}>
+            <PrimaryButton text="Add Category" 
+            onPress={() => setCategoryModalVisible(true)}
+            />
+            <View style={styles.chosenCategory}>
+              {category && 
+                <View style={[styles.infoContainer,shadowStyle]}>
+                    {category && 
+                    <View style={styles.subInfo}>
+                      <Text style={[Global.text,styles.white]}>{category} {categoryId}</Text>
+                      <TouchableOpacity onPress={
+                        ()=>clearCategory()
+                      }>
+                      <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
+                      </TouchableOpacity>
+                    </View>
+                    }
+                    {option && 
+                    <View style={styles.subInfo}>
+                    <Text style={[Global.text,styles.white]}>{option}</Text>
+                    <TouchableOpacity onPress={
+                      ()=>clearOption()
+                    }>
+                    <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
+                    </TouchableOpacity>
+                    </View>
+                    }
+                </View>
+              }
+            </View>
           </View>
         </View>
       </View>
@@ -366,12 +366,12 @@ const getStyles = (theme) => StyleSheet.create({
     paddingVertical: 10,
     backgroundColor : theme.background,
     borderColor : theme.primary,
-    borderWidth : 1,
+    borderWidth : .5,
     borderRadius : 10,
     marginTop: 10,
   },
   btnContainer:{
-    flexDirection: 'row',
+    flexDirection: 'column',
     paddingHorizontal: 20,
     paddingVertical: 10,
     justifyContent: 'space-between',
@@ -379,11 +379,12 @@ const getStyles = (theme) => StyleSheet.create({
     width: '100%',
     gap: 10,
   },
+
   searchLabel:{
     marginBottom: 10,
   },
   infoContainer:{
-    backgroundColor: theme.primaryLight,
+    backgroundColor: theme.primary,
     marginTop: 10,
     padding: 10,
     borderRadius: 5,
@@ -419,6 +420,7 @@ const getStyles = (theme) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: theme.primary,
   },
   searchTextInputWrapper:{
     flexDirection: 'row',

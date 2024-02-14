@@ -11,8 +11,6 @@ import truck from '../../assets/icons/truck.png';
 import category from '../../assets/icons/category.png';
 
 
-
-
 export const categoriesData = [
   {
     id: 1,

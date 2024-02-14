@@ -10,7 +10,7 @@ import { useTheme } from '../context/ThemeContext';
 const PostCardSecondary = ({ post, onPress }) => {
   const { currentUser } = useAuth();
   const theme = useTheme();
-  console.log('theme', theme.primary);
+
   const styles = getStyles(theme);
   const hasImages = post.images && post.images.length > 0;
 
@@ -47,7 +47,7 @@ const PostCardSecondary = ({ post, onPress }) => {
             <LinearGradient
                 colors={[theme.primary, theme.secondary]}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 1.2, y: 0 }}
+                end={{ x: 1.5, y: 0 }}
                 style={[styles.sale]}
               >
               <Text style={styles.saleText}>SALE</Text>
@@ -126,7 +126,7 @@ const getStyles = (theme) => {
     height: 120,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
-    borderWidth: 1,
+    borderWidth: .5,
     borderColor: theme.querternary,
   },
   noImageText:{
@@ -134,7 +134,7 @@ const getStyles = (theme) => {
     fontSize: 25,
     fontWeight: 'bold',
     color: theme.gray,
-    borderWidth: 2,
+    borderWidth: .5,
     borderColor: theme.gray,
     padding: 20,
     borderRadius: 7,
@@ -175,7 +175,7 @@ const getStyles = (theme) => {
     transform: [{ rotate: '270deg' }],
   },
   border:{
-    borderWidth:2,
+    borderWidth:.5,
     borderColor:theme.primary,
     borderRadius:15,
   }

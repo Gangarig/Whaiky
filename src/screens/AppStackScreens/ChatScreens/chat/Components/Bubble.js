@@ -11,7 +11,7 @@ import { useTheme } from '../../../../../context/ThemeContext';
 const Bubble = (props) => {
   const { currentMessage } = props;
   const { currentUser } = useAuth();
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(false);x
   const theme = useTheme();
   const styles = getStyles(theme);
 
@@ -115,7 +115,7 @@ const getStyles = (theme) => {
   textContainer: {
     backgroundColor: theme.lightPrimary,
     borderRadius:5,
-    borderWidth: 1.2,
+    borderWidth: .5,
     padding: 5,
     paddingRight: 20,
     borderColor: theme.primary,
@@ -153,9 +153,9 @@ const getStyles = (theme) => {
     gap: 10,
     marginVertical: 15,
     paddingHorizontal: 15,
-    backgroundColor: theme.background,
+    backgroundColor: theme.lightPrimary,
     borderRadius: 5,
-    borderWidth: 1.2,
+    borderWidth: .5,
     borderColor: "rgba(158, 65, 240, 0.5)",
     padding:10 ,
     position: 'relative',
@@ -168,7 +168,7 @@ const getStyles = (theme) => {
     paddingHorizontal: 15,
     backgroundColor: theme.background,
     borderRadius: 5,
-    borderWidth: 1.2,
+    borderWidth: .5,
     borderColor: theme.primary,
     padding:10 ,
     position: 'relative',
@@ -181,7 +181,7 @@ const getStyles = (theme) => {
     width: 100,
     height: 100,
     borderRadius: 5,
-    borderWidth: 1,
+    borderWidth: 0,
     
   },
   evenImageContainer: {

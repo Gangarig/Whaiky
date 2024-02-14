@@ -78,6 +78,9 @@ const Input = ({ onSend, chatId }) => {
             multiline={true}
             scrollEnabled={true}
           />
+          {imageUrls.length > 0 && (
+          <View style={styles.border}></View>
+          )}
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {imageUrls.length > 0 && (
             <View style={styles.imageContainer}>
@@ -99,6 +102,7 @@ const Input = ({ onSend, chatId }) => {
                   </TouchableOpacity>
                 </View>
               ))}
+
             </View>
           )
           }
@@ -132,25 +136,30 @@ const getStyles = (theme) => {
     justifyContent: 'center',
     bottom: 0,
   },
+  border: {
+    borderBottomColor: theme.primary,
+    borderBottomWidth: 0.5,
+    width: '100%',
+  },
   Input: {
     flexDirection: 'column',
     width: '70%',
     borderWidth: 0.5,
     borderColor: theme.primary,
-    borderRadius: 5,
+    borderRadius: 20,
+    paddingHorizontal: 5,
     left: 10,
     bottom: 5,
     position: 'absolute',
     backgroundColor: theme.background,
     overflow: 'hidden',
+    maxHeight: 300,
   },
   imageContainer: {
     flexDirection: 'row',
     backgroundColor: theme.background,
     gap: 10,
     scrollEnabled: true,
-    borderTopColor: theme.primary,
-    borderTopWidth: 0.5,
     width: '100%',
     padding: 10,
   },
@@ -159,7 +168,6 @@ const getStyles = (theme) => {
     paddingTop: 10,
     fontSize: 16,
     ...Global.text,
-    maxHeight: 300,
   },
   btnContainer: {
     position: 'absolute',
@@ -174,8 +182,7 @@ const getStyles = (theme) => {
     width: 100,
     height: 100,
     borderRadius: 5,
-    borderWidth: 0.5,
-    borderColor: theme.primary,
+    borderWidth: 0,
   },
   xBtn: {
     position: 'absolute',

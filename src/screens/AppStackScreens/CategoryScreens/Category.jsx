@@ -86,7 +86,7 @@ const getStyles = (theme) => StyleSheet.create({
   shadowContainer: {
     marginBottom: 16,
     borderRadius: 10,
-    overflow: 'hidden', 
+    ...shadowStyle,
   },
   mainCategory: {
     width: 350,
@@ -107,6 +107,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 10,
   } ,
   optionsContainer: {
     backgroundColor: theme.gray,

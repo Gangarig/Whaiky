@@ -113,8 +113,8 @@ const Profile = ({ navigation }) => {
             <View style={styles.LinearGradientWrapper}>
             <LinearGradient
             colors={[theme.primary, theme.secondary]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1.5, y:  1}}   
+            start={{ x: .5, y: 0 }}
+            end={{ x: 2, y:  1}}   
               style={styles.profileContainer}
               >
                   <View style={styles.contractorLinks}>
@@ -208,6 +208,7 @@ const getStyles = (theme) => StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.white,
+
   },
   avatarWrapper: {
     position: 'relative',

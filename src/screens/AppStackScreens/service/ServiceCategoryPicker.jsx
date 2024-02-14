@@ -8,8 +8,10 @@ import { useAuth } from '../../../context/AuthContext';
 import { Global } from '../../../constant/Global';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-import UserTheme from '../../../constant/Theme';
+import theme from '../../../constant/Theme';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useTheme } from '../../../context/ThemeContext';
+
 
 const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) => {
   const [openCategory, setOpenCategory] = useState(false);
@@ -22,7 +24,8 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
   const [services, setServices] = useState([]);
   const [image ,setImage]=useState(null);
   const { currentUser } = useAuth();
-
+  const theme = useTheme();
+  const styles = getStyles(theme);
   const items = categoriesData.map(cat => ({
     label: cat.text,
     value: cat.id
@@ -148,9 +151,9 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
             style={styles.dropdown}
             textStyle={styles.textStyle}
             dropDownContainerStyle={styles.dropdownContainer}
-            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-up" />}
-            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-down" />}
-            TickIconComponent={() => <FontAwesomeIcon size={20} color={UserTheme.primary} icon="fa-solid fa-check" />}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
             zIndex={1000}
           />
           <DropDownPicker
@@ -164,9 +167,9 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
             style={styles.dropdown}
             textStyle={styles.textStyle}
             dropDownContainerStyle={styles.dropdownContainer}
-            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-up" />}
-            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-down" />}
-            TickIconComponent={() => <FontAwesomeIcon size={20} color={UserTheme.primary} icon="fa-solid fa-check" />}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
           />
           {showTextInput && (
             <TextInput
@@ -192,7 +195,8 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -201,14 +205,14 @@ const styles = StyleSheet.create({
   modalContent: {
     height: '60%',
     width: '100%',
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
     borderRadius: 10,
     padding: 20,
     zIndex: 99,
     alignItems: 'center',
   },
   dropdown: {
-    borderColor: UserTheme.primary,
+    borderColor: theme.primary,
     borderradius:10,
     borderWidth: 2.5,
     zIndex: 99,
@@ -218,8 +222,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   dropdownContainer: {
-    backgroundColor: UserTheme.white,
-    borderColor: UserTheme.primary,
+    backgroundColor: theme.white,
+    borderColor: theme.primary,
     borderWidth: 2.5,
   },
   btnContainer:{
@@ -231,5 +235,6 @@ const styles = StyleSheet.create({
     
   },
 });
+}
 
 export default ServiceCategoryPicker;

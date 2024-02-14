@@ -121,7 +121,7 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
   },
   postCardWrapper: {
-    width: '50%',
+    width: '100%',
     padding: 5,
   },
 });

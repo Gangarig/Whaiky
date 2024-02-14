@@ -34,7 +34,7 @@ const PostCard = ({ post, onPress }) => {
         start={{ x: 0, y: 1}}
         end={{ x: 1, y: 0 }}
         style={[styles.postCardContainer, { borderRadius: 10, 
-        borderWidth: 1.5, borderColor: theme.primary, overflow: 'hidden' }]}
+        borderWidth: .5, borderColor: theme.primary, overflow: 'hidden' }]}
       >
         {hasImages ? (
           <FastImage 
@@ -130,7 +130,7 @@ const getStyles = (theme) => {
     fontSize: 25,
     fontWeight: 'bold',
     color: theme.gray,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: theme.gray,
     padding: 20,
     borderRadius: 5,
@@ -171,7 +171,7 @@ const getStyles = (theme) => {
     transform: [{ rotate: '270deg' }],
   },
   border:{
-    borderWidth:2,
+    borderWidth:.5,
     borderColor:theme.primary,
     borderRadius:15,
   }

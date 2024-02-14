@@ -38,7 +38,6 @@ const getStyles = (theme) => StyleSheet.create({
     flex: 1,
     backgroundColor: theme.background,
     borderTopColor: theme.black,
-    borderTopWidth: .5,
   }, 
   headerTitle: {
     flexDirection: "row",

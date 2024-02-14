@@ -11,7 +11,7 @@ const GradientButton = ({ text, onPress }) => {
 
   return (
     <TouchableComponent onPress={onPress}>
-      <View style={[styles.shadowContainer,shadowStyle]}>
+      <View style={[styles.shadowContainer]}>
         <LinearGradient
           colors={[theme.primary, theme.secondary]}
           start={{ x: 0, y: 0 }}

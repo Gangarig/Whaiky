@@ -1,11 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  RefreshControl,
-  StyleSheet
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, RefreshControl, StyleSheet } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
 import { Global } from '../../../constant/Global';
@@ -14,75 +8,68 @@ import PostCard from '../../../components/PostCard';
 
 const CategoryDetail = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [lastVisible, setLastVisible] = useState(null);
-  const [endReached, setEndReached] = useState(false);
   const { optionId } = route.params;
-
-  const fetchData = useCallback(async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-        setEndReached(false); // Reset endReached on refresh
-      } else if (endReached) {
-        // If we've already reached the end, don't attempt to fetch more
-        return;
-      } else {
-        setLoadingMore(true);
-      }
-
-      let query = firestore().collection('posts').where('optionId', '==', optionId);
-
-      if (!isRefresh && lastVisible) {
-        query = query.startAfter(lastVisible);
-      }
-
-      const snapshot = await query.limit(10).get();
-
-      const fetchedPosts = snapshot.docs.map(doc => {
-        const post = doc.data();
-        if (!post.title || !post.description || !post.price) {
-          return null; // Skip posts with missing fields
-        }
-        return { ...post, id: doc.id };
-      }).filter(Boolean); // Filter out null values
-
-      if (isRefresh) {
-        setPosts(fetchedPosts);
-      } else {
-        setPosts(prevPosts => [...prevPosts, ...fetchedPosts]);
-      }
-
-      if (snapshot.docs.length > 0) {
-        setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-      }
-
-      if (snapshot.docs.length < 10) {
-        setEndReached(true); // No more posts to load
-      }
-    } catch (error) {
-      showMessage({ message: error.message, type: "danger" });
-    } finally {
-      if (isRefresh) {
-        setRefreshing(false);
-      } else {
-        setLoadingMore(false);
-      }
-    }
-  }, [optionId, lastVisible, endReached]);
+  console.log('optionId:', optionId);
 
   useEffect(() => {
-    fetchData(true); // Initial fetch
-  }, [fetchData]);
+    fetchPosts();
+  }, []);
 
-  const handleRefresh = () => {
-    fetchData(true);
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const querySnapshot = await firestore()
+        .collection('posts')
+        .where('optionId', '==', optionId)
+        .limit(10)
+        .orderBy('timestamp', 'desc')
+        .get();
+      const data = querySnapshot.docs.map(doc => doc.data());
+      setPosts(data);
+      if (querySnapshot.docs.length > 0) {
+        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 2]);
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      showMessage({
+        message: 'Error',
+        description: 'Failed to fetch posts. Please try again later.',
+        type: 'danger',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleLoadMore = () => {
-    if (!loadingMore && !endReached) {
-      fetchData();
+  const fetchMorePosts = async () => {
+    if (lastVisible) {
+      setLoading(true);
+      try {
+        const querySnapshot = await firestore()
+          .collection('posts')
+          .where('optionId', '==', optionId)
+          .orderBy('timestamp', 'desc') // Move this line here
+          .startAfter(lastVisible) // Move this line here
+          .limit(10)
+          .get();
+        const data = querySnapshot.docs.map(doc => doc.data());
+        setPosts(prevPosts => [...prevPosts, ...data]);
+        if (querySnapshot.docs.length > 0) {
+          setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        }
+      } catch (error) {
+        console.error('Error fetching more posts:', error);
+        showMessage({
+          message: 'Error',
+          description: 'Failed to fetch more posts. Please try again later.',
+          type: 'danger',
+        });
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -96,27 +83,36 @@ const CategoryDetail = ({ navigation, route }) => {
     </View>
   );
 
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchPosts().then(() => setRefreshing(false));
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <FlatList
         data={posts}
         renderItem={renderItem}
         numColumns={2}
-        keyExtractor={(item, index) => `${item.id}-${index}`} 
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
         ListEmptyComponent={
           <View style={styles.NoPosts}>
-            <Text style={Global.titleSecondary}>No posts available in this category.</Text>
+            <Text style={Global.titleSecondary}>
+              No posts available in this category.
+            </Text>
           </View>
         }
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        onEndReached={fetchMorePosts}
+        onEndReachedThreshold={0.5} // Adjust as needed
       />
     </View>
   );
 };
-
-export default CategoryDetail;
 
 const styles = StyleSheet.create({
   NoPosts: {
@@ -129,3 +125,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
 });
+
+export default CategoryDetail;
+
+

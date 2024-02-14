@@ -239,7 +239,6 @@ const getStyles = (theme) => {
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadowStyle,
   },
   imagesInside: {
     width: 50,
@@ -256,8 +255,8 @@ const getStyles = (theme) => {
     top: 125,
   },
   selectedImage: {
-    borderColor: theme.querternary, 
-    borderWidth: 2,
+    borderColor: theme.primary, 
+    borderWidth: .5,
   },
   postInfo: {
     padding: 10,
@@ -386,7 +385,6 @@ const getStyles = (theme) => {
     justifyContent:'center',
     alignItems:'center',
     flex:1,
-    ...shadowStyle,
     borderBottomColor:theme.gray,
     borderBottomWidth:1,
     borderColor:theme.gray,

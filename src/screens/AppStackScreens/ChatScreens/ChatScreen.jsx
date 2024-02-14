@@ -26,18 +26,18 @@ const ChatScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.ChatScreen}>
-      <TouchableOpacity
+      {/* <View style={styles.ChatScreen}> */}
+      {/* <TouchableOpacity
         style={[styles.inputWrapper]}
         onPress={handleSearchButtonPress}
       >
         <Text style={[Global.text]}>
           Search a User
         </Text>
-      </TouchableOpacity>
-      <Search isVisible={searchModalVisible} onClose={handleCloseSearch} />
+      </TouchableOpacity> */}
+      {/* <Search isVisible={searchModalVisible} onClose={handleCloseSearch} /> */}
       <Chats navigation={navigation} onSelectChat={handleChatSelect} />
-      </View>
+      {/* </View> */}
     </View>
   );
 };

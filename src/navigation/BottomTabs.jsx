@@ -12,6 +12,7 @@ import { View ,StyleSheet} from 'react-native';
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import Test from '../screens/Test';
 import { useTheme } from '../context/ThemeContext';
+import { Button } from 'react-native';
 const Tab = createBottomTabNavigator();
 
 function BottomTabs({navigation}) {

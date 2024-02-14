@@ -104,7 +104,6 @@ export default ProfileCard
 const getStyles = (theme) => StyleSheet.create({
     profileCardWrapper:{
         width:'100%',
-        ...shadowStyle,
         marginVertical:5,
         height:90,
     },
@@ -127,14 +126,12 @@ const getStyles = (theme) => StyleSheet.create({
         backgroundColor:theme.background,
         justifyContent:'center',
         alignItems:'center',
-        ...shadowStyle,
     },
     profileImage:{
         width:71,
         height:71,
         borderRadius:4,
         resizeMode:'cover',
-        ...shadowStyle,
         borderWidth:1,
         borderColor:theme.primary,
     },
@@ -149,6 +146,7 @@ const getStyles = (theme) => StyleSheet.create({
         fontSize:16,
         fontWeight:'bold',
         color:theme.black,
+        textTransform: 'capitalize', 
     },
     lastMessage:{
         fontFamily:Fonts.primary,
@@ -172,7 +170,7 @@ const getStyles = (theme) => StyleSheet.create({
         fontFamily:Fonts.primary,
         fontSize:14,
         fontWeight:'bold',
-        color:theme.black,
+        color:theme.primary,
     }
 
 });

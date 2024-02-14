@@ -4,18 +4,8 @@ import { useAuth } from './AuthContext';
 
 const ThemeContext = createContext();
 
-const getShadedColor = (color, percent) => {
-  const num = parseInt(color.slice(1), 16);
-  const amt = Math.round(2.55 * percent);
-  const R = (num >> 16) + amt;
-  const G = (num >> 8 & 255) + amt;
-  const B = (num & 255) + amt;
-  return "#" + (1 << 24 | R << 16 | G << 8 | B).toString(16).slice(1);
-};
-
 export const ThemeProvider = ({ children }) => {
   const { currentUser } = useAuth();
-  const isAndroid = Platform.OS === 'android';
 
   // Define themes
   const defaultTheme = {
@@ -27,9 +17,9 @@ export const ThemeProvider = ({ children }) => {
     gray: '#7B7B7B',
     background: '#FBFBFB',
     backgroundSecondary: '#dfd1f1',
-    text: '#000',
+    text: '#090909',
     white: '#FFFFFF',
-    black: '#000000',
+    black: '#090909',
     transparent: 'transparent',
   };
 
@@ -43,25 +33,14 @@ export const ThemeProvider = ({ children }) => {
     gray: '#7B7B7B',
     background: '#FBFBFB',
     backgroundSecondary: '#d6eaeb',
-    text: '#000',
+    text: '#090909',
     white: '#FFFFFF',
-    black: '#000000',
+    black: '#090909',
     transparent: 'transparent',
   };
 
-  // Apply shading for Android platform
-  const applyShading = (theme) => {
-    const shadedTheme = { ...theme };
-    Object.keys(shadedTheme).forEach(key => {
-      if (typeof shadedTheme[key] === 'string' && shadedTheme[key].startsWith('#')) {
-        shadedTheme[key] = isAndroid ? getShadedColor(shadedTheme[key], -10) : shadedTheme[key];
-      }
-    });
-    return shadedTheme;
-  };
-
   // Determine which theme to use
-  const theme = currentUser && currentUser.status === 'contractor' ? applyShading(contractorTheme) : applyShading(defaultTheme);
+  const theme = currentUser && currentUser.status === 'contractor' ? contractorTheme : defaultTheme;
 
   return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
 };

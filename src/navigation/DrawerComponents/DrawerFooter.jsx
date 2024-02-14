@@ -16,7 +16,7 @@ const DrawerFooter = ({navigation}) => {
   const style = getStyles(theme);
   return (
     <View style={style.container}>
-    {
+    {/* {
       currentUser && !(currentUser.status === 'contractor' || currentUser.status === 'admin') && (
         <TouchableOpacity onPress={()=>navigation.navigate('Services')}>
           <GradientText 
@@ -29,7 +29,7 @@ const DrawerFooter = ({navigation}) => {
           </GradientText>
         </TouchableOpacity>
       )
-    }
+    } */}
         <View style={style.footerLinks}>
             <TouchableOpacity 
             onPress={()=>navigation.navigate('Support')}

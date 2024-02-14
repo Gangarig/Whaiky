@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  Button,
   TouchableOpacity,
   StyleSheet,
   TextInput,
   Modal,
-  Image,
   ScrollView,
 } from 'react-native';
 import { useAuth } from '../../../context/AuthContext';
@@ -21,14 +19,10 @@ import Location from '../service/LocationPicker';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import PrimaryGradientButton from '../../../components/Buttons/PrimaryGradientButton';
 import firestore from '@react-native-firebase/firestore';
-import theme from '../../../constant/Theme';
 import GradientText from '../../../components/GradientText';
-import PostDetail from './PostDetail';
 import { shadowStyle } from '../../../constant/Shadow';
 import FastImage from 'react-native-fast-image';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import ImageView from "react-native-image-viewing";
-import Fonts from '../../../constant/Fonts';
 import { useTheme } from '../../../context/ThemeContext';
 
 
@@ -232,6 +226,7 @@ const AddPost = ({ navigation }) => {
   };
 
   const handlePost = async () => {
+    console.log('Post:', post);
     if (!post.title || !post.price || !post.description) {
       showMessage({
         message: 'Please ensure the title, price, and description are filled out.',
@@ -512,7 +507,7 @@ const getStyles = (theme) => StyleSheet.create({
     height:200,
     width:'100%',
     backgroundColor:theme.backgroundSecondary,
-    borderWidth:2.5,
+    borderWidth:1,
     borderRadius:10,
     justifyContent:'center',
     alignItems:'center',
@@ -523,7 +518,7 @@ const getStyles = (theme) => StyleSheet.create({
     width:'100%',
     height:40,
     borderColor:theme.primary,
-    borderWidth:2.5,
+    borderWidth:1,
     backgroundColor:theme.backgroundSecondary,
     borderRadius:10,
     fontSize:17,
@@ -534,7 +529,7 @@ const getStyles = (theme) => StyleSheet.create({
     width:'100%',
     height:40,
     borderColor:theme.primary,
-    borderWidth:2.5,
+    borderWidth:1,
     backgroundColor:theme.backgroundSecondary,
     borderRadius:10,
     fontSize:17,
@@ -545,7 +540,7 @@ const getStyles = (theme) => StyleSheet.create({
     width:'100%',
     height:150,
     borderColor:theme.primary,
-    borderWidth:2.5,
+    borderWidth:1,
     backgroundColor:theme.backgroundSecondary,
     borderRadius:10,
     fontSize:17,
@@ -576,7 +571,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: '100%',
     borderRadius: 10,
     padding: 10,
-    borderWidth:2.5,
+    borderWidth:1,
     borderColor:theme.primary,
   },
   postTypeBox:{
@@ -587,16 +582,18 @@ const getStyles = (theme) => StyleSheet.create({
     marginTop:20,
     marginBottom:20,
     borderColor:theme.primary,
-    borderWidth:2.5,
+    borderWidth:1,
     ...shadowStyle,
-    borderRadius:2,
+    borderRadius:10,
     padding:2,
+    overflow:'hidden',
+    gap:5,
   },
   activePostType:{
     backgroundColor:theme.primary,
     width:'50%',
     padding:10,
-    borderRadius:2,
+    borderRadius:10,
     height:'100%',
     alignItems:'center',
     justifyContent:'center',
@@ -606,7 +603,7 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor:theme.white,
     width:'50%',
     padding:10,
-    borderRadius:2,
+    borderRadius:10,
     height:'100%',
     alignItems:'center',
     justifyContent:'center',

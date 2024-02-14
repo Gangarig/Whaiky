@@ -1,10 +1,10 @@
-import { View, Text ,StyleSheet, TouchableOpacity} from 'react-native'
+import { View ,StyleSheet, TouchableOpacity} from 'react-native'
 import React from 'react'
 import GradientText from '../../components/GradientText'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { shadowStyle } from '../../constant/Shadow'
 import { CommonActions } from '@react-navigation/native';
 import { useTheme } from '../../context/ThemeContext'
+import { shadowStyle } from '../../constant/Shadow';
 
 const StackHeader = ({title,navigation,isHomeScreen}) => {
   const theme = useTheme();
@@ -33,7 +33,7 @@ const StackHeader = ({title,navigation,isHomeScreen}) => {
       </GradientText>
       </TouchableOpacity>
       <TouchableOpacity onPress={()=>navigation.navigate('SearchPost')}>
-      <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" size={20}  color={theme.primary}/>
+      <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" size={20}  color={theme.secondary}/>
       </TouchableOpacity>
     </View>
   )
@@ -47,9 +47,11 @@ const getStyles = (theme) => StyleSheet.create({
     justifyContent:'center',
     alignItems:'center',
     flexDirection:'row',
-    backgroundColor:theme.white,
+    backgroundColor:theme.background,
     justifyContent:'space-between',
     paddingHorizontal:20,
+    borderBottomColor:theme.primary,
+    borderBottomWidth:.5,
   },
   text:{
     fontSize:25,
@@ -58,7 +60,7 @@ const getStyles = (theme) => StyleSheet.create({
     color:theme.primary,
   } ,
   Whaiky:{
-    backgroundColor:theme.white,
+    backgroundColor:theme.background,
   }
 })
 

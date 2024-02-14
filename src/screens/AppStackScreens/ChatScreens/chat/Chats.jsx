@@ -132,6 +132,7 @@ const updateLastMessageInState = (chatId, lastMessageData) => {
         onPress={() => handleSelect(item.chatId, item.userInfo)}
         onDeletePress={() => deleteChat(item.userInfo)}
       />
+      <View style={styles.border}></View>
     </View>
   );
   
@@ -154,16 +155,22 @@ const getStyles = theme => StyleSheet.create({
     backgroundColor: theme.background,
     width: '100%',
   },
-
-  borderBottom: {
+  border: {
     borderBottomColor: theme.primary,
-    borderBottomWidth: 1,
+    borderBottomWidth: .5,
+    width: '90%',
+    marginBottom: 2,
   },
   noChatsText: {
     textAlign: 'center',
     marginTop: 20,
     color: 'grey',
     fontSize: 16,
+  },
+  profileWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
