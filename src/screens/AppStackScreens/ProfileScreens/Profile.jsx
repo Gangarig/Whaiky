@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, Image, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import { showMessage } from 'react-native-flash-message';
 import { useAuth } from '../../../context/AuthContext';
 import defaultAvatar from '../../../assets/images/avatar/avatar.png';
-import { Global } from '../../../constant/Global';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import { shadowStyle } from '../../../constant/Shadow';
-import Colors from '../../../constant/Colors';
+import { useTheme } from '../../../context/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 
 const Profile = ({ navigation }) => {
   const { currentUser } = useAuth();
+  const theme = useTheme();
+  const styles = getStyles(theme);
   if (!currentUser) {
     return (
       <View style={styles.centered}>
@@ -40,9 +38,9 @@ const Profile = ({ navigation }) => {
   <ScrollView style={styles.container}>
     <View style={styles.LinearGradientWrapper}>
       <LinearGradient
-        colors={['#9E41F0', '#4C7BC0']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
+        colors={[theme.primary, theme.secondary]}
+        start={{ x: .5, y: 0 }}
+        end={{ x: 2, y:  1}}        
         style={styles.profileContainer}
       >
         <View style={styles.avatarWrapper}>
@@ -100,9 +98,9 @@ const Profile = ({ navigation }) => {
           {currentUser.status == 'user' && (
             <View style={styles.LinearGradientWrapper}>
             <LinearGradient
-              colors={['#9E41F0', '#4C7BC0']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+            colors={[theme.primary, theme.secondary]}
+            start={{ x: .5, y: 0 }}
+            end={{ x: 2, y:  1}}   
               style={styles.profileContainer}
               >
                 <TouchableOpacity onPress={handleContractor}>
@@ -114,9 +112,9 @@ const Profile = ({ navigation }) => {
           {currentUser.status == 'contractor' && (
             <View style={styles.LinearGradientWrapper}>
             <LinearGradient
-              colors={['#9E41F0', '#4C7BC0']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+            colors={[theme.primary, theme.secondary]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1.5, y:  1}}   
               style={styles.profileContainer}
               >
                   <View style={styles.contractorLinks}>
@@ -141,9 +139,9 @@ const Profile = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     flex: 1,
     width: '100%',
     paddingVertical: 20,
@@ -171,27 +169,27 @@ const styles = StyleSheet.create({
     gap: 15,
   },
   linkWrapper: {
-    borderBottomColor: Colors.white,
+    borderBottomColor: theme.white,
     borderBottomWidth: 1,
   },
   avatar: {
     width: 114,
     height: 119,
     borderWidth: 2,
-    borderColor: Colors.white,
+    borderColor: theme.white,
     borderRadius: 100,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
   },
   nameText: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: Colors.white,
+    color: theme.white,
     paddingBottom: 10,
   },
   btnText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.white,
+    color: theme.white,
   },
   infoWrapper: {
     width: '100%',
@@ -209,7 +207,7 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: Colors.white,
+    color: theme.white,
   },
   avatarWrapper: {
     position: 'relative',

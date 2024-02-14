@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Country, State, City } from 'country-state-city';
-import Colors from '../../../constant/Colors';
-import shadowStyle from '../../../constant/Shadow';
+import { useTheme } from '../../../context/ThemeContext';
 import { Global } from '../../../constant/Global';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 const Location = React.memo(({ onSave, onClose }) => {
+  const theme = useTheme();
+  const styles = getStyles(theme);
   const [countryOpen, setCountryOpen] = useState(false);
   const [stateOpen, setStateOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
@@ -85,6 +87,12 @@ const Location = React.memo(({ onSave, onClose }) => {
         zIndex={3000}
         zIndexInverse={1000}
         closeAfterSelectByDefault={true}
+        style={styles.dropdown}
+        textStyle={styles.textStyle}
+        dropDownContainerStyle={styles.dropdownContainer}
+        ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
+        ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+        TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
       />
 
       {stateItems.length > 0 && (
@@ -102,7 +110,13 @@ const Location = React.memo(({ onSave, onClose }) => {
             disabled={!selectedCountry}
             zIndex={2000}
             zIndexInverse={2000}
+            style={styles.dropdown}
+            textStyle={styles.textStyle}
+            dropDownContainerStyle={styles.dropdownContainer}
             closeAfterSelectByDefault={true}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
           />
         </>
       )}
@@ -122,7 +136,13 @@ const Location = React.memo(({ onSave, onClose }) => {
             disabled={!selectedCountry || !selectedState}
             zIndex={1000}
             zIndexInverse={3000}
+            style={styles.dropdown}
+            textStyle={styles.textStyle}
+            dropDownContainerStyle={styles.dropdownContainer}
             closeAfterSelectByDefault={true}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
           />
         </>
       )}
@@ -143,10 +163,10 @@ const Location = React.memo(({ onSave, onClose }) => {
   );
 });
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     paddingHorizontal: 30,
     paddingVertical: 10,
     gap: 10,
@@ -159,7 +179,21 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   title: {
-    color: Colors.primary,
+    color: theme.text,
+  },
+  dropdown: {
+    borderColor: theme.primary,
+    borderradius:10,
+    borderWidth: 2.5,
+    zIndex: 99,
+  },
+  textStyle: {
+    fontSize: 17,
+  },
+  dropdownContainer: {
+    backgroundColor: theme.white,
+    borderColor: theme.primary,
+    borderWidth: 2.5,
   },
 });
 

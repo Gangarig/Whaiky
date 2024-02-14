@@ -18,6 +18,13 @@ const PostCard = ({ post, onPress }) => {
   ? [theme.primary, theme.tertiary] 
   : [theme.primary, theme.secondary]; 
 
+  const renderDottedLine = () => {
+    const numberOfDots = 10; // Adjust the number of dots as needed
+    return Array.from({ length: numberOfDots }).map((_, index) => (
+      <View key={index} style={styles.verticalLineDot} />
+    ));
+  };
+
 
   return (
    
@@ -47,6 +54,20 @@ const PostCard = ({ post, onPress }) => {
               ellipsizeMode='tail'
               style={[styles.price,{textAlign:'right'}]}>{post.price}$</Text>
             </View>
+            {post?.sale && (
+            <LinearGradient
+                colors={[theme.primary, theme.secondary]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1.2, y: 0 }}
+                style={[styles.sale]}
+              >
+              <Text style={styles.saleText}>SALE</Text>
+                <View style={{ flexDirection: 'column' }}>{renderDottedLine()}</View>
+                <View style={{ flexDirection: 'column' }}>
+                <Text style={styles.verticalText}>{post?.sale}</Text> 
+              </View>
+            </LinearGradient>
+            )}
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -114,6 +135,46 @@ const getStyles = (theme) => {
     padding: 20,
     borderRadius: 5,
   },
+  sale:{
+    position:'absolute',
+    bottom:35,
+    right:10,
+    borderRadius:5,
+    height:31,
+    width:90,
+    justifyContent:'center',
+    alignItems:'center',
+    flexDirection:'row',
+    borderWidth:1,
+    borderColor:theme.white,
+  },
+  saleText:{
+    fontSize:18,
+    color:theme.white,
+    fontFamily:Fonts.querternary,
+    fontWeight:'bold',  
+  },
+  verticalLineDot: {
+    height: 1, 
+    width: 3,  
+    backgroundColor: theme.white,
+    marginVertical: 1, 
+    marginHorizontal: 5,
+    borderRadius: 3,
+  },
+  verticalText: {
+    color: theme.white,
+    fontFamily: Fonts.querternary,
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'center',
+    transform: [{ rotate: '270deg' }],
+  },
+  border:{
+    borderWidth:2,
+    borderColor:theme.primary,
+    borderRadius:15,
+  }
 });
 }
 

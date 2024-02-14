@@ -3,16 +3,17 @@ import { View, Text, FlatList, Image, StyleSheet, Button } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../../context/AuthContext';
 import LinearGradient from 'react-native-linear-gradient';
-import Colors from '../../../../constant/Colors';
 import { shadowStyle } from '../../../../constant/Shadow';
-import { Global } from '../../../../constant/Global';
 import FastImage from 'react-native-fast-image';
 import UserTheme from '../../../../constant/Theme';
+import {useTheme} from '../../../../context/ThemeContext';
 
 const LegalInfo = ({navigation}) => {
   const { currentUser } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [certificates, setCertificates] = useState([]);
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const userDocRef = firestore().collection('users').doc(currentUser.uid);
@@ -44,9 +45,9 @@ const LegalInfo = ({navigation}) => {
         renderItem={({ item }) => (
           <View style={styles.LinearGradientWrapper}>
           <LinearGradient
-          colors={['#9E41F0', '#4C7BC0']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
+          colors={[theme.primary, theme.secondary]}
+          start={{ x: .5, y: 0 }}
+          end={{ x: 2, y:  1}}
           style={styles.itemContainer}
         >
             {item.type ? (
@@ -120,7 +121,8 @@ const LegalInfo = ({navigation}) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
     ...shadowStyle
   },
   itemContainer: {
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
     padding: 16,
     marginBottom: 16,
     borderRadius: 8,
@@ -139,16 +141,16 @@ const styles = StyleSheet.create({
   documentType: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: UserTheme.white,
+    color: theme.white,
   },
   certificateTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: UserTheme.white,
+    color: theme.white,
   },
   docInfo: {
     fontSize: 16,
-    color: UserTheme.white,
+    color: theme.white,
     fontWeight: 'bold',
   },
   image: {
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: UserTheme.white,
+    borderColor: theme.white,
     ...shadowStyle
   },
   titleWrapper: {
@@ -167,7 +169,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: UserTheme.lightPrimary,
+    color: theme.lightPrimary,
   },
   docInfoWrapper: {
     flexDirection: 'row',
@@ -175,5 +177,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+}
 
 export default LegalInfo;

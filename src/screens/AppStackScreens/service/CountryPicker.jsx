@@ -3,11 +3,15 @@ import { View, Modal, StyleSheet, Button } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Country } from 'country-state-city';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-import Colors from '../../../constant/Colors';
+import { useTheme } from '../../../context/ThemeContext';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+
 const CountryPicker = ({ onSelect, isModalVisible, setModalVisibility }) => {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [selectedValue, setSelectedValue] = useState(null);
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const countries = Country.getAllCountries().map((country) => ({
@@ -37,12 +41,15 @@ const CountryPicker = ({ onSelect, isModalVisible, setModalVisibility }) => {
             setOpen={setOpen}
             setValue={onValueChange}
             placeholder="Country of Issue"
-            placeholderStyle={{ color: Colors.primary  }} 
-            style={styles.dropdown}
+            placeholderStyle={{ color: theme.primary  }} 
             dropDownContainerStyle={styles.dropdownContainer}
             zIndex={open ? 5000 : undefined}
             zIndexInverse={1000}
-
+            style={styles.dropdown}
+            textStyle={styles.textStyle}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
           />
           <PrimaryButton
             text="Close"
@@ -54,7 +61,8 @@ const CountryPicker = ({ onSelect, isModalVisible, setModalVisibility }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => {
+  return StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -63,24 +71,31 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
-    backgroundColor: 'white',
+    backgroundColor: theme.background,
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
     gap: 10,
     height: 350,
     justifyContent: 'space-between',
-    borderColor: Colors.primary,
+    borderColor: theme.primary,
     borderWidth: 1,
   },
   dropdown: {
-    borderColor: Colors.primary,
-    borderWidth: 1,
+    borderColor: theme.primary,
+    borderradius:10,
+    borderWidth: 2.5,
+    zIndex: 99,
+  },
+  textStyle: {
+    fontSize: 17,
   },
   dropdownContainer: {
-    borderColor: Colors.primary,
+    backgroundColor: theme.white,
+    borderColor: theme.primary,
+    borderWidth: 2.5,
   },
-  // ... other styles ...
+ 
 });
-
+};
 export default CountryPicker;

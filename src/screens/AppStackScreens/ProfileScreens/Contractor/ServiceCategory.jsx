@@ -6,12 +6,10 @@ import { useAuth } from '../../../../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import LinearGradient from 'react-native-linear-gradient';
-import UserTheme from '../../../../constant/Theme';
+import { useTheme } from '../../../../context/ThemeContext';
 
 // Import custom components and constants
 import ServiceCategoryPicker from '../../service/ServiceCategoryPicker';
-import { Global } from '../../../../constant/Global';
-import Colors from '../../../../constant/Colors';
 import { shadowStyle } from '../../../../constant/Shadow';
 import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 
@@ -21,7 +19,8 @@ const ServiceCategory = ({ navigation }) => {
   const [isPickerModalVisible, setPickerModalVisible] = useState(false);
   const [isModalBackgroundVisible, setModalBackgroundVisible] = useState(false);
   const [userData, setUserData] = useState({});
-
+  const theme = useTheme();
+  const styles = getStyles(theme);
   useEffect(() => {
     if (!currentUser) {
       showMessage({
@@ -134,9 +133,9 @@ const ServiceCategory = ({ navigation }) => {
         )}
         <View style={styles.LinearGradientWrapper}>
         <LinearGradient
-            colors={['#9E41F0', '#4C7BC0']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
+            colors={[theme.primary, theme.secondary]}
+            start={{ x: .5, y: 0 }}
+            end={{ x: 2, y:  1}}
             style={styles.content}
           >
           <Text style={styles.title}>Select Your Categories</Text>
@@ -151,7 +150,7 @@ const ServiceCategory = ({ navigation }) => {
                 <Text style={styles.optionText}>{service.optionText}</Text>
               </View>
               <TouchableOpacity onPress={() => handleDeleteService(service)}>
-              <FontAwesomeIcon size={25} style={[]} color={Colors.primary} icon="fa-solid fa-trash" />
+              <FontAwesomeIcon size={25} style={[]} color={theme.primary} icon="fa-solid fa-trash" />
               </TouchableOpacity>
             </View>
           ))}
@@ -176,9 +175,9 @@ const ServiceCategory = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
-    backgroundColor: UserTheme.background,
+    backgroundColor: theme.background,
     flex: 1,
     width: '100%',
   },
@@ -217,7 +216,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: UserTheme.white,
+    color: theme.white,
     textAlign: 'center',
   },
   btnContainer:{

@@ -5,10 +5,13 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Country, State, City } from 'country-state-city';
 import { showMessage } from 'react-native-flash-message';
 import { Global } from '../../../constant/Global';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useTheme } from '../../../context/ThemeContext';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-import { shadowStyle } from '../../../constant/Shadow';
 
 const LocationPicker = ({ onSave , onClose }) => {
+  const theme = useTheme();
+  const styles = getStyles(theme);
   const [country, setCountry] = useState(null);
   const [state, setState] = useState(null);
   const [city, setCity] = useState(null);
@@ -149,14 +152,18 @@ const LocationPicker = ({ onSave , onClose }) => {
               items={stateItems}
               setOpen={handleStateOpen}
               setValue={handleStateChange}
-              containerStyle={styles.dropdownContainer}
               style={styles.dropdown}
+              textStyle={styles.textStyle}
+              dropDownContainerStyle={styles.dropdownContainer}
               scrollViewProps={{
                 style: styles.dropdownScrollView,
               }}
               zIndex={stateOpen ? 10000 : 2000}
               zIndexInverse={2000}
               closeAfterSelectByDefault={true}
+              ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
+              ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+              TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
             />
           </>
         )}
@@ -169,28 +176,31 @@ const LocationPicker = ({ onSave , onClose }) => {
               items={cityItems}
               setOpen={handleCityOpen}
               setValue={handleCityChange}
-              containerStyle={styles.dropdownContainer}
               style={styles.dropdown}
+              textStyle={styles.textStyle}
+              dropDownContainerStyle={styles.dropdownContainer}
               scrollViewProps={{
                 style: styles.dropdownScrollView,
               }}
               zIndex={cityOpen ? 10000 : 3000}
               zIndexInverse={3000}
               closeAfterSelectByDefault={true}
+              ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
+              ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+              TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
             />
           </>
         )}
-
-      {showSaveButton && (
-        <Button title="Save" onPress={handleSaveAndClose} />
-      )}
-      <Button title="Cancel" onPress={onClose} color="red" />
+      <View style={styles.btnContainer}>
+        <PrimaryButton text="Save" onPress={handleSaveAndClose} />
+        <PrimaryButton text="Cancel" onPress={onClose} />
+      </View>
       </View>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
@@ -208,15 +218,30 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   dropdown: {
-    borderColor: '#ccc',
-    backgroundColor: '#fff',
-    elevation: 3,
+    borderColor: theme.primary,
+    borderradius:10,
+    borderWidth: 2.5,
+    zIndex: 99,
+  },
+  textStyle: {
+    fontSize: 17,
+  },
+  dropdownContainer: {
+    backgroundColor: theme.white,
+    borderColor: theme.primary,
   },
   dropdownScrollView: {
     maxHeight: Dimensions.get('window').height * 0.5,
   },
   subContainer: {
     gap: 5,
+  },
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent:'space-between', // Changed from 'space-between
+    alignItems: 'center',
+    marginTop: 20,
+    paddingHorizontal: 10,
   },
 });
 

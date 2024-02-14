@@ -42,7 +42,7 @@ const Category = ({ navigation }) => {
     <View style={styles.shadowContainer}>
       <LinearGradient
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
+        end={{ x: 2, y: 0 }}
         colors={[theme.primary, theme.secondary]}
         style={styles.mainCategory}
       >
@@ -52,6 +52,7 @@ const Category = ({ navigation }) => {
         </TouchableOpacity>
       </LinearGradient>
       {openCategories.includes(item.id) && (
+        <View style={styles.optionsContainerWrapper}>
         <View style={styles.optionsContainer}>
           {item.options.map((option) => (
             <TouchableOpacity
@@ -61,6 +62,7 @@ const Category = ({ navigation }) => {
               <Text style={styles.optionText}>{`\u2022 ${option.text}`}</Text>
             </TouchableOpacity>
           ))}
+        </View>
         </View>
       )}
     </View>
@@ -72,9 +74,10 @@ const Category = ({ navigation }) => {
       renderItem={renderItem}
       keyExtractor={item => item.id.toString()}
       ref={flatListRef}
-      contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}
+      contentContainerStyle={{ alignItems: 'center',justifyContent:'center', paddingVertical: 20, width: '100%'}}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
+      style={styles.FlatList}
     />
   );
 };
@@ -98,9 +101,18 @@ const getStyles = (theme) => StyleSheet.create({
     color: theme.white,
     fontSize: 24,
   },
+  optionsContainerWrapper: {
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,  
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  } ,
   optionsContainer: {
     backgroundColor: theme.gray,
     padding: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,  
     width: '90%',
   },
   optionText: {

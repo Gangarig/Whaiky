@@ -47,7 +47,7 @@ const PostCardSecondary = ({ post, onPress }) => {
             <LinearGradient
                 colors={[theme.primary, theme.secondary]}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
+                end={{ x: 1.2, y: 0 }}
                 style={[styles.sale]}
               >
               <Text style={styles.saleText}>SALE</Text>

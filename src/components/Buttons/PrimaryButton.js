@@ -12,7 +12,7 @@ const PrimaryButton = ({ text, onPress }) => {
         <LinearGradient
           colors={[theme.primary, theme.secondary]}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 4 }}
+          end={{ x: 1.5, y: 4 }}
           style={[styles.button]}
         >
           <Text style={[styles.text]}>{text}</Text>

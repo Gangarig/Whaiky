@@ -16,7 +16,7 @@ const ContractorCard = ({props , onPress}) => {
 
   return (
     <TouchableOpacity style={styles.ContractorCard} onPress={onPress}>
-      <LinearGradient colors={[theme.primary,theme.secondary]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradient}>
+      <LinearGradient colors={[theme.primary,theme.secondary]} start={{ x: 0, y: 0 }} end={{ x: 1.5, y: 1 }} style={styles.gradient}>
         <View>
           {props.photoURL ? (
             <FastImage

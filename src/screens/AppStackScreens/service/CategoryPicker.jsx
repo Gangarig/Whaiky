@@ -7,8 +7,9 @@ import Colors from '../../../constant/Colors';
 import LinearGradient from 'react-native-linear-gradient';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import { showMessage } from 'react-native-flash-message';
-import UserTheme from '../../../constant/Theme';
+import theme from '../../../constant/Theme';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useTheme } from '../../../context/ThemeContext';
 
 
 const CategoryPicker = ({ onSave, onClose }) => {
@@ -16,6 +17,8 @@ const CategoryPicker = ({ onSave, onClose }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [openOption, setOpenOption] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const categoryItems = categoriesData.map((category) => ({
     label: category.text,
@@ -73,9 +76,9 @@ const CategoryPicker = ({ onSave, onClose }) => {
             style={styles.dropdown}
             textStyle={styles.textStyle}
             dropDownContainerStyle={styles.dropdownContainer}
-            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-up" />}
-            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-down" />}
-            TickIconComponent={() => <FontAwesomeIcon size={20} color={UserTheme.primary} icon="fa-solid fa-check" />}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
             zIndex={1000}
           />
 
@@ -92,9 +95,9 @@ const CategoryPicker = ({ onSave, onClose }) => {
                 style={styles.dropdown}
                 textStyle={styles.textStyle}
                 dropDownContainerStyle={styles.dropdownContainer}
-                ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-up" />}
-                ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={UserTheme.primary} icon="fa-solid fa-caret-down" />}
-                TickIconComponent={() => <FontAwesomeIcon size={20} color={UserTheme.primary} icon="fa-solid fa-check" />}
+                ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
+                ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+                TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
                 zIndex={500}
               />
             </>
@@ -109,17 +112,17 @@ const CategoryPicker = ({ onSave, onClose }) => {
 
 export default CategoryPicker;
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container:{
     width:'100%',
     margin:0,
     gap:10,
-    backgroundColor:UserTheme.white,
+    backgroundColor:theme.white,
     zIndex: 9999,
     padding:10,
   },
   dropdown: {
-    borderColor: UserTheme.primary,
+    borderColor: theme.primary,
     borderradius:10,
     borderWidth: 2.5,
     zIndex: 99,
@@ -128,8 +131,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   dropdownContainer: {
-    backgroundColor: UserTheme.white,
-    borderColor: UserTheme.primary,
+    backgroundColor: theme.white,
+    borderColor: theme.primary,
     borderWidth: 2.5,
   },
   btnContainer:{

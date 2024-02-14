@@ -414,9 +414,9 @@ const AddPost = ({ navigation }) => {
       <View style={styles.postDetails}>
         {post.country && (
           <View style={styles.locationInfo}>
-            <Text style={[styles.postInfo,{color:theme.text}]}>Country: {post.country}</Text>
-            <Text style={[styles.postInfo,{color:theme.text}]}>State: {post.state}</Text>
-            <Text style={[styles.postInfo,{color:theme.text}]}>City: {post.city}</Text>
+            {post.country && (<Text style={[styles.postInfo,{color:theme.text}]}>Country: {post.country}</Text>)}
+            {post.state && (<Text style={[styles.postInfo,{color:theme.text}]}>State: {post.state}</Text>)}
+            {post.city && (<Text style={[styles.postInfo,{color:theme.text}]}>City: {post.city}</Text>)}
           </View>
         )}
         {post.categoryId && (

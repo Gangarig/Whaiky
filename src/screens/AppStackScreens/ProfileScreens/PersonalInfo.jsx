@@ -10,12 +10,12 @@ import { Global } from '../../../constant/Global';
 import FastImage from 'react-native-fast-image';
 import avatar from '../../../assets/images/avatar/avatar.png';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import Colors from '../../../constant/Colors';
 import { shadowStyle } from '../../../constant/Shadow';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import { handleAvatarChange } from '../../AppStackScreens/service/Image/AvatarChange';
 import { handleUpdate } from '../../AppStackScreens/service/ProfileUpdate';
 import Location from '../service/Location';
+import { useTheme } from '../../../context/ThemeContext';
 
 
 const PersonalInfo = ({ navigation }) => {
@@ -30,6 +30,8 @@ const PersonalInfo = ({ navigation }) => {
     city: ''
   });
   const [locationChanged, setLocationChanged] = useState(false);
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const fetchData = async () => {
     if (currentUser?.uid) {
@@ -248,14 +250,15 @@ const PersonalInfo = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
+
   container: {
     padding: 16,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
     paddingBottom: 100,
-    backgroundColor:Colors.background,
+    backgroundColor:theme.background,
   },
   modalOpenContainer: {
     opacity: 0.5,
@@ -264,7 +267,7 @@ const styles = StyleSheet.create({
     width: 114,
     height: 119,
     borderWidth: 2,
-    borderColor: Colors.primary,
+    borderColor: theme.primary,
     borderRadius: 100,
     position:'relative',
 
@@ -273,9 +276,9 @@ const styles = StyleSheet.create({
     position:'absolute',
     bottom:0,
     right:0,
-    backgroundColor:Colors.background,
+    backgroundColor:theme.background,
     borderWidth:2,
-    borderColor:Colors.primary,
+    borderColor:theme.primary,
     borderRadius:100,
     padding:5,
     zIndex:999,
@@ -310,9 +313,9 @@ const styles = StyleSheet.create({
     width: '100%',
     bottom: 0,
     position: 'absolute',
-    borderTopColor: '#696969',
+    borderTopColor:theme.primary,
     borderTopWidth: 2,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -321,9 +324,9 @@ const styles = StyleSheet.create({
     width: '100%',
     bottom: 0,
     position: 'absolute',
-    borderTopColor: '#696969',
+    borderTopColor:theme.primary,
     borderTopWidth: 2,
-    backgroundColor: Colors.background,
+    backgroundColor: theme.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -341,7 +344,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   locationContainer: {
-    borderTopColor: '#696969',
+    borderTopColor:theme.primary,
     borderBottomColor: '#696969',
     borderTopWidth: 1,
     borderBottomWidth: 1,
@@ -351,7 +354,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   title:{
-    color:Colors.primary,
+    color:theme.primary,
   },
   buttonBox:{
     flexDirection:'row',

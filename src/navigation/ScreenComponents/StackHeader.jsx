@@ -50,8 +50,6 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor:theme.white,
     justifyContent:'space-between',
     paddingHorizontal:20,
-    borderBottomColor:theme.gray,
-    ...shadowStyle,
   },
   text:{
     fontSize:25,
