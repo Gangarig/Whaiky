@@ -28,12 +28,14 @@ const PostCard = ({ post, onPress }) => {
 
   return (
    
-    <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
+    <TouchableOpacity onPress={onPress} 
+      activeOpacity={0.7}
+    >
       <LinearGradient
         colors={gradientColors}
         start={{ x: 0, y: 1}}
         end={{ x: 1, y: 0 }}
-        style={[styles.postCardContainer, { borderRadius: 10, 
+        style={[styles.postCardContainer, shadowStyle,{ borderRadius: 10,
         borderWidth: .5, borderColor: theme.primary, overflow: 'hidden' }]}
       >
         {hasImages ? (
@@ -44,15 +46,17 @@ const PostCard = ({ post, onPress }) => {
           />
         ) : (
           <View style={[styles.noImage]}>
-            <Text style={[styles.noImageText, shadowStyle]}>No Image</Text>
+            <Text style={[styles.noImageText]}>No Image</Text>
           </View>
         )}
             <View style={styles.postInfo}>
-              <Text style={styles.title}>{post.title}</Text>
-              <Text
-              numberOfLines={1}
-              ellipsizeMode='tail'
-              style={[styles.price,{textAlign:'right'}]}>{post.price}$</Text>
+              <View style={styles.titleWrapper}>
+                  <Text style={styles.title}>{post.title}</Text>
+              </View>
+              <View style={styles.priceWrapper}>
+                <Text
+                style={[styles.price]}>{post.price}$</Text>
+              </View>
             </View>
             {post?.sale && (
             <LinearGradient
@@ -98,8 +102,7 @@ const getStyles = (theme) => {
     alignItems: 'center',
   },
   postInfo: {
-    paddingVertical: 7,
-    paddingHorizontal: 8,
+    paddingVertical: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
     height: 50,
@@ -110,14 +113,12 @@ const getStyles = (theme) => {
     fontWeight: 'bold',
     color: theme.white,
     fontFamily: Fonts.primary,
-    width: '60%',
   },
   price: {
     fontSize: 14,
     fontWeight: 'bold',
     color: theme.white,
     fontFamily: Fonts.primary,
-    width: '30%',
   },
   noImageIconWrapper:{
     backgroundColor: theme.white,
@@ -174,7 +175,20 @@ const getStyles = (theme) => {
     borderWidth:.5,
     borderColor:theme.primary,
     borderRadius:15,
-  }
+  },
+  titleWrapper:{
+    width:'70%',
+    height:'100%',
+    paddingLeft:7,
+  },
+  priceWrapper:{
+    justifyContent:'flex-end',
+    alignItems:'flex-end',
+    paddingRight:7,
+    width:'30%',
+    height:'100%',
+  },
+
 });
 }
 

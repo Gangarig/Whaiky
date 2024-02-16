@@ -140,7 +140,7 @@ const SignUp = ({ navigation }) => {
           <GradientButton text="CONTINUE" onPress={handleSignUp} />
           <Text style={Global.text}>or</Text>
           <GoogleSigninButton
-            style={[styles.googleButton,shadowStyle]}
+            style={[styles.googleButton]}
             size={GoogleSigninButton.Size.Wide}
             color={GoogleSigninButton.Color.Dark}
             onPress={() => signInWithGoogle(setCurrentUser)}

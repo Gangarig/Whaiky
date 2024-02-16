@@ -6,6 +6,7 @@ import React, { useState, useEffect ,useRef} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import { useTheme } from '../../../../context/ThemeContext';
 import ContractorCard from '../../../../components/ContractorCard';
+import { useAuth } from '../../../../context/AuthContext';
 
 
 
@@ -19,6 +20,7 @@ const Contractor = ({navigation}) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const lastFetchedContractor = useRef(null);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     fetchContractor();
@@ -32,7 +34,7 @@ const Contractor = ({navigation}) => {
         setLoadingMore(loadMore); 
         setRefreshing(!loadMore); 
     
-        let query = firestore().collection('contractor').orderBy('userId').limit(10);
+        let query = firestore().collection('contractor').orderBy('userId').limit(20);
         if (loadMore && lastFetchedContractor.current) {
           query = query.startAfter(lastFetchedContractor.current);
         }
@@ -70,7 +72,7 @@ const Contractor = ({navigation}) => {
 
     const renderItem = ({ item }) => {
       return (
-        <ContractorCard props={item} onPress={()=>navigateToContractorProfile(item.uid)}/>
+        <ContractorCard navigation={navigation} selectedUser={item} currentUser={currentUser} onPress={()=>navigateToContractorProfile(item.uid)}/>
       );
     };
     

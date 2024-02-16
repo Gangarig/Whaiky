@@ -238,10 +238,10 @@ const getStyles = (theme) => StyleSheet.create({
   },
   btnContainer: {
     flexDirection: 'row',
-    justifyContent:'space-between', // Changed from 'space-between
+    justifyContent:'space-between',
     alignItems: 'center',
     marginTop: 20,
-    paddingHorizontal: 10,
+
   },
 });
 

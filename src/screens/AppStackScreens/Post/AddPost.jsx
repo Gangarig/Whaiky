@@ -323,10 +323,11 @@ const AddPost = ({ navigation }) => {
       contentContainerStyle={styles.ScrollView}
     >
       {currentUser.status === 'contractor' && (
-      <View style={styles.postTypeBox}>
+      <View style={[styles.postTypeBox,{...shadowStyle}]}>
         <TouchableOpacity 
           style={postType === 'Looking For Service' ? styles.activePostType : styles.inActivePostType}
           onPress={Toggle}
+          
         >
           <Text 
             style={postType === 'Looking For Service' ? styles.activePostText : styles.inActivePostText}
@@ -583,17 +584,13 @@ const getStyles = (theme) => StyleSheet.create({
     marginBottom:20,
     borderColor:theme.primary,
     borderWidth:1,
-    ...shadowStyle,
     borderRadius:10,
-    padding:2,
     overflow:'hidden',
-    gap:5,
   },
   activePostType:{
     backgroundColor:theme.primary,
     width:'50%',
     padding:10,
-    borderRadius:10,
     height:'100%',
     alignItems:'center',
     justifyContent:'center',
@@ -603,7 +600,6 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor:theme.white,
     width:'50%',
     padding:10,
-    borderRadius:10,
     height:'100%',
     alignItems:'center',
     justifyContent:'center',

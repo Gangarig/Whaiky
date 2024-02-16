@@ -14,6 +14,7 @@ import { handleSelect } from '../screens/AppStackScreens/service/ChatService';
 import firestore from '@react-native-firebase/firestore';
 import Dialog from "react-native-dialog";
 import { useTheme } from '../context/ThemeContext';
+import ContractorCard from './ContractorCard';
 
 
 
@@ -87,11 +88,28 @@ const PostCardDetail = ({ navigation , post }) => {
     navigation.navigate('Chat');
   };
 
+  const navigateToContractorProfile = (uid) => {
+    navigation.navigate('ContractorDetail', { id: uid});
+  }
+
   const handleSale = (post,salePrice) => {
     AddSale(post,salePrice);
     setDialog(false);
     navigation.goBack();
   }
+
+  const navigateImage = (direction) => {
+    let newIndex = selectedImageIndex + direction;
+    if (newIndex < 0) {
+      newIndex = post.images.length - 1; 
+    } else if (newIndex >= post.images.length) {
+      newIndex = 0;
+    }
+    setSelectedImageIndex(newIndex);
+  };
+
+  
+
   return (
     <ScrollView
       style={styles.container}
@@ -117,13 +135,10 @@ const PostCardDetail = ({ navigation , post }) => {
         <View style={styles.images}>
           {post.images.map((image, index) => (
             <TouchableOpacity key={index} onPress={() => selectImage(index)}>
-              <FastImage
-                source={{ uri: image }}
-                style={[
-                  styles.imagesInside,
-                  index === selectedImageIndex && styles.selectedImage,
-                ]}
-              />
+              <View 
+              style={selectedImageIndex === index ? styles.selectedCircle : styles.circle}
+              >
+              </View>
             </TouchableOpacity>
             
           ))}
@@ -164,27 +179,7 @@ const PostCardDetail = ({ navigation , post }) => {
                 <PrimaryButton text='Add Sale' onPress={()=>setDialog(true)} />
               </View>
         ):
-        <View style={[styles.contactContainerWrapper]}>
-          <View style={[styles.contactContainer]}>
-            <View style={styles.btnContainer}>
-              <PrimaryButton text="Contact" onPress={()=>handleContact(currentUser,contractor)} />
-              <PrimaryButton text="Show Profile" onPress={()=>navigation.navigate('ContractorDetail',{id:post.ownerId})} />
-            </View>
-            <View style={styles.avatarWrapper}>
-            {
-              post.ownerAvatar ? (
-                <FastImage
-                  source={{ uri: post.ownerAvatar }}
-                  style={styles.avatar}
-                  resizeMode="cover"
-                />
-              ) : (
-                <FontAwesomeIcon icon={faUser} size={60} color={theme.black} />
-              )
-            }
-          </View>
-          </View>
-        </View>
+          <ContractorCard selectedUser={contractor} navigation={navigation} currentUser={currentUser} onPress={()=>navigateToContractorProfile(post.ownerId)} />
         }
       </View>
       <View>
@@ -239,6 +234,25 @@ const getStyles = (theme) => {
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
+    postion: 'absolute',
+    bottom: 30,
+    width: '100%',
+  },
+  circle: {
+    width: 15,
+    height: 15,
+    borderRadius: 15,
+    backgroundColor: theme.white,
+    borderWidth: .5,
+    borderColor: theme.primary,
+    margin: 5,
+  },
+  selectedCircle: {
+    width: 25,
+    height: 15,
+    borderRadius: 15,
+    backgroundColor: theme.white,
+    margin: 5,
   },
   imagesInside: {
     width: 50,
@@ -253,10 +267,6 @@ const getStyles = (theme) => {
     position: 'absolute',
     right: 10,
     top: 125,
-  },
-  selectedImage: {
-    borderColor: theme.primary, 
-    borderWidth: .5,
   },
   postInfo: {
     padding: 10,

@@ -1,4 +1,4 @@
-import { View, Text,StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text,StyleSheet, TouchableOpacity,TouchableHighlight } from 'react-native'
 import React,{useEffect, useState} from 'react'
 import LinearGradient from 'react-native-linear-gradient'
 import { shadowStyle } from '../constant/Shadow'
@@ -8,19 +8,24 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import firestore from '@react-native-firebase/firestore'
 import { useTheme } from '../context/ThemeContext'
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import { handleSelect } from '../screens/AppStackScreens/service/ChatService'
 
-const ContractorCard = ({props , onPress}) => {
+const ContractorCard = ({currentUser ,onPress ,selectedUser ,navigation}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
+  const handleContact = () => {
+    handleSelect(currentUser,selectedUser)
+    navigation.navigate('Chat')
+  }
   
 
   return (
-    <TouchableOpacity style={styles.ContractorCard} onPress={onPress}>
-      <LinearGradient colors={[theme.primary,theme.secondary]} start={{ x: 0, y: 0 }} end={{ x: 1.5, y: 1 }} style={styles.gradient}>
+    <TouchableOpacity  activeOpacity={0.5}  style={styles.ContractorCard} onPress={onPress}>
+      <LinearGradient colors={[theme.secondary,theme.primary]} start={{ x: 0, y: -2 }} end={{ x: .7, y: 1.6 }} style={styles.gradient}>
         <View>
-          {props.photoURL ? (
+          {selectedUser?.photoURL ? (
             <FastImage
-              source={{ uri: props.photoURL }}
+              source={{ uri: selectedUser.photoURL }}
               style={styles.avatar}
               resizeMode="cover"
               onError={(e) => {
@@ -28,39 +33,54 @@ const ContractorCard = ({props , onPress}) => {
               }}
             />
           ) : (
-            <View style={styles.avatar}>
-              <FontAwesomeIcon icon={faUser} size={60} color={theme.white} />
+            <View style={[styles.avatar]}>
+              <FontAwesomeIcon style={{...shadowStyle}} icon={faUser} size={70} color={theme.white} />
             </View>
           )}
         </View>
         <View style={styles.info}>
-            <Text
-             ellipsizeMode='tail'
-             numberOfLines={1}
-             style={styles.name}>{props.displayName}</Text> 
-          {props.services && props.services.length > 0 && (
+        <Text
+          ellipsizeMode='tail'
+          numberOfLines={1}
+          style={styles.name}>
+          {selectedUser?.firstName || selectedUser?.lastName ? `${selectedUser.firstName} ${selectedUser.lastName}`.trim() : "No Name Currently"}
+        </Text>
+
+          {selectedUser?.services && selectedUser?.services.length > 0 && (
             <Text
             ellipsizeMode='tail'
             numberOfLines={1} 
-            style={styles.categoryText}>{props.services[0]?.categoryText}</Text>
+            style={styles.categoryText}>{selectedUser.services[0]?.categoryText}</Text>
           )}
-            {props.averageRating ? (
+            {selectedUser?.averageRating ? (
               <View style={styles.rating}>
-            <AirbnbRating
-              count={5}
-              defaultRating={props.averageRating}
-              size={15}
-              showRating={false}
-              isDisabled={true}
-            />
-            <Text style={styles.ratingText}>({props.ratingCount} Reviews) </Text>
+                <AirbnbRating
+                  count={5}
+                  defaultRating={selectedUser?.averageRating > 1 ? selectedUser?.averageRating: 1}
+                  size={15}
+                  showRating={false}
+                  isDisabled={true}
+                />
+                <Text style={styles.ratingText}>({selectedUser?.ratingCount} Reviews) </Text>
             </View>
           ) : (
-            <Text
-            ellipsizeMode='tail'
-            numberOfLines={1} 
-            style={styles.ratingText}>No Rating Currently</Text>
+            <View style={styles.rating}>
+              <Text
+              ellipsizeMode='tail'
+              numberOfLines={1} 
+              style={styles.ratingText}>No Rating Currently</Text>
+            </View>
           )} 
+          <View style={styles.btnContainer}>
+            <TouchableOpacity onPress={()=>handleContact()} style={styles.btn}>
+                <FontAwesomeIcon color={theme.white} size={14} icon="fa-regular fa-comment-dots" />
+                <Text style={styles.btnText}>Contact</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btn} onPress={onPress}>
+                <FontAwesomeIcon color={theme.white} size={14} icon="fa-regular fa-user" />
+                <Text style={styles.btnText}>View Profile</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </LinearGradient>
     </TouchableOpacity>
@@ -78,34 +98,34 @@ const getStyles = (theme) => {
       overflow: 'hidden',
       marginVertical: 10,
       ...shadowStyle,
+      overflow: 'hidden',
     },
     gradient: {
       flex: 1,  
-      padding: 10,
       flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 20,
+      justifyContent: 'space-between',
     },
     info: {
-      paddingLeft: 30,
+      flex: 1,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      justifyContent  : 'space-around',
     },
     name: {
       color: theme.white,
-      fontSize: 16,
-      fontWeight: 'bold',
+      fontSize: 14,
       width: '100%',
       maxWidth: 200,
+      fontWeight: 'bold',
     },
     ratingText: {
       color: theme.white,
-      fontSize: 16,
-      fontWeight: 'bold',
+      fontSize: 12,
       width: '100%',
     },
     categoryText: {
       color: theme.white,
-      fontSize: 16,
-      fontWeight: 'bold',
+      fontSize: 12,
       width: '100%',
     },
     rating: {
@@ -115,14 +135,32 @@ const getStyles = (theme) => {
       gap: 5,
     },
     avatar: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      borderWidth: 1,
+      width: 100,
+      height: 100,
+      borderRadius: 12,
+      borderWidth: .5,
       borderColor: theme.white,
-      ...shadowStyle,
       justifyContent: 'center',
       alignItems: 'center',
+
+    },
+    btnContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '90%',
+    },
+    btn: {
+      padding: 5,
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: 5,
+    },
+    btnText: {
+      color: theme.white,
+      fontSize: 14,
+      fontWeight: 'bold',
     },
   });
 }
