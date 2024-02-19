@@ -167,7 +167,7 @@ const Home = ({ navigation }) => {
           key={listKey}
           ListHeaderComponent={
             <View style={styles.listHeader}>
-              <Text style={styles.headerText}>Just Added</Text>
+              <Text style={styles.headerText}>For You[6]</Text>
               <View style={styles.gridView}>
                 {primaryList && (
                 <TouchableOpacity onPress={()=>toggleList()} style={styles.horizontalLineWrapper}>
@@ -215,6 +215,8 @@ const Home = ({ navigation }) => {
     </View>
   );
 };
+
+// Just added 20
 
 export default Home;
 

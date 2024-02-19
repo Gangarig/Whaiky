@@ -8,11 +8,8 @@ import StackHeader from './ScreenComponents/StackHeader';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { shadowStyle } from '../constant/Shadow';
 import AddPost from '../screens/AppStackScreens/Post/AddPost';
-import { View ,StyleSheet} from 'react-native';
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import Test from '../screens/Test';
 import { useTheme } from '../context/ThemeContext';
-import { Button } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 const Tab = createBottomTabNavigator();
 
 function BottomTabs({navigation}) {

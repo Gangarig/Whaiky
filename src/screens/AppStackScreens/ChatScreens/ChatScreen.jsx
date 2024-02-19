@@ -1,11 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import Search from './chat/Search';
+import { View, StyleSheet } from 'react-native';
 import Chats from './chat/Chats';
 import { useTheme } from '../../../context/ThemeContext';
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import { Global } from '../../../constant/Global';
-
 const ChatScreen = ({ navigation }) => {
   const theme = useTheme();
   const styles = getStyles(theme);

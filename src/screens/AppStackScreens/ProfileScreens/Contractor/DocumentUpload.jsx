@@ -16,13 +16,11 @@ import { showMessage } from 'react-native-flash-message';
 import CountryPicker from '../../service/CountryPicker'; 
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useAuth } from '../../../../context/AuthContext';
 import { Global } from '../../../../constant/Global';
 import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 import { shadowStyle } from '../../../../constant/Shadow';
 import LinearGradient from 'react-native-linear-gradient';
-import DatePicker from 'react-native-date-picker'
 import { useTheme } from '../../../../context/ThemeContext';
 
 const DocumentUpload = ({ navigation }) => {
@@ -292,33 +290,11 @@ const DocumentUpload = ({ navigation }) => {
           <View style={styles.dateBox}>
             <Text style={[Global.titleSecondary,styles.titleSecondary]}>Date of Issue:</Text>
             <View style={styles.dateWrapper}>
-            <DateTimePicker
-              value={dateOfIssue ? new Date(dateOfIssue) : new Date()}
-              mode="date"
-              display="default"
-              textColor='red'
-              onChange={(event, selectedDate) => {
-                if (selectedDate) {
-                  setDateOfIssue(selectedDate.toISOString().split('T')[0]);
-                }
-              }}
-            />
             </View>
           </View>
           <View style={styles.dateBox}>
             <Text style={[Global.titleSecondary,styles.titleSecondary]}>Date of Expiry:</Text>
             <View style={styles.dateWrapper}>
-            <DateTimePicker
-              value={dateOfExpiry ? new Date(dateOfExpiry) : new Date()}
-              mode="date"
-              display="default"
-              style={{color:'white'}}
-              onChange={(event, selectedDate) => {
-                if (selectedDate) {
-                  setDateOfExpiry(selectedDate.toISOString().split('T')[0]);
-                }
-              }}
-            />
             </View>
           </View>
         </LinearGradient>

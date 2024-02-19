@@ -8,7 +8,7 @@ const PrimaryButton = ({ text, onPress }) => {
   const styles = getStyles(theme);
   return (
 
-    <TouchableOpacity onPress={onPress} style={[shadowStyle]}>
+    <TouchableOpacity onPress={onPress} >
         <LinearGradient
           colors={[theme.primary, theme.secondary]}
           start={{ x: 0, y: 0 }}
@@ -31,7 +31,6 @@ const getStyles = (theme) => {
     height:30,
     borderRadius: 5,
     backgroundColor: theme.primary,
-    ...shadowStyle,
   },
   text: {
     fontSize: 15,

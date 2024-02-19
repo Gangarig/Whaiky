@@ -86,13 +86,12 @@ const getStyles = (theme) => StyleSheet.create({
   shadowContainer: {
     marginBottom: 16,
     borderRadius: 10,
-    ...shadowStyle,
   },
   mainCategory: {
     width: 350,
     height: 85,
     borderRadius: 10,
-    paddingLeft: 5,
+    paddingLeft: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

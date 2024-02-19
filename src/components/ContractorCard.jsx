@@ -9,6 +9,7 @@ import firestore from '@react-native-firebase/firestore'
 import { useTheme } from '../context/ThemeContext'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import { handleSelect } from '../screens/AppStackScreens/service/ChatService'
+import { height, width } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
 
 const ContractorCard = ({currentUser ,onPress ,selectedUser ,navigation}) => {
   const theme = useTheme();
@@ -24,14 +25,16 @@ const ContractorCard = ({currentUser ,onPress ,selectedUser ,navigation}) => {
       <LinearGradient colors={[theme.secondary,theme.primary]} start={{ x: 0, y: -2 }} end={{ x: .7, y: 1.6 }} style={styles.gradient}>
         <View>
           {selectedUser?.photoURL ? (
+            <View style={styles.avatarWrapper}>
             <FastImage
               source={{ uri: selectedUser.photoURL }}
-              style={styles.avatar}
+              style={styles.image}
               resizeMode="cover"
               onError={(e) => {
                 console.log("Image loading error:", e);
               }}
             />
+            </View>
           ) : (
             <View style={[styles.avatar]}>
               <FontAwesomeIcon style={{...shadowStyle}} icon={faUser} size={70} color={theme.white} />
@@ -97,8 +100,6 @@ const getStyles = (theme) => {
       borderRadius: 10,
       overflow: 'hidden',
       marginVertical: 10,
-      ...shadowStyle,
-      overflow: 'hidden',
     },
     gradient: {
       flex: 1,  
@@ -134,15 +135,29 @@ const getStyles = (theme) => {
       width: '100%',
       gap: 5,
     },
-    avatar: {
+    avatarWrapper: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 100,
+      width: 100,
+    },
+    image: {
       width: 100,
       height: 100,
-      borderRadius: 12,
+      borderRadius: 11,
       borderWidth: .5,
       borderColor: theme.white,
       justifyContent: 'center',
       alignItems: 'center',
-
+    },
+    avatar: {
+      width: 100,
+      height: 100,
+      borderRadius: 11,
+      borderWidth: .5,
+      borderColor: theme.white,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     btnContainer: {
       flexDirection: 'row',

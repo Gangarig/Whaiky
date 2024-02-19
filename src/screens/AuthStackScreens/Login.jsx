@@ -105,9 +105,10 @@ const Login = ({ navigation }) => {
       </LinearGradient>
       <Image source={Logo} style={[Global.logo, styles.logo]} />
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <View style={[styles.content, shadowStyle, { marginTop: keyboardVisible ? -100 : 100 }]}>
+        <View style={[styles.content, { marginTop: keyboardVisible ? -100 : 100 }]}>
           <Text style={[Global.title, styles.title]}>LOGIN</Text>
           <View style={styles.inputs}>
+            <View style={styles.inputWrapper}>
             <Text style={[Global.titleSecondary, styles.label]}>Email address</Text>
             <TextInput
               style={[Global.input, styles.input]}
@@ -118,6 +119,8 @@ const Login = ({ navigation }) => {
               onSubmitEditing={() => passwordInputRef.current.focus()}
               blurOnSubmit={false}
             />
+            </View>
+            <View style={styles.inputWrapper}>
             <Text style={[Global.titleSecondary, styles.label]}>Password</Text>
             <TextInput
               ref={passwordInputRef}
@@ -128,6 +131,7 @@ const Login = ({ navigation }) => {
               secureTextEntry
             />
             <Text style={styles.forgot} onPress={handleForgotPassword}>FORGOT PASSWORD?</Text>
+            </View>
           </View>
         </View>
         <View style={styles.buttons}>
@@ -209,6 +213,9 @@ const styles = StyleSheet.create({
     gap: 5,
     alignItems: 'center',
     top: -24,
+  },
+  inputWrapper: {
+    gap: 12,
   },
 });
 

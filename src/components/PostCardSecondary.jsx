@@ -29,7 +29,7 @@ const PostCardSecondary = ({ post, onPress }) => {
         colors={[theme.primary, theme.tertiary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.postCardContainer,shadowStyle]}
+        style={[styles.postCardContainer]}
       >
         {hasImages ? (
           <FastImage 

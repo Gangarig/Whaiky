@@ -323,7 +323,7 @@ const AddPost = ({ navigation }) => {
       contentContainerStyle={styles.ScrollView}
     >
       {currentUser.status === 'contractor' && (
-      <View style={[styles.postTypeBox,{...shadowStyle}]}>
+      <View style={[styles.postTypeBox]}>
         <TouchableOpacity 
           style={postType === 'Looking For Service' ? styles.activePostType : styles.inActivePostType}
           onPress={Toggle}

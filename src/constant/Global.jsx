@@ -43,7 +43,8 @@ export const Global = StyleSheet.create({
         borderWidth: .5,
         borderColor: '#3d3d3d',
         paddingHorizontal: 15,
-        paddingVertical: 10,
+        paddingVertical: 5, 
+        fontSize: 14,
 
     },
     error: {

@@ -11,24 +11,14 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
 import {  faArrowRight, faArrowUp, faBars, faCamera, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faClipboardList, faDeleteLeft, faDesktop, faEnvelopesBulk, faGear, faHouse, faIcons, faIdCard, faImage, faList, faMagnifyingGlass, faMinus, faPaperPlane, faPaperclip, faTrash, faX } from '@fortawesome/free-solid-svg-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import ServiceCategory from './src/screens/AppStackScreens/ProfileScreens/Contractor/ServiceCategory';
-import DocumentUpload from './src/screens/AppStackScreens/ProfileScreens/Contractor/DocumentUpload';
-import Certificate from './src/screens/AppStackScreens/ProfileScreens/Contractor/Certificate';
 import Test from './src/screens/Test';
 import { faMessage } from '@fortawesome/free-regular-svg-icons/faMessage'
 import { faAddressCard} from '@fortawesome/free-regular-svg-icons/faAddressCard'
 import { faAddressBook,faCommentDots,faFileLines, faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { faUser } from '@fortawesome/free-regular-svg-icons/faUser';
-import GradientText from './src/screens/Test';
-import { View,StyleSheet } from 'react-native';
-import Contractor from './src/screens/AppStackScreens/ProfileScreens/Contractor/Contractor';
 import { ThemeProvider } from './src/context/ThemeContext';
-import ContractorDetail from './src/screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
 import { MenuProvider } from 'react-native-popup-menu';
-import UserTheme from './src/constant/Theme';
-
-
 
 
 library.add(
@@ -64,23 +54,21 @@ library.add(
 export default function App() {
   return (
     <SafeAreaProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>    
+      <GestureHandlerRootView style={{ flex: 1 }}> 
+      <ThemeProvider>   
         <AuthProvider>
             <ChatContextProvider>
-              <ThemeProvider>
               <FlashMessage position="top" style={{zIndex:9999}}/>
               <SafeAreaView style={{ flex: 1 }}>
                 <NavigationContainer>
-                  <MenuProvider>
-                     
+                  <MenuProvider>               
                       <Main />
-                   
                   </MenuProvider>
                 </NavigationContainer>
               </SafeAreaView>
-              </ThemeProvider>
             </ChatContextProvider>
           </AuthProvider>
+          </ThemeProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>
    

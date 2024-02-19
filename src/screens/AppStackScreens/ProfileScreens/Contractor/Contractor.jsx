@@ -105,7 +105,6 @@ const getStyles = (theme) => {
       flex: 1,
       backgroundColor: theme.backgroundColor,
       paddingHorizontal: 10,
-      paddingBottom: 10,
       justifyContent: 'center',
       alignItems: 'center',
     },

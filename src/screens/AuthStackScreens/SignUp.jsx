@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import {
   View, Text, TextInput, StyleSheet, ScrollView,
-  Keyboard, Modal, Platform
+  Keyboard
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -13,15 +13,14 @@ import { showMessage } from 'react-native-flash-message';
 import GradientButton from '../../components/Buttons/GradientButton';
 import signInWithGoogle from './SocialSignIn/Google';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
-import { shadowStyle } from '../../constant/Shadow';
 import UserTheme from '../../constant/Theme';
 import TermsModal from '../../components/TermsModal';
 
 const InputField = ({ label, value, onChangeText, secureTextEntry }) => (
-  <View>
-    <Text style={Global.titleSecondary}>{label}</Text>
+  <View style={styles.inputWrapper}>
+    <Text style={[Global.titleSecondary,styles.label]}>{label}</Text>
     <TextInput
-      style={Global.input}
+      style={[Global.input,styles.input]}
       placeholder={`Type your ${label.toLowerCase()}`}
       onChangeText={onChangeText}
       value={value}
@@ -33,7 +32,7 @@ const InputField = ({ label, value, onChangeText, secureTextEntry }) => (
 const SignUp = ({ navigation }) => {
   const [formData, setFormData] = useState({ email: '', password: '', displayName: '' });
   const [errorMessage, setErrorMessage] = useState(null);
-  const { setCurrentUser } = useContext(AuthContext);
+  const {setCurrentUser} = useContext(AuthContext);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [termsModalVisible, setTermsModalVisible] = useState(false);
 
@@ -130,7 +129,7 @@ const SignUp = ({ navigation }) => {
         contentContainerStyle={styles.scrollView}
         style={{ marginBottom: keyboardVisible ? 0 : 100 }}
       >
-        <View style={[styles.content, shadowStyle]}>
+        <View style={[styles.content]}>
           <Text style={[Global.title, styles.title]}>Create new account</Text>
           <InputField label="User name" value={formData.displayName} onChangeText={text => handleInputChange('displayName', text)} />
           <InputField label="Email address" value={formData.email} onChangeText={text => handleInputChange('email', text)} />
@@ -206,6 +205,9 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 4,
     backgroundColor: UserTheme.white,
+  },
+  inputWrapper: {
+    gap: 12,
   },
 });
 
