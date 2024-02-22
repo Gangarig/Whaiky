@@ -11,6 +11,7 @@ import { Rating, AirbnbRating } from 'react-native-ratings';
 import { handleSelect } from '../screens/AppStackScreens/service/ChatService'
 import { height, width } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
 
+
 const ContractorCard = ({currentUser ,onPress ,selectedUser ,navigation}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -48,7 +49,6 @@ const ContractorCard = ({currentUser ,onPress ,selectedUser ,navigation}) => {
           style={styles.name}>
           {selectedUser?.firstName || selectedUser?.lastName ? `${selectedUser.firstName} ${selectedUser.lastName}`.trim() : "No Name Currently"}
         </Text>
-
           {selectedUser?.services && selectedUser?.services.length > 0 && (
             <Text
             ellipsizeMode='tail'

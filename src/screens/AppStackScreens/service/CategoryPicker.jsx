@@ -2,15 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Modal } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
-import { Global } from '../../../constant/Global';
-import Colors from '../../../constant/Colors';
-import LinearGradient from 'react-native-linear-gradient';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-import { showMessage } from 'react-native-flash-message';
-import theme from '../../../constant/Theme';
+import Fonts from '../../../constant/Fonts';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useTheme } from '../../../context/ThemeContext';
-
+import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
 
 const CategoryPicker = ({ onSave, onClose }) => {
   const [openCategory, setOpenCategory] = useState(false);
@@ -65,7 +60,7 @@ const CategoryPicker = ({ onSave, onClose }) => {
 
   return (
         <View style={styles.container}>
-          <Text style={Global.titleSecondary}>Select Category</Text>
+          <Text style={styles.text}>Select Category</Text>
           <DropDownPicker
             open={openCategory}
             value={selectedCategory}
@@ -76,15 +71,15 @@ const CategoryPicker = ({ onSave, onClose }) => {
             style={styles.dropdown}
             textStyle={styles.textStyle}
             dropDownContainerStyle={styles.dropdownContainer}
-            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
-            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
             TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
             zIndex={1000}
           />
 
           {selectedCategory && (
             <>
-              <Text style={Global.titleSecondary}>Select Option</Text>
+              <Text style={styles.text}>Select Option</Text>
               <DropDownPicker
                 open={openOption}
                 value={selectedOption}
@@ -95,17 +90,21 @@ const CategoryPicker = ({ onSave, onClose }) => {
                 style={styles.dropdown}
                 textStyle={styles.textStyle}
                 dropDownContainerStyle={styles.dropdownContainer}
-                ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
-                ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+                ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
+                ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
                 TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
                 zIndex={500}
               />
             </>
           )}
-            <View style={styles.btnContainer}>
-              <PrimaryButton text="Done" onPress={handleSave} />
-              <PrimaryButton text="Cancel" onPress={onClose} />
-            </View>
+          <View style={styles.buttonBox}>
+          <TwoSelectButton
+            primary="Save"
+            secondary="Cancel"
+            onPressPrimary={handleSave}
+            onPressSecondary={onClose}
+          />
+          </View>
         </View>
   );
 };
@@ -120,11 +119,12 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor:theme.white,
     zIndex: 9999,
     padding:10,
+    flex:1,
   },
   dropdown: {
     borderColor: theme.primary,
-    borderradius:10,
-    borderWidth: 2.5,
+    borderradius:12,
+    borderWidth: 1,
     zIndex: 99,
   },
   textStyle: {
@@ -133,7 +133,7 @@ const getStyles = (theme) => StyleSheet.create({
   dropdownContainer: {
     backgroundColor: theme.white,
     borderColor: theme.primary,
-    borderWidth: 2.5,
+    borderWidth: 1,
   },
   btnContainer:{
     flexDirection:'row',
@@ -143,4 +143,18 @@ const getStyles = (theme) => StyleSheet.create({
     gap:10,
     marginTop:10,
   },
+  buttonBox: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  text: {
+    fontSize: 14,
+    color: theme.text,
+    fontFamily: Fonts.primary,
+  },
+
+  
 });

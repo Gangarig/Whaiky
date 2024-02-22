@@ -4,8 +4,9 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Country, State, City } from 'country-state-city';
 import { useTheme } from '../../../context/ThemeContext';
 import { Global } from '../../../constant/Global';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
+import Fonts from '../../../constant/Fonts';
 
 const Location = React.memo(({ onSave, onClose }) => {
   const theme = useTheme();
@@ -73,8 +74,9 @@ const Location = React.memo(({ onSave, onClose }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[Global.title, styles.title]}>Choose a Location</Text>
-      <Text style={[Global.titleSecondary]}>Country</Text>
+      <View style={styles.dropDownWrapper}>
+      <Text style={[Global.title, styles.title]}>Location</Text>
+      <Text style={styles.text}>Country</Text>
       <DropDownPicker
         open={countryOpen}
         onOpen={onCountryOpen}
@@ -90,14 +92,14 @@ const Location = React.memo(({ onSave, onClose }) => {
         style={styles.dropdown}
         textStyle={styles.textStyle}
         dropDownContainerStyle={styles.dropdownContainer}
-        ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
-        ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+        ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
+        ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
         TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
       />
 
       {stateItems.length > 0 && (
         <>
-          <Text style={[Global.titleSecondary]}>State</Text>
+          <Text style={styles.text}>State</Text>
           <DropDownPicker
             open={stateOpen}
             onOpen={onStateOpen}
@@ -114,8 +116,8 @@ const Location = React.memo(({ onSave, onClose }) => {
             textStyle={styles.textStyle}
             dropDownContainerStyle={styles.dropdownContainer}
             closeAfterSelectByDefault={true}
-            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
-            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
             TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
           />
         </>
@@ -123,7 +125,7 @@ const Location = React.memo(({ onSave, onClose }) => {
 
       {cityItems.length > 0 && (
         <>
-          <Text style={[Global.titleSecondary]}>City</Text>
+          <Text style={styles.text}>City</Text>
           <DropDownPicker
             open={cityOpen}
             onOpen={onCityOpen}
@@ -140,42 +142,41 @@ const Location = React.memo(({ onSave, onClose }) => {
             textStyle={styles.textStyle}
             dropDownContainerStyle={styles.dropdownContainer}
             closeAfterSelectByDefault={true}
-            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
-            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
             TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
           />
         </>
       )}
-
+      </View>
       <View style={styles.buttonBox}>
-        <PrimaryButton
-          style={styles.button}
-          text="Done"
-          onPress={() => onSave(selectedCountry, selectedState, selectedCity)}
-        />
-        <PrimaryButton
-          style={styles.button}
-          text="Cancel"
-          onPress={onClose}
-        />
+      <TwoSelectButton
+        primary="Save"
+        secondary="Cancel"
+        onPressPrimary={() => onSave(selectedCountry, selectedState, selectedCity)} 
+        onPressSecondary={onClose} 
+      />
       </View>
     </View>
   );
 });
 
 const getStyles = (theme) => StyleSheet.create({
+
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    paddingHorizontal: 30,
     paddingVertical: 10,
-    gap: 10,
+  },
+  dropDownWrapper: {
+    paddingHorizontal: 20,
+    width: '100%',
   },
   buttonBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
     alignItems: 'center',
-    marginTop: 20,
     zIndex: -1,
   },
   title: {
@@ -184,16 +185,19 @@ const getStyles = (theme) => StyleSheet.create({
   dropdown: {
     borderColor: theme.primary,
     borderradius:10,
-    borderWidth: 2.5,
+    borderWidth: 1,
     zIndex: 99,
+    marginVertical: 10,
   },
-  textStyle: {
-    fontSize: 17,
+  text: {
+    fontSize: 14,
+    color: theme.text,
+    fontFamily: Fonts.primary,
   },
   dropdownContainer: {
     backgroundColor: theme.white,
     borderColor: theme.primary,
-    borderWidth: 2.5,
+    borderWidth: 1,
   },
 });
 

@@ -10,7 +10,7 @@ export const ThemeProvider = ({ children }) => {
   // Define themes
   const defaultTheme = {
     primary: '#9E41F0',
-    secondary: '#01AD94',
+    secondary: '#189DA2',
     tertiary: '#4C7BC0',
     lightPrimary: '#dfd1f1',
     lightSecondary: '#01AD95',

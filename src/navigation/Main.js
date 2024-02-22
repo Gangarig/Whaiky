@@ -1,9 +1,9 @@
 import React from "react";
 import AuthStackScreens from "./AuthStack";
-import DrawerNavigator from "./DrawerNavigator";
 import { useAuth } from "../context/AuthContext";
 import Loading from "../components/Loading";
 import { View, StyleSheet } from "react-native";
+import BottomTabs from "./BottomTabs";
 
 function Main() {
     const { currentUser, loading } = useAuth();
@@ -13,7 +13,9 @@ function Main() {
     return (  
         <>
           { currentUser ?
-            <DrawerNavigator style={style.appContent}/>
+            <View style={style.appContent}>
+              <BottomTabs />
+            </View>
           :
           <AuthStackScreens />
           }

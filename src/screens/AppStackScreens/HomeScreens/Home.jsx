@@ -1,222 +1,111 @@
-import React, { useState, useEffect,useRef } from 'react';
-import {
-  View, Text, TouchableOpacity, Button,
-  RefreshControl, SafeAreaView, FlatList, StyleSheet,ActivityIndicator
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, RefreshControl, StyleSheet,TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { showMessage } from 'react-native-flash-message';
 import { useAuth } from '../../../context/AuthContext';
 import PostCard from '../../../components/PostCard';
-import PostCardSecondary from '../../../components/PostCardSecondary';
 import { useTheme } from '../../../context/ThemeContext';
-
+import PostCardSecondary from '../../../components/PostCardSecondary';
 
 const Home = ({ navigation }) => {
-  const { currentUser, profile } = useAuth();
+  const { currentUser } = useAuth();
   const theme = useTheme();
   const styles = getStyles(theme);
-  const [posts, setPosts] = useState([]);
+  const [forYouPosts, setForYouPosts] = useState([]);
+  const [justAddedPosts, setJustAddedPosts] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const lastFetchedPost = useRef(null);
   const [primaryList, setPrimaryList] = useState(true);
-  const [secondaryList, setSecondaryList] = useState(false);
-  const [columns, setColumns] = useState(2);
-  const [listKey, setListKey] = useState('primaryList'); 
+  
   const toggleList = () => {
     setPrimaryList(!primaryList);
-    setSecondaryList(!secondaryList);
-    const newColumns = columns === 2 ? 1 : 2;
-    setColumns(newColumns);
-
-    // Change the key prop to force a re-render of FlatList
-    setListKey(newColumns === 2 ? 'primaryList' : 'secondaryList');
-  };
+  }
 
 
   useEffect(() => {
     fetchPosts();
-    return () => {
-      setPosts([]);
-    };
   }, []);
 
-  const onEndReached = () => {
-    console.log("onEndReached called"); // Debugging log
-    if (!loadingMore && hasMore) {
-      fetchPosts(true);
-    }
-  };
-
-  
-  const fetchPosts = async (loadMore = false) => {
-    if (loadingMore && !loadMore) return;
-    setLoadingMore(true);
-  
+  const fetchPosts = async () => {
+    setRefreshing(true);
     try {
-      let query = firestore()
-        .collection('posts')
-        .orderBy('timestamp', 'desc')
-        .limit(10); // Increase this limit if you want more posts per fetch
+      const allPostsQuery = firestore().collection('posts').orderBy('timestamp', 'desc').limit(20);
+      const allPostsSnapshot = await allPostsQuery.get();
+      const allPosts = allPostsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   
-      if (loadMore && lastFetchedPost.current) {
-        query = query.startAfter(lastFetchedPost.current);
-      }
+      const forYou = allPosts.filter(post => 
+        currentUser.services.some(service => String(post.categoryId) === String(service.categoryId))
+      ).slice(0, 2);
   
-      const snapshot = await query.get();
-      const fetchedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const justAdded = allPosts.filter(post => !forYou.includes(post));
   
-      if (fetchedPosts.length > 0) {
-        lastFetchedPost.current = snapshot.docs[snapshot.docs.length - 1];
-        setPosts(prevPosts => loadMore ? [...prevPosts, ...fetchedPosts] : fetchedPosts);
-        setHasMore(fetchedPosts.length === 10); // Check if fetched posts are equal to the limit
-      } else {
-        setHasMore(false);
-      }
+      setForYouPosts(forYou);
+      setJustAddedPosts(justAdded);
     } catch (error) {
       console.error("Error fetching posts:", error);
     } finally {
-      setLoadingMore(false);
       setRefreshing(false);
     }
   };
   
   
-  
-
 
   const onRefresh = () => {
-    setRefreshing(true);
-    lastFetchedPost.current = null;
     fetchPosts();
   };
 
-
-  const checkPostExistence = async (postId) => {
-    try {
-      const doc = await firestore().collection('posts').doc(postId).get();
-      if (!doc.exists) {
-        showMessage({
-          message: 'This post is no longer available',
-          type: "danger",
-        });
-        return false;
-      }
-      return true;
-    } catch (error) {
-      showMessage({
-        message: error.message || 'Error checking post existence',
-        type: "danger",
-      });
-      return false;
-    }
-  };
-  const navigateToPostDetail = async (postId) => {
-    const exists = await checkPostExistence(postId);
-    if (exists) {
-      navigation.navigate('PostDetail', { id: postId });
-    }
-  };
-
-  const checkAccountStatus = () => {
-    if (!currentUser) {
-      showMessage({
-        message: 'Please sign in to create a post.',
-        type: "danger",
-      });
-    } else if (profile !== 'completed') {
-      showMessage({
-        message: 'Please complete your profile to create a post.',
-        type: "danger",
-      });
-      navigation.navigate('PersonalInfo');
-    } else {
-      navigation.navigate('AddPost');
-    }
-  };
-
-  const renderItem = ({ item }) => {
-    const postCardWrapperStyle = [
-      styles.postCardWrapper,
-      { width: primaryList ? '50%' : '100%' }
-    ];
-  
-    return (
-      <View style={postCardWrapperStyle}>
-        {columns === 2 ? (
-          <PostCard
-            post={item}
-            onPress={() => navigateToPostDetail(item.id)}
-          />
-        ) : (
-          <PostCardSecondary
-            post={item}
-            onPress={() => navigateToPostDetail(item.id)}
-          />
-        )}
-      </View>
-    );
-  };
-  
-
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
       {currentUser ? (
-        <FlatList
-          key={listKey}
-          ListHeaderComponent={
-            <View style={styles.listHeader}>
-              <Text style={styles.headerText}>For You[6]</Text>
-              <View style={styles.gridView}>
-                {primaryList && (
-                <TouchableOpacity onPress={()=>toggleList()} style={styles.horizontalLineWrapper}>
-                  <View style={styles.horizontalLine}></View>
-                  <View style={styles.horizontalLine}></View>
-                  <View style={styles.horizontalLine}></View>
-                </TouchableOpacity>
-                )}
-                {secondaryList && (
-                <TouchableOpacity onPress={()=>toggleList()} style={styles.quadratBoxWrapper}>
-                  <View style={{flexDirection:'row'}}>  
-                    <View style={styles.quadratBox}></View>
-                    <View style={styles.quadratBox}></View>
-                  </View> 
-                  <View style={{flexDirection:'row'}}>  
-                    <View style={styles.quadratBox}></View>
-                    <View style={styles.quadratBox}></View>
-                  </View> 
-                </TouchableOpacity>
-                )}
+        <>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>For You</Text>
+            {primaryList ? (
+            <TouchableOpacity onPress={()=>toggleList()} style={styles.horizontalLineWrapper}>
+              <View style={styles.horizontalLine}></View>
+              <View style={styles.horizontalLine}></View>
+              <View style={styles.horizontalLine}></View>
+            </TouchableOpacity>
+            ):(
+            <TouchableOpacity onPress={()=>toggleList()} style={styles.quadratBoxWrapper}>
+              <View style={{flexDirection:'row'}}>  
+                <View style={styles.quadratBox}></View>
+                <View style={styles.quadratBox}></View>
+              </View> 
+              <View style={{flexDirection:'row'}}>  
+                <View style={styles.quadratBox}></View>
+                <View style={styles.quadratBox}></View>
+              </View> 
+            </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.listWrap}>
+            {forYouPosts.map((item) => (
+              <View style={styles.postWrapper} key={item.id}>
+                <PostCardSecondary  post={item} onPress={() => navigation.navigate('PostDetail', { id: item.id })} />
               </View>
+            ))}
+          </View>
+          <Text style={styles.sectionTitle}>Just Added</Text>
+          <View style={primaryList ? styles.listWrap : styles.listFlexWrap}>
+          {justAddedPosts.map((item) => (
+            <View style={primaryList ? styles.postWrapper : styles.postWrapperSecondary} key={item.id} >
+              {primaryList ? (
+                <PostCardSecondary post={item} onPress={() => navigation.navigate('PostDetail', { id: item.id })} />
+              ):(
+                <PostCard key={item.id} post={item} onPress={() => navigation.navigate('PostDetail', { id: item.id })} />
+              )}
             </View>
-          }
-          data={posts}
-          renderItem={renderItem}
-          style={styles.flatList}
-          keyExtractor={item => item.id}
-          ListEmptyComponent={<Text style={{ textAlign: 'center' }}>No posts available.</Text>}
-          horizontal={false}
-          numColumns={columns}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          onEndReached={onEndReached}
-          onEndReachedThreshold={0.2} 
-          ListFooterComponent={
-            loadingMore && <ActivityIndicator size="large" color={theme.primary} />
-          }
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        />
+          ))}
+          </View>
+        </>
       ) : (
         <Text>Please sign in to see posts.</Text>
       )}
-    </View>
+    </ScrollView>
   );
 };
-
-// Just added 20
 
 export default Home;
 
@@ -224,23 +113,12 @@ const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    width: '100%',
   },
-  flatList: {
-    backgroundColor: theme.background,
-    width: '100%',
-    paddingHorizontal:5,
-  },
-  postCardWrapper: {
-    padding: 5,
-  },
-  listHeader: {
-    width: '100%',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    justifyContent: 'space-between',
+  header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    padding: 10,
   },
   headerText: {
     fontSize: 16,
@@ -267,5 +145,31 @@ const getStyles = (theme) => StyleSheet.create({
     height: 10,
     backgroundColor: theme.primary,
     margin: 2,
-  }
+  },
+  listWrap:{
+    paddingHorizontal: 10,
+  },
+  postWrapper:{
+    margin: 5,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: theme.text,
+    margin: 10,
+  },
+  listFlexWrap:{
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+  },
+
+  postWrapperSecondary:{
+    margin: 5,
+    marginVertical: 10,
+  },
+
 });
+
+

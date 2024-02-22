@@ -7,7 +7,8 @@ import { showMessage } from 'react-native-flash-message';
 import { Global } from '../../../constant/Global';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useTheme } from '../../../context/ThemeContext';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
+import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
+import Fonts from '../../../constant/Fonts';
 
 const LocationPicker = ({ onSave , onClose }) => {
   const theme = useTheme();
@@ -123,29 +124,24 @@ const LocationPicker = ({ onSave , onClose }) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.centeredContainer}>
-        <Text style={Global.title}>Choose a Location</Text>
+      <View style={styles.container}>
+        <Text style={Global.title}>Location</Text>
         
-        <Text style={Global.titleSecondary}>Country</Text>
+        <Text style={styles.text}>Country</Text>
         <DropDownPicker
           open={countryOpen}
           value={country}
           items={countryItems}
           setOpen={handleCountryOpen}
           setValue={handleCountryChange}
-          containerStyle={styles.dropdownContainer}
           style={styles.dropdown}
-          scrollViewProps={{
-            style: styles.dropdownScrollView,
-          }}
-          zIndex={countryOpen ? 10000 : 1000}
-          zIndexInverse={1000}
+          textStyle={styles.textStyle}
+          dropDownContainerStyle={styles.dropdownContainer}
           closeAfterSelectByDefault={true}
         />
         {stateItems.length > 0 && (
           <>
-            <Text style={Global.titleSecondary}>State</Text>
+            <Text style={styles.text}>State</Text>
             <DropDownPicker
               open={stateOpen}
               value={state}
@@ -155,21 +151,16 @@ const LocationPicker = ({ onSave , onClose }) => {
               style={styles.dropdown}
               textStyle={styles.textStyle}
               dropDownContainerStyle={styles.dropdownContainer}
-              scrollViewProps={{
-                style: styles.dropdownScrollView,
-              }}
-              zIndex={stateOpen ? 10000 : 2000}
-              zIndexInverse={2000}
               closeAfterSelectByDefault={true}
-              ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
-              ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+              ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
+              ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
               TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
             />
           </>
         )}
         {cityItems.length > 0 && (
           <>
-            <Text style={Global.titleSecondary}>City</Text>
+            <Text style={styles.text}>City</Text>
             <DropDownPicker
               open={cityOpen}
               value={city}
@@ -179,48 +170,39 @@ const LocationPicker = ({ onSave , onClose }) => {
               style={styles.dropdown}
               textStyle={styles.textStyle}
               dropDownContainerStyle={styles.dropdownContainer}
-              scrollViewProps={{
-                style: styles.dropdownScrollView,
-              }}
-              zIndex={cityOpen ? 10000 : 3000}
-              zIndexInverse={3000}
               closeAfterSelectByDefault={true}
-              ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
-              ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+              ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
+              ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
               TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
             />
           </>
         )}
-      <View style={styles.btnContainer}>
-        <PrimaryButton text="Save" onPress={handleSaveAndClose} />
-        <PrimaryButton text="Cancel" onPress={onClose} />
+          <View style={styles.buttonBox}>
+          <TwoSelectButton
+            primary="Save"
+            secondary="Cancel"
+            onPressPrimary={handleSaveAndClose}
+            onPressSecondary={onClose}
+          />
+          </View>
       </View>
-      </View>
-    </SafeAreaView>
   );
 };
 
 const getStyles = (theme) => StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    height: 400, // Add this
-  },
-
-  centeredContainer: {
-    width: '95%',
-    gap: 5,
-  },
-  dropdownContainer: {
-    marginTop: 10,
-    width: '100%',
+  container:{
+    width:'100%',
+    margin:0,
+    gap:10,
+    backgroundColor:theme.white,
+    zIndex: 9999,
+    padding:10,
+    flex:1,
   },
   dropdown: {
     borderColor: theme.primary,
-    borderradius:10,
-    borderWidth: 2.5,
+    borderradius:12,
+    borderWidth: 1,
     zIndex: 99,
   },
   textStyle: {
@@ -229,20 +211,31 @@ const getStyles = (theme) => StyleSheet.create({
   dropdownContainer: {
     backgroundColor: theme.white,
     borderColor: theme.primary,
+    borderWidth: 1,
   },
-  dropdownScrollView: {
-    maxHeight: Dimensions.get('window').height * 0.5,
-  },
-  subContainer: {
-    gap: 5,
-  },
-  btnContainer: {
-    flexDirection: 'row',
+  btnContainer:{
+    flexDirection:'row',
     justifyContent:'space-between',
-    alignItems: 'center',
-    marginTop: 20,
-
+    alignItems:'center',
+    width:'100%',
+    gap:10,
+    marginTop:10,
   },
+  buttonBox: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  text: {
+    fontSize: 14,
+    color: theme.text,
+    fontFamily: Fonts.primary,
+  },
+
+  
 });
+
 
 export default LocationPicker;

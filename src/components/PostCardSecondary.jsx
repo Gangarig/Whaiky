@@ -10,7 +10,6 @@ import { useTheme } from '../context/ThemeContext';
 const PostCardSecondary = ({ post, onPress }) => {
   const { currentUser } = useAuth();
   const theme = useTheme();
-  console.log(post.sale)
 
   const styles = getStyles(theme);
   const hasImages = post.images && post.images.length > 0;  

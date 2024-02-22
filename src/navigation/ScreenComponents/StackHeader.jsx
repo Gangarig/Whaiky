@@ -14,16 +14,11 @@ const StackHeader = ({title,navigation,isHomeScreen}) => {
     <View style={styles.container}>
       <TouchableOpacity 
           onPress={() => {
-            if (isHomeScreen) {
-              navigation.toggleDrawer();
-            } else {
               navigation.dispatch(CommonActions.goBack());
-
-            }
           }}
       >
-        <FontAwesomeIcon icon={isHomeScreen ? "fa-solid fa-bars" : "fa-solid fa-caret-left" }
-        size={20} color={theme.primary} />
+        {isHomeScreen ? null :<FontAwesomeIcon icon={isHomeScreen ? "fa-solid fa-bars" : "fa-solid fa-caret-left" }
+        size={20} color={theme.primary} />}
       </TouchableOpacity>
       <TouchableOpacity onPress={()=>navigation.navigate('Home')} style={styles.Whaiky}>
       <GradientText colors={[theme.primary, theme.secondary]} style={styles.text}

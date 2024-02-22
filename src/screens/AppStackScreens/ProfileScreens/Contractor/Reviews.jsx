@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../../context/AuthContext';
-import { Rating } from 'react-native-ratings';
 import { AirbnbRating } from 'react-native-ratings';
 
 const Reviews = ({ navigation }) => {

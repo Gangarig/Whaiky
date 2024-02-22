@@ -11,6 +11,8 @@ import shadowStyle from '../../../constant/Shadow';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { showMessage } from 'react-native-flash-message';
 import { useTheme } from '../../../context/ThemeContext';
+import { BlurView } from "@react-native-community/blur";
+
 
 const PostSearch = ({ navigation }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,6 +35,7 @@ const PostSearch = ({ navigation }) => {
   const isSearchActive = searchTerm.trim() !== '' || country || state || city || categoryId || optionId;
   const theme = useTheme();
   const styles = getStyles(theme);
+  const [blur, setBlur] = useState(false);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -165,6 +168,14 @@ const PostSearch = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+    {blur && (
+        <BlurView
+        style={styles.blur}
+        blurType="light"
+        blurAmount={5}
+        reducedTransparencyFallbackColor="white"
+        />
+    )}
       <View style={styles.searchBox}>
         <View style={styles.searchInput}>
         <Text style={[Global.titleSecondary,styles.searchLabel]}> Search with / Post Title or Poster Name /. </Text>
@@ -181,7 +192,10 @@ const PostSearch = ({ navigation }) => {
           {/* <PrimaryButton text="Search" onPress={handleSearch} /> */}
           <View style={styles.locationBtn}>
             <PrimaryButton text="Add Location" 
-            onPress={() => setLocationModalVisible(true)} 
+            onPress={() => {
+              setLocationModalVisible(true);
+              setBlur(true);
+            }}
             />
             {country && 
               <View style={[styles.infoContainer,shadowStyle]}>
@@ -223,7 +237,10 @@ const PostSearch = ({ navigation }) => {
           
           <View style={styles.categoryBtn}>
             <PrimaryButton text="Add Category" 
-            onPress={() => setCategoryModalVisible(true)}
+            onPress={() => {
+              setCategoryModalVisible(true);
+              setBlur(true);
+            }}
             />
             <View style={styles.chosenCategory}>
               {category && 
@@ -303,20 +320,27 @@ const PostSearch = ({ navigation }) => {
             visible={locationModalVisible}
             onRequestClose={() => {
               setLocationModalVisible(false);
+              setBlur(false);
             }}
           >
             <View style={styles.locationModal}>
               <TouchableOpacity 
                 style={styles.modalOverlay} 
                 activeOpacity={1} 
-                onPressOut={() => { setLocationModalVisible(false); }}
+                onPressOut={() => { 
+                setLocationModalVisible(false); 
+                setBlur(false);
+                }}
               />
               <Location
                 onSave={(selectedCountry, selectedState, selectedCity) => {
                   handleLocationSave(selectedCountry, selectedState, selectedCity);
                   setLocationModalVisible(false); 
                 }}
-                onClose={() => setLocationModalVisible(false)} 
+                onClose={() => {
+                setLocationModalVisible(false)
+                setBlur(false);
+              }}
               />
             </View>
           </Modal>
@@ -327,6 +351,7 @@ const PostSearch = ({ navigation }) => {
             visible={categoryModalVisible}
             onRequestClose={() => {
               setCategoryModalVisible(false);
+              setBlur(false);
             }}
           >
             <View style={styles.categoryModal}>
@@ -335,13 +360,17 @@ const PostSearch = ({ navigation }) => {
                 activeOpacity={1}
                 onPressOut={() => {
                   setCategoryModalVisible(false);
+                  setBlur(false);
                 }}
               />
             <CategoryPicker
               onSave={(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText) => {
                 handleCategorySave(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText);
               }}
-              onClose={() => setCategoryModalVisible(false)}
+              onClose={() => {
+                setCategoryModalVisible(false);
+                setBlur(false);
+              }}
             />
             </View>
           </Modal>
@@ -350,6 +379,7 @@ const PostSearch = ({ navigation }) => {
 };
 
 const getStyles = (theme) => StyleSheet.create({
+  
   container: {
     backgroundColor: theme.background,
     flex: 1,
@@ -399,8 +429,8 @@ const getStyles = (theme) => StyleSheet.create({
     width: '100%',
     bottom: 0,
     position: 'absolute',
-    borderTopColor: '#696969',
-    borderTopWidth: 2,
+    borderTopColor: theme.primary,
+    borderTopWidth: 1,
     backgroundColor: theme.background,
     justifyContent: 'center',
     alignItems: 'center',
@@ -410,8 +440,8 @@ const getStyles = (theme) => StyleSheet.create({
     width: '100%',
     bottom: 0,
     position: 'absolute',
-    borderTopColor: '#696969',
-    borderTopWidth: 2,
+    borderTopColor: theme.primary,
+    borderTopWidth: 1,
     backgroundColor: theme.background,
     paddingTop: 20,
     alignItems: 'center',
@@ -457,6 +487,16 @@ const getStyles = (theme) => StyleSheet.create({
     width: '50%',
     padding: 2.5,
   },
+  blur: {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    position: "absolute",
+    height: "110%",
+    width: "110%",
+    zIndex: 10,
+  }
 });
 
 export default PostSearch;

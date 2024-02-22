@@ -9,7 +9,6 @@ import {
   ScrollView,
 } from 'react-native';
 import { useAuth } from '../../../context/AuthContext';
-import { Global } from '../../../constant/Global';
 import CategoryPicker from '../service/CategoryPicker';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { showMessage } from 'react-native-flash-message';
@@ -20,21 +19,21 @@ import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import PrimaryGradientButton from '../../../components/Buttons/PrimaryGradientButton';
 import firestore from '@react-native-firebase/firestore';
 import GradientText from '../../../components/GradientText';
-import { shadowStyle } from '../../../constant/Shadow';
 import FastImage from 'react-native-fast-image';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useTheme } from '../../../context/ThemeContext';
+import { BlurView } from "@react-native-community/blur";
+
 
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();
   const theme = useTheme();
   const styles = getStyles(theme);
-
   const [postType, setPostType] = useState('Looking For Service');
   const [subTitle, setSubTitle] = useState('Looking For Service');
   const [documentApproved, setDocumentApproved] = useState(false); // Track if the document is approved
-
+  const [blur, setBlur] = useState(false);
   const [post, setPost] = useState({
     postId: '',
     title: '',
@@ -100,13 +99,16 @@ const AddPost = ({ navigation }) => {
 
   const closeModal = () => {
     setModalVisible(false);
+    setBlur(false);
   };
 
   const openCategoryModal = () => {
     setCategoryModalVisible(true);
+    setBlur(true);
   };
   const closeCategoryModal = () => {
     setCategoryModalVisible(false);
+    setBlur(false);
   };
   const handleCategorySave = (category, option, categoryText, optionText) => {
     // Set the selected category and option
@@ -316,12 +318,21 @@ const AddPost = ({ navigation }) => {
       city: selectedCity,
     });
     closeModal();
+
   };
 
   return (
     <ScrollView style={styles.container}
       contentContainerStyle={styles.ScrollView}
     >
+    {blur && (
+        <BlurView
+        style={styles.blur}
+        blurType="light"
+        blurAmount={5}
+        reducedTransparencyFallbackColor="white"
+        />
+    )}
       {currentUser.status === 'contractor' && (
       <View style={[styles.postTypeBox]}>
         <TouchableOpacity 
@@ -436,6 +447,7 @@ const AddPost = ({ navigation }) => {
         visible={categoryModalVisible}
         onRequestClose={() => {
           setCategoryModalVisible(false);
+          setBlur(false);
         }} >
             <View style={styles.categoryModal}>
               <TouchableOpacity
@@ -452,7 +464,7 @@ const AddPost = ({ navigation }) => {
             </View>
       </Modal>
       <View style={styles.buttonBox}>
-          <PrimaryButton text="Select a Location" onPress={() => setModalVisible(true)} />
+          <PrimaryButton text="Select a Location" onPress={() => {setModalVisible(true);setBlur(true)}} />
           <PrimaryButton text="Select Category" onPress={openCategoryModal} />
       </View>
       <View style={styles.PostBtn}>
@@ -478,14 +490,13 @@ const getStyles = (theme) => StyleSheet.create({
   },
 
   fullScreenModal: {
-    height: 500,
+    height: 450,
     width: '100%',
     bottom: 0,
     position: 'absolute',
     borderTopColor: theme.primary,
-    borderTopWidth: 2,
+    borderTopWidth: 1,
     backgroundColor: theme.background,
-    paddingTop: 30,
     alignItems: 'center',
   },
   categoryModal: {
@@ -494,7 +505,7 @@ const getStyles = (theme) => StyleSheet.create({
     bottom: 0,
     position: 'absolute',
     borderTopColor: theme.primary,
-    borderTopWidth: 2,
+    borderTopWidth: 1,
     backgroundColor: theme.background,
     paddingTop: 30,
     alignItems: 'center',
@@ -644,7 +655,16 @@ const getStyles = (theme) => StyleSheet.create({
     textAlign:'center',
     color:theme.primary,
   },
-
+  blur: {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    position: "absolute",
+    height: "110%",
+    width: "110%",
+    zIndex: 10,
+  }
 
 });
 
