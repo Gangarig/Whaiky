@@ -19,7 +19,8 @@ const Feedback = ({navigation,route}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
   const { currentUser } = useAuth();
-  const { contractor } = route.params;
+  const { Id } = route.params;
+  const [contractor, setContractor] = useState(null);
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(null);
   const [feedbacks, setFeedbacks] = useState([]);
@@ -35,14 +36,13 @@ const Feedback = ({navigation,route}) => {
     try {
       let query = firestore()
         .collection('users')
-        .doc(contractor.uid)
+      .doc(Id)
         .collection('feedbacks')
         .orderBy('timestamp', 'desc')
         .limit(10); // Fetch in batches of 10
       if (lastVisible) {
         query = query.startAfter(lastVisible);
       }
-
       const snapshot = await query.get();
       if (!snapshot.empty) {
         const newFeedbacks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -63,9 +63,25 @@ const Feedback = ({navigation,route}) => {
     }
   };
 
+  const fetchContractor = async () => {
+    try {
+      const contractorDoc = await firestore().collection('users').doc(Id).get();
+      if (contractorDoc.exists) {
+        setContractor(contractorDoc.data());
+      }
+    } catch (error) {
+      console.error('Error fetching contractor:', error);
+      showMessage({
+        message: "Failed to fetch contractor",
+        type: "danger",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchAndSetFeedbacks();
-  }, [contractor.uid]); 
+    fetchContractor();
+  }, []);
 
   const handleLoadMore = () => {
     console.log("Loading more feedbacks...");

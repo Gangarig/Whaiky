@@ -51,7 +51,6 @@ const MyPosts = ({ navigation }) => {
         fetchedPosts.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
   
         setPosts(fetchedPosts);
-        console.log("Fetched posts:", fetchedPosts);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
@@ -89,6 +88,7 @@ const MyPosts = ({ navigation }) => {
     <View style={styles.container}>
       <FlatList
         data={posts}
+        style={styles.flatList}
         renderItem={({ item }) => (
           <View style={styles.postCardWrapper}>
             <PostCard post={item} onPress={()=>navigateToPostDetail(item.id)}/>
@@ -123,6 +123,9 @@ const getStyles = (theme) => StyleSheet.create({
   },
   postCardWrapper: {
     width: '50%',
-    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 8,
   },
+
 });

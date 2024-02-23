@@ -135,14 +135,14 @@ const getStyles = (theme) => StyleSheet.create({
     height: 25,
   },
   horizontalLine:{
-    width: 24,
-    height: 5,
+    width: 20,
+    height: 3,
     backgroundColor: theme.primary,
     margin: 2,
   },
   quadratBox:{
-    width: 10,
-    height: 10,
+    width: 8,
+    height: 8,
     backgroundColor: theme.primary,
     margin: 2,
   },

@@ -8,11 +8,20 @@ import FastImage from 'react-native-fast-image'
 import { AirbnbRating } from 'react-native-ratings';
 import image from '../assets/images/image1.png'
 import { faPen } from '@fortawesome/free-solid-svg-icons/faPen'
+import { useAuth } from '../context/AuthContext'
 
 
-const SecondaryProfileCard = ({profile}) => {
+const SecondaryProfileCard = ({profile,navigation}) => {
     const theme = useTheme();   
     const styles = getStyles(theme);
+    const { currentUser } = useAuth();
+    const handleFeedBack = (uid) => {
+      if(currentUser?.uid === uid){
+        navigation.navigate('Reviews')
+      } else {
+        navigation.navigate('Feedback', {id: uid})
+      } 
+    }
     
   return (
     <View style={styles.container}>
@@ -23,9 +32,11 @@ const SecondaryProfileCard = ({profile}) => {
         style={styles.profileContainer}
         >
           <View style={styles.cardHeader}>
-            <TouchableOpacity style={styles.editBtn} onPress={() => console.log('Profile Image')}>
+            {currentUser?.uid === profile?.uid && (
+            <TouchableOpacity style={styles.editBtn} onPress={() => navigation.navigate('PersonalInfo')}>
               <FontAwesomeIcon icon={faPen} color={theme.secondary} size={15} />
             </TouchableOpacity>
+            )}
               {profile && profile?.photoURL ? (
               <View style={styles.userIconWrapper}>
                 <FastImage
@@ -67,7 +78,7 @@ const SecondaryProfileCard = ({profile}) => {
                 style={[styles.cardInfoText,styles.marginVertical]}>No Category Currently</Text>
               )}
                 {profile?.averageRating ? (
-                  <View style={styles.rating}>
+                  <TouchableOpacity onPress={()=>handleFeedBack(profile.uid)} style={styles.rating}>
                     <AirbnbRating
                       count={5}
                       defaultRating={profile?.averageRating > 1 ? profile?.averageRating: 1}
@@ -75,19 +86,12 @@ const SecondaryProfileCard = ({profile}) => {
                       showRating={false}
                       isDisabled={true}
                     />
-                    <Text style={styles.cardInfoText}>({profile?.ratingCount} Reviews) </Text>
-                </View>
+                    <Text style={styles.ratingText}>({profile?.ratingCount} Reviews) </Text>
+                </TouchableOpacity>
               ) : (
                 <View style={styles.rating}>
-                <AirbnbRating
-                  count={5}
-                  defaultRating={profile?.averageRating > 1 ? profile?.averageRating: 1}
-                  size={12}
-                  showRating={false}
-                  isDisabled={true}
-                />
-                <Text style={styles.ratingText}>({profile?.ratingCount} Reviews) </Text>
-            </View>
+                  <Text style={styles.cardInfoText}>No Rating </Text>
+                </View>
               )} 
             </View>
           </View>
@@ -169,7 +173,7 @@ const getStyles = theme => StyleSheet.create({
     },
     cardBodyLabelWrapper: {
       height: '100%',
-      width: '30%',
+      width: '40%',
       alignItems: 'center',
       justifyContent: 'space-around',
       

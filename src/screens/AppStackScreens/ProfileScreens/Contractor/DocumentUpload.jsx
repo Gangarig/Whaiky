@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  Button,
-  SafeAreaView,
   ScrollView,
   Modal,
 } from 'react-native';
@@ -22,6 +20,9 @@ import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 import { shadowStyle } from '../../../../constant/Shadow';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '../../../../context/ThemeContext';
+import DatePicker from 'react-native-date-picker'
+
+
 
 
 const DocumentUpload = ({ navigation }) => {
@@ -39,6 +40,8 @@ const DocumentUpload = ({ navigation }) => {
   });
   const theme = useTheme();
   const styles = getStyles(theme);
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false) 
 
   const handleChoosePhoto = (imageNumber) => {
     ImageCropPicker.openPicker({
@@ -293,11 +296,40 @@ const DocumentUpload = ({ navigation }) => {
           <View style={styles.dateBox}>
             <Text style={[Global.titleSecondary,styles.titleSecondary]}>Date of Issue:</Text>
             <View style={styles.dateWrapper}>
+              <DatePicker
+                modal
+                open={open}
+                date={date}
+                onConfirm={(date) => {
+                  setOpen(false)
+                  setDate(date)
+                }}
+                onCancel={() => {
+                  setOpen(false)
+                }}
+              />
             </View>
           </View>
           <View style={styles.dateBox}>
             <Text style={[Global.titleSecondary,styles.titleSecondary]}>Date of Expiry:</Text>
             <View style={styles.dateWrapper}>
+              <TouchableOpacity 
+              onPress={() => setOpen(true)}
+              style={styles.dateWrapper}>
+              <Text style={styles.placeholderText}>Select Date</Text>
+              </TouchableOpacity>
+            <DatePicker
+              modal
+              open={open}
+              date={date}
+              onConfirm={(date) => {
+                setOpen(false)
+                setDate(date)
+              }}
+              onCancel={() => {
+                setOpen(false)
+              }}
+            />
             </View>
           </View>
         </LinearGradient>
@@ -420,7 +452,7 @@ const getStyles = (theme) => {
   dateWrapper: {
     width: 150,
       height: 50,
-      backgroundColor: '#e7e7e8',
+      backgroundColor: theme.background,
       borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',

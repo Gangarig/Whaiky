@@ -2,15 +2,6 @@ import { View, Text,StyleSheet, ScrollView } from 'react-native'
 import React ,{useState}from 'react'
 import { useTheme } from '../../../../context/ThemeContext';
 import firestore from '@react-native-firebase/firestore'
-import FastImage from 'react-native-fast-image'
-import Cover from '../../../../assets/images/image1.png'
-import ImageView from 'react-native-image-viewing'
-import UserAvatar from 'react-native-user-avatar'
-import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import LinearGradient from 'react-native-linear-gradient';
-import { shadowStyle } from '../../../../constant/Shadow';
-import { Rating, AirbnbRating } from 'react-native-ratings';
 import Fonts from '../../../../constant/Fonts';
 import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 import PostCard from '../../../../components/PostCard';
@@ -20,9 +11,8 @@ import { handleSelect } from '../../service/ChatService';
 import { useAuth } from '../../../../context/AuthContext';
 import { ActivityIndicator } from 'react-native';
 import { RefreshControl } from 'react-native';
-import PostCardSecondary from '../../../../components/PostCardSecondary';
-
-
+import AboutText from '../../../../components/AboutText';
+import SecondaryProfileCard from '../../../../components/SecondaryProfileCard';
 const ContractorDetail = ({ navigation, route }) => {
     const { id } = route.params;
     const theme = useTheme();
@@ -98,95 +88,34 @@ const ContractorDetail = ({ navigation, route }) => {
         handleSelect(currentUser,contractor);
         navigation.navigate('Chat');
     }
-    const handleFeedBack = (contractor) => {
-        navigation.navigate('FeedBack',{contractor});
+    const handleFeedBack = (uid) => {
+        if(currentUser?.uid === uid){
+            navigation.navigate('Review');
+        }else{
+            navigation.navigate('Feedback',{id:uid});
+        }
     }
     const renderHeader = () => (
         <View style={styles.header}>
-        <View style={styles.cover}>
-        <FastImage
-            style={styles.coverImage}
-            source={Cover}
-            resizeMode={FastImage.resizeMode.cover}
-        />
-        </View>
-        <LinearGradient 
-        colors={[theme.primary,theme.secondary ]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }} 
-        style={styles.gradient}
-        >
-        <View style={[shadowStyle]}>
-        {contractor?.photoURL ? (
-        <FastImage
-            source={{ uri: contractor.photoURL }}
-            style={styles.avatar}
-            resizeMode="cover"
-            onError={(e) => {
-                console.log("Image loading error:", e);
-            }}
-        />
-        ) : (
-            <View style={styles.avatar}>
-                <FontAwesomeIcon icon={faUser} size={55} color={theme.white} />
-            </View>
-        )}
-        </View>
-        <View style={styles.profileHeader}>
-        <Text style={[styles.headerText, {fontSize: 20}]}>
-        {
-            (contractor?.firstName || contractor?.lastName) ? `${contractor?.firstName || ''} ${contractor?.lastName || ''}`.trim() : 'No Name Currently'
-        }
-        </Text>
-
-        {contractor?.averageRating ? (
-            <View style={styles.rating}>
-                <AirbnbRating
-                    count={5}
-                    defaultRating={contractor?.averageRating || 0}
-                    size={15}
-                    showRating={false}
-                    isDisabled={true}
-                />
-                <Text style={styles.headerText}>
-                {contractor?.ratingCount || 0} Reviews
-                </Text>
-            </View>
-            ) : (
-            <Text style={styles.headerText}>No Rating Currently</Text>
+            <SecondaryProfileCard profile={contractor} navigation={navigation}/>
+            {currentUser?.about && (
+            <AboutText text={contractor?.about} userUid={id} />
             )}
-        {contractor?.services && contractor.services.length > 0 ? (
-        <Text style={styles.headerText}>
-            {contractor.services[0].categoryText || 'No Category'}
-        </Text>
-        ) : (
-        <Text style={styles.headerText}>No Category</Text>
-        )}
-        </View>
-        </LinearGradient>
-        <View style={styles.aboutMe}>
-            <Text style={styles.aboutMeTitle}>
-            {contractor?.aboutMe || "About Me Not Provided"}
-            </Text>
-            <Text style={styles.aboutMeText}>
-            {contractor?.aboutMeText || "About Me Text Not Provided"}
-            </Text>
-        </View>
         <View style={styles.posts}>
-        <Text style={styles.aboutMeTitle}>More from {contractor?.displayName || 'Contractor'}
-        </Text>
-        <Text style={styles.servicesTitle}>Services I am Offering</Text>
-        {contractor?.services && contractor.services.length > 0 ? (
-            contractor.services.map(renderService)
-        ) : (
-            <Text style={styles.servicesTitle}>No services found</Text>
-        )}
+            <Text style={styles.aboutMeTitle}>More from {contractor?.displayName || 'Contractor'}
+            </Text>
+            <Text style={styles.servicesTitle}>Services I am Offering</Text>
+            {contractor?.services && contractor.services.length > 0 ? (
+                contractor.services.map(renderService)
+            ) : (
+                <Text style={styles.servicesTitle}>No services found</Text>
+            )}
         </View>
         <View style={styles.btnContainer}>
             <PrimaryButton text="Contact" onPress={()=>handleContact(currentUser,contractor)}/>
-            <PrimaryButton text="FeedBacks" onPress={()=>handleFeedBack(contractor)}/>
+            <PrimaryButton text="FeedBacks" onPress={()=>handleFeedBack(contractor.uid)}/>
         </View>
-        <Text style={[styles.aboutMeTitle,{paddingLeft:10}]}>My Posts</Text>
+            {myPosts.length > 0 && <Text style={styles.aboutMeTitle}>My Posts</Text>}
         </View>
     );
     const renderItem = ({ item }) => {
@@ -199,21 +128,23 @@ const ContractorDetail = ({ navigation, route }) => {
     
 
   return (
-    <FlatList
-    data={myPosts}
-    renderItem={renderItem}
-    keyExtractor={(item) => item.id.toString()}
-    ListHeaderComponent={renderHeader}
-    refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={fetchData} />
-    }
-    numColumns={2}
-    contentContainerStyle={styles.listContainer}
-    ListFooterComponent={() => isLoading && <ActivityIndicator size="large" />}
-    style={styles.FlatList}
-    showsHorizontalScrollIndicator={false}
-    showsVerticalScrollIndicator={false}
-    />
+    <View style={styles.container}>
+        <FlatList
+        data={myPosts}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        ListHeaderComponent={renderHeader}
+        refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={fetchData} />
+        }
+        numColumns={2}
+        contentContainerStyle={styles.listContainer}
+        ListFooterComponent={() => isLoading && <ActivityIndicator size="large" />}
+        style={styles.FlatList}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        />
+    </View>
   )
 }
 
@@ -221,15 +152,12 @@ const getStyles = (theme) => {
     return StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: theme.background,    
-        },
-        ScrollView: {
-            alignItems: 'center',
+            backgroundColor: theme.background,  
+            paddingVertical: 10,  
         },
         cover: {
             width: '100%',
             height: 300,
-            ...shadowStyle,
         },
         coverImage: {
             width: '100%',
@@ -339,7 +267,9 @@ const getStyles = (theme) => {
         },
         postWrapper:{
             width:'50%',
-            padding:5,
+            justifyContent:'center',
+            alignItems:'center',
+            paddingVertical:5,
         },
         rating: {
             flexDirection: 'row',

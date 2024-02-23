@@ -1,42 +1,63 @@
-import { View, Text,StyleSheet, TouchableOpacity } from 'react-native'
-import React from 'react'
-import { useTheme } from '../context/ThemeContext'
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faIdBadge, faFile,faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faIdBadge, faFile, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 
+const SecondaryDocumentCard = ({ item }) => {
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
-const SecondaryDocumentCard = ({item}) => {
-  const theme = useTheme()
-  const styles = getStyles(theme)
+  const formatDateTime = (date) => {
+    if (!date) return "N/A";
+
+    let day = date.getDate().toString().padStart(2, '0');
+    let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero indexed
+    let year = date.getFullYear();
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${day}/${month}/${year}, ${hours}:${minutes}`;
+  };
+  const timeStampDate = item.timeStamp ? new Date(item.timeStamp._seconds * 1000) : null;
+  const formattedDateTime = formatDateTime(timeStampDate);
+
+  const capitalizeFirstLetter = (string) => {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   return (
     <View style={styles.container}>
       {item ? (
-      <View style={styles.cardWrapper}>
-        {item?.type === 'document' ? (
-          <View style={styles.cardIcon}>
-            <FontAwesomeIcon size={40} color={theme.primary} icon={faIdBadge} />
+        <View style={styles.cardWrapper}>
+          {item?.docType === 'document' ? (
+            <View style={styles.cardIcon}>
+              <FontAwesomeIcon size={40} color={theme.primary} icon={faIdBadge} />
+            </View>
+          ) : (
+            <View style={styles.cardIcon}>
+              <FontAwesomeIcon size={40} color={theme.primary} icon={faFile} />
+            </View>
+          )}
+          <View style={styles.cardInfo}>
+            <Text style={[styles.cardText,{fontWeight:'bold'}]}>
+              {capitalizeFirstLetter(item?.docType)}: {item?.type} 
+            </Text>
+            <Text style={styles.cardText}>{formattedDateTime}</Text>
           </View>
-        ):(
-          <View style={styles.cardIcon}>
-            <FontAwesomeIcon size={40} color={theme.primary} icon={faFile} />
-          </View>
-        )}
-        <View style={styles.cardInfo}>
-          <Text style={{color:theme.text}}>{item?.docType}</Text>
-          <Text style={{color:theme.text}}>{item?.timeStamp}</Text>
+          <TouchableOpacity style={styles.cardMenuWrapper} onPress={() => console.log('Menu Pressed')}>
+            <FontAwesomeIcon size={30} color={theme.primary} icon={faEllipsisVertical} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity  style={styles.cardMenuWrapper} onPress={()=>console.log('Menu Pressed')}>
-        <FontAwesomeIcon size={30} color={theme.primary} icon={faEllipsisVertical} />
-        </TouchableOpacity>
-      </View>
-      ):(
-      <View style={styles.Error}>
-        <Text style={styles.errorText}>No Document Available</Text>
-      </View> 
-      )} 
+      ) : (
+        <View style={styles.Error}>
+          <Text style={styles.errorText}>No Document Available</Text>
+        </View>
+      )}
     </View>
-  )
-}
+  );
+};
 
 const getStyles = (theme) => {
   return StyleSheet.create({
@@ -56,10 +77,8 @@ const getStyles = (theme) => {
       borderRadius: 12,
       height: 60,
       width: '100%',
-      justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row',
-      justifyContent: 'space-between',
       paddingHorizontal: 5,
     },
     Error: {
@@ -75,6 +94,15 @@ const getStyles = (theme) => {
       color: theme.text,
       fontWeight: 'bold',
       fontSize: 16,
+    },
+    cardText: {
+      color: theme.text,
+      fontSize: 14,
+      paddingLeft: 10,
+    },
+    cardMenuWrapper : {
+      position: 'absolute',
+      right: 5,
     },
   })
 }

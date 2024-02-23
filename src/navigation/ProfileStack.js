@@ -12,6 +12,8 @@ import Marklist from "../screens/AppStackScreens/ProfileScreens/Marklist";
 import MyPosts from "../screens/AppStackScreens/Post/MyPosts";
 import Contractor from "../screens/AppStackScreens/ProfileScreens/Contractor/Contractor";
 import Reviews from "../screens/AppStackScreens/ProfileScreens/Contractor/Reviews";
+import Feedback from "../screens/AppStackScreens/ProfileScreens/Contractor/Feedback";
+import ContractorDetail from "../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail";
 
 const ProfileStack = createStackNavigator();
 
@@ -89,6 +91,20 @@ function ProfileStackScreen({ navigation }) {
         })}
       />
       <ProfileStack.Screen 
+        name="ContractorDetail" 
+        component={ContractorDetail} 
+        options={({navigation}) => ({
+          header: (props) => <StackHeader title="Contractor Detail" navigation={navigation} isHomeScreen={false} {...props} />,
+        })}
+      />
+        <ProfileStack.Screen 
+        name="Feedback" 
+        component={Feedback} 
+        options={({navigation}) => ({
+          header: (props) => <StackHeader title="Feedback" navigation={navigation} isHomeScreen={false} {...props} />,
+        })}
+      />
+        <ProfileStack.Screen 
         name="Reviews" 
         component={Reviews} 
         options={({navigation}) => ({

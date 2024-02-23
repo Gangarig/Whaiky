@@ -14,37 +14,49 @@ const Profile = ({navigation}) => {
   const [docs, setDocs] = useState([])
   const theme = useTheme()
   const style = getStyles(theme)
+
   useEffect(() => {
     const subscriber = firestore()
-    .collection('users')
-    .doc(currentUser.uid)
-    .collection('documents')
-    .onSnapshot(querySnapshot => {
-      const documents = []
-      querySnapshot.forEach(documentSnapshot => {
-        documents.push({
-          ...documentSnapshot.data(),
-          key: documentSnapshot.id,
-        })
-      })
-      setDocs(documents)
-    })
-    return () => subscriber()
-  }
-  ,[])
+      .collection('users')
+      .doc(currentUser.uid)
+      .collection('documents')
+      .onSnapshot(querySnapshot => {
+        const documents = [];
+        querySnapshot.forEach(documentSnapshot => {
+          const docData = documentSnapshot.data();
+          const createdAtDate = docData.createdAt ? new Date(docData.createdAt._seconds * 1000) : null;
+          
+          documents.push({
+            ...docData,
+            key: documentSnapshot.id,
+            createdAt: createdAtDate,
+          });
+        });
+        setDocs(documents);
+      });
+    return () => subscriber();
+  }, []);
+  
+
 
 
   return (
     <ScrollView style={style.container}
       showsHorizontalScrollIndicator  = {false}
       showsVerticalScrollIndicator = {false}
-      contentContainerStyle={{alignItems:'center',justifyContent:'center'}}
+      contentContainerStyle={{alignItems:'center',justifyContent:'center',paddingTop:20}}
     >
-      <SecondaryProfileCard profile={currentUser} />
-      <AboutText />
+      <SecondaryProfileCard profile={currentUser} navigation={navigation}/>
+      <AboutText userUid={currentUser.uid}/>
       <View style={style.documents}>
         <Text style={style.docTitle}>Documents</Text>
-        <SecondaryDocumentCard />
+        {docs.map((doc, index) => (
+          <SecondaryDocumentCard
+            key={index}
+            item={doc}
+            onPress={() => navigation.navigate('DocumentDetail', { doc })}
+          />
+        ))}
       </View>
       <TwoSelectButtonGradient   
         primary="Upload Certificate"

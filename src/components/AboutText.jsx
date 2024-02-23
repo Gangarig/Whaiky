@@ -1,15 +1,35 @@
 import { View, Text,StyleSheet, TextInput } from 'react-native'
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import { useTheme } from '../context/ThemeContext'
 import Fonts from '../constant/Fonts'
 import PrimaryButton from './Buttons/PrimaryButton'
 import firestore from '@react-native-firebase/firestore'
 import { showMessage } from 'react-native-flash-message'
 
-const AboutText = ({text , userUid}) => {
+const AboutText = ({userUid}) => {
     const theme = useTheme();
     const style = getStyles(theme);
     const [aboutText, setAboutText] = useState(null)
+
+    useEffect(() => {
+        fetchAboutText();
+    }, [])
+
+    const fetchAboutText = async () => {
+        try {
+            const userDoc = await firestore().collection('users').doc(userUid).get();
+            if (userDoc.exists) {
+                setAboutText(userDoc.data().about);
+            }
+        } catch (error) {
+            console.error('Error fetching about text:', error);
+            showMessage({
+                message: "Error",
+                description: error,
+                type: "danger",
+                });
+        }
+    }
     const handleAboutText = () => {
         if(!aboutText){
             showMessage({
@@ -47,16 +67,18 @@ const AboutText = ({text , userUid}) => {
 
   return (
     <View style={style.aboutWrapper}>
-        {text && 
+        {aboutText &&
         <View style={style.aboutTitle}>
             <Text style={style.title}>About</Text>
         </View>}
-        {text &&
+        {aboutText &&
         <View style={style.aboutText}>
-            <Text style={style.text}>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections </Text>
+            <Text style={style.text}>
+                {aboutText}
+            </Text>
         </View>
         }
-        {!text &&
+        {!aboutText &&
         <View style={style.aboutText}>
             <Text style={style.text}>No Information Available</Text>
             <View>
