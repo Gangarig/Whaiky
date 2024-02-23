@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import SecondaryDocumentCard from '../components/SecondaryDocumentCard'
 import SecondaryProfileCard from '../components/SecondaryProfileCard'
+import AboutText from '../components/AboutText'
 
 const Test = () => {
   return (
@@ -9,6 +10,7 @@ const Test = () => {
       <Text>Test</Text>
       <SecondaryDocumentCard />
       <SecondaryProfileCard />
+      <AboutText />
     </View>
   )
 }

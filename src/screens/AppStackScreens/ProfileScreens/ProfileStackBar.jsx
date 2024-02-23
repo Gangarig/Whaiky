@@ -10,7 +10,7 @@ import Fonts from '../../../constant/Fonts'
 import {AirbnbRating} from 'react-native-ratings';
 import { shadowStyle } from '../../../constant/Shadow'
 import auth from '@react-native-firebase/auth'
-
+import image from '../../../assets/images/image1.png'
 const ProfileStackBar = ({ navigation }) => {
     const theme = useTheme();
     const { currentUser } = useAuth();
@@ -23,7 +23,7 @@ const ProfileStackBar = ({ navigation }) => {
 
         return (
             <TouchableOpacity onPress={() => handlePress(item)} style={containerStyle}>
-                {isActive ? (
+                {/* {isActive ? (
                     <LinearGradient
                         style={styles.gradientWrapper}
                         start={{ x: 0, y: 0 }}
@@ -33,12 +33,12 @@ const ProfileStackBar = ({ navigation }) => {
                         <FontAwesomeIcon icon={icon} size={25} color={theme.white} />
                         <Text style={[styles.text, { color: theme.white }]}>{label}</Text>
                     </LinearGradient>
-                ) : (
+                ) : ( */}
                     <View style={styles.default}>
                         <FontAwesomeIcon icon={icon} size={24} color={theme.text} />
                         <Text style={styles.text}>{label}</Text>
                     </View>
-                )}
+                {/* )} */}
             </TouchableOpacity>
         );
     };
@@ -52,40 +52,39 @@ const ProfileStackBar = ({ navigation }) => {
         <View style={styles.container}>
             <LinearGradient
                 colors={[theme.secondary, theme.primary]}
-                start={{ x: -.3, y: 0 }}
+                start={{ x: .2, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.profileContainer}
             >   
                 <View style={styles.profileWrapper}>
                     {currentUser?.photoURL ? (
-                        <FastImage
-                            source={{ uri: currentUser.photoURL }}
-                            style={styles.image}
-                            resizeMode="cover"
-                            onError={(e) => {
-                                console.log("Image loading error:", e);
-                            }}
-                        />
-                    ) : (
                         <View style={styles.avatarWrapper}>
-                        <FontAwesomeIcon style={{...shadowStyle}} icon={faUser} size={70} color={theme.white} />
+                            <FastImage
+                                source={image}
+                                style={styles.image}
+                                resizeMode={FastImage.resizeMode.cover}
+                            />
+                        </View>
+                    ) : (
+                        <View style={styles.userIconWrapper}>
+                            <FontAwesomeIcon style={{...shadowStyle}} icon={faUser} size={70} color={theme.white} />
                         </View>
                     )}
                     <View style={styles.profileInfo}>
-                        <Text style={styles.infoText}>{currentUser?.firstName} {currentUser?.lastName}</Text>
-                        <Text style={styles.infoText}>Status : {currentUser?.status}</Text>
-                        <View style={styles.rating}>
+                        <Text style={[styles.infoText,{marginTop:0}]}>{currentUser?.firstName} {currentUser?.lastName}</Text>
+                        <Text style={[styles.infoText,{fontSize:12}]}>Status : {currentUser?.status}</Text>
+                        <View style={styles.ratingWrapper}>
                             {currentUser?.averageRating ? (
                                 <TouchableOpacity style={styles.rating} onPress={()=>navigation.navigate('Reviews')} >
                                     <AirbnbRating   
                                         count={5}
                                         defaultRating={currentUser?.averageRating > 1 ? currentUser?.averageRating: 1}
-                                        size={20}
+                                        size={15}
                                         showRating={false}
                                         isDisabled={true}
                                         unSelectedColor={theme.white}
                                     />
-                                    <Text style={styles.infoText}>({currentUser?.ratingCount} Reviews) </Text>
+                                    <Text style={[styles.infoText,{fontSize:12,marginTop:0}]}>({currentUser?.ratingCount} Reviews) </Text>
                                 </TouchableOpacity>
                             ):(
                                 <View style={styles.rating}>
@@ -137,10 +136,9 @@ const getStyles = (theme) => {
     },
     barItems: {
         width: '100%',
-        paddingVertical: 20,
-        alignItems: 'center',
+        paddingTop: 10,
+        paddingLeft: 31,
     },
-
     wrapper: {
       flexDirection: 'row',
       gap: 20,
@@ -155,31 +153,30 @@ const getStyles = (theme) => {
       fontStyle: "normal",
       paddingTop: 2,
       color: theme.text,
-      paddingLeft: 10,
     },
     gradientWrapper: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 20,
+      gap: 31,
       borderRadius: 5,
+      marginVertical: 8,
+      paddingVertical: 8,
       width: '100%',
-      paddingHorizontal: 15,
-      paddingVertical: 10,
       borderColor: theme.black,
       borderWidth: .5,
     },
     default: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 20,
+      gap: 31,
       borderRadius: 10,
       width: '100%',
-      paddingHorizontal: 15,
-      paddingVertical: 10,
+      marginVertical: 8,
+      paddingVertical: 8,
     },
     profileContainer: {
       width: '100%',
-      height: 200,
+      height: 226,
       alignItems: 'center',
       justifyContent: 'center',
       padding: 20,
@@ -188,32 +185,47 @@ const getStyles = (theme) => {
         flexDirection: 'row',
     },
     profileInfo: {
-        marginLeft: 20,
-        justifyContent: 'space-around',
+        marginLeft: 18,
+        paddingVertical: 5,
+        height: '100%',
+        width: 200,
+        alignItems: 'flex-start',
+    },
+    avatarWrapper: {
+        width: 100,
         height: 100,
-        
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 12,
+        overflow: 'hidden',
+    },
+    userIconWrapper:{ 
+        width: 100,
+        height: 100,
+        padding: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: .5,
+        borderColor: theme.white,
+        borderRadius: 12,
+      }
+    ,
+    ratingWrapper: {
+        marginTop: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     image: {
         width: 100,
         height: 100,
-        borderRadius: 50,
-        borderWidth: 2,
-        borderColor: theme.white,
     },
     rating: {
         flexDirection: 'row',
         alignItems: 'center',
     },
-    avatarWrapper: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 100,
-        width: 100,
-        borderWidth: .5,
-        borderRadius : 10,
-        borderColor: theme.white,
-    },
+
     infoText: {
+        marginTop: 12,
         color: theme.white,
         fontSize: 16,
     },
@@ -223,11 +235,11 @@ const getStyles = (theme) => {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '90%',
-        padding: 10,
+        paddingHorizontal: 10,
     },
     footerText: {
         color: theme.text,
-        fontSize: 16,
+        fontSize: 12,
     },
   });
   }

@@ -21,12 +21,14 @@ import { shadowStyle } from '../../../../constant/Shadow';
 import { useTheme } from '../../../../context/ThemeContext';
 import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 
+
 const Certificate = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [certificateImage, setCertificateImage] = useState(null);
   const [certificateDetails, setCertificateDetails] = useState({
     title: '',
     description: '',
+    typeOfDoc: 'certificate',
   });
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -83,6 +85,7 @@ const Certificate = ({ navigation }) => {
       const certificateData = {
         ...certificateDetails,
         imageUrl: certificateImageUrl,
+        timeStamp: firestore.FieldValue.serverTimestamp(),
       };
   
       // Store data in Firestore

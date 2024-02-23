@@ -23,6 +23,7 @@ import { shadowStyle } from '../../../../constant/Shadow';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '../../../../context/ThemeContext';
 
+
 const DocumentUpload = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [imageFront, setImageFront] = useState(null);
@@ -155,6 +156,8 @@ const DocumentUpload = ({ navigation }) => {
         frontImage: frontImageUri,
         backImage: backImageUri,
         status: 'pending',
+        typeOfDoc: 'document',
+        timeStamp: firestore.FieldValue.serverTimestamp(),
       };
 
       // Store data in Firestore
