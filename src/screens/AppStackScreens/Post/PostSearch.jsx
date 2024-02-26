@@ -172,7 +172,7 @@ const PostSearch = ({ navigation }) => {
         <BlurView
         style={styles.blur}
         blurType="light"
-        blurAmount={5}
+        blurAmount={2}
         reducedTransparencyFallbackColor="white"
         />
     )}
@@ -336,6 +336,7 @@ const PostSearch = ({ navigation }) => {
                 onSave={(selectedCountry, selectedState, selectedCity) => {
                   handleLocationSave(selectedCountry, selectedState, selectedCity);
                   setLocationModalVisible(false); 
+                  setBlur(false);
                 }}
                 onClose={() => {
                 setLocationModalVisible(false)

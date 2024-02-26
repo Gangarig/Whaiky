@@ -20,7 +20,7 @@ const TwoSelectButtonGradient = ({ onPressPrimary, onPressSecondary, primary, se
   
   // Function to render button with conditional gradient
   const renderButton = (label, isActive, onPress) => {
-    const gradientColors = isActive ? [theme.secondary, theme.primary] : [theme.background, theme.background];
+    const gradientColors = isActive ? [theme.primary, theme.secondary] : [theme.background, theme.background];
     return (
       <TouchableOpacity onPress={onPress} style={styles.button}>
         <LinearGradient
@@ -56,7 +56,6 @@ const getStyles = (theme) => StyleSheet.create({
     marginVertical: 10,
     width: '100%',
     overflow: 'hidden',
-    paddingHorizontal: 15,
   },
   buttonTypeBox: {
     flexDirection: 'row',

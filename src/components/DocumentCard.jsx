@@ -10,6 +10,20 @@ import { useTheme } from '../context/ThemeContext';
 const DocumentCard = ({ item ,onApprove , onDeny}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
+  const formatDateTime = (date) => {
+    if (!date) return "N/A";
+
+    let day = date.getDate().toString().padStart(2, '0');
+    let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero indexed
+    let year = date.getFullYear();
+    let hours = date.getHours().toString().padStart(2, '0');
+    let minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${day}/${month}/${year}, ${hours}:${minutes}`;
+  };
+  const timeStampDate = item.timeStamp ? new Date(item.timeStamp._seconds * 1000) : null;
+  const formattedDateTime = formatDateTime(timeStampDate);
+
   return (
     <View style={styles.container}>
       <LinearGradient

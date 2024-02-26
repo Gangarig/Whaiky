@@ -15,26 +15,51 @@ const LegalInfo = ({navigation}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
 
-  useEffect(() => {
-    const userDocRef = firestore().collection('users').doc(currentUser.uid);
-    // Subscribe to real-time updates for documents
-    const documentsListener = userDocRef.collection('documents').onSnapshot((querySnapshot) => {
-      const documentsData = querySnapshot.docs.map((doc) => doc.data());
-      setDocuments(documentsData);
-    });
 
-    // Subscribe to real-time updates for certificates
-    const certificatesListener = userDocRef.collection('certificates').onSnapshot((querySnapshot) => {
-      const certificatesData = querySnapshot.docs.map((doc) => doc.data());
-      setCertificates(certificatesData);
-    });
+const convertTimestamp = (timestamp) => {
+  return timestamp ? new Date(timestamp.seconds * 1000) : null;
+};
 
-    // Unsubscribe listeners when the component unmounts
-    return () => {
-      documentsListener();
-      certificatesListener();
-    };
-  }, [currentUser]);
+useEffect(() => {
+  const userDocRef = firestore().collection('users').doc(currentUser.uid);
+
+
+  const documentsListener = userDocRef.collection('documents').onSnapshot((querySnapshot) => {
+    const documentsData = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        dateOfIssue: convertTimestamp(data.dateOfIssue)?.toLocaleDateString(),
+        dateOfExpiry: convertTimestamp(data.dateOfExpiry)?.toLocaleDateString(),
+        timeStamp: convertTimestamp(data.timeStamp)?.toLocaleDateString(),
+      };
+    });
+    console.log('documentsData', documentsData);
+    setDocuments(documentsData);
+  });
+
+
+  const certificatesListener = userDocRef.collection('certificates').onSnapshot((querySnapshot) => {
+    const certificatesData = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        timeStamp: convertTimestamp(data.timeStamp)?.toLocaleDateString(),
+      };
+    });
+    setCertificates(certificatesData);
+  });
+
+  // Cleanup function
+  return () => {
+    documentsListener();
+    certificatesListener();
+  };
+}, [currentUser.uid]);
+
+  
 
   return (
     <View style={styles.container}>

@@ -10,7 +10,7 @@ const AboutText = ({userUid}) => {
     const theme = useTheme();
     const style = getStyles(theme);
     const [aboutText, setAboutText] = useState(null)
-
+    const [text, setText] = useState('')
     useEffect(() => {
         fetchAboutText();
     }, [])
@@ -31,7 +31,7 @@ const AboutText = ({userUid}) => {
         }
     }
     const handleAboutText = () => {
-        if(!aboutText){
+        if(!text){
             showMessage({
                 message: "Please Enter About Text",
                 type: "danger",
@@ -43,24 +43,25 @@ const AboutText = ({userUid}) => {
         .collection('users')
         .doc(userUid)
         .update({
-            about: aboutText
+            about: text,
         })
         .then(() => {
             console.log('About Text updated!');
         });
-        setAboutText(null);
+        setText('')
         showMessage({
             message: "About Text Updated",
             type: "success",
           });
-        }
-        catch(e){
+        }catch(e){
             showMessage({
                 message: "Error",
                 description: e,
                 type: "danger",
                 });
             console.log(e)
+        }finally{
+            fetchAboutText();
         }
     }
 
@@ -86,7 +87,7 @@ const AboutText = ({userUid}) => {
             multiline={true}
             placeholder="About Text"
             style={style.input}
-            onChangeText={text => setAboutText(text)}
+            onChangeText={text => setText(text)}
             />
             <PrimaryButton text="Add About Text" onPress={() => handleAboutText()} />
             </View> 
@@ -100,7 +101,6 @@ const getStyles = theme => StyleSheet.create({
     aboutWrapper:{
         width:'100%',
         marginTop:16,
-        paddingHorizontal:15,
         backgroundColor:theme.white,    
     },
     aboutTitle:{

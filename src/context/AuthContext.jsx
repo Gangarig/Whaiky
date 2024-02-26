@@ -17,25 +17,30 @@ export const AuthProvider = ({ children }) => {
   const [showTermsModal, setShowTermsModal] = useState(false); 
   const [showLoading, setShowLoading] = useState(false); 
 
+
   useEffect(() => {
     const unsubscribeAuth = auth().onAuthStateChanged(async (user) => {
       if (user) {
         const userRef = firestore().collection('users').doc(user.uid);
-        
+        const documentRef = firestore().collection('users').doc(user.uid).collection('documents');
         const unsubscribeUserDoc = userRef.onSnapshot(async (docSnapshot) => {
           if (docSnapshot.exists) {
             const userData = docSnapshot.data();
-
-            // Check if TermsAndConditions is not agreed
             if (userData.TermsAndConditions !== 'agreed') {
-              setShowTermsModal(true); // Show the TermsModal
+              setShowTermsModal(true);
             }
-
+            // Only update status if not admin
+            if (userData.status !== 'admin') {
+            const docSnapshot = await documentRef.where('status', '==', 'approved').get();
+            if (!docSnapshot.empty && userData.status !== 'contractor') {
+            // User has at least one approved document and is not already a contractor
+            await userRef.update({ status: 'contractor' });
+            userData.status = 'contractor';
+            }
+          }
             setCurrentUser({ ...userData, uid: user.uid });
           } else {
-            // If the user document does not exist, consider showing the TermsModal as part of the user onboarding
             setShowTermsModal(true);
-            // Set default user data here as before
           }
           setLoading(false);
         });
@@ -51,7 +56,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const handleSignOut = async () => {
-    // Your existing sign-out logic
+    try {
+      await auth().signOut();
+    } catch (error) {
+      showMessage({ message: 'Error signing out', type: 'danger' });
+    }
   };
 
   const handleAcceptTerms = async () => {
@@ -59,7 +68,7 @@ export const AuthProvider = ({ children }) => {
       await firestore().collection('users').doc(currentUser.uid).update({
         TermsAndConditions: 'agreed',
       });
-      setShowTermsModal(false); // Hide the modal after acceptance
+      setShowTermsModal(false); 
       showMessage({ message: 'Terms and Conditions accepted', type: 'success' });
     }
   };

@@ -66,7 +66,6 @@ const getStyles = (theme) => StyleSheet.create({
         overflow:'hidden',
         width:'100%',
         height:60,
-        maxWidth:360,
       },
     activeBtnType:{
         backgroundColor:theme.primary,

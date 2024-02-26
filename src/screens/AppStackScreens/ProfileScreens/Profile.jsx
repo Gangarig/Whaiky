@@ -25,7 +25,6 @@ const Profile = ({navigation}) => {
         querySnapshot.forEach(documentSnapshot => {
           const docData = documentSnapshot.data();
           const createdAtDate = docData.createdAt ? new Date(docData.createdAt._seconds * 1000) : null;
-          
           documents.push({
             ...docData,
             key: documentSnapshot.id,
@@ -44,8 +43,8 @@ const Profile = ({navigation}) => {
     <ScrollView style={style.container}
       showsHorizontalScrollIndicator  = {false}
       showsVerticalScrollIndicator = {false}
-      contentContainerStyle={{alignItems:'center',justifyContent:'center',paddingTop:20}}
-    >
+      contentContainerStyle={style.ScrollView}
+    > 
       <SecondaryProfileCard profile={currentUser} navigation={navigation}/>
       <AboutText userUid={currentUser.uid}/>
       <View style={style.documents}>
@@ -54,6 +53,7 @@ const Profile = ({navigation}) => {
           <SecondaryDocumentCard
             key={index}
             item={doc}
+            navigation={navigation}
             onPress={() => navigation.navigate('DocumentDetail', { doc })}
           />
         ))}
@@ -73,7 +73,14 @@ const getStyles = (theme) => {
     container: {
       flex: 1,
       backgroundColor: theme.background,
+      padding : 15
     },
+    ScrollView: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+    },
+
     documents: {
       marginTop: 20,
       flexDirection: 'column',

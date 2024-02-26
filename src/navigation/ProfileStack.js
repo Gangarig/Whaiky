@@ -14,6 +14,10 @@ import Contractor from "../screens/AppStackScreens/ProfileScreens/Contractor/Con
 import Reviews from "../screens/AppStackScreens/ProfileScreens/Contractor/Reviews";
 import Feedback from "../screens/AppStackScreens/ProfileScreens/Contractor/Feedback";
 import ContractorDetail from "../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail";
+import DashBoard from "../screens/AppStackScreens/AdminScreens/DashBoard";
+import SubmissionDetail from "../screens/AppStackScreens/AdminScreens/SubmissionDetail";
+import LegalInfo from "../screens/AppStackScreens/ProfileScreens/Contractor/LegalInfo";
+import PostDetail from "../screens/AppStackScreens/Post/PostDetail";
 
 const ProfileStack = createStackNavigator();
 
@@ -32,6 +36,20 @@ function ProfileStackScreen({ navigation }) {
         component={Profile} 
         options={({navigation}) => ({
           header: (props) => <StackHeader title="Profile" navigation={navigation} isHomeScreen={false} {...props} />,
+        })}
+      />
+      <ProfileStack.Screen 
+        name="Dashboard" 
+        component={DashBoard} 
+        options={({navigation}) => ({
+          header: (props) => <StackHeader title="Dashboard" navigation={navigation} isHomeScreen={false} {...props} />,
+        })}
+      />
+      <ProfileStack.Screen
+        name="SubmitDetail"
+        component={SubmissionDetail}
+        options={({ navigation }) => ({
+          header: (props) => <StackHeader title="Submission Detail" navigation={navigation} isHomeScreen={false} {...props} />,
         })}
       />
       <ProfileStack.Screen 
@@ -109,6 +127,20 @@ function ProfileStackScreen({ navigation }) {
         component={Reviews} 
         options={({navigation}) => ({
           header: (props) => <StackHeader title="Reviews" navigation={navigation} isHomeScreen={false} {...props} />,
+        })}
+      />
+        <ProfileStack.Screen 
+        name="LegalInfo" 
+        component={LegalInfo} 
+        options={({navigation}) => ({
+          header: (props) => <StackHeader title="Legal Info" navigation={navigation} isHomeScreen={false} {...props} />,
+        })}
+      />
+      <ProfileStack.Screen 
+        name="PostDetail" 
+        component={PostDetail} 
+        options={({navigation}) => ({
+          header: (props) => <StackHeader title="Post Detail" navigation={navigation} isHomeScreen={false} {...props} />,
         })}
       />
     </ProfileStack.Navigator>

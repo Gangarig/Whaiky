@@ -1,16 +1,30 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import SecondaryDocumentCard from '../components/SecondaryDocumentCard'
-import SecondaryProfileCard from '../components/SecondaryProfileCard'
-import AboutText from '../components/AboutText'
+import React, { useState } from 'react'
+import { Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+import { View } from 'react-native'
 
 const Test = () => {
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+
+
   return (
-    <View style={{flex:1,justifyContent:'center',alignItems:'center',width:'100%'}}>
-      <Text>Test</Text>
-      <SecondaryDocumentCard />
-      <SecondaryProfileCard />
-      <AboutText />
+    <View style={style.co}>
+      
+      <Button title="Open" onPress={() => setOpen(true)} />
+      <DatePicker
+        modal
+        open={open}
+        mode='date'
+        date={date}
+        onConfirm={(date) => {
+          setOpen(false)
+          setDate(date)
+        }}
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
     </View>
   )
 }

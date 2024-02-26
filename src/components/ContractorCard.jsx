@@ -99,7 +99,7 @@ const getStyles = (theme) => {
       height: 100,
       borderRadius: 10,
       overflow: 'hidden',
-      marginVertical: 10,
+      // marginVertical: 10,
     },
     gradient: {
       flex: 1,  

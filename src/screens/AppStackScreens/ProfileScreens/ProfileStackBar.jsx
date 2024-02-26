@@ -51,7 +51,7 @@ const ProfileStackBar = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <LinearGradient
-                colors={[theme.secondary, theme.primary]}
+                colors={[theme.primary, theme.secondary]}
                 start={{ x: .2, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.profileContainer}
@@ -96,13 +96,14 @@ const ProfileStackBar = ({ navigation }) => {
                 </View>
             </LinearGradient>
             <View style={styles.barItems}>
+                {currentUser && currentUser.status === 'admin' && (
+                    <BarItem item="Dashboard" icon='fa-solid fa-desktop' label="Dashboard" />
+                )}
                 <BarItem item="MyPosts" icon='fa-solid fa-list' label="My Posts" />
                 <BarItem item="Contractors" icon='fa-solid fa-user-group' label="Contractors" />
                 <BarItem item="ProfileScreen" icon='fa-solid fa-gear' label="My Whaiky" />
                 <BarItem item="Marklist" icon='fa-regular fa-star' label="Marklist" />
-                {currentUser && currentUser.status === 'admin' && (
-                    <BarItem item="Dashboard" icon={faDesktop} label="Dashboard" />
-                )}
+                <BarItem item="Services" icon='fa-regular fa-star' label="Services" />
             </View>
             <View style={styles.barFooter}>
                 <TouchableOpacity style={styles.barText}

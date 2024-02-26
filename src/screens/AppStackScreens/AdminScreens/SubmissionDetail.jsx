@@ -19,16 +19,19 @@ const SubmissionDetail = ({ navigation, route }) => {
         .collection('documents');
   
       const docSnap = await documentRef.get();
-      const documents = [];
-      docSnap.forEach((doc) => {
-        if (doc.exists) {
-          // Add the document ID to the document data
-          const docData = doc.data();
-          documents.push({ ...docData, docId: doc.id });
-        }
+      const documents = docSnap.docs.map(doc => {
+        const docData = doc.data();
+        // Convert timestamps to Date objects
+        return {
+          ...docData,
+          docId: doc.id,
+          dateOfExpiry: docData.dateOfExpiry ? new Date(docData.dateOfExpiry.seconds * 1000).toLocaleDateString() : null,
+          dateOfIssue: docData.dateOfIssue ? new Date(docData.dateOfIssue.seconds * 1000).toLocaleDateString() : null,
+          timeStamp: docData.timeStamp ? new Date(docData.timeStamp.seconds * 1000).toLocaleDateString() : null,
+        };
       });
+  
       setDocs(documents);
-
     } catch (error) {
       console.error("Error fetching documents: ", error);
       showMessage({

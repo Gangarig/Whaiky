@@ -72,7 +72,9 @@ const Contractor = ({navigation}) => {
 
     const renderItem = ({ item }) => {
       return (
-        <ContractorCard navigation={navigation} selectedUser={item} currentUser={currentUser} onPress={()=>navigateToContractorProfile(item.uid)}/>
+        <View style={{paddingVertical:5}}>
+          <ContractorCard navigation={navigation} selectedUser={item} currentUser={currentUser} onPress={()=>navigateToContractorProfile(item.uid)}/>
+        </View>
       );
     };
     
@@ -80,7 +82,7 @@ const Contractor = ({navigation}) => {
   return (
     <View style={styles.container}>
       <FlatList
-        style={{ width: '100%' }}
+        style={{ width: '100%',paddingTop:10 }}
         data={contractorData}
         renderItem={renderItem}
         keyExtractor={(item, index) => item.id || index.toString()}

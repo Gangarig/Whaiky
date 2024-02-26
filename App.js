@@ -9,7 +9,7 @@ import { ChatContextProvider } from './src/context/ChatContext';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
-import {  faArrowRight, faArrowUp, faBars, faCamera, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faClipboardList, faDeleteLeft, faDesktop, faEnvelopesBulk, faGear, faHouse, faIcons, faIdCard, faImage, faList, faMagnifyingGlass, faMinus, faPaperPlane, faPaperclip, faTrash, faUserGroup, faX , } from '@fortawesome/free-solid-svg-icons'
+import {  faArrowRight, faArrowUp, faBars, faCamera, faCar, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faClipboardList, faDeleteLeft, faDesktop, faEnvelopesBulk, faGear, faHouse, faIcons, faIdBadge, faIdCard, faImage, faList, faMagnifyingGlass, faMinus, faPaperPlane, faPaperclip, faPassport, faTrash, faUserGroup, faX , } from '@fortawesome/free-solid-svg-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Test from './src/screens/Test';
 import { faMessage } from '@fortawesome/free-regular-svg-icons/faMessage'
@@ -21,6 +21,10 @@ import { ThemeProvider } from './src/context/ThemeContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import ProfileStackBar from './src/screens/AppStackScreens/ProfileScreens/ProfileStackBar';
 import TwoSelectButton from './src/components/Buttons/TwoSelectButton';
+import DatePickerComponent from './src/components/DatePicker';
+import DocumentUpload from './src/screens/AppStackScreens/ProfileScreens/Contractor/DocumentUpload';
+import PersonalInfo from './src/screens/AppStackScreens/ProfileScreens/PersonalInfo';
+import Feedback from './src/screens/AppStackScreens/ProfileScreens/Contractor/Feedback';
 library.add(
   fab, faAddressCard,faAddressBook,faFileLines,
   faSquareCheck,faMagnifyingGlass,faBars,
@@ -43,7 +47,8 @@ library.add(
   faHouse,
   faIdCard,faDesktop,faCommentDots,faPenToSquare,
   faUser,faGear,faCheck,faX,faIdCard,faEnvelopesBulk,
-  faImage,faIcons,faClipboardList,faUserGroup,faStar
+  faImage,faIcons,faClipboardList,faUserGroup,faStar,
+  faPassport,faIdBadge,faCar
   );
 
   LogBox.ignoreLogs([
@@ -52,30 +57,24 @@ library.add(
   ]);
 
 export default function App() {
-  const onClose = () => {
-    console.log('Cancel');
-  }
-  const onSave = () => {
-    console.log('Save');
-  }
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}> 
-      <ThemeProvider>   
         <AuthProvider>
+        <ThemeProvider>   
             <ChatContextProvider>
               <FlashMessage position="top" style={{zIndex:9999}}/>
               <SafeAreaView style={{ flex: 1 }}>
                 <NavigationContainer>
                   <MenuProvider>               
-                      <Main />
-                      {/* <Test /> */}
+                    {/* <Main /> */}
+                    <DocumentUpload />
                   </MenuProvider>
                 </NavigationContainer>
               </SafeAreaView>
             </ChatContextProvider>
+            </ThemeProvider>
           </AuthProvider>
-          </ThemeProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>
    

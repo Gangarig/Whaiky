@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,6 @@ import {
   Image,
   TextInput,
   ScrollView,
-  Modal,
 } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { showMessage } from 'react-native-flash-message';
@@ -15,13 +14,13 @@ import CountryPicker from '../../service/CountryPicker';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { useAuth } from '../../../../context/AuthContext';
-import { Global } from '../../../../constant/Global';
-import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
 import { shadowStyle } from '../../../../constant/Shadow';
-import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '../../../../context/ThemeContext';
-import DatePicker from 'react-native-date-picker'
-
+import Fonts from '../../../../constant/Fonts';
+import DatePickerComponent from '../../../../components/DatePicker';
+import TwoSelectButton from '../../../../components/Buttons/TwoSelectButton';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import LinearGradient from 'react-native-linear-gradient';
 
 
 
@@ -212,136 +211,74 @@ const DocumentUpload = ({ navigation }) => {
     });
   };
 
+  const handleDateOfIssue = (date) => {
+    setDateOfIssue(date);
+    console.log(date)
+    setOpen(false)
+  }
+  const handleDateOfExpiry = (date) => {
+    setDateOfExpiry(date);
+    setOpen(false)
+  }
+
   return (
       <ScrollView style={[styles.container]}
         contentContainerStyle={styles.ScrollView}
       >
-        <View style={[styles.LinearGradientWrapper, shadowStyle]}>
-          <LinearGradient
-            colors={[theme.primary, theme.secondary]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={[shadowStyle,styles.inputContainer,
-          ]}
-          >
-          <Text style={[Global.title,styles.title]}>Document Upload</Text>
-          <View style={[styles.docTypeSelection,shadowStyle]}>
-            {['Passport', 'ID', "Driver's License"].map((type) => (
-              <TouchableOpacity
-                key={type}
-                onPress={() => setDocType(type)}
-                style={[
-                  styles.docTypeButton,
-                  docType === type && styles.activeDocTypeButton,
-                ]}
-              >
-                <Text style={[
-                  Global.titleSecondary,styles.titleSecondary,
-                  docType === type && styles.activeDocTypeButton,
-                  ]}>{type}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
+      <View style={styles.docType}>
+        <TouchableOpacity 
+        style={
+          docType === 'Passport' ? styles.activeDoc : styles.doc
+        }
+        onPress={() => setDocType('Passport')}
+        >
+          <FontAwesomeIcon icon='fa-solid fa-passport' size={25} 
+          color={docType === 'Passport' ? theme.primary : theme.white} />
           {docType === 'Passport' && (
-            <TouchableOpacity
-              onPress={() => handleChoosePhoto('front')}
-              style={styles.imageContainer}
-            >
-              {imageFront ? (
-                <Image source={{ uri: imageFront.path }} style={styles.image} />
-              ) : (
-                <Text style={styles.placeholderText}>Select Passport Image</Text>
-              )}
-            </TouchableOpacity>
+            <Text style={styles.docText}>
+              Passport
+            </Text>
           )}
-          {docType !== 'Passport' && (
-            <>
-              <TouchableOpacity
-                onPress={() => handleChoosePhoto('front')}
-                style={styles.imageContainer}
-              >
-                {imageFront ? (
-                  <Image source={{ uri: imageFront.path }} style={styles.image} />
-                ) : (
-                  <Text style={styles.placeholderText}>Select Front Image</Text>
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => handleChoosePhoto('back')}
-                style={styles.imageContainer}
-              >
-                {imageBack ? (
-                  <Image source={{ uri: imageBack.path }} style={styles.image} />
-                ) : (
-                  <Text style={styles.placeholderText}>Select Back Image</Text>
-                )}
-              </TouchableOpacity>
-            </>
-          )}
+        </TouchableOpacity>
+        <TouchableOpacity 
+        style={
+          docType === "ID" ? styles.activeDoc : styles.doc
+        }
+        onPress={() => setDocType('ID')}
+        >
+            <FontAwesomeIcon icon='fa-solid fa-id-badge' size={25} color={docType === 'ID' ? theme.primary : theme.white} />
+        </TouchableOpacity >
+        <TouchableOpacity 
+        style={
+          docType === "Driver's License" ? styles.activeDoc : styles.doc
+        }
+        onPress={() => setDocType("Driver's License")}
+        >
+            <FontAwesomeIcon icon='fa-solid fa-car' size={25} color={docType === "Driver's License" ? theme.primary : theme.white} />  
+        </TouchableOpacity>
+      </View>
+      {docType === 'Passport' && 
+        <TouchableOpacity 
+        onPress={()=>console.log('pressed')}
+        >
+          <LinearGradient 
+          colors={[theme.primary, theme.tertiary]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.imageInput}
+          >
+            <Text style={styles.imageInputText}>
+              Front Image
+            </Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      }
 
-          <TextInput
-            style={Global.input}
-            placeholder={`${docType} Number`}
-            onChangeText={(text) => handleInputChange('number', text)}
-            value={docDetails.number}
-          />
-          <TextInput
-            style={[Global.input]}
-            placeholder="Full Name"
-            onChangeText={(text) => handleInputChange('fullName', text)}
-            value={docDetails.fullName}
-          />
-          {country && <Text style={[Global.titleSecondary,styles.titleSecondary]}>Country of Issue: {country}</Text>}
-          <View style={styles.dateBox}>
-            <Text style={[Global.titleSecondary,styles.titleSecondary]}>Date of Issue:</Text>
-            <View style={styles.dateWrapper}>
-              <DatePicker
-                modal
-                open={open}
-                date={date}
-                onConfirm={(date) => {
-                  setOpen(false)
-                  setDate(date)
-                }}
-                onCancel={() => {
-                  setOpen(false)
-                }}
-              />
-            </View>
-          </View>
-          <View style={styles.dateBox}>
-            <Text style={[Global.titleSecondary,styles.titleSecondary]}>Date of Expiry:</Text>
-            <View style={styles.dateWrapper}>
-              <TouchableOpacity 
-              onPress={() => setOpen(true)}
-              style={styles.dateWrapper}>
-              <Text style={styles.placeholderText}>Select Date</Text>
-              </TouchableOpacity>
-            <DatePicker
-              modal
-              open={open}
-              date={date}
-              onConfirm={(date) => {
-                setOpen(false)
-                setDate(date)
-              }}
-              onCancel={() => {
-                setOpen(false)
-              }}
-            />
-            </View>
-          </View>
-        </LinearGradient>
-        </View>
-      {/* CountryPicker as a modal */}
       <CountryPicker
         onSelect={(selectedCountry) => setCountry(selectedCountry)}
         isModalVisible={isCountryPickerVisible}
         setModalVisibility={setCountryPickerVisible}
       />
-        <PrimaryButton text="Country of Issue " onPress={() => setCountryPickerVisible(true)} />
-        <PrimaryButton text="Upload Document" onPress={uploadData} />
       </ScrollView>
   );
 };
@@ -353,114 +290,51 @@ const getStyles = (theme) => {
     flex: 1,
     width: '100%',
     paddingVertical: 20,
+    paddingHorizontal: 20,
   },
   ScrollView: {
-    flexGrow: 1,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    width: '100%',
-    gap: 20,
-    paddingBottom: 100,
-    backgroundColor: theme.background,
-  },
-  LinearGradientWrapper: {
-    width: '100%',
-    alignItems: 'center',
     justifyContent: 'center',
+
   },
-  docTypeSelection: {
+  docType: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
+    justifyContent: 'space-between',
     width: '100%',
-  },
-  docTypeButton: {
-    padding: 10,
     borderWidth: 1,
-    borderColor: theme.white,
-    borderRadius: 5,
-    backgroundColor: theme.primary,
-  },
-  activeDocTypeButton: {
-    backgroundColor: theme.background,
-    color: theme.black,
-    borderColor: theme.black,
-  },
-  title: {
-    color: theme.white,
-  },
-  titleSecondary: {
-    color: theme.white,
-  },
-  imageContainer: {
-    width: '100%',
-    height: 200,
-    borderWidth: 1.5,
-    ...shadowStyle,
-    borderColor: theme.black,
-    backgroundColor: theme.background,
-    justifyContent: 'center',
+    borderColor: theme.primary,
+    borderRadius: 12,
     alignItems: 'center',
-    borderRadius: 5,
-    marginBottom: 20,
+    backgroundColor: theme.primary,
+    height: 40,
+    overflow: 'hidden',
   },
-  image: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 5,
-  },
-  modalContainer: {
+  doc: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  modalContent: {
-    width: '80%',
-    height: 360,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  modalCloseButton: {
-    marginTop: 20,
-  },
-  dateBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 50,
-    width: 300,
-  },
-  inputContainer: {
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+  activeDoc: {
+    height: '100%',
+    width: '66.66%',
+    backgroundColor: theme.background,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 5,
-    width: '90%',
+    flexDirection: 'row',
   },
-  dateWrapper: {
-    width: 150,
-      height: 50,
-      backgroundColor: theme.background,
-      borderRadius: 5,
-      justifyContent: 'center',
-      alignItems: 'center',
-      ...shadowStyle,
-    },
-  placeholderText: {
+  docText: {
     color: theme.text,
-    fontSize: 16,
+    fontWeight: 'bold',
+    fontFamily: Fonts.primary,
+    fontSize:14,
+    paddingLeft: 20,
+  },
+  imageInput : {
+    width: '100%',
+    height:200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+    marginTop: 16,
   },
     
 });

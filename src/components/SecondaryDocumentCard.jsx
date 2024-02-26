@@ -4,7 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faIdBadge, faFile, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 
-const SecondaryDocumentCard = ({ item }) => {
+const SecondaryDocumentCard = ({ item,navigation }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
 
@@ -28,10 +28,10 @@ const SecondaryDocumentCard = ({ item }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity onPress={()=>navigation.navigate('LegalInfo')} style={styles.container}>
       {item ? (
         <View style={styles.cardWrapper}>
-          {item?.docType === 'document' ? (
+          {item?.typeOfDoc === 'document' ? (
             <View style={styles.cardIcon}>
               <FontAwesomeIcon size={40} color={theme.primary} icon={faIdBadge} />
             </View>
@@ -42,7 +42,7 @@ const SecondaryDocumentCard = ({ item }) => {
           )}
           <View style={styles.cardInfo}>
             <Text style={[styles.cardText,{fontWeight:'bold'}]}>
-              {capitalizeFirstLetter(item?.docType)}: {item?.type} 
+              {capitalizeFirstLetter(item?.typeOfDoc)}: {item?.type} 
             </Text>
             <Text style={styles.cardText}>{formattedDateTime}</Text>
           </View>
@@ -55,7 +55,7 @@ const SecondaryDocumentCard = ({ item }) => {
           <Text style={styles.errorText}>No Document Available</Text>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -68,7 +68,6 @@ const getStyles = (theme) => {
       backgroundColor: theme.backgroundColor,
       borderRadius: 12,
       marginVertical: 6,
-      paddingHorizontal: 15,
       overflow: 'hidden',
     },
     cardWrapper: {

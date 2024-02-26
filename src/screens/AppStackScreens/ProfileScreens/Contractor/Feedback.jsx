@@ -3,19 +3,17 @@ import React , { useState , useEffect } from 'react'
 import { useTheme } from '../../../../context/ThemeContext'
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
-import { shadowStyle } from '../../../../constant/Shadow';
 import Fonts from '../../../../constant/Fonts';
 import { useAuth } from '../../../../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
 import ContractorCard from '../../../../components/ContractorCard';
 import { FlatList } from 'react-native';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { ActivityIndicator } from 'react-native';
 
 
 
-const Feedback = ({navigation,route}) => {
+const Feedback = ({route,navigation}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
   const { currentUser } = useAuth();
@@ -78,13 +76,14 @@ const Feedback = ({navigation,route}) => {
     }
   };
 
-  useEffect(() => {
-    fetchAndSetFeedbacks();
-    fetchContractor();
-  }, []);
 
+  useEffect(() => {
+    fetchContractor();
+    fetchAndSetFeedbacks();
+  }, []);
+    
   const handleLoadMore = () => {
-    console.log("Loading more feedbacks...");
+  
     if (!loading) {
       fetchAndSetFeedbacks();
     }
@@ -167,56 +166,83 @@ const Feedback = ({navigation,route}) => {
       });
     }
 };
-
-  
-  return (
-    <View style={styles.container}>
+  const handeNavigateToContractorDetail = (id) => {
+    navigation.navigate('ContractorDetail',{id:id})
+  }
+    const listHeader = () => {
+      return (
       <View style={styles.header}>
-        <ContractorCard props={contractor} onPress={()=>{}}/>
-      </View>
-      <View style={styles.feedBackInput}>
-        <TextInput
-          style={[styles.input]}
-          placeholder="Write your feedback"
-          multiline
-          numberOfLines={2}
-          value={comment}
-          onChangeText={setComment}
-        />
-        <View style={styles.rating}>
-        <AirbnbRating
-          count={5}
-          defaultRating={3}
-          size={17}
-          showRating={false}
-          onFinishRating={setRating}
-        />
-        <PrimaryButton text="SUBMIT" onPress={()=>handleSubmit(currentUser)}/>
+          <ContractorCard 
+          selectedUser={contractor}
+          currentUser={currentUser}
+          navigation={navigation}
+          onPress={()=>handeNavigateToContractorDetail(contractor.uid)}
+          />
+        {currentUser?.uid === Id ? ( null) : (
+        <View style={styles.feedBackInput}>
+          <View style={styles.label}>
+              <Text style={styles.feedBackText}>Review</Text> 
+          </View>
+            <TextInput
+              style={[styles.input]}
+              placeholder="Write your feedback"
+              multiline
+              numberOfLines={10}
+              value={comment}
+              onChangeText={setComment}
+              maxLength={200}
+            />
+          <View style={styles.rating}>
+            <View style={styles.ratingWrapper}>
+            <AirbnbRating
+              count={5}
+              defaultRating={3}
+              size={25}
+              showRating={false}
+              onFinishRating={setRating}
+            />
+            </View>
+            <PrimaryButton text="SUBMIT" onPress={()=>handleSubmit(contractor)}/>
+          </View>
+        </View>
+        )}
+        <View style={styles.listLable}>
+          <Text style={styles.feedBackText}>Reviews</Text>
         </View>
       </View>
-      <View style={styles.feedBacks}>
+      )
+    }
+  return (
+    <View style={styles.container}>
         <FlatList
           data={feedbacks}
           style={styles.flatList}
+          ListHeaderComponent={listHeader}
           renderItem={({ item }) => (
             <View style={styles.feedBack}>
-              <Text style={styles.feedBackText}>{item.comment}</Text>
-              <Rating
-                type='star'
-                ratingCount={5}
-                imageSize={12}
-                startingValue={item.rating}
-                readonly
-              />
+              <Text style={styles.feedBackComment}
+              >{item.comment}
+              </Text>
+                <View style={styles.listRatingWrapper}>
+                  <Rating
+                    type='star'
+                    ratingCount={5}
+                    imageSize={15}
+                    startingValue={item.rating}
+                    readonly
+                    style={styles.ratingStar}
+                  />
+                </View> 
             </View>
           )}
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
+          refreshing={loading}
+          onRefresh={fetchAndSetFeedbacks}
           onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5} // How far from the end to trigger the load more
+          onEndReachedThreshold={0.5} 
           ListFooterComponent={() => loading && hasMore ? <ActivityIndicator size="large" /> : null}
         />
-      </View>
     </View>
   )
 }
@@ -226,63 +252,70 @@ const getStyles = (theme) => {
     container: {
       flex: 1,
       backgroundColor: theme.white,
-      alignItems: 'center',
-    },
-    feedBackInput:{
-      width:'100%',
-      alignItems:'flex-end',
-      justifyContent:'center',
-      paddingHorizontal:20,
-      borderBottomColor:theme.primary,
-      borderBottomWidth:1,
-      paddingBottom:10,
-    } ,
-    input:{
-      width:'100%', 
-      backgroundColor:theme.backgroundColor,
-      borderWidth:1,
-      borderColor:theme.primary,
-      borderRadius:5,
-      height:50,
-      padding:10,
-      marginBottom:20,
-    },
-    rating:{
-      flexDirection:'row',
-      alignItems:'center',
-      justifyContent:'space-between',
-      width:'100%',
-    },
-    header: {
-      width : '100%',
-      padding: 10,
-    },
-    feedBacks: {
-      flex: 1,
-      width: '100%',
+      paddingHorizontal: 14,
+      paddingTop: 10,
     },
     flatList: {
-      flex: 1,
-      paddingHorizontal: 10,
-    },
-    feedBack: {
       width: '100%',
-      padding: 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      borderBottomWidth: 1,
-      borderBottomColor: theme.primary,
-      alignItems: 'center',
+    },
+    feedBackInput: {
+      width: '100%',
+    },
+    label: {
+      marginTop: 18,
+      marginBottom: 6,
     },
     feedBackText: {
       fontFamily: Fonts.primary,
-      fontSize: 15,
-      fontWeight: "400",
-      fontStyle: "normal",
+      fontSize: 14,
       color: theme.text,
-      marginBottom: 5,
-      width: '80%',
     },
+    input: {
+      borderWidth: 1,
+      borderColor: theme.primary,
+      height: 124,
+      borderRadius: 12,
+      textAlignVertical: 'top',
+      paddingVertical: 5,
+      paddingHorizontal: 18,
+      fontFamily: Fonts.primary,
+      fontSize: 14,
+      color: theme.text,
+    },
+    rating: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: 10,
+    },
+    ratingWrapper: {
+      paddingLeft: 20,
+    },
+    feedbacks: {
+      marginTop: 20,
+      flex: 1,
+    },
+    listLable: {
+      width: '100%',
+      borderBottomColor: theme.primary,
+      borderBottomWidth: 1,
+      paddingVertical: 8,
+    },
+    feedBack: {
+      width: '100%',
+      borderBottomColor: theme.primary,
+      borderBottomWidth: 1,
+      paddingVertical: 10,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+    },
+    feedBackComment: {
+      width: '70%',
+    },
+
   });
 }
 

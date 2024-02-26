@@ -19,14 +19,14 @@ const SecondaryProfileCard = ({profile,navigation}) => {
       if(currentUser?.uid === uid){
         navigation.navigate('Reviews')
       } else {
-        navigation.navigate('Feedback', {id: uid})
+        navigation.navigate('Feedback', {Id: uid})
       } 
     }
     
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[theme.secondary, theme.primary]}
+        colors={[theme.primary, theme.secondary]}
         start={{ x: .3, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.profileContainer}
@@ -34,7 +34,7 @@ const SecondaryProfileCard = ({profile,navigation}) => {
           <View style={styles.cardHeader}>
             {currentUser?.uid === profile?.uid && (
             <TouchableOpacity style={styles.editBtn} onPress={() => navigation.navigate('PersonalInfo')}>
-              <FontAwesomeIcon icon={faPen} color={theme.secondary} size={15} />
+              <FontAwesomeIcon icon={faPen} color={theme.primary} size={15} />
             </TouchableOpacity>
             )}
               {profile && profile?.photoURL ? (
@@ -64,7 +64,7 @@ const SecondaryProfileCard = ({profile,navigation}) => {
                 ellipsizeMode='tail'
                 style={[styles.cardInfoText,styles.marginVertical]}
                 numberOfLines={1}  >
-                {profile?.status || "No Status Currently" }
+                Status: {profile?.status || "No Status Currently" }
               </Text>
               {profile?.services && profile?.services.length > 0 ? (
               <Text
@@ -118,7 +118,6 @@ const getStyles = theme => StyleSheet.create({
         alignItems: 'center',
         backgroundColor: theme.background,
         width: '100%',
-        paddingHorizontal: 14,
     },
     profileContainer: {
         width: '100%',
@@ -214,7 +213,7 @@ const getStyles = theme => StyleSheet.create({
       zIndex: 999,
       backgroundColor: theme.background,
       borderWidth: 1,
-      borderColor: theme.secondary,
+      borderColor: theme.primary,
       borderRadius: 15,
       padding : 7,
     },

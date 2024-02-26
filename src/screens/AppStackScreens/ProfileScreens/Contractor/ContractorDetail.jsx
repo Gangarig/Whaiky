@@ -13,6 +13,7 @@ import { ActivityIndicator } from 'react-native';
 import { RefreshControl } from 'react-native';
 import AboutText from '../../../../components/AboutText';
 import SecondaryProfileCard from '../../../../components/SecondaryProfileCard';
+import TwoSelectButton from '../../../../components/Buttons/TwoSelectButton';
 const ContractorDetail = ({ navigation, route }) => {
     const { id } = route.params;
     const theme = useTheme();
@@ -79,8 +80,8 @@ const ContractorDetail = ({ navigation, route }) => {
     
     const renderService = (service) => (
         <View style={styles.serviceContainer} key={`${service.categoryId}-${service.optionId}`}>
-          <Text style={styles.serviceText}>      {service.categoryText}</Text>
-          <Text style={styles.optionText}>       {service.optionText}</Text>
+          <Text style={styles.categoryTitle}>{service.categoryText}</Text>
+          <Text style={styles.optionText}>{service.optionText}</Text>
         </View>
       );
 
@@ -92,7 +93,7 @@ const ContractorDetail = ({ navigation, route }) => {
         if(currentUser?.uid === uid){
             navigation.navigate('Review');
         }else{
-            navigation.navigate('Feedback',{id:uid});
+            navigation.navigate('Feedback', {Id: uid});
         }
     }
     const renderHeader = () => (
@@ -101,21 +102,21 @@ const ContractorDetail = ({ navigation, route }) => {
             {currentUser?.about && (
             <AboutText text={contractor?.about} userUid={id} />
             )}
-        <View style={styles.posts}>
-            <Text style={styles.aboutMeTitle}>More from {contractor?.displayName || 'Contractor'}
-            </Text>
-            <Text style={styles.servicesTitle}>Services I am Offering</Text>
-            {contractor?.services && contractor.services.length > 0 ? (
-                contractor.services.map(renderService)
-            ) : (
-                <Text style={styles.servicesTitle}>No services found</Text>
-            )}
-        </View>
-        <View style={styles.btnContainer}>
-            <PrimaryButton text="Contact" onPress={()=>handleContact(currentUser,contractor)}/>
-            <PrimaryButton text="FeedBacks" onPress={()=>handleFeedBack(contractor.uid)}/>
-        </View>
-            {myPosts.length > 0 && <Text style={styles.aboutMeTitle}>My Posts</Text>}
+            <View style={styles.posts}>
+                <Text style={[styles.title,styles.border]}>Offering Services</Text>
+                {contractor?.services && contractor.services.length > 0 ? (
+                    contractor.services.map(renderService)
+                ) : (
+                    <Text style={styles.title}>No services found</Text>
+                )}
+            </View>
+            <TwoSelectButton   
+                primary="Contact"
+                secondary="Feedback"
+                onPressPrimary={()=>handleContact(currentUser,contractor)}
+                onPressSecondary={()=>handleFeedBack(contractor.uid)}
+            />
+            {myPosts.length > 0 && <Text style={styles.title}>Posts of {currentUser?.displayName}</Text>}
         </View>
     );
     const renderItem = ({ item }) => {
@@ -154,109 +155,20 @@ const getStyles = (theme) => {
             flex: 1,
             backgroundColor: theme.background,  
             paddingVertical: 10,  
-        },
-        cover: {
-            width: '100%',
-            height: 300,
-        },
-        coverImage: {
-            width: '100%',
-            height: '100%',
-        },
-        gradient: {
-            width: '100%',
-            height: 100,
-            paddingVertical: 10,
-            paddingHorizontal: 20,
-            flexDirection: 'row',
-        },
-        avatar: {
-            width: 80,
-            height: 80,
-            borderRadius: 60,
-            borderWidth: 1,
-            borderColor: theme.white,
-            justifyContent: 'center',
-            alignItems: 'center',
-            resizeMode: 'cover',
-        },
-        profileHeader: {
-            paddingLeft: 20,
-            justifyContent: 'center',
-            width: '90%',
-            alignItems: 'flex-start',
-        },
-        headerText: {
-            fontFamily: Fonts.primary,
-            fontSize: 14,
-            fontWeight: "600",
-            fontStyle: "normal",
-            color: theme.white,
-        },
-        aboutMe: {
-            width: '100%',
-            padding: 10,
-            alignItems: 'center',
-
-        },
-        aboutMeTitle: {
-            fontFamily: Fonts.primary,
-            fontSize: 20,
-            fontWeight: "600",
-            fontStyle: "normal",
-            color: theme.text,
-            marginBottom: 10,
-            width: '100%',
-        },
-        aboutMeText: {
-            fontFamily: Fonts.primary,
-            fontSize: 14,
-            fontWeight: "400",
-            fontStyle: "normal",
-            color: theme.text,
-            textAlign: 'justify',
-            width: '90%',
+            paddingHorizontal: 14,
         },
         posts: {
             width: '100%',
-            padding: 10,
+            marginTop: 16,
             alignItems: 'center',
-        },
-        btnContainer: {
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            padding: 10,
         },
         serviceContainer: {
             justifyContent: 'space-between',
             width: '100%',
-            padding: 10,
             borderBottomWidth: 1,
-            borderBottomColor: theme.text,
-        },
-        serviceText: {
-            fontFamily: Fonts.primary,
-            fontSize: 16,
-            fontWeight: "600",
-            fontStyle: "normal",
-            color: theme.text,
-        },
-        optionText: {
-            fontFamily: Fonts.primary,
-            fontSize: 14,
-            fontWeight: "400",
-            fontStyle: "normal",
-            color: theme.text,
-        },
-        servicesTitle: {
-            fontFamily: Fonts.primary,
-            fontSize: 16,
-            fontWeight: "600",
-            fontStyle: "normal",
-            color: theme.text,
-            width: '100%',
-            paddingLeft: 10,
+            borderBottomColor: theme.primary,
+            paddingVertical: 16,
+            paddingLeft: 24,
         },
         myPosts:{
             paddingVertical:10,
@@ -267,17 +179,30 @@ const getStyles = (theme) => {
         },
         postWrapper:{
             width:'50%',
-            justifyContent:'center',
-            alignItems:'center',
-            paddingVertical:5,
+            paddingVertical: 5,
         },
-        rating: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 5,
+        title: {
+            fontFamily: Fonts.primary,
+            fontSize: 14,
+            fontWeight: 'bold',
+            color: theme.text,
+            paddingBottom: 16,
         },
-        FlatList: {
-            width: '100%',
+        categoryTitle: {
+            fontFamily: Fonts.primary,
+            fontSize: 14,
+            color: theme.text,
+
+        },
+        optionText: {
+            fontFamily: Fonts.primary,
+            fontSize: 14,
+            color: theme.text,
+        },
+        border: {
+            borderBottomWidth: 1,
+            borderBottomColor: theme.primary,
+            width:'100%',
         },
     })
 }
