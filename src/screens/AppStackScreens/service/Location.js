@@ -182,17 +182,17 @@ const getStyles = (theme) => StyleSheet.create({
   title: {
     color: theme.text,
   },
+  text: {
+    fontSize: 14,
+    color: theme.text,
+    fontFamily: Fonts.primary,
+  },
   dropdown: {
     borderColor: theme.primary,
     borderradius:10,
     borderWidth: 1,
     zIndex: 99,
     marginVertical: 10,
-  },
-  text: {
-    fontSize: 14,
-    color: theme.text,
-    fontFamily: Fonts.primary,
   },
   dropdownContainer: {
     backgroundColor: theme.white,

@@ -8,9 +8,9 @@ import { useAuth } from '../../../context/AuthContext';
 import { Global } from '../../../constant/Global';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
-import theme from '../../../constant/Theme';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useTheme } from '../../../context/ThemeContext';
+import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
 
 
 const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) => {
@@ -151,8 +151,9 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
             style={styles.dropdown}
             textStyle={styles.textStyle}
             dropDownContainerStyle={styles.dropdownContainer}
-            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
-            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            closeAfterSelectByDefault={true}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
             TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
             zIndex={1000}
           />
@@ -167,8 +168,9 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
             style={styles.dropdown}
             textStyle={styles.textStyle}
             dropDownContainerStyle={styles.dropdownContainer}
-            ArrowUpIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-up" />}
-            ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
+            closeAfterSelectByDefault={true}
+            ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
+            ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
             TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
           />
           {showTextInput && (
@@ -180,14 +182,12 @@ const ServiceCategoryPicker = ({ onServicesChange, modalVisible, toggleModal }) 
             />
           )}
           <View style={styles.btnContainer}>
-          <PrimaryButton
-            text="Add Service"
-            onPress={handleAddService}
-          />
-          <PrimaryButton  
-            text="Close"
-            onPress={toggleModal}
-          />
+            <TwoSelectButton
+              primary="Add Service"
+              secondary="Cancel"
+              onPressPrimary={handleAddService}
+              onPressSecondary={toggleModal}
+            />
           </View>
           </View>
       </View>
@@ -206,33 +206,34 @@ const getStyles = (theme) => {
     height: '60%',
     width: '100%',
     backgroundColor: theme.background,
-    borderRadius: 10,
+    borderTopWidth: 1,
+    borderTopColor: theme.primary,
     padding: 20,
     zIndex: 99,
     alignItems: 'center',
   },
+
+  textStyle: {
+    fontSize: 17,
+  },
   dropdown: {
     borderColor: theme.primary,
     borderradius:10,
-    borderWidth: 2.5,
+    borderWidth: 1,
     zIndex: 99,
-    marginVertical:10,
-  },
-  textStyle: {
-    fontSize: 17,
+    marginVertical: 10,
   },
   dropdownContainer: {
     backgroundColor: theme.white,
     borderColor: theme.primary,
-    borderWidth: 2.5,
+    borderWidth: 1,
   },
   btnContainer:{
     justifyContent:'center',
     alignItems:'center',
     gap: 10,
     position: 'absolute',
-    bottom: 20,
-    
+    bottom: 20
   },
 });
 }

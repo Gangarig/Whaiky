@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Modal, StyleSheet, Button } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Country } from 'country-state-city';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import { useTheme } from '../../../context/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
 
 const CountryPicker = ({ onSelect, isModalVisible, setModalVisibility }) => {
   const [open, setOpen] = useState(false);
@@ -23,7 +23,7 @@ const CountryPicker = ({ onSelect, isModalVisible, setModalVisibility }) => {
 
   const onValueChange = (selectedItem) => {
     setSelectedValue(selectedItem);
-    onSelect(selectedItem); // Pass the selected country back to parent
+    onSelect(selectedItem); 
   };
 
   return (
@@ -51,9 +51,11 @@ const CountryPicker = ({ onSelect, isModalVisible, setModalVisibility }) => {
             ArrowDownIconComponent={() => <FontAwesomeIcon size={30} color={theme.primary} icon="fa-solid fa-caret-down" />}
             TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
           />
-          <PrimaryButton
-            text="Close"
-            onPress={() => setModalVisibility(false)}
+          <TwoSelectButton
+            primary="Done"
+            secondary="Cancel"
+            onPressPrimary={() => setModalVisibility(false)}
+            onPressSecondary={() => setModalVisibility(false)}
           />
         </View>
       </View>
@@ -65,14 +67,15 @@ const getStyles = (theme) => {
   return StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
+
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: '80%',
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
     backgroundColor: theme.background,
-    borderRadius: 10,
     padding: 20,
     alignItems: 'center',
     gap: 10,
@@ -84,7 +87,7 @@ const getStyles = (theme) => {
   dropdown: {
     borderColor: theme.primary,
     borderradius:10,
-    borderWidth: 2.5,
+    borderWidth: 1,
     zIndex: 99,
   },
   textStyle: {
@@ -93,7 +96,7 @@ const getStyles = (theme) => {
   dropdownContainer: {
     backgroundColor: theme.white,
     borderColor: theme.primary,
-    borderWidth: 2.5,
+    borderWidth: 1,
   },
  
 });

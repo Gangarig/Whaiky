@@ -53,7 +53,6 @@ const getStyles = (theme) => StyleSheet.create({
   wrapper: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
     width: '100%',
     overflow: 'hidden',
   },

@@ -8,6 +8,8 @@ import AboutText from '../../../components/AboutText'
 import TwoSelectButtonGradient from '../../../components/Buttons/TwoSelectButtonGradient'
 import Fonts from '../../../constant/Fonts'
 import firestore from '@react-native-firebase/firestore'
+import Services from '../../../components/Services'
+import ServiceButton from '../../../components/Buttons/ServiceButton'
 
 const Profile = ({navigation}) => {
   const { currentUser } = useAuth()
@@ -47,6 +49,11 @@ const Profile = ({navigation}) => {
     > 
       <SecondaryProfileCard profile={currentUser} navigation={navigation}/>
       <AboutText userUid={currentUser.uid}/>
+
+      <View style={style.documents}>
+        <Services navigation={navigation} />
+        <ServiceButton navigation={navigation} onPress={()=>navigation.navigate('Services')}/>
+      </View>
       <View style={style.documents}>
         <Text style={style.docTitle}>Documents</Text>
         {docs.map((doc, index) => (
@@ -58,6 +65,8 @@ const Profile = ({navigation}) => {
           />
         ))}
       </View>
+
+
       <TwoSelectButtonGradient   
         primary="Upload Certificate"
         secondary="Upload Document"
@@ -79,10 +88,11 @@ const getStyles = (theme) => {
       alignItems: 'center',
       justifyContent: 'center',
       width: '100%',
+      paddingBottom: 30,
     },
 
     documents: {
-      marginTop: 20,
+      marginTop: 16,
       flexDirection: 'column',
       width: '100%',
     },
@@ -91,7 +101,7 @@ const getStyles = (theme) => {
       color: theme.text,
       fontWeight: 'bold',
       fontFamily: Fonts.primary,
-      paddingLeft: 15,
+      marginBottom: 16,
     }
   })
 }

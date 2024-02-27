@@ -7,7 +7,6 @@ import { faIdBadge, faFile, faEllipsisVertical } from '@fortawesome/free-solid-s
 const SecondaryDocumentCard = ({ item,navigation }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
-
   const formatDateTime = (date) => {
     if (!date) return "N/A";
 
@@ -28,7 +27,7 @@ const SecondaryDocumentCard = ({ item,navigation }) => {
   };
 
   return (
-    <TouchableOpacity onPress={()=>navigation.navigate('LegalInfo')} style={styles.container}>
+    <TouchableOpacity onPress={()=>navigation.navigate('LegalInfo',{ document:item })} style={styles.container}>
       {item ? (
         <View style={styles.cardWrapper}>
           {item?.typeOfDoc === 'document' ? (
@@ -67,8 +66,8 @@ const getStyles = (theme) => {
       alignItems: 'center',
       backgroundColor: theme.backgroundColor,
       borderRadius: 12,
-      marginVertical: 6,
       overflow: 'hidden',
+      marginBottom: 16,
     },
     cardWrapper: {
       borderWidth: 1,

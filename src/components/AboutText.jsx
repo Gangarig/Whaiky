@@ -113,7 +113,7 @@ const getStyles = theme => StyleSheet.create({
         fontFamily: Fonts.primary,
     },
     aboutText:{
-        marginTop:12,
+
     },
     text:{
         fontSize: 12,

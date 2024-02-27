@@ -30,7 +30,9 @@ const DatePickerComponent = ({onClose,onSave,title,textStyle,buttonStyle}) => {
         onConfirm={(date) => {
           setOpen(false)
           setDate(date)
-          onSave(date)
+          if (onSave) {
+            onSave(date)
+          }
         }}
         onCancel={() => {
           setOpen(false)

@@ -15,11 +15,12 @@ import { showMessage } from 'react-native-flash-message';
 import { useAuth } from '../../../../context/AuthContext';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import { Global } from '../../../../constant/Global';
-import LinearGradient from 'react-native-linear-gradient';
-import { shadowStyle } from '../../../../constant/Shadow';
 import { useTheme } from '../../../../context/ThemeContext';
-import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
+import FastImage from 'react-native-fast-image';
+import Fonts from '../../../../constant/Fonts';
+import TwoSelectButton from '../../../../components/Buttons/TwoSelectButton';
+import LinearGradient from 'react-native-linear-gradient';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 
 const Certificate = ({ navigation }) => {
@@ -134,53 +135,47 @@ const Certificate = ({ navigation }) => {
     style={styles.container}
     contentContainerStyle={styles.ScrollView}
     >
-    <View style={[styles.LinearGradientWrapper, shadowStyle]}>
-    <LinearGradient
-        colors={[theme.primary, theme.secondary]}
-        start={{ x: 0, y:0 }}
-        end={{ x: 1, y: 1 }}
-        style={[styles.content,shadowStyle]}
-      >
-          <Text style={[Global.title,styles.title]}>Certificate Upload</Text>
           <TouchableOpacity
             onPress={handleChooseImage}
-            style={styles.imageContainer}
           >
+            <LinearGradient
+              colors={[theme.primary, theme.tertiary]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.imageInput}
+            >
             {certificateImage ? (
-              <Image source={{ uri: certificateImage.path }} style={styles.image} />
+              <FastImage source={{ uri: certificateImage.path }} style={styles.image} 
+              resizeMode={FastImage.resizeMode.cover}
+              />
             ) : (
-              <Text style={styles.placeholderText}>Select Certificate Image</Text>
+              <View style={styles.info}>
+                <FontAwesomeIcon icon='fa-solid fa-id-card' size={88} color={theme.white} />
+                <Text style={styles.text}>Select Certificate Image</Text>
+              </View>
             )}
+            </LinearGradient>
           </TouchableOpacity>
-
           <TextInput
-            style={[Global.input,{backgroundColor:theme.backgroundSecondary}]}
+            style={styles.input}
             placeholder="Certificate Title"
             onChangeText={(text) => handleInputChange('title', text)}
             value={certificateDetails.title}
           />
           <TextInput
-            style={[Global.input,{backgroundColor:theme.backgroundSecondary}]}
+            style={styles.input}
             placeholder="Description"
             onChangeText={(text) => handleInputChange('description', text)}
             value={certificateDetails.description}
           />
-          <View>
+          <View style={styles.btn}>
+          <TwoSelectButton  
+          primary="Upload"
+          secondary="Skip"
+          onPressPrimary={uploadCertificate}
+          onPressSecondary={() => navigation.navigate('Home')}
+          />
           </View>
-      </LinearGradient>
-      </View>
-      <PrimaryButton
-        text="Upload Certificate"
-        onPress={uploadCertificate}
-        style={styles.button}
-      />
-      {currentUser && currentUser.status === 'contractor' ? 
-      null:
-      (<PrimaryButton  
-        text='Continue'
-        onPress={SubmitDone}
-        style={styles.button}
-      />)}
     </ScrollView>
   );
 };
@@ -193,60 +188,49 @@ const getStyles = (theme) => StyleSheet.create({
     flex: 1,
     width: '100%',
     paddingVertical: 20,
+    paddingHorizontal : 20
   },
   ScrollView: {
-    flexGrow: 1,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    width: '100%',
-    gap: 20,
-    paddingBottom: 100,
-    backgroundColor: theme.background,
-  },
-  LinearGradientWrapper: {
-    width: '100%',
-    alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   },
-  content:{
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+  imageInput : {
+    width: '100%',
+    height:200,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 5,
-    width: '90%',
-    ...shadowStyle
-  },
-  imageContainer: {
-    width: '100%',
-    height: 200,
-    borderWidth: 1.5,
-    borderColor: theme.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    marginBottom: 20,
-    backgroundColor: theme.backgroundSecondary,
-    ...shadowStyle
+    borderRadius: 12,
+    marginTop: 16,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
     height: '100%',
-    borderRadius: 5,
+    borderRadius: 12,
   },
-  inputContainer: {
-    flex: 1,
-    alignItems: 'center',  
-    justifyContent: 'center', 
-    gap: 20,
+  info: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 5,
   },
-  title: {
+  text: {
     color: theme.white,
+    fontSize: 14,
+    fontFamily: Fonts.primary,
   },
-  placeholderText: {
+  input: {
+    borderWidth: 1,
+    borderColor: theme.primary,
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginTop: 16,
     color: theme.text,
-    fontSize: 16,
+    fontFamily: Fonts.primary,
+    fontSize: 14,
   },
+  btn: {
+    marginTop: 16,
+  },
+
 });
