@@ -167,6 +167,8 @@ const getStyles = (theme) => StyleSheet.create({
     flex: 1,
     backgroundColor: theme.background,
     paddingVertical: 10,
+    borderTopColor  : theme.primary,
+    borderTopWidth: 1,
   },
   dropDownWrapper: {
     paddingHorizontal: 20,
@@ -178,7 +180,8 @@ const getStyles = (theme) => StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     zIndex: -1,
-
+    paddingHorizontal: 20,
+    paddingBottom: 10,
   },
   title: {
     color: theme.text,

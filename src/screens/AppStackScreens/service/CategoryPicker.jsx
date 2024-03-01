@@ -123,7 +123,8 @@ const getStyles = (theme) => StyleSheet.create({
     paddingVertical: 10,
     flex:1,
     justifyContent:'space-between',
-    borderWidth: 1,
+    borderTopColor: theme.primary,
+    borderTopWidth: 1,
   },
   dropdown: {
     borderColor: theme.primary,

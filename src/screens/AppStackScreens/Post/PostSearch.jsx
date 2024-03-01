@@ -3,7 +3,6 @@ import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, Modal, 
 import firestore from '@react-native-firebase/firestore';
 import debounce from 'lodash/debounce';
 import PostCard from '../../../components/PostCard';
-import { Global } from '../../../constant/Global';
 import Location from '../service/Location';
 import CategoryPicker from '../service/CategoryPicker';
 import PrimaryButton from '../../../components/Buttons/PrimaryButton';
@@ -13,15 +12,12 @@ import { showMessage } from 'react-native-flash-message';
 import { useTheme } from '../../../context/ThemeContext';
 import { BlurView } from "@react-native-community/blur";
 import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
+import Fonts from '../../../constant/Fonts';
+import ContractorCard from '../../../components/ContractorCard';
+
 
 
 const PostSearch = ({ navigation }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [allPosts, setAllPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [country, setCountry] = useState('');
@@ -31,464 +27,252 @@ const PostSearch = ({ navigation }) => {
   const [optionId, setOptionId] = useState('');
   const [category, setCategory] = useState('');
   const [option, setOption] = useState('');
-  const [lastVisible, setLastVisible] = useState(null);
-  const [showLoadMore, setShowLoadMore] = useState(false);
-  const isSearchActive = searchTerm.trim() !== '' || country || state || city || categoryId || optionId;
   const theme = useTheme();
   const styles = getStyles(theme);
   const [blur, setBlur] = useState(false);
-
-  const fetchPosts = async () => {
-    setLoading(true);
-
-    try {
-      let query = firestore()
-        .collection('posts')
-        .orderBy('timestamp', 'desc')
-        .limit(10); // Set limit to 1 for testing
-
-      if (lastVisible) {
-        query = query.startAfter(lastVisible);
-      }
-
-      const snapshot = await query.get();
-      const fetchedPosts = snapshot.docs.map(doc => doc.data());
-
-      if (fetchedPosts.length > 0) {
-        setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-        setAllPosts(prevPosts => [...prevPosts, ...fetchedPosts]);
-        setShowLoadMore(true); // Show 'Load More' button if more posts are available
-      } else {
-        setShowLoadMore(false); // Hide 'Load More' button if no more posts
-      }
-    } catch (error) {
-      console.error('Error fetching users:', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  useEffect(() => {
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    // Only filter posts if there is a search term, country, state, city, categoryId, or optionId selected
-    if (searchTerm.trim() !== '' || country || state || city || categoryId || optionId) {
-      const filtered = allPosts.filter(post => {
-        const matchesSearchTerm = !searchTerm.trim() || 
-          (post.title && post.title.toLowerCase().includes(lowerCaseSearchTerm)) ||
-          (post.ownerName && post.ownerName.toLowerCase().includes(lowerCaseSearchTerm));
-  
-        const matchesCountry = !country || (post.country === country);
-        const matchesState = !state || (post.state === state);
-        const matchesCity = !city || (post.city === city);
-        const matchesCategoryId = !categoryId || (post.categoryId === categoryId);
-        const matchesOptionId = !optionId || (post.optionId === optionId);
-  
-        return matchesSearchTerm && matchesCountry && matchesState && matchesCity && matchesCategoryId && matchesOptionId;
-      });
-  
-      setFilteredPosts(filtered);
-    } else {
-      // If no filters are selected, set filteredPosts to an empty array
-      setFilteredPosts([]);
-    }
-  }, [searchTerm, country, state, city, categoryId, optionId, allPosts]);
-  
-
-
-  const navigateToPostDetail = async (postId) => {
-    const exists = await checkPostExistence(postId);
-      if (exists) {
-        navigation.navigate('PostDetail', { id: postId });
-      }
-  };
-
-  const checkPostExistence = async (postId) => {
-    try {
-      const doc = await firestore().collection('posts').doc(postId).get();
-      if (!doc.exists) {
-        showMessage({
-          message: 'This post is no longer available',
-          type: "danger",
-        });
-        return false;
-      }
-      return true;
-    } catch (error) {
-      showMessage({
-        message: error.message || 'Error checking post existence',
-        type: "danger",
-      });
-      return false;
-    }
-  };
-
-
-  const handleLocationSave = (selectedCountry, selectedState, selectedCity) => {
-    setCountry(selectedCountry || '');
-    setState(selectedState || '');
-    setCity(selectedCity || '');
-  };
-
-  const handleCategorySave = (selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText) => {
-    setCategoryId(selectedCategoryId);
-    setOptionId(selectedOptionId);
-    setCategory(selectedCategoryText);
-    setOption(selectedOptionText);
-    console.log(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText);
-  };
-
-  const clearCountry = () => {
-    setCountry('');
-  };
-  const clearState = () => {
-    setState('');
-  };
-  const clearCity = () => {
-    setCity('');
-  };
-
-
-
-  const clearCategory = () => {
-    setCategoryId('');
-    setCategory('');
-    setOptionId('');
-    setOption('');
-  };
-  const clearOption = () => {
-    setOptionId('');
-    setOption('');
-    setCategoryId('');
-    setCategory('');
-  }
-
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.searchBox}>
-        <View style={styles.searchInput}>
-        <Text style={[Global.titleSecondary,styles.searchLabel]}> Search with / Post Title or Poster Name /. </Text>
-        <View style={styles.searchTextInputWrapper}>
-        <TextInput
+  const header = () => {
+    return (
+    <View style={styles.header}>
+        <TextInput 
+          style={styles.searchTextInput}
           placeholder="Search"
-          style={Global.input}
-          onChangeText={(text) => setSearchTerm(text)}
           value={searchTerm}
+          onChangeText={text => setSearchTerm(text)}
+        />
+        <View style={styles.btn}>
+        <TwoSelectButton
+          primary={"Add Location"}
+          secondary={"Add Category"}
+          onPressPrimary={() => {
+            setLocationModalVisible(true);
+            setBlur(true);
+          }}
+          onPressSecondary={() => {
+            setCategoryModalVisible(true);
+            setBlur(true);
+          }}
         />
         </View>
+        <View style={styles.btn}>
+        <TwoSelectButton  
+          primary={"Search User"}
+          secondary={"Search Post"}
+          onPressPrimary={() => {
+            navigation.navigate('UserSearch');
+          }}
+          onPressSecondary={() => {}}
+          />
         </View>
-        <View style={styles.btnContainer}>
-          {/* <PrimaryButton text="Search" onPress={handleSearch} /> */}
-          <View style={styles.locationBtn}>
-            <PrimaryButton text="Add Location" 
-            onPress={() => {
-              setLocationModalVisible(true);
-              setBlur(true);
-            }}
-            />
-            {country && 
+        <View style={styles.info}>
+            {/* {country &&  */}
               <View style={[styles.infoContainer,shadowStyle]}>
-                {country &&
+                {/* {country && */}
                 <View style={styles.subInfo}>
-                <Text style={[Global.text,styles.white]}>Country : {country}</Text>
+                <Text style={styles.value}>Country : {country || 'N/A'}</Text>
                 <TouchableOpacity onPress={
                   ()=>clearCountry()
                 }>
                 <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
                 </TouchableOpacity>
                 </View>
-                }
+                {/* // } */}
                 
-                {state &&
+                {/* {state && */}
                 <View style={styles.subInfo}>
-                <Text style={[Global.text,styles.white]}>State : {state}</Text>
+                <Text style={styles.value}>State : {state}</Text>
                 <TouchableOpacity onPress={
                   ()=>clearState()
                 }>
                 <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
                 </TouchableOpacity>
                 </View>
-                }
+                {/* //} */}
                 
-                {city &&
+                {/* // {city && */}
                 <View style={styles.subInfo}>
-                <Text style={[Global.text,styles.white]}>City : {city}</Text>
+                <Text style={styles.value}>City : {city}</Text>
                 <TouchableOpacity onPress={
                   ()=>clearCity()
                 }>
                 <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
                 </TouchableOpacity>
                 </View>
-                }
+                {/* } */}
               </View>
-            }
-          </View>
-          
-          <View style={styles.categoryBtn}>
-            <PrimaryButton text="Add Category" 
-            onPress={() => {
-              setCategoryModalVisible(true);
-              setBlur(true);
-            }}
-            />
-            <View style={styles.chosenCategory}>
-              {category && 
+            {/* } */}
+        </View>
+        <View style={styles.info}>
+              {/* {category &&  */}
                 <View style={[styles.infoContainer,shadowStyle]}>
-                    {category && 
+                    {/* {category &&  */}
                     <View style={styles.subInfo}>
-                      <Text style={[Global.text,styles.white]}>{category} {categoryId}</Text>
+                      <Text style={styles.value}>{category || 'N/A'} {categoryId}</Text>
                       <TouchableOpacity onPress={
                         ()=>clearCategory()
                       }>
                       <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
                       </TouchableOpacity>
                     </View>
-                    }
-                    {option && 
+                    {/* } */}
+                    {/* {option &&  */}
                     <View style={styles.subInfo}>
-                    <Text style={[Global.text,styles.white]}>{option}</Text>
+                    <Text style={styles.value}>{option || 'N/A'}</Text>
                     <TouchableOpacity onPress={
                       ()=>clearOption()
                     }>
                     <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
                     </TouchableOpacity>
                     </View>
-                    }
+                    {/* } */}
                 </View>
-              }
-            </View>
-          </View>
-        </View>
+              {/* } */}
       </View>
+      <View style={styles.bottomBorder}>
+      </View>
+    </View>
+    )
+  }
 
-      {loading && 
-      <View style={styles.statusMSG}>
-      <ActivityIndicator size="large" color={theme.primary} />
-      </View>
-      }
-      {error ?
-      <View style={styles.statusMSG}>
-       <Text style={[Global.titleSecondary,styles.errorText,]}>{error}</Text> 
-      </View>
-       : null}
-      <View style={styles.flatListWrapper}>
-      <FlatList
+  // Search Functions
+  const [posts , setPosts] = useState([]);
+  const [users ,setUsers] = useState([]);
+  const [searchType , setSearchType] = useState('post');
+  const [filteredData , setFilteredData ] = useState([]);
+
+
+
+
+
+
+  return (
+    <View style={styles.flatlist}>
+      <FlatList 
         data={filteredPosts}
-        keyExtractor={(item, index) => item.id || index.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.postWrapper} onPress={() => navigation.navigate('PostDetail', { postId: item.id })}>
-            <PostCard 
-              post={item}
-              onPress={() => navigateToPostDetail(item.postId)}
-            />
-          </TouchableOpacity>
-        )}
+        renderItem={({ item }) => <PostCard post={item} />}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={header}
         refreshing={isRefreshing}
-        numColumns={2}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={searchTerm && !loading && filteredPosts.length === 0 && 
-        <Text>No posts found</Text>}
       />
-
-        {showLoadMore && isSearchActive && (
-            <TouchableOpacity 
-              style={styles.loadMoreBtn} 
-              onPress={fetchPosts}
-            >
-              <FontAwesomeIcon color={theme.primary} size={25} icon="fa-solid fa-chevron-down" />
-            </TouchableOpacity>
-        )}
-      </View>
-      {/* Location Picker Modal */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={locationModalVisible}
         onRequestClose={() => {
-          setLocationModalVisible(false);
+          setLocationModalVisible(!locationModalVisible);
           setBlur(false);
         }}
       >
-        <View style={styles.locationModal}>
-          <TouchableOpacity 
-            style={styles.modalOverlay} 
-            activeOpacity={1} 
-            onPressOut={() => { 
-            setLocationModalVisible(false); 
-            setBlur(false);
-            }}
-          />
-          <Location
-            onSave={(selectedCountry, selectedState, selectedCity) => {
-              handleLocationSave(selectedCountry, selectedState, selectedCity);
-              setLocationModalVisible(false); 
-              setBlur(false);
-            }}
-            onClose={() => {
-            setLocationModalVisible(false)
+        <View style={styles.Modal}>
+        <Location
+          onClose={() => {
+            setLocationModalVisible(false);
             setBlur(false);
           }}
-          />
+          onSave={(country, state, city) => {
+            setCountry(country);
+            setState(state);
+            setCity(city);
+            setLocationModalVisible(false);
+            setBlur(false);
+          }}
+        />
         </View>
       </Modal>
-      {/* Category Picker Modal */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={categoryModalVisible}
         onRequestClose={() => {
-          setCategoryModalVisible(false);
+          setCategoryModalVisible(!categoryModalVisible);
           setBlur(false);
         }}
       >
-        <View style={styles.categoryModal}>
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPressOut={() => {
-              setCategoryModalVisible(false);
-              setBlur(false);
-            }}
-          />
+        <View style={styles.Modal}>
         <CategoryPicker
-          onSave={(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText) => {
-            handleCategorySave(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText);
-          }}
           onClose={() => {
+            setCategoryModalVisible(false);
+            setBlur(false);
+          }}
+          onSave={(categoryId, optionId, category, option) => {
+            setCategoryId(categoryId);
+            setOptionId(optionId);
+            setCategory(category);
+            setOption(option);
             setCategoryModalVisible(false);
             setBlur(false);
           }}
         />
         </View>
       </Modal>
+      {blur && (
+        <BlurView
+          style={styles.blur}
+          blurType="light"
+          blurAmount={10}
+          reducedTransparencyFallbackColor="white"
+        />
+      )}
     </View>
-  );
-};
+  )
+}
 
 const getStyles = (theme) => StyleSheet.create({
-  
-  container: {
+  flatlist: {
     backgroundColor: theme.background,
     flex: 1,
+  },
+  header: {
+    paddingHorizontal: 15,
+    paddingTop: 16,
+    borderBottomColor: theme.primary,
+    borderBottomWidth: 1,
+  },
+  searchTextInput: {
+    backgroundColor: theme.background,
+    borderColor: theme.primary,
+    borderWidth: 1,
+    borderRadius: 12,
+    marginBottom: 16,
     paddingHorizontal: 10,
+    paddingVertical: 5,
   },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-  },
-  searchBox:{
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
-    backgroundColor : theme.background,
-    borderColor : theme.primary,
-    borderWidth : .5,
-    borderRadius : 10,
-    marginTop: 10,
-  },
-  btnContainer:{
-    flexDirection: 'column',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+  btn: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    width: '100%',
-    gap: 10,
+    marginBottom: 16,
   },
-
-  searchLabel:{
-    marginBottom: 10,
-  },
-  infoContainer:{
+  info: {
     backgroundColor: theme.primary,
-    marginTop: 10,
+    borderRadius: 12,
     padding: 10,
-    borderRadius: 5,
-    width: 296,
+    marginBottom: 16,
   },
-  white:{
-    color: theme.white,
-    fontWeight: 'bold',
-  },
-  locationModal: {
-    height: 450,
-    width: '100%',
-    bottom: 0,
-    position: 'absolute',
-    borderTopColor: theme.primary,
-    borderTopWidth: 1,
-    backgroundColor: theme.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  categoryModal: {
-    height: 350,
-    width: '100%',
-    bottom: 0,
-    position: 'absolute',
-    borderTopColor: theme.primary,
-    borderTopWidth: 1,
-    backgroundColor: theme.background,
-    paddingTop: 20,
-    alignItems: 'center',
-  },
-  subInfo:{
+  subInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: theme.primary,
   },
-  searchTextInputWrapper:{
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
-    backgroundColor: theme.white,
-    borderRadius: 5,
+  value: {
+    color: theme.white,
+    fontSize: 14,
+    fontFamily: Fonts.primary,
   },
-  more:{
+  Modal: {
+    height: 400,
+    width: '100%',
     position: 'absolute',
-    width: '100%',
     bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  statusMSG:{
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
-  },
-  loadMoreBtn: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    ...shadowStyle,
-  },
-  flatListWrapper :{
-    width: '100%',
-    flex: 1,
-    paddingBottom: 10
-  },
-  postWrapper:{
-    width: '50%',
-    padding: 2.5,
+    backgroundColor: theme.background,
   },
   blur: {
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    position: "absolute",
-    height: "110%",
-    width: "110%",
-    zIndex: 10,
-  }
+    height: '100%',
+    width: '100%',
+  },
+
 });
 
 export default PostSearch;
