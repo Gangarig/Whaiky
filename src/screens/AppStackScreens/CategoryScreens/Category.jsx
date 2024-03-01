@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Dimensions }
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '../../../context/ThemeContext';
 import { categoriesData } from '../../../constant/dataStatic/categoriesData';
-import { shadowStyle } from '../../../constant/Shadow';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 const Category = ({ navigation }) => {
   const [openCategories, setOpenCategories] = useState([]);
@@ -38,33 +38,53 @@ const Category = ({ navigation }) => {
     navigation.navigate('CategoryDetail', { optionId });
   };
 
+  const categoryIcons = {
+    1: 'fa-solid fa-house',
+    2: 'fa-solid fa-fire',
+    3: 'fa-solid fa-bolt',
+    4: 'fa-solid fa-droplet-slash',
+    5: 'fa-solid fa-droplet-slash',
+    6: 'fa-solid fa-spray-can-sparkles',
+    7: 'fa-solid fa-paint-roller',
+    8: 'fa-solid fa-temperature-arrow-up',
+    9: 'fa-solid fa-truck',
+    10: 'fa-solid fa-screwdriver-wrench',
+    11: 'fa-solid fa-person',
+  };
+
+
   const renderItem = ({ item }) => (
-    <View style={styles.shadowContainer}>
-      <LinearGradient
-        start={{ x: 0, y: 0 }}
-        end={{ x: 2, y: 0 }}
-        colors={[theme.primary, theme.secondary]}
-        style={styles.mainCategory}
+    <View style={styles.categoryContainer}>
+      <TouchableOpacity style={styles.categoryWrapper}
+        onPress={() => toggleCategory(item.id)}
+        activeOpacity={0.7}
       >
-        <TouchableOpacity onPress={() => toggleCategory(item.id)} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={item.icon} style={styles.icon} />
-          <Text style={styles.title}>{item.text}</Text>
+        <LinearGradient
+          start={{ x: 0, y: 0 }}
+          end={{ x: 2, y: 0 }}
+          colors={[theme.primary, theme.secondary]}
+          style={styles.mainCategory}
+        >
+            <FontAwesomeIcon size={40} style={[]} color={theme.white}
+              icon={categoryIcons[item.id]}
+            />
+            <Text style={styles.title}>{item.text}</Text>
+        </LinearGradient>
         </TouchableOpacity>
-      </LinearGradient>
-      {openCategories.includes(item.id) && (
-        <View style={styles.optionsContainerWrapper}>
-        <View style={styles.optionsContainer}>
-          {item.options.map((option) => (
-            <TouchableOpacity
-              key={option.optionId}
-              onPress={() => navigateToDetail(option.optionId)}
-            >
-              <Text style={styles.optionText}>{`\u2022 ${option.text}`}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        </View>
-      )}
+        {openCategories.includes(item.id) && (
+          <View style={styles.optionsContainerWrapper}>
+          <View style={styles.optionsContainer}>
+            {item.options.map((option) => (
+              <TouchableOpacity
+                key={option.optionId}
+                onPress={() => navigateToDetail(option.optionId)}
+              >
+                <Text style={styles.optionText}>{`\u2022 ${option.text}`}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          </View>
+        )}
     </View>
   );
 
@@ -79,26 +99,34 @@ const Category = ({ navigation }) => {
       showsVerticalScrollIndicator={false}
       style={styles.FlatList}
     />
+
   );
 };
 
 const getStyles = (theme) => StyleSheet.create({
-  shadowContainer: {
+  FlatList: {
+    flex: 1,
+    paddingHorizontal: 15,
+  },
+  categoryContainer: {
+    minWidth: '100%',
     marginBottom: 16,
-    borderRadius: 10,
+  },
+  categoryWrapper: {
+    width: '100%',
   },
   mainCategory: {
-    width: 350,
     height: 85,
-    borderRadius: 10,
-    paddingLeft: 15,
+    width: '100%',
     flexDirection: 'row',
+    borderRadius  : 12,
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingLeft: 20,
   },
   title: {
     color: theme.white,
     fontSize: 24,
+    paddingLeft: 25,
   },
   optionsContainerWrapper: {
     borderBottomLeftRadius: 10,

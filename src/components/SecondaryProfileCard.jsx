@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import FastImage from 'react-native-fast-image'
 import { AirbnbRating } from 'react-native-ratings';
-import image from '../assets/images/image1.png'
 import { faPen } from '@fortawesome/free-solid-svg-icons/faPen'
 import { useAuth } from '../context/AuthContext'
 
@@ -43,7 +42,7 @@ const SecondaryProfileCard = ({profile,navigation}) => {
                   style={styles.avatar}
                   resizeMode={FastImage.resizeMode.cover}
                   source={{
-                    uri: image1,
+                    uri: profile.photoURL,
                     priority: FastImage.priority.normal,
                   }}
                 />

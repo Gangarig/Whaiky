@@ -14,6 +14,7 @@ import { RefreshControl } from 'react-native';
 import AboutText from '../../../../components/AboutText';
 import SecondaryProfileCard from '../../../../components/SecondaryProfileCard';
 import TwoSelectButton from '../../../../components/Buttons/TwoSelectButton';
+import Services from '../../../../components/Services';
 const ContractorDetail = ({ navigation, route }) => {
     const { id } = route.params;
     const theme = useTheme();
@@ -110,12 +111,14 @@ const ContractorDetail = ({ navigation, route }) => {
                     <Text style={styles.title}>No services found</Text>
                 )}
             </View>
+            <View style={styles.btnContainer}>
             <TwoSelectButton   
                 primary="Contact"
                 secondary="Feedback"
                 onPressPrimary={()=>handleContact(currentUser,contractor)}
                 onPressSecondary={()=>handleFeedBack(contractor.uid)}
             />
+            </View>
             {myPosts.length > 0 && <Text style={styles.title}>Posts of {currentUser?.displayName}</Text>}
         </View>
     );
@@ -203,6 +206,12 @@ const getStyles = (theme) => {
             borderBottomWidth: 1,
             borderBottomColor: theme.primary,
             width:'100%',
+        },
+        btnContainer:{
+            width:'100%',
+            justifyContent:'center',
+            alignItems:'center',
+            marginVertical: 16,
         },
     })
 }

@@ -10,7 +10,7 @@ import Fonts from '../../../constant/Fonts'
 import {AirbnbRating} from 'react-native-ratings';
 import { shadowStyle } from '../../../constant/Shadow'
 import auth from '@react-native-firebase/auth'
-import image from '../../../assets/images/image1.png'
+import GradientText from '../../../components/GradientText'
 const ProfileStackBar = ({ navigation }) => {
     const theme = useTheme();
     const { currentUser } = useAuth();
@@ -60,7 +60,7 @@ const ProfileStackBar = ({ navigation }) => {
                     {currentUser?.photoURL ? (
                         <View style={styles.avatarWrapper}>
                             <FastImage
-                                source={image}
+                                source={{ uri: currentUser?.photoURL }}
                                 style={styles.image}
                                 resizeMode={FastImage.resizeMode.cover}
                             />
@@ -71,7 +71,9 @@ const ProfileStackBar = ({ navigation }) => {
                         </View>
                     )}
                     <View style={styles.profileInfo}>
-                        <Text style={[styles.infoText,{marginTop:0}]}>{currentUser?.firstName} {currentUser?.lastName}</Text>
+                    <Text style={[styles.infoText, {marginTop: 0}]}>
+                    {`${currentUser?.firstName || currentUser?.lastName ? `${currentUser?.firstName} ${currentUser?.lastName}`.trim() : currentUser?.displayName || 'No name available'}`}
+                    </Text>
                         <Text style={[styles.infoText,{fontSize:12}]}>Status : {currentUser?.status}</Text>
                         <View style={styles.ratingWrapper}>
                             {currentUser?.averageRating ? (
@@ -105,6 +107,22 @@ const ProfileStackBar = ({ navigation }) => {
                 <BarItem item="Marklist" icon='fa-regular fa-star' label="Marklist" />
                 <BarItem item="Services" icon='fa-regular fa-star' label="Services" />
             </View>
+            {currentUser?.status === 'user' ? 
+                <TouchableOpacity onPress={()=>navigation.navigate('Services')} style={styles.contractorWrapper}>
+                    <GradientText colors={[theme.primary, theme.secondary]} style={[styles.text,{fontWeight:'bold'}]}
+                    size={25}
+                    >
+                    Become a Contractor
+                    </GradientText>
+                    <LinearGradient
+                        style={styles.bottomBorder}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1.5, y: 0 }}
+                        colors={[theme.primary, theme.secondary]}
+                    >
+                    </LinearGradient>
+                </TouchableOpacity>           
+            : null }
             <View style={styles.barFooter}>
                 <TouchableOpacity style={styles.barText}
                     onPress={() => navigation.navigate('Support')}
@@ -113,7 +131,7 @@ const ProfileStackBar = ({ navigation }) => {
                         Support
                     </Text>
                 </TouchableOpacity>
-            <TouchableOpacity style={styles.barText}
+                <TouchableOpacity style={styles.barText}
                     onPress={() => auth().signOut()}
                 >
                     <Text style={styles.footerText}>
@@ -154,6 +172,7 @@ const getStyles = (theme) => {
       fontStyle: "normal",
       paddingTop: 2,
       color: theme.text,
+
     },
     gradientWrapper: {
       flexDirection: 'row',
@@ -241,6 +260,17 @@ const getStyles = (theme) => {
     footerText: {
         color: theme.text,
         fontSize: 12,
+    },
+    contractorWrapper: {    
+        width: 250,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    bottomBorder: {
+        position: 'absolute',
+        bottom: 0,
+        width: '95%',
+        height: 2,
     },
   });
   }

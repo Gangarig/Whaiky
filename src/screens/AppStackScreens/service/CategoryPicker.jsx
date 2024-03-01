@@ -60,7 +60,9 @@ const CategoryPicker = ({ onSave, onClose }) => {
 
   return (
         <View style={styles.container}>
-          <Text style={styles.text}>Select Category</Text>
+          <View>
+          <Text style={styles.title}>Category</Text>
+          <Text style={styles.label}>Select Category</Text>
           <DropDownPicker
             open={openCategory}
             value={selectedCategory}
@@ -79,7 +81,7 @@ const CategoryPicker = ({ onSave, onClose }) => {
 
           {selectedCategory && (
             <>
-              <Text style={styles.text}>Select Option</Text>
+              <Text style={styles.label}>Select Option</Text>
               <DropDownPicker
                 open={openOption}
                 value={selectedOption}
@@ -97,6 +99,7 @@ const CategoryPicker = ({ onSave, onClose }) => {
               />
             </>
           )}
+          </View>
           <View style={styles.buttonBox}>
           <TwoSelectButton
             primary="Save"
@@ -114,12 +117,13 @@ export default CategoryPicker;
 const getStyles = (theme) => StyleSheet.create({
   container:{
     width:'100%',
-    margin:0,
-    gap:10,
-    backgroundColor:theme.white,
+    backgroundColor:theme.backgroundColor,
     zIndex: 9999,
-    padding:10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     flex:1,
+    justifyContent:'space-between',
+    borderWidth: 1,
   },
   dropdown: {
     borderColor: theme.primary,
@@ -127,30 +131,33 @@ const getStyles = (theme) => StyleSheet.create({
     borderWidth: 1,
     zIndex: 99,
   },
-  textStyle: {
-    fontSize: 17,
-  },
   dropdownContainer: {
     backgroundColor: theme.white,
     borderColor: theme.primary,
     borderWidth: 1,
   },
-  btnContainer:{
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center',
-    width:'100%',
-    gap:10,
-    marginTop:10,
-  },
   buttonBox: {
-    position: 'absolute',
-    bottom: 0,
     width: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
   },
-  text: {
+  title : {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: theme.text,
+    fontFamily: Fonts.primary,
+    textAlign: 'left',
+    width: '100%',
+  },
+  label: {
+    marginTop: 16,
+    fontSize: 14,
+    color: theme.text,
+    fontFamily: Fonts.primary,
+    marginBottom: 6,
+  },
+  textStyle: {
     fontSize: 14,
     color: theme.text,
     fontFamily: Fonts.primary,

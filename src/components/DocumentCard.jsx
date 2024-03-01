@@ -1,116 +1,200 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import React , { useState } from 'react';
+import { View, Text, StyleSheet ,ScrollView ,TouchableOpacity} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import Colors from '../constant/Colors';
-import { shadowStyle } from '../constant/Shadow';
-import PrimaryButton from './Buttons/PrimaryButton';
 import { useTheme } from '../context/ThemeContext';
+import TwoSelectButton from './Buttons/TwoSelectButton';
+import Fonts from '../constant/Fonts';
+import ImageView from "react-native-image-viewing";
+import { useAuth } from '../context/AuthContext';
 
 const DocumentCard = ({ item ,onApprove , onDeny}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
-  const formatDateTime = (date) => {
-    if (!date) return "N/A";
+  const { currentUser } = useAuth();
+  const [visible, setIsVisible] = useState(false);
+  const images = [
+    ...(item?.frontImage ? [{ uri: item.frontImage }] : []),
+    ...(item?.backImage ? [{ uri: item.backImage }] : []),
+    
+  ];
+  
+  const formatDateTime = (timestamp) => {
+    if (!timestamp) return "N/A";
 
-    let day = date.getDate().toString().padStart(2, '0');
-    let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero indexed
-    let year = date.getFullYear();
-    let hours = date.getHours().toString().padStart(2, '0');
-    let minutes = date.getMinutes().toString().padStart(2, '0');
+   
+    const date = new Date(timestamp.seconds * 1000);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero indexed
+    const year = date.getFullYear();
 
-    return `${day}/${month}/${year}, ${hours}:${minutes}`;
+    return `${day}/${month}/${year}`; 
   };
-  const timeStampDate = item.timeStamp ? new Date(item.timeStamp._seconds * 1000) : null;
-  const formattedDateTime = formatDateTime(timeStampDate);
+
+  // Use the modified function to format dates
+  const dateOfIssueFormatted = formatDateTime(item?.dateOfIssue);
+  const dateOfExpiryFormatted = formatDateTime(item?.dateOfExpiry);
+
+
+
+
+
+
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={['#9E41F0', '#4C7BC0']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.gradient}
-      >
-        {item.type ? (
-          // Render documents
-          <>
-            <Text style={styles.title}>Document Type: {item.type}</Text>
-            <Text style={styles.info}>Document Number: {item.number}</Text>
-            <Text style={styles.info}>Full Name: {item.fullName}</Text>
-            <Text style={styles.info}>Country of Issue: {item.country}</Text>
-            <Text style={styles.info}>Date of Issue: {item.dateOfIssue}</Text>
-            <Text style={styles.info}>Date of Expiry: {item.dateOfExpiry}</Text>
-            <Text style={styles.info}>Document Status: {item.status}</Text>
-            {/* Display images as needed */}
-            {item.frontImage && (
-              <FastImage source={{ uri: item.frontImage }} style={styles.image} />
-            )}
-            {item.backImage && (
-              <FastImage source={{ uri: item.backImage }} style={styles.image} />
-            )}
-          </>
-        ) : (
-          // Render certificates
-          <>
-            <Text style={styles.title}>Certificate Title: {item.title}</Text>
-            <Text style={styles.info}>Description: {item.description}</Text>
-            {/* Display certificate images as needed */}
-            {item.imageUrl && (
-              <FastImage source={{ uri: item.imageUrl }} style={styles.image} />
-            )}
-          </>
-        )}
-      </LinearGradient>
-      {item.status === 'pending' && (
-      <View style={styles.btnContainer}>
-      <PrimaryButton text="Approve" onPress={() => onApprove(item.docId)} />
-      <PrimaryButton text="Deny" onPress={() => onDeny(item.docId)} />
-      </View>
+    <ScrollView 
+    styles={styles.container}
+    showsHorizontalScrollIndicator  = {false}
+    showsVerticalScrollIndicator = {false}
+    contentContainerStyle={styles.ScrollView}
+    >
+      <Text style={styles.title}>
+        {item?.type || 'N/A'}
+      </Text>
+      {item?.frontImage && (
+        <TouchableOpacity
+          style={styles.wrapper}
+          onPress={() => setIsVisible(true)}>
+            <FastImage source={{ uri: item?.frontImage }} style={styles.image} />
+        </TouchableOpacity>
       )}
-    </View>
-  );
-};
+      {item?.backImage && (
+        <TouchableOpacity
+          style={styles.wrapper}
+          onPress={() => setIsVisible(true)}>
+            <FastImage source={{ uri: item?.backImage }} style={styles.image} />
+        </TouchableOpacity>
+      )}
+      <View style={styles.info}>
+        <Text style={styles.label}>
+          Document Number
+        </Text>
+        <Text style={styles.value}>
+          {item?.number || 'N/A'}
+        </Text>
+      </View>
+      <View style={styles.info}>
+        <Text style={styles.label}>
+          Full Name
+        </Text>
+        <Text style={styles.value}>
+          {item?.fullName || 'N/A'}
+        </Text>
+      </View>
+      <View style={styles.info}>
+        <Text style={styles.label}>
+          Country of Issue
+        </Text>
+        <Text style={styles.value}>
+          {item?.country || 'N/A'}
+        </Text>
+      </View>
+      <View style={styles.info}>
+        <Text style={styles.label}>
+          Date of Issue
+        </Text>
+        <Text style={styles.value}>
+          {dateOfIssueFormatted || 'N/A'}
+        </Text>
+      </View>
+      <View style={styles.info}>
+        <Text style={styles.label}>
+          Date of Expiry
+        </Text>
+        <Text style={styles.value}>
+          {dateOfExpiryFormatted || 'N/A'}
+        </Text>
+      </View>
+      <View style={styles.info}>
+        <Text style={styles.label}>
+          Status
+        </Text>
+        <Text style={styles.value}>
+          {item?.status || 'N/A'}
+        </Text>
+      </View> 
+      {(currentUser?.status === 'admin' && item?.status === 'pending') ? (
+        <View style={styles.btn}>
+          <TwoSelectButton  
+            primary={'Approve'}
+            secondary={'Deny'}
+            onPressPrimary={() => onApprove(item.docId)}
+            onPressSecondary={() => onDeny(item.docId)}
+          />
+        </View>
+      ) : null}
+      <ImageView
+        images={images}
+        imageIndex={0}
+        visible={visible}
+        onRequestClose={() => setIsVisible(false)}
+      />
+    </ScrollView>
+  )
+}
+
+export default DocumentCard;
 
 const getStyles = (theme) => {
   return StyleSheet.create({
-  container: {
-    marginVertical: 20,
-    borderRadius: 8,
-    overflow: 'hidden',
-    ...shadowStyle,
-  },
-  gradient: {
-    backgroundColor: theme.background,
-    padding: 16,
-    borderRadius: 8,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: theme.white,
-    marginBottom: 5,
-  },
-  info: {
-    fontSize: 16,
-    color: theme.white,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  image: {
-    width: '100%',
-    height: 200,
-    marginVertical: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.white,
-    ...shadowStyle,
-  },
-  btnContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-  },
-});
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    ScrollView: {
+      alignItems: 'center',
+      width: '100%',
+      paddingVertical: 20,
+      paddingHorizontal: 20,
+    },
+    title: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      color: theme.text,
+      fontFamily: Fonts.primary,
+      textAlign: 'left',
+      width: '100%',
+    },
+    info: {
+      width: '100%',
+    },
+    label: {
+      marginTop: 16,
+      fontSize: 14,
+      color: theme.text,
+      fontFamily: Fonts.primary,
+      marginBottom: 6,
+    },
+    value: {
+      borderWidth: 1,
+      borderColor: theme.primary,
+      borderRadius: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      color: theme.text,
+      fontFamily: Fonts.primary,
+      fontSize: 14,
+      width: '100%',
+    },
+    image: {
+      width: '100%',
+      height: 200,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.primary,
+      overflow: 'hidden',
+    },
+    wrapper: {
+      width: '100%',
+      height: 200,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 12,
+      marginTop: 16,
+      overflow: 'hidden',
+    },
+    btn : {
+      marginTop: 20,
+      marginBottom: 20,
+    },
+  })
 }
-export default DocumentCard;

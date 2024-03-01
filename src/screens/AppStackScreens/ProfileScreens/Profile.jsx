@@ -11,6 +11,7 @@ import firestore from '@react-native-firebase/firestore'
 import Services from '../../../components/Services'
 import ServiceButton from '../../../components/Buttons/ServiceButton'
 
+
 const Profile = ({navigation}) => {
   const { currentUser } = useAuth()
   const [docs, setDocs] = useState([])
@@ -49,11 +50,13 @@ const Profile = ({navigation}) => {
     > 
       <SecondaryProfileCard profile={currentUser} navigation={navigation}/>
       <AboutText userUid={currentUser.uid}/>
-
+      {currentUser?.status === 'contractor' && (
       <View style={style.documents}>
-        <Services navigation={navigation} />
+        <Text style={style.docTitle}>My Services</Text>
+        <Services navigation={navigation} services={currentUser.services}/>
         <ServiceButton navigation={navigation} onPress={()=>navigation.navigate('Services')}/>
       </View>
+      )}
       <View style={style.documents}>
         <Text style={style.docTitle}>Documents</Text>
         {docs.map((doc, index) => (
@@ -65,14 +68,14 @@ const Profile = ({navigation}) => {
           />
         ))}
       </View>
-
-
+      {currentUser?.status === 'contractor' && (
       <TwoSelectButtonGradient   
         primary="Upload Certificate"
         secondary="Upload Document"
         onPressPrimary={() => navigation.navigate('Certificate')}
         onPressSecondary={() => navigation.navigate('DocumentUpload')}
       />
+      )}
     </ScrollView>
   )
 }

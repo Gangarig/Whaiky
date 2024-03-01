@@ -9,25 +9,30 @@ import PrimaryButton from '../../../components/Buttons/PrimaryButton'
 import { updateProfile } from './Utility'
 import { showMessage } from 'react-native-flash-message'
 import { handleAvatarChange } from '../service/Image/AvatarChange'
+import PhoneInputComponent from '../../../components/PhoneInput'
+import TwoSelectButton from '../../../components/Buttons/TwoSelectButton'
+import LocationPicker from '../service/LocationPicker'
+import { BlurView } from "@react-native-community/blur";
 
 const PersonalInfo = ({navigation}) => {
   const {currentUser} = useAuth()
-  // console.log('currentUser:', currentUser.photoURL);
   const theme = useTheme()
   const styles = getStyles(theme)
   const [data, setData] = useState({
     firstName: currentUser?.firstName || '',
     lastName: currentUser?.lastName || '',
     displayName: currentUser?.displayName || '',
-   
+    phoneNumber: currentUser?.phoneNumber || '',
   });
-
+  const [blur , setBlur] = useState(false)
+  const [phoneModal, setPhoneModal] = useState(false);
   const hasChanges = () => {
     return (
       data.firstName !== currentUser?.firstName ||
       data.lastName !== currentUser?.lastName ||
-      data.displayName !== currentUser?.displayName
-     
+      data.displayName !== currentUser?.displayName ||
+      data.phoneNumber !== currentUser?.phoneNumber 
+
     );
   };
 
@@ -63,11 +68,19 @@ const PersonalInfo = ({navigation}) => {
     <ScrollView style={styles.ScrollView}
       contentContainerStyle={styles.ScrollViewContent}
     >
+    {blur && (
+        <BlurView
+        style={styles.blur}
+        blurType="light"
+        blurAmount={5}
+        reducedTransparencyFallbackColor="white"
+        />
+    )}
       <View style={styles.avatarWrapper}>
-        {data.photoURL ? (
+        {currentUser?.photoURL ? (
           <FastImage 
             style={styles.avatar}
-            source={{ uri: data.photoURL, priority: FastImage.priority.normal }}
+            source={{ uri: currentUser?.photoURL, priority: FastImage.priority.normal }}
             resizeMode={FastImage.resizeMode.cover}
           />
         ) : (
@@ -105,10 +118,16 @@ const PersonalInfo = ({navigation}) => {
          editable={false}
          defaultValue={currentUser?.email}
          ></TextInput>
+        <Text style={styles.inputLabel}>Phone Number</Text>
+        <TextInput
+         style={styles.input}
+         editable={false}
+         defaultValue={currentUser?.phoneNumber}
+         ></TextInput>
       </View> 
-      <View style={styles.location}>
-          <Text style={styles.locationLabel}>Location</Text>
-          <View style={styles.locationTextWrapper}>
+      <View style={styles.info}>
+          <Text style={styles.infoLabel}>Location</Text>
+          <View style={styles.infoTextWrapper}>
             <Text style={styles.inputText}>Country: {currentUser?.country}</Text>
             <Text style={styles.inputText}>State: {currentUser?.state}</Text>
             <Text style={styles.inputText}>City: {currentUser?.city}</Text>
@@ -123,6 +142,29 @@ const PersonalInfo = ({navigation}) => {
           />
         )}
       </View>
+      <View style={styles.btnContainer}>
+          <TwoSelectButton
+          primary="Location"
+          secondary="Phone Number"
+          onPressPrimary={()=>navigation.navigate('LocationPicker')}
+          onPressSecondary={
+            ()=>{setPhoneModal(true),setBlur(true)}}
+          />
+      </View>
+      
+      <PhoneInputComponent 
+      visible={phoneModal}
+      onCancel={()=>{setPhoneModal(false),setBlur(false)}}
+      onSave={(phoneNumber)=>{
+        setData(prevData => ({
+          ...prevData,
+          phoneNumber: phoneNumber,
+        }));
+        setPhoneModal(false);
+        setBlur(false);
+      }
+      }
+      />
     </ScrollView>
   )
 }
@@ -155,6 +197,8 @@ const getStyles = (theme) => StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    borderWidth: 1,
+    borderColor: theme.primary,
   },
   changeAvatar: {
     position: 'absolute',
@@ -189,13 +233,13 @@ const getStyles = (theme) => StyleSheet.create({
     fontFamily: Fonts.primary,
     marginTop: 10,
   },
-  location: {
+  info: {
     width: '100%',
     borderBottomColor: theme.primary,
     borderBottomWidth: 1,
     paddingBottom: 6,
   },
-  locationLabel: {
+  infoLabel: {
     borderBottomColor: theme.primary,
     borderBottomWidth: 1,
     color: theme.text,
@@ -203,7 +247,7 @@ const getStyles = (theme) => StyleSheet.create({
     fontFamily: Fonts.primary,
     paddingBottom: 5,
   },
-  locationTextWrapper: {
+  infoTextWrapper: {
     paddingLeft: 20,
   },
   inputText: {
@@ -215,6 +259,15 @@ const getStyles = (theme) => StyleSheet.create({
   btnContainer: {
     width: '100%',
     marginTop: 20,
+  },
+  blur: {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    position: "absolute",
+    height: "110%",
+    width: "110%",
+    zIndex: 10,
   }
-
 })

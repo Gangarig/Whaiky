@@ -12,7 +12,7 @@ const ServiceButton = ({ item,navigation,onPress }) => {
     onPress={onPress}
     >
             <View style={styles.cardIcon}>
-              <FontAwesomeIcon size={40} color={theme.primary} icon={faIdBadge} />
+              <FontAwesomeIcon size={40} color={theme.primary} icon='fa-solid fa-layer-group' />
             </View>
             <Text style={[styles.cardText]}>
                 Select or Change Categories

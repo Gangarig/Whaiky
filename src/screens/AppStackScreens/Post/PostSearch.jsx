@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { showMessage } from 'react-native-flash-message';
 import { useTheme } from '../../../context/ThemeContext';
 import { BlurView } from "@react-native-community/blur";
+import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
 
 
 const PostSearch = ({ navigation }) => {
@@ -168,14 +169,6 @@ const PostSearch = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-    {blur && (
-        <BlurView
-        style={styles.blur}
-        blurType="light"
-        blurAmount={2}
-        reducedTransparencyFallbackColor="white"
-        />
-    )}
       <View style={styles.searchBox}>
         <View style={styles.searchInput}>
         <Text style={[Global.titleSecondary,styles.searchLabel]}> Search with / Post Title or Poster Name /. </Text>
@@ -311,70 +304,68 @@ const PostSearch = ({ navigation }) => {
             </TouchableOpacity>
         )}
       </View>
-
-
-          {/* Location Picker Modal */}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={locationModalVisible}
-            onRequestClose={() => {
-              setLocationModalVisible(false);
+      {/* Location Picker Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={locationModalVisible}
+        onRequestClose={() => {
+          setLocationModalVisible(false);
+          setBlur(false);
+        }}
+      >
+        <View style={styles.locationModal}>
+          <TouchableOpacity 
+            style={styles.modalOverlay} 
+            activeOpacity={1} 
+            onPressOut={() => { 
+            setLocationModalVisible(false); 
+            setBlur(false);
+            }}
+          />
+          <Location
+            onSave={(selectedCountry, selectedState, selectedCity) => {
+              handleLocationSave(selectedCountry, selectedState, selectedCity);
+              setLocationModalVisible(false); 
               setBlur(false);
             }}
-          >
-            <View style={styles.locationModal}>
-              <TouchableOpacity 
-                style={styles.modalOverlay} 
-                activeOpacity={1} 
-                onPressOut={() => { 
-                setLocationModalVisible(false); 
-                setBlur(false);
-                }}
-              />
-              <Location
-                onSave={(selectedCountry, selectedState, selectedCity) => {
-                  handleLocationSave(selectedCountry, selectedState, selectedCity);
-                  setLocationModalVisible(false); 
-                  setBlur(false);
-                }}
-                onClose={() => {
-                setLocationModalVisible(false)
-                setBlur(false);
-              }}
-              />
-            </View>
-          </Modal>
-          {/* Category Picker Modal */}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={categoryModalVisible}
-            onRequestClose={() => {
+            onClose={() => {
+            setLocationModalVisible(false)
+            setBlur(false);
+          }}
+          />
+        </View>
+      </Modal>
+      {/* Category Picker Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={categoryModalVisible}
+        onRequestClose={() => {
+          setCategoryModalVisible(false);
+          setBlur(false);
+        }}
+      >
+        <View style={styles.categoryModal}>
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPressOut={() => {
               setCategoryModalVisible(false);
               setBlur(false);
             }}
-          >
-            <View style={styles.categoryModal}>
-              <TouchableOpacity
-                style={styles.modalOverlay}
-                activeOpacity={1}
-                onPressOut={() => {
-                  setCategoryModalVisible(false);
-                  setBlur(false);
-                }}
-              />
-            <CategoryPicker
-              onSave={(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText) => {
-                handleCategorySave(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText);
-              }}
-              onClose={() => {
-                setCategoryModalVisible(false);
-                setBlur(false);
-              }}
-            />
-            </View>
-          </Modal>
+          />
+        <CategoryPicker
+          onSave={(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText) => {
+            handleCategorySave(selectedCategoryId, selectedOptionId, selectedCategoryText, selectedOptionText);
+          }}
+          onClose={() => {
+            setCategoryModalVisible(false);
+            setBlur(false);
+          }}
+        />
+        </View>
+      </Modal>
     </View>
   );
 };

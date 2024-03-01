@@ -1,21 +1,10 @@
-import brush from '../../assets/icons/brush.png';
-import energy from '../../assets/icons/energy.png';
-import fire from '../../assets/icons/fire.png';
-import brush2 from '../../assets/icons/brush2.png';
-import home from '../../assets/icons/home.png';
-import sapling from '../../assets/icons/sapling.png';
-import shaver from '../../assets/icons/shaver.png';
-import thermometer from '../../assets/icons/thermometer.png';
-import tool from '../../assets/icons/tool.png';
-import truck from '../../assets/icons/truck.png';
-import category from '../../assets/icons/category.png';
+
 
 
 export const categoriesData = [
   {
     id: 1,
     text: 'Home Improvement',
-    icon: home,
     options: [
       { optionId: 1, text: 'Flooring installation and repair' },
       { optionId: 2, text: 'Kitchen and bathroom remodeling' },
@@ -26,7 +15,6 @@ export const categoriesData = [
   {
     id: 2,
     text: 'Cleaning Services',
-    icon: brush,
     options: [
       { optionId: 5, text: 'Residential and commercial cleaning' },
       { optionId: 6, text: 'Carpet and upholstery cleaning' },
@@ -37,7 +25,6 @@ export const categoriesData = [
   {
     id: 3,
     text: 'HVAC Services',
-    icon: fire,
     options: [
       { optionId: 9, text: 'Heating and cooling preparation' },
       { optionId: 10, text: 'Air duct maintenance' },
@@ -48,7 +35,6 @@ export const categoriesData = [
   {
     id: 4,
     text: 'Painting Services',
-    icon: brush2,
     options: [
       { optionId: 13, text: 'Interior and exterior painting' },
       { optionId: 14, text: 'Faux painting' },
@@ -59,7 +45,6 @@ export const categoriesData = [
   {
     id: 5,
     text: 'Electrical Services',
-    icon: energy,
     options: [
       { optionId: 17, text: 'Lighting installation and repair' },
       { optionId: 18, text: 'Wiring and Rewiring' },
@@ -70,7 +55,6 @@ export const categoriesData = [
   {
     id: 6,
     text: 'Water Heater Services',
-    icon: thermometer,
     options: [
       { optionId: 21, text: 'Residential and commercial cleaning' },
       { optionId: 22, text: 'Carpet and upholstery cleaning' }  ,
@@ -81,7 +65,6 @@ export const categoriesData = [
   {
     id: 7,
     text: 'Plumbing Services',
-    icon: shaver,
     options: [
       { optionId: 25, text: 'Pipe repair and installation' },
       { optionId: 26, text: 'Water heater installation and repair' },
@@ -92,7 +75,6 @@ export const categoriesData = [
   {
     id: 8,
     text: 'Moving Services',
-    icon: truck,
     options: [
       { optionId: 29, text: 'Local and long-distance moving' },
       { optionId: 30, text: 'Packing and unpacking' },
@@ -103,7 +85,6 @@ export const categoriesData = [
   {
     id: 9,
     text: 'Landscaping Services',
-    icon: sapling,
     options: [
       { optionId: 33, text: 'Lawn care and maintenance' },
       { optionId: 34, text: 'Tree trimming and removal' },
@@ -114,7 +95,6 @@ export const categoriesData = [
   {
     id: 10,
     text: 'General Services',
-    icon: tool,
     options: [
       { optionId: 37, text: 'General home repairs and maintenance' },
       { optionId: 38, text: 'Carpentry services' },
@@ -125,7 +105,6 @@ export const categoriesData = [
   {
     id: 11,
     text: 'Other Services',
-    icon: category,
     options: [
       { optionId: 41, text: 'Other Services' },
     ],

@@ -15,7 +15,6 @@ import { showMessage } from 'react-native-flash-message';
 import firebase from '@react-native-firebase/app';
 import * as Progress from 'react-native-progress';
 import Location from '../service/LocationPicker';
-import PrimaryButton from '../../../components/Buttons/PrimaryButton';
 import PrimaryGradientButton from '../../../components/Buttons/PrimaryGradientButton';
 import firestore from '@react-native-firebase/firestore';
 import GradientText from '../../../components/GradientText';
@@ -23,6 +22,7 @@ import FastImage from 'react-native-fast-image';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useTheme } from '../../../context/ThemeContext';
 import { BlurView } from "@react-native-community/blur";
+import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
 
 
 
@@ -464,8 +464,12 @@ const AddPost = ({ navigation }) => {
             </View>
       </Modal>
       <View style={styles.buttonBox}>
-          <PrimaryButton text="Select a Location" onPress={() => {setModalVisible(true);setBlur(true)}} />
-          <PrimaryButton text="Select Category" onPress={openCategoryModal} />
+          <TwoSelectButton
+            primary={'Select Location'}
+            secondary={'Select Category'}
+            onPressPrimary={() => {setModalVisible(true);setBlur(true)}}
+            onPressSecondary={openCategoryModal}
+          />
       </View>
       <View style={styles.PostBtn}>
       <PrimaryGradientButton text="Post" onPress={handlePost} />
@@ -500,14 +504,13 @@ const getStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
   },
   categoryModal: {
-    height: 300,
+    height: 450,
     width: '100%',
     bottom: 0,
     position: 'absolute',
     borderTopColor: theme.primary,
     borderTopWidth: 1,
     backgroundColor: theme.background,
-    paddingTop: 30,
     alignItems: 'center',
   },
   addImageWrapper: {

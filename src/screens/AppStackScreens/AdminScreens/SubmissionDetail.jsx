@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import { showMessage } from 'react-native-flash-message';
 import DocumentCard from '../../../components/DocumentCard';
 import { denyDocument,approveDocument ,UpdateStatus} from './Utility';
+import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
 
 const SubmissionDetail = ({ navigation, route }) => {
   const id = route.params.id;
@@ -97,11 +98,5 @@ export default SubmissionDetail;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-  },
-  btnContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
   },
 });

@@ -42,8 +42,8 @@ const LocationPicker = ({ onSave , onClose }) => {
 
       setStateItems(stateList);
       setCountryOpen(false);
-      setState(null); // Reset state selection on country change
-      setCity(null);  // Reset city selection on country change
+      setState(null); 
+      setCity(null);  
     }
   }, [country]);
 
@@ -56,11 +56,11 @@ const LocationPicker = ({ onSave , onClose }) => {
       setCityItems(cityList);
       setStateOpen(false);
 
-      // If the state doesn't have cities, set city to state value
+      
       if (cityList.length === 0) {
         setCity(state);
       } else {
-        setCity(null); // Reset city selection on state change
+        setCity(null); 
       }
     }
   }, [state, country]);
@@ -119,15 +119,11 @@ const LocationPicker = ({ onSave , onClose }) => {
     });
   };
 
-  useEffect(() => {
-    console.log("LocationPicker rendered!");
-  }, []);
-
   return (
       <View style={styles.container}>
-        <Text style={Global.title}>Location</Text>
-        
-        <Text style={styles.text}>Country</Text>
+        <View >
+        <Text style={styles.title}>Location</Text> 
+        <Text style={styles.label}>Country</Text>
         <DropDownPicker
           open={countryOpen}
           value={country}
@@ -141,7 +137,7 @@ const LocationPicker = ({ onSave , onClose }) => {
         />
         {stateItems.length > 0 && (
           <>
-            <Text style={styles.text}>State</Text>
+            <Text style={styles.label}>State</Text>
             <DropDownPicker
               open={stateOpen}
               value={state}
@@ -160,7 +156,7 @@ const LocationPicker = ({ onSave , onClose }) => {
         )}
         {cityItems.length > 0 && (
           <>
-            <Text style={styles.text}>City</Text>
+            <Text style={styles.label}>City</Text>
             <DropDownPicker
               open={cityOpen}
               value={city}
@@ -177,6 +173,7 @@ const LocationPicker = ({ onSave , onClose }) => {
             />
           </>
         )}
+        </View>
           <View style={styles.buttonBox}>
           <TwoSelectButton
             primary="Save"
@@ -192,12 +189,12 @@ const LocationPicker = ({ onSave , onClose }) => {
 const getStyles = (theme) => StyleSheet.create({
   container:{
     width:'100%',
-    margin:0,
-    gap:10,
-    backgroundColor:theme.white,
+    backgroundColor:theme.backgroundColor,
     zIndex: 9999,
-    padding:10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     flex:1,
+    justifyContent:'space-between',
   },
   dropdown: {
     borderColor: theme.primary,
@@ -205,34 +202,38 @@ const getStyles = (theme) => StyleSheet.create({
     borderWidth: 1,
     zIndex: 99,
   },
-  textStyle: {
-    fontSize: 17,
-  },
   dropdownContainer: {
     backgroundColor: theme.white,
     borderColor: theme.primary,
     borderWidth: 1,
   },
-  btnContainer:{
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center',
-    width:'100%',
-    gap:10,
-    marginTop:10,
-  },
   buttonBox: {
-    position: 'absolute',
-    bottom: 0,
     width: '100%',
+    justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
   },
-  text: {
+  title : {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: theme.text,
+    fontFamily: Fonts.primary,
+    textAlign: 'left',
+    width: '100%',
+  },
+  label: {
+    marginTop: 16,
+    fontSize: 14,
+    color: theme.text,
+    fontFamily: Fonts.primary,
+    marginBottom: 6,
+  },
+  textStyle: {
     fontSize: 14,
     color: theme.text,
     fontFamily: Fonts.primary,
   },
+
 
   
 });

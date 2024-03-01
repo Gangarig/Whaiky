@@ -12,7 +12,7 @@ const CategoryDetail = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [lastVisible, setLastVisible] = useState(null);
   const { optionId } = route.params;
-  console.log('optionId:', optionId);
+
 
   useEffect(() => {
     fetchPosts();
@@ -74,11 +74,11 @@ const CategoryDetail = ({ navigation, route }) => {
   };
 
   const renderItem = ({ item }) => (
-    <View style={[styles.postWrapper, shadowStyle]}>
+    <View style={[styles.postWrapper]}>
       <PostCard
         navigation={navigation}
         post={item}
-        onPress={() => navigation.navigate('PostDetail', { id: item.id })}
+        onPress={() => navigation.navigate('PostDetail', { id: item.postId })}
       />
     </View>
   );
@@ -122,7 +122,9 @@ const styles = StyleSheet.create({
   },
   postWrapper: {
     width: '50%',
-    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
   },
 });
 

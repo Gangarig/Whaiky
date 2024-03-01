@@ -3,15 +3,13 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'rea
 import { showMessage } from 'react-native-flash-message';
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../../context/AuthContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from '../../../../context/ThemeContext';
-
-// Import custom components and constants
 import ServiceCategoryPicker from '../../service/ServiceCategoryPicker';
-import { shadowStyle } from '../../../../constant/Shadow';
 import PrimaryButton from '../../../../components/Buttons/PrimaryButton';
+import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import Fonts from '../../../../constant/Fonts';
+import { BlurView } from '@react-native-community/blur';
 
 const ServiceCategory = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -21,6 +19,8 @@ const ServiceCategory = ({ navigation }) => {
   const [userData, setUserData] = useState({});
   const theme = useTheme();
   const styles = getStyles(theme);
+  const [blur, setBlur] = useState(false);
+
   useEffect(() => {
     if (!currentUser) {
       showMessage({
@@ -60,6 +60,7 @@ const ServiceCategory = ({ navigation }) => {
   }, [currentUser]);
 
   const togglePickerModal = () => {
+    setBlur(!blur);
     setPickerModalVisible(prevVisible => !prevVisible);
     setModalBackgroundVisible(prevVisible => !prevVisible);
   };
@@ -121,23 +122,32 @@ const ServiceCategory = ({ navigation }) => {
     navigation.navigate('DocumentUpload');
   };
 
+  const categoryIcons = {
+    1: 'fa-solid fa-house',
+    2: 'fa-solid fa-fire',
+    3: 'fa-solid fa-bolt',
+    4: 'fa-solid fa-droplet-slash',
+    5: 'fa-solid fa-droplet-slash',
+    6: 'fa-solid fa-spray-can-sparkles',
+    7: 'fa-solid fa-paint-roller',
+    8: 'fa-solid fa-temperature-arrow-up',
+    9: 'fa-solid fa-truck',
+    10: 'fa-solid fa-screwdriver-wrench',
+  };
+
   return (
-
-
       <ScrollView 
         style={styles.container}
         contentContainerStyle={styles.ScrollView}
       >
-        {isModalBackgroundVisible && (
-          <View style={styles.modalBackground} />
-        )}
-        <View style={styles.LinearGradientWrapper}>
-        <LinearGradient
-            colors={[theme.primary, theme.secondary]}
-            start={{ x: .5, y: 0 }}
-            end={{ x: 2, y:  1}}
-            style={styles.content}
-          >
+            {blur && (
+                <BlurView
+                style={styles.blur}
+                blurType="light"
+                blurAmount={2}
+                reducedTransparencyFallbackColor="white"
+                />
+            )}
           <Text style={styles.title}>Select Your Categories</Text>
           <ServiceCategoryPicker 
             modalVisible={isPickerModalVisible} 
@@ -145,17 +155,22 @@ const ServiceCategory = ({ navigation }) => {
           />
           {services.map((service, index) => (
             <View key={index} style={styles.serviceContainer}>
+              <FontAwesomeIcon size={40} style={[]} color={theme.primary}
+                icon={categoryIcons[service.categoryId]}
+              />
               <View style={styles.textWrapper}>
                 <Text style={styles.categoryText}>{service.categoryText}</Text>
                 <Text style={styles.optionText}>{service.optionText}</Text>
               </View>
               <TouchableOpacity onPress={() => handleDeleteService(service)}>
-              <FontAwesomeIcon size={25} style={[]} color={theme.primary} icon="fa-solid fa-trash" />
+              <FontAwesomeIcon size={40} style={[]} color={theme.primary} icon={faTrashCan}/>
               </TouchableOpacity>
             </View>
           ))}
-          </LinearGradient>
-          </View>
+          {services.length === 0 && (
+            <Text style={styles.title}>No services found</Text>
+          )  
+          }
           <View style={styles.btnContainer}>
             <PrimaryButton
             text="Add Service"
@@ -179,80 +194,73 @@ const getStyles = (theme) => StyleSheet.create({
   container: {
     backgroundColor: theme.background,
     flex: 1,
-    width: '100%',
   },
   ScrollView: {
-    flexGrow: 1,
-    justifyContent: 'space-around',
-    width: '100%',
-    gap: 20,
-    paddingBottom: 100,
-  },
-  LinearGradientWrapper: {
-    width: '100%',
-    alignItems: 'center',
-    ...shadowStyle,
-    marginTop: 20,
-  }, 
-  modalBackground: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex:9, 
-  },
-  content:{
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    paddingHorizontal: 20,
+    width: '100%',  
     paddingVertical: 20,
+    paddingHorizontal: 15,
     justifyContent: 'center',
-    alignItems: 'center',
-    gap: 5,
-    width: '90%',
   },
   title: {
-    fontSize: 24,
+    fontSize: 14,
     fontWeight: 'bold',
-    color: theme.white,
-    textAlign: 'center',
-  },
-  btnContainer:{
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
+    color: theme.text,
+    marginBottom: 16,
   },
   serviceContainer: {
-    backgroundColor: '#fff',
-    padding: 16,
+    backgroundColor: theme.background,
+    borderWidth: 1,
+    borderColor: theme.primary,
+    borderRadius: 12,
+    overflow: 'hidden',
+    height: 80,
+    paddingHorizontal: 10,
     marginBottom: 16,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
     width: '100%',
     flexDirection: 'row',
+    justifyContent: 'center',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   textWrapper: {
-    width: '80%',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    flex: 1,
+    paddingLeft: 20,
   },
   categoryText: {
-    fontSize: 18,
+    color: theme.text,
+    fontSize: 14,
+    fontFamily: Fonts.primary,
+    marginBottom: 6,
     fontWeight: 'bold',
   },
   optionText: {
-    fontSize: 16,
+    color: theme.text,
+    fontSize: 12,
+    fontFamily: Fonts.primary,
+    
   },
+  btnContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16,
+  },
+  blur: {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    position: "absolute",
+    height: "110%",
+    width: "110%",
+    zIndex: 10,
+  }
+  
 });
 
 export default ServiceCategory;
+
+
+

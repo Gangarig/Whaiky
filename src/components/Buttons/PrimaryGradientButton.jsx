@@ -1,17 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {shadowStyle} from '../../constant/Shadow';
 import { useTheme } from '../../context/ThemeContext';
 
 const PrimaryGradientButton = ({ text, onPress }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
-  const TouchableComponent =
-    Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
 
   return (
-    <TouchableComponent onPress={onPress}>
+    <TouchableOpacity onPress={onPress}>
       <View style={[styles.shadowContainer]}>
         <LinearGradient
           colors={[theme.primary, theme.secondary]}
@@ -22,7 +19,7 @@ const PrimaryGradientButton = ({ text, onPress }) => {
           <Text style={styles.getStarted}>{text}</Text>
         </LinearGradient>
       </View>
-    </TouchableComponent>
+    </TouchableOpacity>
   );
 }
 

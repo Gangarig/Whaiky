@@ -59,21 +59,23 @@ const DashBoard = ({ navigation }) => {
     return () => unsubscribe(); // Detach listener on unmount
   }, []);
 
-  return (
-    <View style={[styles.container]}>
-      <View style={{...shadowStyle}}>
+  const listHeader = () => {
+    return (
       <LinearGradient
         colors={[theme.primary, theme.secondary]}
+        style={[styles.gradient]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={[styles.gradient,]}
       >
-        <Text style={[Global.title, styles.white]}>Dashboard</Text>
-        <Text style={[Global.titleSecondary, styles.white]}>Document submissions</Text>
+        <Text style={styles.title}>Document Submission</Text>
       </LinearGradient>
-      </View>
+    );
+  }
+  return (
+    <View style={[styles.container]}>
       <FlatList
         data={submissions}
+        ListHeaderComponent={listHeader}
         renderItem={({ item }) => (
           <SubmissionCard
             date={item.timeStamp}
@@ -98,14 +100,20 @@ const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 10,
+    padding: 15,
   },
   gradient: {
-    borderRadius: 10,
+    width: '100%',
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  title:{ 
+    fontSize: 26, 
+    color: theme.white, 
+    fontWeight: 'bold',
     padding: 10,
-    marginBottom: 10,
-  },
-  white: {
-    color: theme.white,
-  },
+    paddingHorizontal: 15,
+  }
+
+
 });

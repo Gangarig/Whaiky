@@ -95,12 +95,14 @@ const Certificate = ({ navigation }) => {
         .doc(currentUser.uid)
         .collection('certificates')
         .add(certificateData);
-  
+      
+      if(currentUser?.status === 'contractor'){
       showMessage({
         message: 'Certificate uploaded successfully.',
         type: 'success',
       });
-      navigation.navigate('Home');
+      }
+      navigation.navigate('Profile');
       resetForm();
     } catch (error) {
       showMessage({
@@ -124,11 +126,7 @@ const Certificate = ({ navigation }) => {
     });
   };
   const SubmitDone = () => {
-    showMessage({
-      message: 'Submission successfully sent.',
-      type: 'success',
-    });
-    navigation.navigate('Home');
+    navigation.navigate('ProfileScreen');
   }
   return (
     <ScrollView 
@@ -169,12 +167,12 @@ const Certificate = ({ navigation }) => {
             value={certificateDetails.description}
           />
           <View style={styles.btn}>
-          <TwoSelectButton  
-          primary="Upload"
-          secondary="Skip"
-          onPressPrimary={uploadCertificate}
-          onPressSecondary={() => navigation.navigate('Home')}
-          />
+            <TwoSelectButton  
+            primary="Upload"
+            secondary="Skip"
+            onPressPrimary={uploadCertificate}
+            onPressSecondary={SubmitDone}
+            />
           </View>
     </ScrollView>
   );
@@ -207,6 +205,8 @@ const getStyles = (theme) => StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: theme.primary,
   },
   info: {
     justifyContent: 'center',

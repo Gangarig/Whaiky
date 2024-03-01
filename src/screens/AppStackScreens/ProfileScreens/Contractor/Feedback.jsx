@@ -197,7 +197,7 @@ const Feedback = ({route,navigation}) => {
             <AirbnbRating
               count={5}
               defaultRating={3}
-              size={25}
+              size={20}
               showRating={false}
               onFinishRating={setRating}
             />

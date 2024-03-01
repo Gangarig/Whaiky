@@ -150,12 +150,12 @@ const Location = React.memo(({ onSave, onClose }) => {
       )}
       </View>
       <View style={styles.buttonBox}>
-      <TwoSelectButton
-        primary="Save"
-        secondary="Cancel"
-        onPressPrimary={() => onSave(selectedCountry, selectedState, selectedCity)} 
-        onPressSecondary={onClose} 
-      />
+        <TwoSelectButton
+          primary="Save"
+          secondary="Cancel"
+          onPressPrimary={() => onSave(selectedCountry, selectedState, selectedCity)} 
+          onPressSecondary={onClose} 
+        />
       </View>
     </View>
   );
@@ -178,6 +178,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     zIndex: -1,
+
   },
   title: {
     color: theme.text,

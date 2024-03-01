@@ -4,15 +4,14 @@ import { useTheme } from '../context/ThemeContext'
 import Fonts from '../constant/Fonts'
 import { useAuth } from '../context/AuthContext'
 
-const Services = () => {
+const Services = (services) => {
     const theme = useTheme()
     const styles = getStyles(theme)
-    const { currentUser } = useAuth()
+
 
   return (
-    <View style={styles.container}>
-        <Text style={styles.title}>My Services</Text>
-        {currentUser.services.map((service, index) => (
+<View style={styles.container}>
+        {services.services.map((service, index) => (
             <View key={index} style={styles.wrapper}>
                 <Text style={styles.categoryText}>{service.categoryText}</Text>
                 <Text style={styles.optionText}>{service.optionText}</Text>
@@ -26,6 +25,9 @@ const getStyles = (theme) => {
     return StyleSheet.create({
         container: {
             width: '100%',
+            marginBottom: 16,
+            borderBottomColor: theme.primary,
+            borderBottomWidth: 1,
         },
         title: {
             marginBottom: 16,
@@ -37,10 +39,7 @@ const getStyles = (theme) => {
         wrapper: {
             borderTopColor: theme.primary,
             borderTopWidth: 1,
-            borderBottomColor: theme.primary,
-            borderBottomWidth: 1,
             paddingVertical: 16,
-            marginBottom: 16,
         },
         categoryText: {
             color: theme.text,

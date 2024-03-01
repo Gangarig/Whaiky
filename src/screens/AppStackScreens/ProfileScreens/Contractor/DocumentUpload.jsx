@@ -185,6 +185,10 @@
         if( currentUser.status === 'contractor') {
           navigation.navigate('Home');
         } else {
+          showMessage({
+            message: 'Document Submitted successfully.',
+            type: 'success',
+          });
           navigation.navigate('Certificate');
         }
 
