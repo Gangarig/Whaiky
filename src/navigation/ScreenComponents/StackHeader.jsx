@@ -27,7 +27,7 @@ const StackHeader = ({title,navigation,isHomeScreen}) => {
         {title}
       </GradientText>
       </TouchableOpacity>
-      <TouchableOpacity onPress={()=>navigation.navigate('SearchPost')}>
+      <TouchableOpacity onPress={()=>navigation.navigate('Search')}>
       <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" size={20}  color={theme.secondary}/>
       </TouchableOpacity>
     </View>

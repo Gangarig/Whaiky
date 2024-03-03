@@ -35,12 +35,14 @@ const PostCard = ({ post, onPress }) => {
         colors={gradientColors}
         start={{ x: 0, y: 1}}
         end={{ x: 1, y: 0 }}
-        style={[styles.postCardContainer,{ borderRadius: 10,
-        borderWidth: .5, borderColor: theme.primary, overflow: 'hidden' }]}
+        style={[styles.postCardContainer,]}
       >
         {hasImages ? (
           <FastImage 
-            source={{ uri: post.images[0] }}
+              source={{ 
+                uri: post.images[0],
+                priority: FastImage.priority.high,
+              }}
             style={styles.postImage}
             resizeMode={FastImage.resizeMode.cover}
           />
@@ -84,6 +86,10 @@ const getStyles = (theme) => {
     position: 'relative',
     maxWidth: 180,
     backgroundColor: theme.querternary,
+    borderRadius: 10,
+    borderWidth: .5, 
+    borderColor: theme.primary, 
+    overflow: 'hidden'
   },
   noImage:{
     justifyContent:'center',
@@ -93,6 +99,7 @@ const getStyles = (theme) => {
   postImage: {
     width: '100%',
     height: 120,
+    backgroundColor: theme.background,
   },
   noImage:{
     height: 120,

@@ -40,7 +40,7 @@ export const ThemeProvider = ({ children }) => {
   };
 
   // Determine which theme to use
-  const theme = currentUser && currentUser.status === 'contractor' ? contractorTheme : defaultTheme;
+  const theme = ((currentUser && currentUser.status === 'contractor') ||(currentUser && currentUser.status ==='admin')) ? contractorTheme : defaultTheme;
 
   return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
 };

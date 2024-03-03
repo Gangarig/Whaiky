@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/AppStackScreens/HomeScreens/Home';
 import PostDetail from '../screens/AppStackScreens/Post/PostDetail';
-import PostSearch from '../screens/AppStackScreens/Post/PostSearch';
+import Search from '../screens/AppStackScreens/Post/Search';
 import StackHeader from './ScreenComponents/StackHeader';
 import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedback';
 import ContractorDetail from '../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
@@ -36,8 +36,8 @@ function HomeStackScreen({ navigation}) {
       }
        />
       <HomeStack.Screen 
-      name="SearchPost" 
-      component={PostSearch}
+      name="Search" 
+      component={Search}
       options={
         ({navigation}) => ({
           header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
