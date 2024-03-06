@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/AppStackScreens/HomeScreens/Home';
 import PostDetail from '../screens/AppStackScreens/Post/PostDetail';
-import Search from '../screens/AppStackScreens/Post/Search';
+import Search from '../screens/AppStackScreens/Search/Search';
 import StackHeader from './ScreenComponents/StackHeader';
 import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedback';
 import ContractorDetail from '../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';

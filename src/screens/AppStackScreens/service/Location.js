@@ -7,8 +7,9 @@ import { Global } from '../../../constant/Global';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
 import Fonts from '../../../constant/Fonts';
+import { Modal } from 'react-native';
 
-const Location = React.memo(({ onSave, onClose }) => {
+const Location = React.memo(({ onSave, onClose ,visible}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
   const [countryOpen, setCountryOpen] = useState(false);
@@ -73,6 +74,12 @@ const Location = React.memo(({ onSave, onClose }) => {
   }, [selectedCountry, selectedState]);
 
   return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
     <View style={styles.container}>
       <View style={styles.dropDownWrapper}>
       <Text style={[Global.title, styles.title]}>Location</Text>
@@ -158,13 +165,18 @@ const Location = React.memo(({ onSave, onClose }) => {
         />
       </View>
     </View>
+    </Modal>
+
   );
 });
 
 const getStyles = (theme) => StyleSheet.create({
 
   container: {
-    flex: 1,
+    height: 450,
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
     backgroundColor: theme.background,
     paddingVertical: 10,
     borderTopColor  : theme.primary,

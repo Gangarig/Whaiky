@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, Modal, TouchableOpacity, Button } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import debounce from 'lodash/debounce';
@@ -17,6 +17,10 @@ import ContractorCard from '../../../components/ContractorCard';
 import { fetchPosts , fetchUsers , filterPosts, filterUsers } from './SearchFunctions';
 import Loading from '../../../components/Loading';
 import { useAuth } from '../../../context/AuthContext';
+import { Animated } from 'react-native';
+import { CollapsibleHeaderScrollView } from 'react-native-collapsible-header-views';
+import Header from './Header';
+
 
 
 const Search = ({ navigation }) => {
@@ -33,6 +37,8 @@ const Search = ({ navigation }) => {
   const styles = getStyles(theme);
   const { currentUser } = useAuth();
   const [blur, setBlur] = useState(false);
+
+
 
   const clearOption = () => {
     setOption('');
@@ -66,106 +72,7 @@ const Search = ({ navigation }) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  const header = () => {
-    return (
-    <View style={styles.header}>
-        <TextInput 
-          style={styles.searchTextInput}
-          placeholder="Search"
-          // value={searchTerm}
-          // onChangeText={text => setSearchTerm(text)}
-        />
-        <View style={styles.btn}>
-        <TwoSelectButton
-          primary={"Add Location"}
-          secondary={"Add Category"}
-          onPressPrimary={() => {
-            setLocationModalVisible(true);
-            setBlur(true);
-          }}
-          onPressSecondary={() => {
-            setCategoryModalVisible(true);
-            setBlur(true);
-          }}
-        />
-        </View>
-        <View style={styles.btn}>
-        <TwoSelectButton
-          primary={"Search"}
-          secondary={`Search ${searchType === 'Post' ? 'Users' : 'Posts'}`}
-          onPressPrimary={() => {
-    
-          }}
-          onPressSecondary={toggleSearchType}
-        />
-        </View>
-        { (country || state || city ) && (
-        <View style={styles.info}>
-            {country && 
-              <View style={[styles.infoContainer,shadowStyle]}>
-                {country &&
-                <View style={styles.subInfo}>
-                <Text style={styles.value}>Country : {country || 'N/A'}</Text>
-                <TouchableOpacity onPress={
-                  ()=>clearCountry()
-                }>
-                <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
-                </TouchableOpacity>
-                </View>
-                }
-                
-                {state &&
-                <View style={styles.subInfo}>
-                <Text style={styles.value}>State : {state}</Text>
-                <TouchableOpacity onPress={
-                  ()=>clearState()
-                }>
-                <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
-                </TouchableOpacity>
-                </View>
-                }
-                
-                {city &&
-                <View style={styles.subInfo}>
-                <Text style={styles.value}>City : {city}</Text>
-                <TouchableOpacity onPress={
-                  ()=>clearCity()
-                }>
-                <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
-                </TouchableOpacity>
-                </View>
-                }
-              </View>
-            }
-        </View>
-        )}
-        { (category || option) && (
-          <View style={[styles.info]}>
-            <View style={[styles.infoContainer, shadowStyle]}>
-              {category && (
-                <View style={styles.subInfo}>
-                  <Text style={styles.value}>{category} {categoryId || 'N/A'}</Text>
-                  <TouchableOpacity onPress={clearCategory}>
-                    <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
-                  </TouchableOpacity>
-                </View>
-              )}
-              {option && (
-                <View style={styles.subInfo}>
-                  <Text style={styles.value}>{option || 'N/A'}</Text>
-                  <TouchableOpacity onPress={clearOption}>
-                    <FontAwesomeIcon color={theme.white} size={22} icon="fa-solid fa-delete-left" />
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-          </View>
-        )}
-      <View style={styles.bottomBorder}>
-      </View>
-    </View>
-    )
-  }
+
   const Footer = () => {
     if (loadingMore) {
       return <Loading />;
@@ -308,7 +215,7 @@ const Search = ({ navigation }) => {
     <View style={styles.container}>
       {searchType === 'Post' ? (
         <FlatList
-          key="post-list" // Unique key for posts
+          key="post-list" 
           data={posts}
           renderItem={renderItem}
           keyExtractor={item => item.postId || item.id}
@@ -319,36 +226,86 @@ const Search = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={Footer}
-          ListHeaderComponent={header}
+          ListHeaderComponent={
+            <Header
+              theme={theme}
+              styles={styles}
+              locationModalVisible={locationModalVisible}
+              categoryModalVisible={categoryModalVisible}
+              setLocationModalVisible={setLocationModalVisible}
+              setCategoryModalVisible={setCategoryModalVisible}
+              country={country}
+              state={state}
+              city={city}
+              categoryId={categoryId}
+              optionId={optionId}
+              category={category}
+              option={option}
+              clearCountry={clearCountry}
+              clearState={clearState}
+              clearCity={clearCity}
+              clearCategory={clearCategory}
+              clearOption={clearOption}
+              onSearchTypeToggle={toggleSearchType}
+              onAddLocationPress={() => {
+                setLocationModalVisible(true);
+                setBlur(true);
+              }}
+              onAddCategoryPress={() => {
+                setCategoryModalVisible(true);
+                setBlur(true);
+              }}
+            />
+          }
           ListEmptyComponent={ListEmptyComponent}
         />
       ) : (
         <FlatList
-          key="user-list" // Unique key for users
+          key="user-list"
           data={users}
           renderItem={renderItem}
           keyExtractor={item => item.uid || item.id}
           style={styles.userList}
-          numColumns={1} // Change to 1 for users
+          numColumns={1} 
           refreshing={refreshing}
           onRefresh={fetchUsers}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={Footer}
-          ListHeaderComponent={header}
           ListEmptyComponent={ListEmptyComponent}
+          ListHeaderComponent={
+            <Header
+              theme={theme}
+              styles={styles}
+              locationModalVisible={locationModalVisible}
+              categoryModalVisible={categoryModalVisible}
+              setLocationModalVisible={setLocationModalVisible}
+              setCategoryModalVisible={setCategoryModalVisible}
+              country={country}
+              state={state}
+              city={city}
+              categoryId={categoryId}
+              optionId={optionId}
+              category={category}
+              option={option}
+              clearCountry={clearCountry}
+              clearState={clearState}
+              clearCity={clearCity}
+              clearCategory={clearCategory}
+              clearOption={clearOption}
+              onSearchTypeToggle={toggleSearchType}
+              onAddLocationPress={() => {
+                setLocationModalVisible(true);
+                setBlur(true);
+              }}
+              onAddCategoryPress={() => {
+                setCategoryModalVisible(true);
+                setBlur(true);
+              }}
+            />
+          }
         />
       )}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={locationModalVisible}
-        onRequestClose={() => {
-          setLocationModalVisible(!locationModalVisible);
-          setBlur(false);
-        }}
-      >
-        <View style={styles.Modal}>
         <Location
           onClose={() => {
             setLocationModalVisible(false);
@@ -361,19 +318,8 @@ const Search = ({ navigation }) => {
             setLocationModalVisible(false);
             setBlur(false);
           }}
+          visible={locationModalVisible}
         />
-        </View>
-      </Modal>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={categoryModalVisible}
-        onRequestClose={() => {
-          setCategoryModalVisible(!categoryModalVisible);
-          setBlur(false);
-        }}
-      >
-        <View style={styles.Modal}>
         <CategoryPicker
           onClose={() => {
             setCategoryModalVisible(false);
@@ -387,9 +333,8 @@ const Search = ({ navigation }) => {
             setCategoryModalVisible(false);
             setBlur(false);
           }}
+          visible={categoryModalVisible}
         />
-        </View>
-      </Modal>
       {blur && (
         <BlurView
           style={styles.blur}
@@ -420,6 +365,7 @@ const getStyles = (theme) => StyleSheet.create({
     paddingTop: 16,
     borderBottomColor: theme.primary,
     borderBottomWidth: 1,
+    backgroundColor: theme.background,
   },
   searchTextInput: {
     backgroundColor: theme.background,

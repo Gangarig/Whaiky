@@ -6,8 +6,9 @@ import Fonts from '../../../constant/Fonts';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useTheme } from '../../../context/ThemeContext';
 import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
+import { showMessage } from 'react-native-flash-message';
 
-const CategoryPicker = ({ onSave, onClose }) => {
+const CategoryPicker = ({ onSave, onClose,visible }) => {
   const [openCategory, setOpenCategory] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [openOption, setOpenOption] = useState(false);
@@ -34,6 +35,15 @@ const CategoryPicker = ({ onSave, onClose }) => {
   }, [selectedCategory]);
 
   const handleSave = () => {
+    if(!selectedCategory)
+    {
+      showMessage({
+        message: "Please select category",
+        type: "danger",
+      });
+      return;
+    }
+
     const selectedCategoryText = categoriesData.find(
       (category) => category.id === parseInt(selectedCategory)
     ).text;
@@ -59,6 +69,12 @@ const CategoryPicker = ({ onSave, onClose }) => {
   
 
   return (
+    <Modal
+      animationType="slide"
+      visible={visible}
+      onRequestClose={onClose}
+      transparent={true}
+    >
         <View style={styles.container}>
           <View>
           <Text style={styles.title}>Category</Text>
@@ -109,6 +125,7 @@ const CategoryPicker = ({ onSave, onClose }) => {
           />
           </View>
         </View>
+    </Modal>
   );
 };
 
@@ -117,14 +134,16 @@ export default CategoryPicker;
 const getStyles = (theme) => StyleSheet.create({
   container:{
     width:'100%',
-    backgroundColor:theme.backgroundColor,
+    backgroundColor:theme.background,
     zIndex: 9999,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    flex:1,
+    height: 400,
     justifyContent:'space-between',
     borderTopColor: theme.primary,
     borderTopWidth: 1,
+    position: 'absolute',
+    bottom: 0,
   },
   dropdown: {
     borderColor: theme.primary,
