@@ -41,7 +41,6 @@ const CountryPicker = ({ onSelect, isModalVisible, setModalVisibility }) => {
             setOpen={setOpen}
             setValue={onValueChange}
             placeholder="Country of Issue"
-            placeholderStyle={{ color: theme.primary  }} 
             dropDownContainerStyle={styles.dropdownContainer}
             zIndex={open ? 5000 : undefined}
             zIndexInverse={1000}

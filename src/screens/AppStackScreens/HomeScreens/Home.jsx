@@ -32,8 +32,9 @@ const Home = ({ navigation }) => {
       const allPosts = allPostsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   
       const forYou = allPosts.filter(post => 
-        currentUser.services.some(service => String(post.categoryId) === String(service.categoryId))
+        (currentUser.services ?? []).some(service => String(post.categoryId) === String(service.categoryId))
       ).slice(0, 2);
+      
   
       const justAdded = allPosts.filter(post => !forYou.includes(post));
   

@@ -3,12 +3,10 @@ import { View, Modal, StyleSheet,TouchableOpacity,TouchableHighlight,Text ,Scrol
 import GradientText from '../components/GradientText';
 import Fonts from '../constant/Fonts';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../context/ThemeContext';
 
 
 const TermsModal = ({ visible, onAccept, onClose }) => {
-  const theme = useTheme();
-  const styles = getStyles(theme);
+  
   return (
     <SafeAreaView style={{flex:1}}>
     <View style={styles.modalContainer}>
@@ -593,7 +591,7 @@ const TermsModal = ({ visible, onAccept, onClose }) => {
               onPress={onClose}
               >
               <View style={styles.btn} >
-              <GradientText colors={[theme.primary, theme.secondary]} style={styles.btnText}
+              <GradientText colors={['#9E41F0', '#189DA2']} style={styles.btnText}
                 size={25}
                 >
                   Disagree
@@ -602,7 +600,7 @@ const TermsModal = ({ visible, onAccept, onClose }) => {
               </TouchableOpacity>
               <TouchableOpacity style={styles.shadowWrapper}  onPress={onAccept}>
               <View style={styles.btn}>
-              <GradientText colors={[theme.primary, theme.secondary]} style={styles.btnText}
+              <GradientText colors={['#9E41F0', '#189DA2']} style={styles.btnText}
                 size={25}
                 >
                   Agree
@@ -619,62 +617,62 @@ const TermsModal = ({ visible, onAccept, onClose }) => {
 
 export default TermsModal;
 
-const getStyles = (theme) => StyleSheet.create({
+const styles = StyleSheet.create({
     modalContainer: {
-      backgroundColor: theme.background,
+      backgroundColor: '#FBFBFB',
     },
     container: {
       flex: .5,
-      backgroundColor: theme.background,
+      backgroundColor: '#FBFBFB',
       padding: 20,
     },
     title: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: theme.text,
+      color: '#090909',
       marginTop: 16,
       fontFamily: Fonts.primary,
     },
     titleSecondary: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: theme.text,
+      color: '#090909',
       marginTop: 16,
       fontFamily: Fonts.primary,
     },
     titleThird: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: theme.text,
+      color: '#090909',
       marginTop: 16,
       fontFamily: Fonts.primary,
     },
     text: {
       fontSize: 14,
-      color: theme.text,
+      color: '#090909',
       marginTop: 5,
     },
     bold: {
       fontSize: 14,
-      color: theme.text,
+      color: '#090909',
       marginTop: 16,
       fontWeight: 'bold',
     },
     boldListElement: {
       fontSize: 14,
-      color: theme.text,
+      color: '#090909',
       marginTop: 16,
       fontWeight: 'bold',
       marginLeft: 20,
     },
     listElement: {
       fontSize: 14,
-      color: theme.text,
+      color: '#090909',
       margin: 8,
     },
     header: {
       borderBottomWidth: 1,
-      borderBottomColor: theme.text,
+      borderBottomColor: '#090909',
       marginBottom: 10,
     },
     part: {
@@ -702,6 +700,6 @@ const getStyles = (theme) => StyleSheet.create({
     btnText: {
       fontSize:25,
       textAlign:'center',
-      color:theme.primary,
+      color:'#9E41F0',
     },
   });

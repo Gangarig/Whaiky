@@ -16,6 +16,7 @@ import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import UserTheme from '../../constant/Theme';
 import TermsModal from '../../components/TermsModal';
 
+
 const InputField = ({ label, value, onChangeText, secureTextEntry }) => (
   <View style={styles.inputWrapper}>
     <Text style={[Global.titleSecondary,styles.label]}>{label}</Text>

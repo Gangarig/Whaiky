@@ -398,13 +398,14 @@ const AddPost = ({ navigation }) => {
           value={post.title}
           onChangeText={(text) => setPost({ ...post, title: text })}
         />
-          <TextInput
+        <TextInput
           style={styles.price}
           placeholder="Price"
           value={post.price}
-          onChangeText={(text) => setPost({ ...post, price: text })}
+          onChangeText={(text) => setPost({ ...post, price: text.replace(/[^0-9]/g, '') })}
           keyboardType="numeric"
         />
+
         <TextInput
           style={styles.description}
           placeholder="Description"
@@ -441,28 +442,11 @@ const AddPost = ({ navigation }) => {
             />
         </View>
       </Modal>
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={categoryModalVisible}
-        onRequestClose={() => {
-          setCategoryModalVisible(false);
-          setBlur(false);
-        }} >
-            <View style={styles.categoryModal}>
-              <TouchableOpacity
-                style={styles.modalOverlay}
-                activeOpacity={1}
-                onPressOut={() => {
-                  setCategoryModalVisible(false);
-                }}
-              />
               <CategoryPicker
                 onSave={handleCategorySave}
                 onClose={closeCategoryModal}
+                visible={categoryModalVisible}
               />
-            </View>
-      </Modal>
       <View style={styles.buttonBox}>
           <TwoSelectButton
             primary={'Select Location'}

@@ -14,7 +14,6 @@
   import firestore from '@react-native-firebase/firestore';
   import storage from '@react-native-firebase/storage';
   import { useAuth } from '../../../../context/AuthContext';
-  import { shadowStyle } from '../../../../constant/Shadow';
   import { useTheme } from '../../../../context/ThemeContext';
   import Fonts from '../../../../constant/Fonts';
   import DatePickerComponent from '../../../../components/DatePicker';
@@ -22,9 +21,6 @@
   import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
   import LinearGradient from 'react-native-linear-gradient';
   import FastImage from 'react-native-fast-image';
-  import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
-  import { KeyboardAvoidingView } from 'react-native';
-
 
 
   const DocumentUpload = ({ navigation }) => {
