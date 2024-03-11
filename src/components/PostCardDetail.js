@@ -170,7 +170,7 @@ const PostCardDetail = ({ navigation , post }) => {
           </View>
         </View>
         <View style={styles.postBody}>
-          <Text style={styles.postDescription}>{post.description}</Text>
+          <Text style={[styles.postDescription,{color:theme.text}]}>{post.description}</Text>
         </View>
 
         {currentUser.uid === post.ownerId ? (
@@ -306,6 +306,7 @@ const getStyles = (theme) => {
     paddingVertical: 20,
     textAlign: 'justify',
     marginBottom: 30,
+    color: theme.text,
   },
   contactContainerWrapper: {
     justifyContent: 'center',

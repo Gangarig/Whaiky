@@ -109,9 +109,9 @@ const Login = ({ navigation }) => {
           <Text style={[Global.title, styles.title]}>LOGIN</Text>
           <View style={styles.inputs}>
             <View style={styles.inputWrapper}>
-            <Text style={[Global.titleSecondary, styles.label]}>Email address</Text>
+            <Text style={[Global.titleSecondary, styles.label,]}>Email address</Text>
             <TextInput
-              style={[Global.input, styles.input]}
+              style={[Global.input, styles.input,]}
               placeholder="Email"
               onChangeText={(text) => setEmail(text)}
               value={email}
@@ -121,10 +121,10 @@ const Login = ({ navigation }) => {
             />
             </View>
             <View style={styles.inputWrapper}>
-            <Text style={[Global.titleSecondary, styles.label]}>Password</Text>
+            <Text style={[Global.titleSecondary, styles.label,]}>Password</Text>
             <TextInput
               ref={passwordInputRef}
-              style={[Global.input, styles.input]}
+              style={[Global.input, styles.input,]}
               placeholder="Password"
               onChangeText={(text) => setPassword(text)}
               value={password}

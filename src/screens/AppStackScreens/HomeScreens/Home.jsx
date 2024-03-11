@@ -83,19 +83,19 @@ const Home = ({ navigation }) => {
           </View>
           <View style={styles.listWrap}>
             {forYouPosts.map((item) => (
-              <View style={styles.postWrapper} key={item.id}>
+              <View style={styles.postWrapperSecondary} key={item.id}>
                 <PostCardSecondary  post={item} onPress={() => navigation.navigate('PostDetail', { id: item.id })} />
               </View>
             ))}
           </View>
           <Text style={styles.sectionTitle}>Just Added</Text>
-          <View style={primaryList ? styles.listWrap : styles.listFlexWrap}>
+          <View style={primaryList ? styles.listFlexWrap : styles.listWrap}>
           {justAddedPosts.map((item) => (
             <View style={primaryList ? styles.postWrapper : styles.postWrapperSecondary} key={item.id} >
               {primaryList ? (
-                <PostCardSecondary post={item} onPress={() => navigation.navigate('PostDetail', { id: item.id })} />
-              ):(
                 <PostCard key={item.id} post={item} onPress={() => navigation.navigate('PostDetail', { id: item.id })} />
+              ):(
+                <PostCardSecondary  post={item} onPress={() => navigation.navigate('PostDetail', { id: item.id })} />
               )}
             </View>
           ))}
@@ -148,10 +148,17 @@ const getStyles = (theme) => StyleSheet.create({
     margin: 2,
   },
   listWrap:{
-    paddingHorizontal: 10,
+ 
+  },
+  listFlexWrap:{
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',  
+    width: '100%',
   },
   postWrapper:{
-    margin: 5,
+    width: '50%',
+    padding: 5,
   },
   sectionTitle: {
     fontSize: 16,
@@ -159,13 +166,6 @@ const getStyles = (theme) => StyleSheet.create({
     color: theme.text,
     margin: 10,
   },
-  listFlexWrap:{
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
-  },
-
   postWrapperSecondary:{
     margin: 5,
     marginVertical: 10,

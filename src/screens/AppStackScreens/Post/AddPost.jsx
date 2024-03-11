@@ -338,7 +338,6 @@ const AddPost = ({ navigation }) => {
         <TouchableOpacity 
           style={postType === 'Looking For Service' ? styles.activePostType : styles.inActivePostType}
           onPress={Toggle}
-          
         >
           <Text 
             style={postType === 'Looking For Service' ? styles.activePostText : styles.inActivePostText}
@@ -393,21 +392,20 @@ const AddPost = ({ navigation }) => {
           ))}
 
         <TextInput
-          style={styles.title}
+          style={[styles.title]}
           placeholder="Title"
           value={post.title}
           onChangeText={(text) => setPost({ ...post, title: text })}
         />
         <TextInput
-          style={styles.price}
+          style={[styles.price]}
           placeholder="Price"
           value={post.price}
           onChangeText={(text) => setPost({ ...post, price: text.replace(/[^0-9]/g, '') })}
           keyboardType="numeric"
         />
-
         <TextInput
-          style={styles.description}
+          style={[styles.description]}
           placeholder="Description"
           value={post.description}
           onChangeText={(text) => setPost({ ...post, description: text })}

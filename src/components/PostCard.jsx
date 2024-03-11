@@ -39,10 +39,7 @@ const PostCard = ({ post, onPress }) => {
       >
         {hasImages ? (
           <FastImage 
-              source={{ 
-                uri: post.images[0],
-                priority: FastImage.priority.high,
-              }}
+            source={{ uri: post.images[0] }}
             style={styles.postImage}
             resizeMode={FastImage.resizeMode.cover}
           />
@@ -97,9 +94,10 @@ const getStyles = (theme) => {
     flex:1,
   },
   postImage: {
-    width: '100%',
+    minWidth: '100%',
     height: 120,
     backgroundColor: theme.background,
+    zIndex: 199,
   },
   noImage:{
     height: 120,
@@ -145,7 +143,7 @@ const getStyles = (theme) => {
   },
   sale:{
     position:'absolute',
-    bottom:35,
+    bottom:50,
     right:10,
     borderRadius:5,
     height:31,

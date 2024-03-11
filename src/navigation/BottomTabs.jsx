@@ -21,9 +21,9 @@ function BottomTabs({navigation}) {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
-          height: 55,
+          height: 5,
           backgroundColor: theme.primary,
-          ...shadowStyle,
+          paddingTop:10,
         },
         tabBarLabelStyle: {
           display: 'none',
@@ -97,7 +97,7 @@ export default BottomTabs;
 const getStyles = (theme) => StyleSheet.create({
 
   BottomTabsIcon: {
-    paddingBottom: 5,
+    padding: 5,
   },
   FocusedIcon: {
     borderBottomColor: theme.white,

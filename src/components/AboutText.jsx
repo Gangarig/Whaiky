@@ -101,7 +101,7 @@ const getStyles = theme => StyleSheet.create({
     aboutWrapper:{
         width:'100%',
         marginTop:16,
-        backgroundColor:theme.white,    
+        backgroundColor:theme.background,    
     },
     aboutTitle:{
         
