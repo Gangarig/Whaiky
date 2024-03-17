@@ -11,8 +11,7 @@ import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
 import { useAuth } from '../../../context/AuthContext';
 import Fonts from '../../../constant/Fonts';
 import TwoSelectBtnWithActiveState from '../../../components/Buttons/TwoSelectBtnWithActiveState';
-import { showMessage } from 'react-native-flash-message';
-
+import ProfileCard from '../../../components/ProfileCard';
 const Search = ({ navigation }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -30,8 +29,9 @@ const Search = ({ navigation }) => {
   const [optionId, setOptionId] = useState('');
   const [category, setCategory] = useState('');
   const [option, setOption] = useState('');
-  const [posts, setPosts] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const onRefresh = () => {
     setRefreshing(true);
     fetchPosts();
@@ -76,21 +76,20 @@ const Search = ({ navigation }) => {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.postWrapper}>
-        <PostCard post={item} onPress={() => navigation.navigate('PostDetail', { id: item.id })} />
+       
       </View>
     );
   };
 
   useEffect(() => {
-    fetchPosts();
+    fetchUsers();
   }, [searchText, country, state, city, categoryId, optionId]);
-
-  const fetchPosts = async () => {
+  const fetchUsers = async () => {
     setLoading(true);
     try {
-      let query = firestore().collection('posts');
+      let query = firestore().collection('users');
       if (searchText !== '') {
-        query = query.where('title', '>=', searchText).where('title', '<=', searchText + '\uf8ff');
+        query = query.where('keywords', 'array-contains-any', [searchText.toLowerCase()]);
       }
       if (country !== '') {
         query = query.where('country', '==', country);
@@ -111,16 +110,17 @@ const Search = ({ navigation }) => {
       const fetchedPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setPosts(fetchedPosts);
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error('Error fetching users:', error);
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <View style={styles.container}>
         <FlatList
-          data={posts}
+          data={users}
           renderItem={renderItem}
           keyExtractor={item => item.id}
           style={styles.postList}
@@ -146,13 +146,7 @@ const Search = ({ navigation }) => {
                 <TwoSelectBtnWithActiveState
                   primary="Search Users"
                   secondary="Search Posts"
-                  onPressPrimary={() => {
-                  showMessage({
-                    message: "Feature not available yet",
-                    type: "danger",
-                  });
-                  }
-                  }
+                  onPressPrimary={() => navigation.navigate('SearchUsers')}
                   onPressSecondary={() => navigation.navigate('Search')}
                   primaryActive={!active}
                   secondaryActive={active}

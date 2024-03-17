@@ -7,6 +7,7 @@ import StackHeader from './ScreenComponents/StackHeader';
 import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedback';
 import ContractorDetail from '../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
 import Reviews from '../screens/AppStackScreens/ProfileScreens/Contractor/Reviews';
+import SearchUser from '../screens/AppStackScreens/Search/SearchUser';
 const HomeStack = createStackNavigator();
 function HomeStackScreen({ navigation}) {
   return (
@@ -40,10 +41,20 @@ function HomeStackScreen({ navigation}) {
       component={Search}
       options={
         ({navigation}) => ({
-          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
+          header: (props) => <StackHeader title="Search Posts" navigation={navigation} isHomeScreen={false} {...props}  />,
         })
       }
       />
+      <HomeStack.Screen 
+      name="SearchUsers" 
+      component={SearchUser}
+      options={
+        ({navigation}) => ({
+          header: (props) => <StackHeader title="Search Users" navigation={navigation} isHomeScreen={false} {...props}  />,
+        })
+      }
+      />
+
       <HomeStack.Screen 
       name="ContractorDetail" 
       component={ContractorDetail}

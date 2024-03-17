@@ -85,6 +85,7 @@ const Location = React.memo(({ onSave, onClose ,visible}) => {
       <Text style={[Global.title, styles.title]}>Location</Text>
       <Text style={styles.text}>Country</Text>
       <DropDownPicker
+        searchable={true}
         open={countryOpen}
         onOpen={onCountryOpen}
         value={selectedCountry}

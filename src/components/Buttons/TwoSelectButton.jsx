@@ -12,27 +12,33 @@ const TwoSelectButton = ({
   primaryDisabled,
   secondaryDisabled,
   icon,
-  
+  controlledActiveButtonType,
 }) => {
-  const [buttonType, setButtonType] = useState(secondary);
   const theme = useTheme();
   const styles = getStyles(theme);
 
+  const [buttonType, setButtonType] = useState(controlledActiveButtonType || secondary);
+
   useEffect(() => {
-   
-    setButtonType(secondary);
-  }, [primary, secondary]); 
+    if (controlledActiveButtonType) {
+      setButtonType(controlledActiveButtonType);
+    }
+  }, [controlledActiveButtonType, primary, secondary]);
 
   const primaryPress = () => {
     if (!primaryDisabled) {
-      setButtonType(primary);
+      if (!controlledActiveButtonType) { 
+        setButtonType(primary);
+      }
       onPressPrimary();
     }
   };
 
   const secondaryPress = () => {
     if (!secondaryDisabled) {
-      setButtonType(secondary);
+      if (!controlledActiveButtonType) { 
+        setButtonType(secondary);
+      }
       onPressSecondary();
     }
   };
