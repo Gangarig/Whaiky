@@ -1,4 +1,4 @@
-import { View, Text , StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native'
+import { View, Text , StyleSheet, ScrollView, TouchableOpacity, TextInput, Modal } from 'react-native'
 import React , { useState } from 'react'
 import { useAuth } from '../../../context/AuthContext'
 import { useTheme } from '../../../context/ThemeContext'
@@ -23,6 +23,10 @@ const PersonalInfo = ({navigation}) => {
     lastName: currentUser?.lastName || '',
     displayName: currentUser?.displayName || '',
     phoneNumber: currentUser?.phoneNumber || '',
+    photoURL: currentUser?.photoURL || '',
+    country: currentUser?.country || '',
+    state: currentUser?.state || '',
+    city: currentUser?.city || '',
   });
   const [blur , setBlur] = useState(false)
   const [phoneModal, setPhoneModal] = useState(false);
@@ -31,10 +35,15 @@ const PersonalInfo = ({navigation}) => {
       data.firstName !== currentUser?.firstName ||
       data.lastName !== currentUser?.lastName ||
       data.displayName !== currentUser?.displayName ||
-      data.phoneNumber !== currentUser?.phoneNumber 
+      data.phoneNumber !== currentUser?.phoneNumber ||
+      data.photoURL !== currentUser?.photoURL ||
+      data.country !== currentUser?.country ||
+      data.state !== currentUser?.state ||
+      data.city !== currentUser?.city
 
     );
   };
+  const [locationModal, setLocationModal] = useState(false);
 
   const updateAvatar = (newAvatarURL) => {
     setData(prevData => ({
@@ -95,21 +104,21 @@ const PersonalInfo = ({navigation}) => {
         <Text style={styles.inputLabel}>Full Name</Text>
         <TextInput
         onChangeText={(text)=>setData({...data, firstName: text})}
-        defaultValue={currentUser?.firstName}
+        defaultValue={currentUser?.firstName  || 'Currently Empty'}
         style={styles.input}
         >
         </TextInput>
         <TextInput 
         style={styles.input}
         onChangeText={(text)=>setData({...data, lastName: text})}
-        defaultValue={currentUser?.lastName}
+        defaultValue={currentUser?.lastName || 'Currently Empty'}
         >
         </TextInput>
         <Text style={styles.inputLabel}>User Name</Text>
         <TextInput 
         style={styles.input}
         onChangeText={(text)=>setData({...data, displayName: text})}
-        defaultValue={currentUser?.displayName}
+        defaultValue={currentUser?.displayName || 'Currently Empty'}
         >
         </TextInput>
         <Text style={styles.inputLabel}>Email</Text>
@@ -122,13 +131,13 @@ const PersonalInfo = ({navigation}) => {
         <TextInput
          style={styles.input}
          editable={false}
-         defaultValue={currentUser?.phoneNumber}
+         defaultValue={currentUser?.phoneNumber || 'Currently Empty'}
          ></TextInput>
       </View> 
       <View style={styles.info}>
           <Text style={styles.infoLabel}>Location</Text>
           <View style={styles.infoTextWrapper}>
-            <Text style={styles.inputText}>Country: {currentUser?.country}</Text>
+            <Text style={styles.inputText}>Country: {currentUser?.country }</Text>
             <Text style={styles.inputText}>State: {currentUser?.state}</Text>
             <Text style={styles.inputText}>City: {currentUser?.city}</Text>
           </View>
@@ -146,7 +155,10 @@ const PersonalInfo = ({navigation}) => {
           <TwoSelectButton
           primary="Location"
           secondary="Phone Number"
-          onPressPrimary={()=>navigation.navigate('LocationPicker')}
+          onPressPrimary={()=>{
+            setBlur(true)
+            setLocationModal(true)
+          }}
           onPressSecondary={
             ()=>{setPhoneModal(true),setBlur(true)}}
           />
@@ -165,6 +177,37 @@ const PersonalInfo = ({navigation}) => {
       }
       }
       />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={blur}
+        onRequestClose={() => {
+          setBlur(false)
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modal}>
+        <LocationPicker
+          onSave={(country, state, city) => {
+            setData(prevData => ({
+              ...prevData,
+              country,
+              state,
+              city,
+            }));
+            setBlur(false);
+            setLocationModal(false);
+          }}
+          onClose={() => {
+            setBlur(false);
+            setLocationModal(false);
+          }}
+        />
+        </View>
+        </View>
+      </Modal>
+
+
     </ScrollView>
   )
 }
@@ -269,5 +312,19 @@ const getStyles = (theme) => StyleSheet.create({
     height: "110%",
     width: "110%",
     zIndex: 10,
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor:'transparent',
+  },
+  modal: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: theme.background,
+    height: 550,
+    borderTopColor: theme.primary,
+    borderTopWidth: 1,
+    paddingBottom: 20,
+  },
 })

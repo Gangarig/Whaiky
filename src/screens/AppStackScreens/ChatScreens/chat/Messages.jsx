@@ -5,6 +5,7 @@ import { useAuth } from '../../../../context/AuthContext';
 import { sendMessage } from './Components/Utility';
 import Input from './Input'; 
 import Bubble from './Components/Bubble';
+import { Platform } from 'react-native';
 const Messages = ({ chatId,userInfo }) => {
   const [messages, setMessages] = useState([]);
   const { currentUser } = useAuth();
@@ -73,16 +74,17 @@ const Messages = ({ chatId,userInfo }) => {
 
 
   return (
-      <GiftedChat
+      <GiftedChat 
         messages={messages}
         onSend={handleSend}
         user={{ _id: currentUser.uid }}
-        renderInputToolbar={props => <Input onSend={handleSend} chatId={chatId} />}  
+        renderSend={props => <Input {...props} chatId={chatId} />}
         renderBubble={props => <Bubble {...props} />}
-        keyboardShouldPersistTaps={'never'}
         renderAvatar={null}
+        bottomOffset={Platform.OS === 'ios' ? 80 :70}
       />
   );
 };
 
 export default Messages;
+

@@ -40,14 +40,14 @@ const Category = ({ navigation }) => {
 
   const categoryIcons = {
     1: 'fa-solid fa-house',
-    2: 'fa-solid fa-fire',
-    3: 'fa-solid fa-bolt',
-    4: 'fa-solid fa-droplet-slash',
-    5: 'fa-solid fa-droplet-slash',
-    6: 'fa-solid fa-spray-can-sparkles',
-    7: 'fa-solid fa-paint-roller',
-    8: 'fa-solid fa-temperature-arrow-up',
-    9: 'fa-solid fa-truck',
+    2: 'fa-solid fa-spray-can-sparkles',//fa-fire',
+    3: 'fa-solid fa-fire', //fa-bolt',
+    4: 'fa-solid fa-paint-roller',
+    5: 'fa-solid fa-bolt',    //fa-droplet-slash',
+    6: 'fa-solid fa-temperature-arrow-up',//fa-spray-can-sparkles',
+    7: 'fa-solid fa-droplet-slash',//fa-paint-roller',
+    8: 'fa-solid fa-truck',//fa-temperature-arrow-up',
+    9: 'fa-solid fa-seedling',
     10: 'fa-solid fa-screwdriver-wrench',
     11: 'fa-solid fa-person',
   };

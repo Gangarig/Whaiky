@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import DashBoard from "../screens/AppStackScreens/AdminScreens/DashBoard";
 import SubmissionDetail from "../screens/AppStackScreens/AdminScreens/SubmissionDetail";
 import StackHeader from "./ScreenComponents/StackHeader";
+import Inbox from "../screens/AppStackScreens/AdminScreens/Inbox";
 
 const AdminStack = createStackNavigator();
 function AdminStackScreen() {
@@ -22,6 +23,14 @@ function AdminStackScreen() {
         header: props => <StackHeader title="Submission" isHomeScreen={false} {...props} />,
       }}
       />
+      <AdminStack.Screen
+      name="Inbox"
+      component={Inbox}
+      options={{
+        header: props => <StackHeader title="Inbox" isHomeScreen={false} {...props} />,
+      }}
+      />
+
     </AdminStack.Navigator>
   );
 }

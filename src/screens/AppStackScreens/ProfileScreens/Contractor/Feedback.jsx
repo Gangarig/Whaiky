@@ -28,6 +28,7 @@ const Feedback = ({route,navigation}) => {
   const [hasMore, setHasMore] = useState(true); 
 
 
+
   const fetchAndSetFeedbacks = async () => {
     if (!hasMore) return;
     setLoading(true);
@@ -169,55 +170,52 @@ const Feedback = ({route,navigation}) => {
   const handeNavigateToContractorDetail = (id) => {
     navigation.navigate('ContractorDetail',{id:id})
   }
-    const listHeader = () => {
-      return (
-      <View style={styles.header}>
-          <ContractorCard 
-          selectedUser={contractor}
-          currentUser={currentUser}
-          navigation={navigation}
-          onPress={()=>handeNavigateToContractorDetail(contractor.uid)}
-          />
-        {currentUser?.uid === Id ? ( null) : (
-        <View style={styles.feedBackInput}>
-          <View style={styles.label}>
-              <Text style={styles.feedBackText}>Review</Text> 
-          </View>
-            <TextInput
-              style={[styles.input]}
-              placeholder="Write your feedback"
-              multiline
-              numberOfLines={10}
-              value={comment}
-              onChangeText={setComment}
-              maxLength={200}
-            />
-          <View style={styles.rating}>
-            <View style={styles.ratingWrapper}>
-            <AirbnbRating
-              count={5}
-              defaultRating={3}
-              size={20}
-              showRating={false}
-              onFinishRating={setRating}
-            />
-            </View>
-            <PrimaryButton text="SUBMIT" onPress={()=>handleSubmit(contractor)}/>
-          </View>
-        </View>
-        )}
-        <View style={styles.listLable}>
-          <Text style={styles.feedBackText}>Reviews</Text>
-        </View>
-      </View>
-      )
-    }
   return (
     <View style={styles.container}>
         <FlatList
           data={feedbacks}
           style={styles.flatList}
-          ListHeaderComponent={listHeader}
+          ListHeaderComponent={
+                              <View style={styles.header}>
+                              <ContractorCard 
+                              selectedUser={contractor}
+                              currentUser={currentUser}
+                              navigation={navigation}
+                              onPress={()=>handeNavigateToContractorDetail(contractor.uid)}
+                              />
+                            {currentUser?.uid === Id ? ( null) : (
+                            <View style={styles.feedBackInput}>
+                              <View style={styles.label}>
+                                  <Text style={styles.feedBackText}>Review</Text> 
+                              </View>
+                                <TextInput
+                                  style={[styles.input]}
+                                  placeholder="Write your feedback"
+                                  multiline
+                                  numberOfLines={10}
+                                  value={comment}
+                                  onChangeText={setComment}
+                                  maxLength={200}
+                                />
+                              <View style={styles.rating}>
+                                <View style={styles.ratingWrapper}>
+                                <AirbnbRating
+                                  count={5}
+                                  defaultRating={3}
+                                  size={20}
+                                  showRating={false}
+                                  onFinishRating={setRating}
+                                />
+                                </View>
+                                <PrimaryButton text="SUBMIT" onPress={()=>handleSubmit(contractor)}/>
+                              </View>
+                            </View>
+                            )}
+                            <View style={styles.listLable}>
+                              <Text style={styles.feedBackText}>Reviews</Text>
+                            </View>
+                          </View>
+                            }
           renderItem={({ item }) => (
             <View style={styles.feedBack}>
               <Text style={styles.feedBackComment}

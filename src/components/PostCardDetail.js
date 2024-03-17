@@ -15,6 +15,8 @@ import firestore from '@react-native-firebase/firestore';
 import Dialog from "react-native-dialog";
 import { useTheme } from '../context/ThemeContext';
 import ContractorCard from './ContractorCard';
+import TwoSelectButton from './Buttons/TwoSelectButton';
+import { showMessage } from 'react-native-flash-message';
 
 
 
@@ -108,6 +110,24 @@ const PostCardDetail = ({ navigation , post }) => {
     setSelectedImageIndex(newIndex);
   };
 
+  const deletePost = (id) => {
+    try {
+      firestore().collection('posts').doc(id).delete();
+      firestore().collection('users').doc(currentUser.uid).collection('myPosts').doc(id).delete();
+      showMessage({
+        message: "Post deleted successfully",
+        type: "success",
+      });
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      showMessage({
+        message: "Failed to delete post",
+        type: "danger",
+      });
+    }
+  }
+
   
 
   return (
@@ -175,8 +195,12 @@ const PostCardDetail = ({ navigation , post }) => {
 
         {currentUser.uid === post.ownerId ? (
               <View style={styles.postEdit}>
-                <PrimaryButton text='Delete' onPress={()=>DeletePost(post)} />
-                <PrimaryButton text='Add Sale' onPress={()=>setDialog(true)} />
+                <TwoSelectButton  
+                  primary="Add Sale"
+                  secondary="Delete"
+                  onPressPrimary={()=>setDialog(true)}
+                  onPressSecondary={()=>deletePost(post.postId)}
+                />
               </View>
         ):
           <ContractorCard selectedUser={contractor} navigation={navigation} currentUser={currentUser} onPress={()=>navigateToContractorProfile(post.ownerId)} />
@@ -219,7 +243,6 @@ const getStyles = (theme) => {
   scrollView: {
     flexGrow: 1,
     justifyContent: 'center',
-
   },
   imageWrapper: {
     width: '100%',
@@ -416,6 +439,7 @@ const getStyles = (theme) => {
     paddingVertical:10,
     width:'100%',
     borderRadius:10,
+    paddingTop:50,
   },
   btnContainer:{
     gap:10,

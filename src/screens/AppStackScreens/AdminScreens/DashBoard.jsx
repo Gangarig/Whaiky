@@ -7,45 +7,66 @@ import { shadowStyle } from '../../../constant/Shadow';
 import LinearGradient from 'react-native-linear-gradient';
 import SubmissionCard from '../../../components/SubmissionCard';
 import { useAuth } from '../../../context/AuthContext';
+import TwoSelectButtonGradient from '../../../components/Buttons/TwoSelectButtonGradient';
+
 
 const DashBoard = ({ navigation }) => {
   const [submissions, setSubmissions] = useState([]);
   const [lastVisible, setLastVisible] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [active, setActive] = useState(true);
   const { currentUser } = useAuth();
   const theme = useTheme();
   const styles = getStyles(theme);
 
-  const fetchSubmissions = async () => {
-    if (lastVisible === null && submissions.length > 0) {
-      setLoading(false); 
-      return;
+  const fetchSubmissions = async (refresh = false) => {
+    if (refresh) {
+      setRefreshing(true);
+      setLastVisible(null); // Reset pagination on refresh
+    } else if (loading || !hasMoreToLoad()) {
+      return; // Exit if already loading or no more items to load
+    } else {
+      setLoading(true);
     }
   
-    setLoading(true);
     try {
-      const query = firestore()
-        .collection('submission')
-        .orderBy('timeStamp', 'desc')
-        .startAfter(lastVisible || 0)
-        .limit(10); 
+      let query = firestore().collection('submission').orderBy('timeStamp', 'desc');
   
-      const querySnapshot = await query.get();
+      if (!refresh && lastVisible) {
+        query = query.startAfter(lastVisible);
+      }
+  
+      const querySnapshot = await query.limit(10).get();
   
       if (!querySnapshot.empty) {
         const submissionsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        setSubmissions(prevSubmissions => [...prevSubmissions, ...submissionsData]);
+  
+        if (refresh) {
+          setSubmissions(submissionsData);
+        } else {
+          setSubmissions(prev => [...prev, ...submissionsData]);
+        }
+        // Check if there are fewer items than requested, indicating end of data
+        if (querySnapshot.docs.length < 10) {
+          setLoading(false); // No more items to load
+        }
       } else {
-        // If no documents are returned, we've reached the end of data
-        setLastVisible(null);
+        setLastVisible(null); // No items in query, end of data
       }
     } catch (error) {
       console.error("Error fetching submissions: ", error);
     } finally {
-      setLoading(false);
+      if (!refresh) { setLoading(false); }
+      setRefreshing(false);
     }
   };
+
+  const hasMoreToLoad = () => {
+    return submissions.length % 10 === 0 && lastVisible !== null;
+  };
+  
   
 
   useEffect(() => {
@@ -61,6 +82,7 @@ const DashBoard = ({ navigation }) => {
 
   const listHeader = () => {
     return (
+      <View style={{marginBottom:16}}>
       <LinearGradient
         colors={[theme.primary, theme.secondary]}
         style={[styles.gradient]}
@@ -68,9 +90,20 @@ const DashBoard = ({ navigation }) => {
         end={{ x: 1, y: 0 }}
       >
         <Text style={styles.title}>Document Submission</Text>
-      </LinearGradient>
+      </LinearGradient>      
+      <TwoSelectButtonGradient
+          primary="Inbox"
+          secondary="Submissions"
+          primaryActive={!active}
+          secondaryActive={active}
+          onPressPrimary={() => navigation.navigate('Inbox')}
+        />
+      </View>
     );
   }
+
+
+
   return (
     <View style={[styles.container]}>
       <FlatList
@@ -88,7 +121,12 @@ const DashBoard = ({ navigation }) => {
         keyExtractor={(item, index) => 'submission-' + index}
         onEndReached={fetchSubmissions}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={() => loading ? <Text>Loading more...</Text> : null}
+        ListFooterComponent={() => loading && hasMoreToLoad() ? <Text style={styles.loadingText}>Loading more...</Text> : null}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No submissions found</Text>
+          </View>
+        }
       />
     </View>
   );
@@ -100,12 +138,13 @@ const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
-    padding: 15,
+    paddingHorizontal: 15,
   },
   gradient: {
     width: '100%',
     borderRadius: 12,
     marginBottom: 16,
+    marginTop: 16,
   },
   title:{ 
     fontSize: 26, 
@@ -113,7 +152,21 @@ const getStyles = (theme) => StyleSheet.create({
     fontWeight: 'bold',
     padding: 10,
     paddingHorizontal: 15,
-  }
+  },
+  loadingText: {
+    textAlign: 'center',
+    padding: 10,
+    color: theme.text,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: theme.text,
+    fontSize: 20,
+  },
 
 
 });

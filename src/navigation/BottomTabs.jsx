@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { shadowStyle } from '../constant/Shadow';
 import AddPost from '../screens/AppStackScreens/Post/AddPost';
 import { useTheme } from '../context/ThemeContext';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 const Tab = createBottomTabNavigator();
 
 function BottomTabs({navigation}) {
@@ -21,9 +21,11 @@ function BottomTabs({navigation}) {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
-          height: 5,
           backgroundColor: theme.primary,
-          paddingTop:10,
+          height: 50,
+          padding:0,
+          paddingBottom:0,
+          margin:0,
         },
         tabBarLabelStyle: {
           display: 'none',
@@ -63,7 +65,7 @@ function BottomTabs({navigation}) {
       name="Category"
       component={CategoryStack} 
       options={({navigation}) => ({
-        header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
+        header: (props) => <StackHeader title="Category" navigation={navigation} isHomeScreen={false} {...props}  />,
       })}
       />
       <Tab.Screen
@@ -71,21 +73,21 @@ function BottomTabs({navigation}) {
       component={AddPost}
       options={({navigation}) => ({
         headerShown: true,
-        header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
+        header: (props) => <StackHeader title="Add Post" navigation={navigation} isHomeScreen={false} {...props}  />,
       })}
       />
       <Tab.Screen
       name="Chat"
       component={ChatStackScreen} 
       options={({navigation}) => ({
-        header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
+        header: (props) => <StackHeader title="Chat" navigation={navigation} isHomeScreen={false} {...props}  />,
       })}
       />
       <Tab.Screen
       name="Profile"
       component={ProfileStackScreen} 
       options={({navigation}) => ({
-        header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
+        header: (props) => <StackHeader title="Profile" navigation={navigation} isHomeScreen={false} {...props}  />,
       })}
       />
     </Tab.Navigator>
@@ -97,10 +99,13 @@ export default BottomTabs;
 const getStyles = (theme) => StyleSheet.create({
 
   BottomTabsIcon: {
-    padding: 5,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   FocusedIcon: {
-    borderBottomColor: theme.white,
-    borderBottomWidth: 2,
+  borderBottomColor: theme.white,
+  borderBottomWidth: 1,
   },
+
 })

@@ -1,24 +1,19 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import { useTheme } from '../../context/ThemeContext'
-import LinearGradient from 'react-native-linear-gradient'
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
+import LinearGradient from 'react-native-linear-gradient';
 
-const TwoSelectButtonGradient = ({ onPressPrimary, onPressSecondary, primary, secondary }) => {
-  const [buttonType, setButtonType] = useState(primary)
+const TwoSelectButtonGradient = ({
+  onPressPrimary,
+  onPressSecondary,
+  primary,
+  secondary,
+  primaryActive = false,
+  secondaryActive = false,
+}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
-  
-  const primaryPress = () => {
-    setButtonType(primary)
-    onPressPrimary()
-  }
 
-  const secondaryPress = () => {
-    setButtonType(secondary)
-    onPressSecondary()
-  }
-  
-  // Function to render button with conditional gradient
   const renderButton = (label, isActive, onPress) => {
     const gradientColors = isActive ? [theme.primary, theme.secondary] : [theme.background, theme.background];
     return (
@@ -39,15 +34,15 @@ const TwoSelectButtonGradient = ({ onPressPrimary, onPressSecondary, primary, se
 
   return (
     <View style={styles.wrapper}>
-      <View style={[styles.buttonTypeBox]}>
-        {renderButton(secondary, buttonType === secondary, secondaryPress)}
-        {renderButton(primary, buttonType === primary, primaryPress)}
+      <View style={styles.buttonTypeBox}>
+        {renderButton(secondary, secondaryActive, onPressSecondary)}
+        {renderButton(primary, primaryActive, onPressPrimary)}
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default TwoSelectButtonGradient
+export default TwoSelectButtonGradient;
 
 const getStyles = (theme) => StyleSheet.create({
   wrapper: {
@@ -68,9 +63,9 @@ const getStyles = (theme) => StyleSheet.create({
     height: 60,
   },
   button: {
+    flex: 1, 
     justifyContent: 'center',
     alignItems: 'center',
-    width: '50%',
   },
   activeText: {
     color: theme.white,

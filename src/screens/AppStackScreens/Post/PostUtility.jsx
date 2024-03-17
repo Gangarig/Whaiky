@@ -16,6 +16,7 @@ export const EditPost = (post) => {
     
     }
 
+
 export const AddSale = (post,saleValue) => {
     try {
         firestore()
@@ -39,3 +40,40 @@ export const AddSale = (post,saleValue) => {
     }
     
 }
+
+export const markPost = (postId,userUid) => {
+    try {
+    firestore().collection('users').doc(userUid).collection('markedPosts').doc(postId).set({
+      postId: postId,
+    })
+    showMessage({
+      message: "Post Marked",
+      type: "success",
+    });
+    } catch (error) {
+      console.error('Error marking post:', error);
+      showMessage({
+        message: "Error",
+        description: error,
+        type: "danger",
+      });
+    }
+  }
+
+  export const removeMarkedPost = (postId,userUid) => {
+    try {
+        firestore().collection('users').doc(userUid).collection('markedPosts').doc(postId).delete()
+        showMessage({
+            message: "Post Unmarked",
+            type: "success",
+        });
+        }
+        catch (error) {
+            console.error('Error unmarking post:', error);
+            showMessage({
+                message: "Error",
+                description: error,
+                type: "danger",
+            });
+        }
+  }

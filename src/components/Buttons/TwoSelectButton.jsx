@@ -12,6 +12,7 @@ const TwoSelectButton = ({
   primaryDisabled,
   secondaryDisabled,
   icon,
+  
 }) => {
   const [buttonType, setButtonType] = useState(secondary);
   const theme = useTheme();

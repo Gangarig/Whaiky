@@ -7,13 +7,13 @@ import { useTheme } from '../context/ThemeContext';
 import Fonts from '../constant/Fonts';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useAuth } from '../context/AuthContext';
-
-const PostCard = ({ post, onPress }) => {
+import TwoSelectButton from './Buttons/TwoSelectButton';
+import { markPost, removeMarkedPost } from '../screens/AppStackScreens/Post/PostUtility';
+const PostCard = ({ post, onPress , saved }) => {
   const { currentUser } = useAuth();
   const theme = useTheme();
   const styles = getStyles(theme);
   const hasImages = post.images && post.images.length > 0;
-
   const gradientColors = currentUser && currentUser.status === 'contractor' 
   ? [theme.primary, theme.tertiary] 
   : [theme.primary, theme.secondary]; 
@@ -24,7 +24,6 @@ const PostCard = ({ post, onPress }) => {
       <View key={index} style={styles.verticalLineDot} />
     ));
   };
-
 
   return (
    
@@ -54,10 +53,12 @@ const PostCard = ({ post, onPress }) => {
               </View>
               <View style={styles.priceWrapper}>
                 <Text
+                ellipsizeMode='tail'
+                numberOfLines={1}
                 style={[styles.price]}>{post.price}$</Text>
               </View>
             </View>
-            {post?.sale && (
+            {post.sale && (
             <LinearGradient
                 colors={[theme.primary, theme.secondary]}
                 start={{ x: 0, y: 0 }}
@@ -71,6 +72,18 @@ const PostCard = ({ post, onPress }) => {
               </View>
             </LinearGradient>
             )}
+        {saved ? (
+        <TouchableOpacity style={styles.marklist} 
+        onPress={()=>removeMarkedPost(post?.postId,currentUser?.uid)}
+        >
+          <FontAwesomeIcon  icon="fa-solid fa-square-minus" color={theme.white} size={25} />
+        </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.marklist} 
+          onPress={()=>markPost(post?.postId,currentUser?.uid)}>
+          <FontAwesomeIcon  icon="fa-solid fa-star" color={theme.white} size={25} />
+        </TouchableOpacity>  
+        )}
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -143,7 +156,7 @@ const getStyles = (theme) => {
   },
   sale:{
     position:'absolute',
-    bottom:50,
+    bottom:35,
     right:10,
     borderRadius:5,
     height:31,
@@ -153,6 +166,7 @@ const getStyles = (theme) => {
     flexDirection:'row',
     borderWidth:1,
     borderColor:theme.white,
+    zIndex: 200,
   },
   saleText:{
     fontSize:18,
@@ -193,7 +207,13 @@ const getStyles = (theme) => {
     width:'30%',
     height:'100%',
   },
-
+  marklist:{
+    position:'absolute',
+    top:5,
+    right:5,
+    zIndex: 200,
+    ...shadowStyle,
+  },
 });
 }
 

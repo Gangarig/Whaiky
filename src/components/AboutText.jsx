@@ -1,12 +1,17 @@
-import { View, Text,StyleSheet, TextInput } from 'react-native'
+import { View, Text,StyleSheet, TextInput, TouchableOpacity } from 'react-native'
 import React,{useEffect, useState} from 'react'
 import { useTheme } from '../context/ThemeContext'
 import Fonts from '../constant/Fonts'
 import PrimaryButton from './Buttons/PrimaryButton'
 import firestore from '@react-native-firebase/firestore'
 import { showMessage } from 'react-native-flash-message'
-
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import Dialog from "react-native-dialog";
+import { useAuth } from '../context/AuthContext'
+import { KeyboardAvoidingView } from 'react-native'
+import { Platform } from 'react-native'
 const AboutText = ({userUid}) => {
+    const {currentUser} = useAuth()
     const theme = useTheme();
     const style = getStyles(theme);
     const [aboutText, setAboutText] = useState(null)
@@ -65,23 +70,67 @@ const AboutText = ({userUid}) => {
         }
     }
 
+    const deleteAboutText = () => {
+        try {
+        firestore()
+        .collection('users')
+        .doc(userUid)
+        .update({
+            about: null,
+        })
+        .then(() => {
+            showMessage({
+                message: "About Text Deleted",
+                type: "success",
+                });
+            console.log('About Text deleted!');
+        });
+        setText('')
+        }
+        catch(e){
+            showMessage({
+                message: "Error",
+                description: e,
+                type: "danger",
+                });
+            console.log(e)
+        }
+        finally{
+            fetchAboutText();
+        }
+    }
+
+
+
 
   return (
-    <View style={style.aboutWrapper}>
+    <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={style.keyboard}
+    >
+        <View style={style.aboutWrapper}>
         {aboutText &&
-        <View style={style.aboutTitle}>
-            <Text style={style.title}>About</Text>
-        </View>}
-        {aboutText &&
-        <View style={style.aboutText}>
-            <Text style={style.text}>
-                {aboutText}
-            </Text>
+        <View style={style.aboutContent}>
+            <View style={style.aboutTitle}>
+                <Text style={style.title}>About</Text>
+            </View>
+            <View style={style.aboutText}>
+                <Text style={style.text}>
+                    {aboutText}
+                </Text>
+            </View>
+        {currentUser?.uid === userUid &&
+        <TouchableOpacity onPress={() => deleteAboutText()} style={style.delete}>
+            <FontAwesomeIcon icon="fa-solid fa-delete-left" color={theme.primary} size={20} />
+        </TouchableOpacity>
+        }
         </View>
         }
         {!aboutText &&
         <View style={style.aboutText}>
             <Text style={style.text}>No Information Available</Text>
+            <View>
+            {currentUser?.uid === userUid &&
             <View>
             <TextInput
             multiline={true}
@@ -90,10 +139,12 @@ const AboutText = ({userUid}) => {
             onChangeText={text => setText(text)}
             />
             <PrimaryButton text="Add About Text" onPress={() => handleAboutText()} />
+            </View>}
             </View> 
         </View>
         }
-    </View>
+        </View>
+    </KeyboardAvoidingView>
   )
 }
 
@@ -130,6 +181,19 @@ const getStyles = theme => StyleSheet.create({
         marginVertical:10,
         width:'100%',
         textAlignVertical: 'top',
+        color:theme.text,
+    },
+    delete:{
+        position:'absolute',
+        right:0,
+        top:0,
+    },
+    keyboard:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
+        width:'100%',
+        paddingBottom: 100,
     }
 
 })

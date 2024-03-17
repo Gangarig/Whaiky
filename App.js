@@ -9,12 +9,12 @@ import { ChatContextProvider } from './src/context/ChatContext';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
-import {  faArrowRight, faArrowUp, faBars, faBolt, faCamera, faCar, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faClipboardList, faDeleteLeft, faDesktop, faDropletSlash, faEllipsisVertical, faEnvelopesBulk, faFire, faGear, faHouse, faIcons, faIdBadge, faIdCard, faImage, faLayerGroup, faList, faMagnifyingGlass, faMinus, faPaintRoller, faPaperPlane, faPaperclip, faPassport, faPerson, faScrewdriverWrench, faSeedling, faSprayCanSparkles, faTemperatureArrowUp, faTrash, faTruck, faUserGroup, faX  } from '@fortawesome/free-solid-svg-icons'
+import {  faArrowRight, faArrowUp, faBars, faBolt, faCamera, faCar, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faClipboardList, faDeleteLeft, faDesktop, faDropletSlash, faEllipsisVertical, faEnvelopesBulk, faFire, faGear, faHouse, faIcons, faIdBadge, faIdCard, faImage, faLayerGroup, faList, faMagnifyingGlass, faMinus, faPaintRoller, faPaperPlane, faPaperclip, faPassport, faPerson, faScrewdriverWrench, faSeedling, faSprayCanSparkles, faSquareMinus, faTemperatureArrowUp, faTrash, faTruck, faUserGroup, faX } from '@fortawesome/free-solid-svg-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Test from './src/screens/Test';
 import { faMessage } from '@fortawesome/free-regular-svg-icons/faMessage'
 import { faAddressCard} from '@fortawesome/free-regular-svg-icons/faAddressCard'
-import { faAddressBook,faCommentDots,faFileLines, faPenToSquare , faStar } from '@fortawesome/free-regular-svg-icons';
+import { faAddressBook,faCommentDots,faFileLines, faPenToSquare ,faStar} from '@fortawesome/free-regular-svg-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { faUser } from '@fortawesome/free-regular-svg-icons/faUser';
 import { ThemeProvider } from './src/context/ThemeContext';
@@ -44,7 +44,8 @@ library.add(
   faUser,faGear,faCheck,faX,faIdCard,faEnvelopesBulk,
   faImage,faIcons,faClipboardList,faUserGroup,faStar,
   faPassport,faIdBadge,faCar,faIdCard,faLayerGroup,
-  faHouse,faFire,faBolt,faDropletSlash,faSeedling,faSprayCanSparkles,faPaintRoller,faTemperatureArrowUp,faTruck,faScrewdriverWrench,faPerson
+  faHouse,faFire,faBolt,faDropletSlash,faSeedling,faSprayCanSparkles,faPaintRoller,faTemperatureArrowUp,faTruck,faScrewdriverWrench,faPerson,faStar,
+  faSquareMinus
   );
 
   LogBox.ignoreLogs([
@@ -60,7 +61,7 @@ export default function App() {
         <ThemeProvider>   
             <ChatContextProvider>
               <FlashMessage position="top" style={{zIndex:9999}}/>
-              <SafeAreaView style={{ flex: 1 }}>
+              <SafeAreaView style={{ flex: 1 ,backgroundColor:'#3d3d3d'}}>
                 <NavigationContainer> 
                   <MenuProvider>               
                     <Main />

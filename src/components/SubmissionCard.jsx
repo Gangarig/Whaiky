@@ -32,9 +32,9 @@ const SubmissionCard = ({ id,type, status,date, onPress }) => {
                 <Text style={styles.value}>{type}</Text>
                 <Text style={styles.value}>{status}</Text>
               </View>
-          <TouchableOpacity style={styles.btn} onPress={onPress}>
+          {/* <TouchableOpacity style={styles.btn} onPress={onPress}>
             <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" size={24} color={theme.primary}/>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </TouchableOpacity>
   );
 };
@@ -49,7 +49,6 @@ const getStyles = (theme) => {
       borderColor: theme.primary,
       padding: 10,
       paddingHorizontal: 20,
-      height: 120,
       overflow: 'hidden',
       flexDirection: 'row',
     },

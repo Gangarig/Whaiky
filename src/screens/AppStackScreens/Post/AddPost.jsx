@@ -23,8 +23,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useTheme } from '../../../context/ThemeContext';
 import { BlurView } from "@react-native-community/blur";
 import TwoSelectButton from '../../../components/Buttons/TwoSelectButton';
-
-
+import { KeyboardAvoidingView } from 'react-native';
+import { Platform } from 'react-native';
 
 const AddPost = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -322,6 +322,11 @@ const AddPost = ({ navigation }) => {
   };
 
   return (
+        <KeyboardAvoidingView 
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"} 
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+    >
     <ScrollView style={styles.container}
       contentContainerStyle={styles.ScrollView}
     >
@@ -457,6 +462,7 @@ const AddPost = ({ navigation }) => {
       <PrimaryGradientButton text="Post" onPress={handlePost} />
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

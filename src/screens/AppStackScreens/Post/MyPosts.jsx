@@ -69,7 +69,7 @@ const MyPosts = ({ navigation }) => {
         .doc(currentUser.uid)
         .collection('myPosts')
         .get();
-  
+
       const fetchedPostIds = querySnapshot.docs.map(doc => doc.data().postId);
       setMyPostIds(fetchedPostIds);
     } catch (error) {
@@ -98,7 +98,11 @@ const MyPosts = ({ navigation }) => {
         contentContainerStyle={styles.flatList}
         showsVerticalScrollIndicator={false}
         numColumns={2}
-        ListEmptyComponent={<Text style={{ fontSize: 25, color: theme.text,paddingTop:30 }}>No posts found</Text>}
+        ListEmptyComponent={
+        <View style={styles.centered}>
+        <Text style={styles.title}>No posts found</Text>
+        </View>
+      }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -118,7 +122,6 @@ const getStyles = (theme) => StyleSheet.create({
     backgroundColor: theme.background,
     width: '100%',
     justifyContent: 'center',
-    alignItems: 'center',
     paddingTop: 16,
   },
   postCardWrapper: {
@@ -126,6 +129,16 @@ const getStyles = (theme) => StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 8,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    
+  },
+  title: {
+    fontSize: 20,
+    color: theme.text,
   },
 
 });

@@ -16,14 +16,15 @@ const LocationPicker = ({ onSave , onClose }) => {
   const [country, setCountry] = useState(null);
   const [state, setState] = useState(null);
   const [city, setCity] = useState(null);
+  const [stateName, setStateName] = useState(null);
   const [showSaveButton, setShowSaveButton] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
   const [stateOpen, setStateOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
-
   const [countryItems, setCountryItems] = useState([]);
   const [stateItems, setStateItems] = useState([]);
   const [cityItems, setCityItems] = useState([]);
+  const [zIndex, setZIndex] = useState({ country: 3000, state: 2000, city: 1000 });
 
   useEffect(() => {
     const countryList = Country.getAllCountries().map(country => ({
@@ -66,18 +67,21 @@ const LocationPicker = ({ onSave , onClose }) => {
   }, [state, country]);
 
   const handleCountryOpen = useCallback(() => {
+    setZIndex({ country: 3000, state: 2000, city: 1000 });
     setCityOpen(false);
     setStateOpen(false);
     setCountryOpen(prevState => !prevState);
   }, []);
 
   const handleStateOpen = useCallback(() => {
+    setZIndex({ country: 3000, state: 4000, city: 1000 });
     setCityOpen(false);
     setCountryOpen(false);
     setStateOpen(prevState => !prevState); 
   }, []);
 
   const handleCityOpen = useCallback(() => {
+    setZIndex({ country: 3000, state: 2000, city: 5000 });
     setCountryOpen(false);
     setStateOpen(false);
     setCityOpen(prevState => !prevState);
@@ -90,6 +94,7 @@ const LocationPicker = ({ onSave , onClose }) => {
 
   const handleStateChange = (value) => {
     setState(value);
+    console.log('state', value);
   };
 
   const handleCityChange = (value) => {
@@ -134,6 +139,8 @@ const LocationPicker = ({ onSave , onClose }) => {
           textStyle={styles.textStyle}
           dropDownContainerStyle={styles.dropdownContainer}
           closeAfterSelectByDefault={true}
+          zIndex={zIndex.country}
+          searchable={true}
         />
         {stateItems.length > 0 && (
           <>
@@ -151,7 +158,8 @@ const LocationPicker = ({ onSave , onClose }) => {
               ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
               ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
               TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
-            />
+              zIndex={zIndex.state}
+           />
           </>
         )}
         {cityItems.length > 0 && (
@@ -170,6 +178,8 @@ const LocationPicker = ({ onSave , onClose }) => {
               ArrowUpIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-up" />}
               ArrowDownIconComponent={() => <FontAwesomeIcon size={18} color={theme.primary} icon="fa-solid fa-chevron-down" />}
               TickIconComponent={() => <FontAwesomeIcon size={20} color={theme.primary} icon="fa-solid fa-check" />}
+              zIndex={zIndex.city}
+              dropDownDirection='TOP'
             />
           </>
         )}

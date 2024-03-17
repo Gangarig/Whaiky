@@ -6,7 +6,7 @@ import Search from '../screens/AppStackScreens/Search/Search';
 import StackHeader from './ScreenComponents/StackHeader';
 import Feedback from '../screens/AppStackScreens/ProfileScreens/Contractor/Feedback';
 import ContractorDetail from '../screens/AppStackScreens/ProfileScreens/Contractor/ContractorDetail';
-
+import Reviews from '../screens/AppStackScreens/ProfileScreens/Contractor/Reviews';
 const HomeStack = createStackNavigator();
 function HomeStackScreen({ navigation}) {
   return (
@@ -62,6 +62,16 @@ function HomeStackScreen({ navigation}) {
         })
       }
       />
+      <HomeStack.Screen
+      name="Reviews"
+      component={Reviews}
+      options={
+        ({navigation}) => ({
+          header: (props) => <StackHeader title="Whaiky" navigation={navigation} isHomeScreen={false} {...props}  />,
+        })
+      }
+      />
+
     </HomeStack.Navigator>
   );
 }

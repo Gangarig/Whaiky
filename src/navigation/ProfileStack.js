@@ -18,7 +18,7 @@ import DashBoard from "../screens/AppStackScreens/AdminScreens/DashBoard";
 import SubmissionDetail from "../screens/AppStackScreens/AdminScreens/SubmissionDetail";
 import LegalInfo from "../screens/AppStackScreens/ProfileScreens/Contractor/LegalInfo";
 import PostDetail from "../screens/AppStackScreens/Post/PostDetail";
-
+import Inbox from "../screens/AppStackScreens/AdminScreens/Inbox";
 const ProfileStack = createStackNavigator();
 
 function ProfileStackScreen({ navigation }) {
@@ -50,6 +50,13 @@ function ProfileStackScreen({ navigation }) {
         component={SubmissionDetail}
         options={({ navigation }) => ({
           header: (props) => <StackHeader title="Submission Detail" navigation={navigation} isHomeScreen={false} {...props} />,
+        })}
+      />
+      <ProfileStack.Screen
+        name="Inbox"
+        component={Inbox}
+        options={({ navigation }) => ({
+          header: (props) => <StackHeader title="Inbox" navigation={navigation} isHomeScreen={false} {...props} />,
         })}
       />
       <ProfileStack.Screen 
@@ -116,7 +123,7 @@ function ProfileStackScreen({ navigation }) {
         })}
       />
         <ProfileStack.Screen 
-        name="Feedback" 
+        name="FeedBack" 
         component={Feedback} 
         options={({navigation}) => ({
           header: (props) => <StackHeader title="Feedback" navigation={navigation} isHomeScreen={false} {...props} />,

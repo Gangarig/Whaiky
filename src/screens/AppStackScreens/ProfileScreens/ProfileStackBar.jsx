@@ -105,7 +105,6 @@ const ProfileStackBar = ({ navigation }) => {
                 <BarItem item="Contractors" icon='fa-solid fa-user-group' label="Contractors" />
                 <BarItem item="ProfileScreen" icon='fa-solid fa-gear' label="My Whaiky" />
                 <BarItem item="Marklist" icon='fa-regular fa-star' label="Marklist" />
-                <BarItem item="Services" icon='fa-regular fa-star' label="Services" />
             </View>
             {currentUser?.status === 'user' ? 
                 <TouchableOpacity onPress={()=>navigation.navigate('Services')} style={styles.contractorWrapper}>
@@ -265,6 +264,7 @@ const getStyles = (theme) => {
         width: 250,
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: 30,
     },
     bottomBorder: {
         position: 'absolute',

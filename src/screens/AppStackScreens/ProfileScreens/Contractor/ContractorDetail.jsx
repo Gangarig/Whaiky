@@ -15,6 +15,7 @@ import AboutText from '../../../../components/AboutText';
 import SecondaryProfileCard from '../../../../components/SecondaryProfileCard';
 import TwoSelectButton from '../../../../components/Buttons/TwoSelectButton';
 import Services from '../../../../components/Services';
+import { showMessage } from 'react-native-flash-message';
 const ContractorDetail = ({ navigation, route }) => {
     const { id } = route.params;
     const theme = useTheme();
@@ -91,10 +92,24 @@ const ContractorDetail = ({ navigation, route }) => {
         navigation.navigate('Chat');
     }
     const handleFeedBack = (uid) => {
-        if(currentUser?.uid === uid){
-            navigation.navigate('Review');
+        if(currentUser?.uid === uid ){
+           if(currentUser?.status === 'contractor'){
+                navigation.navigate('Review');
+            }else{
+                showMessage({
+                    message: "User is not a contractor",
+                    type: "danger",
+                });
+            }
         }else{
-            navigation.navigate('Feedback', {Id: uid});
+            if(contractor?.status === 'contractor'){
+                navigation.navigate('FeedBack', {Id: uid});
+            }else{
+                showMessage({
+                    message: "User is not a contractor",
+                    type: "danger",
+                });
+            }
         }
     }
     const renderHeader = () => (

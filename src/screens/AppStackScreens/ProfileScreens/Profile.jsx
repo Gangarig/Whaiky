@@ -17,6 +17,7 @@ const Profile = ({navigation}) => {
   const [docs, setDocs] = useState([])
   const theme = useTheme()
   const style = getStyles(theme)
+  const [active, setActive] = useState(true)
 
   useEffect(() => {
     const subscriber = firestore()
@@ -38,7 +39,6 @@ const Profile = ({navigation}) => {
       });
     return () => subscriber();
   }, []);
-  
 
 
 
@@ -50,13 +50,14 @@ const Profile = ({navigation}) => {
     > 
       <SecondaryProfileCard profile={currentUser} navigation={navigation}/>
       <AboutText userUid={currentUser.uid}/>
-      {currentUser?.status === 'contractor' && (
+      {currentUser?.services && (
       <View style={style.documents}>
         <Text style={style.docTitle}>My Services</Text>
         <Services navigation={navigation} services={currentUser.services}/>
         <ServiceButton navigation={navigation} onPress={()=>navigation.navigate('Services')}/>
       </View>
       )}
+      {docs.length > 0 && (
       <View style={style.documents}>
         <Text style={style.docTitle}>Documents</Text>
         {docs.map((doc, index) => (
@@ -68,14 +69,23 @@ const Profile = ({navigation}) => {
           />
         ))}
       </View>
+      )}
       {currentUser?.status === 'contractor' && (
       <TwoSelectButtonGradient   
         primary="Upload Certificate"
         secondary="Upload Document"
-        onPressPrimary={() => navigation.navigate('Certificate')}
-        onPressSecondary={() => navigation.navigate('DocumentUpload')}
+        primaryActive={active}
+        secondaryActive={!active}
+        onPressPrimary={() => {
+          setActive(!active)
+          navigation.navigate('Certificate')
+        }}
+        onPressSecondary={() => {
+          setActive(!active)
+          navigation.navigate('DocumentUpload')
+        }}
       />
-      )}
+      )} 
     </ScrollView>
   )
 }
@@ -85,7 +95,7 @@ const getStyles = (theme) => {
     container: {
       flex: 1,
       backgroundColor: theme.background,
-      padding : 15
+      padding : 15,
     },
     ScrollView: {
       alignItems: 'center',
@@ -98,6 +108,7 @@ const getStyles = (theme) => {
       marginTop: 16,
       flexDirection: 'column',
       width: '100%',
+      marginBottom: 16,
     },
     docTitle: {
       fontSize: 17,

@@ -51,8 +51,8 @@ const CategoryDetail = ({ navigation, route }) => {
         const querySnapshot = await firestore()
           .collection('posts')
           .where('optionId', '==', optionId)
-          .orderBy('timestamp', 'desc') // Move this line here
-          .startAfter(lastVisible) // Move this line here
+          .orderBy('timestamp', 'desc') 
+          .startAfter(lastVisible) 
           .limit(10)
           .get();
         const data = querySnapshot.docs.map(doc => doc.data());
@@ -108,7 +108,7 @@ const CategoryDetail = ({ navigation, route }) => {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         onEndReached={fetchMorePosts}
-        onEndReachedThreshold={0.5} // Adjust as needed
+        onEndReachedThreshold={0.5}
       />
     </View>
   );

@@ -54,7 +54,7 @@ export const categoriesData = [
   },
   {
     id: 6,
-    text: 'Water Heater Services',
+    text: 'Heater Services',
     options: [
       { optionId: 21, text: 'Residential and commercial cleaning' },
       { optionId: 22, text: 'Carpet and upholstery cleaning' }  ,

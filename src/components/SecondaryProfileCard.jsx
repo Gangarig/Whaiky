@@ -18,7 +18,7 @@ const SecondaryProfileCard = ({profile,navigation}) => {
       if(currentUser?.uid === uid){
         navigation.navigate('Reviews')
       } else {
-        navigation.navigate('Feedback', {Id: uid})
+        navigation.navigate('FeedBack', {Id: uid})
       } 
     }
     
@@ -96,9 +96,9 @@ const SecondaryProfileCard = ({profile,navigation}) => {
           </View>
           <View style={styles.cardBody}>
               <View style={styles.cardBodyLabelWrapper}>
-                <Text style={styles.cardBodyLabel}>Email: </Text>
-                <Text style={styles.cardBodyLabel}>Phone: </Text>
-                <Text style={styles.cardBodyLabel}>Location: </Text>
+                <Text style={styles.cardBodyLabel}>Email :</Text>
+                <Text style={styles.cardBodyLabel}>Phone :</Text>
+                <Text style={styles.cardBodyLabel}>Location :</Text>
               </View>
               <View style={styles.cardBodyValueWrapper}>
                 <Text style={styles.cardBodyValue}>{profile?.email || "No Email Currently"}</Text>
@@ -171,7 +171,7 @@ const getStyles = theme => StyleSheet.create({
     },
     cardBodyLabelWrapper: {
       height: '100%',
-      width: '40%',
+      width: '50%',
       alignItems: 'center',
       justifyContent: 'space-around',
       
@@ -197,7 +197,7 @@ const getStyles = theme => StyleSheet.create({
     },
     cardBodyLabel: {
       color: theme.white,
-      fontSize: 14,
+      fontSize: 12,
       textAlign: 'left',
       width: '50%',
     },
