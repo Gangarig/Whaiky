@@ -6,8 +6,9 @@ import { shadowStyle } from '../constant/Shadow';
 import Fonts from '../constant/Fonts';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-
-const PostCardSecondary = ({ post, onPress }) => {
+import { markPost, removeMarkedPost } from '../screens/AppStackScreens/Post/PostUtility';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+const PostCardSecondary = ({ post, onPress,saved }) => {
   const { currentUser } = useAuth();
   const theme = useTheme();
 
@@ -68,6 +69,18 @@ const PostCardSecondary = ({ post, onPress }) => {
                 </LinearGradient>
               )}
             </View>
+        {saved ? (
+        <TouchableOpacity style={styles.marklist} 
+        onPress={()=>removeMarkedPost(post?.postId,currentUser?.uid)}
+        >
+          <FontAwesomeIcon  icon="fa-solid fa-square-minus" color={theme.white} size={25} />
+        </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.marklist} 
+          onPress={()=>markPost(post?.postId,currentUser?.uid)}>
+          <FontAwesomeIcon  icon="fa-solid fa-star" color={theme.white} size={25} />
+        </TouchableOpacity>  
+        )}
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -178,6 +191,13 @@ const getStyles = (theme) => {
     fontSize: 16,
     textAlign: 'center',
     transform: [{ rotate: '270deg' }],
+  },
+  marklist:{
+    position:'absolute',
+    top:5,
+    right:5,
+    zIndex: 200,
+    ...shadowStyle,
   },
 
 

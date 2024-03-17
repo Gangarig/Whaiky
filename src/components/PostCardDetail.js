@@ -17,10 +17,12 @@ import { useTheme } from '../context/ThemeContext';
 import ContractorCard from './ContractorCard';
 import TwoSelectButton from './Buttons/TwoSelectButton';
 import { showMessage } from 'react-native-flash-message';
+import { markPost, removeMarkedPost } from '../screens/AppStackScreens/Post/PostUtility';
 
 
 
-const PostCardDetail = ({ navigation , post }) => {
+
+const PostCardDetail = ({ navigation , post, saved }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isImageViewVisible, setImageViewVisible] = useState(false);
   const { currentUser } = useAuth();
@@ -227,6 +229,19 @@ const PostCardDetail = ({ navigation , post }) => {
           <Dialog.Button label="Add" onPress={()=>handleSale(post,salePrice)} />
         </Dialog.Container>
       </View>
+
+      {saved ? (
+        <TouchableOpacity style={styles.marklist} 
+        onPress={()=>removeMarkedPost(post?.postId,currentUser?.uid)}
+        >
+          <FontAwesomeIcon  icon="fa-solid fa-square-minus" color={theme.white} size={25} />
+        </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.marklist} 
+          onPress={()=>markPost(post?.postId,currentUser?.uid)}>
+          <FontAwesomeIcon  icon="fa-solid fa-star" color={theme.white} size={25} />
+        </TouchableOpacity>  
+        )}
       {renderImageViewer()}
     </ScrollView>
   );
@@ -461,6 +476,13 @@ const getStyles = (theme) => {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  marklist:{
+    position:'absolute',
+    top:10,
+    right:10,
+    zIndex: 200,
+    ...shadowStyle,
   },
 });
 }

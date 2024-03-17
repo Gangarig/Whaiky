@@ -274,6 +274,7 @@ const getStyles = (theme) => StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 10,
     paddingVertical: 5,
+    color: theme.text,
   },
   btn: {
     flexDirection: 'row',

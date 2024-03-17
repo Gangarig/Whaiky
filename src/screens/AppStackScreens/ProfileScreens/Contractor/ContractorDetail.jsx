@@ -149,6 +149,7 @@ const ContractorDetail = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
         <FlatList
+
         data={myPosts}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
@@ -174,6 +175,8 @@ const getStyles = (theme) => {
             backgroundColor: theme.background,  
             paddingVertical: 10,  
             paddingHorizontal: 14,
+            justifyContent: 'center',
+            alignItems: 'center',
         },
         posts: {
             width: '100%',
@@ -197,7 +200,9 @@ const getStyles = (theme) => {
         },
         postWrapper:{
             width:'50%',
-            paddingVertical: 5,
+            paddingBottom: 5,
+
+
         },
         title: {
             fontFamily: Fonts.primary,
@@ -227,6 +232,10 @@ const getStyles = (theme) => {
             justifyContent:'center',
             alignItems:'center',
             marginVertical: 16,
+        },
+        FlatList:{
+            width:'100%',
+            
         },
     })
 }

@@ -45,9 +45,10 @@ const MyPosts = ({ navigation }) => {
         const postsSnapshots = await Promise.all(postsPromises);
         const fetchedPosts = postsSnapshots.map(doc => ({
           id: doc.id,
-          ...doc.data()
+          ...(doc.data() || {}), 
+          timestamp: doc.data()?.timestamp || { seconds: 0 }, 
         }));
-
+  
         fetchedPosts.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds);
   
         setPosts(fetchedPosts);
@@ -60,6 +61,7 @@ const MyPosts = ({ navigation }) => {
       fetchPosts();
     }
   }, [myPostIds]);
+  
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
