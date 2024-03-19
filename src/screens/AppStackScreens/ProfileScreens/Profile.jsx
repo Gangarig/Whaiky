@@ -10,7 +10,7 @@ import Fonts from '../../../constant/Fonts'
 import firestore from '@react-native-firebase/firestore'
 import Services from '../../../components/Services'
 import ServiceButton from '../../../components/Buttons/ServiceButton'
-
+import { RefreshControl } from 'react-native'
 
 const Profile = ({navigation}) => {
   const { currentUser } = useAuth()
@@ -18,6 +18,8 @@ const Profile = ({navigation}) => {
   const theme = useTheme()
   const style = getStyles(theme)
   const [active, setActive] = useState(true)
+  const [refreshing, setRefreshing] = useState(false);
+
 
   useEffect(() => {
     const subscriber = firestore()
@@ -40,6 +42,26 @@ const Profile = ({navigation}) => {
     return () => subscriber();
   }, []);
 
+  const refresh = () => {
+    firestore()
+      .collection('users')
+      .doc(currentUser.uid)
+      .collection('documents')
+      .get()
+      .then(querySnapshot => {
+        const documents = [];
+        querySnapshot.forEach(documentSnapshot => {
+          const docData = documentSnapshot.data();
+          const createdAtDate = docData.createdAt ? new Date(docData.createdAt._seconds * 1000) : null;
+          documents.push({
+            ...docData,
+            key: documentSnapshot.id,
+            createdAt: createdAtDate,
+          });
+        });
+        setDocs(documents);
+      });
+  } 
 
 
   return (
@@ -47,6 +69,12 @@ const Profile = ({navigation}) => {
       showsHorizontalScrollIndicator  = {false}
       showsVerticalScrollIndicator = {false}
       contentContainerStyle={style.ScrollView}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={refresh}
+        />
+      }
     > 
       <SecondaryProfileCard profile={currentUser} navigation={navigation}/>
       <AboutText userUid={currentUser.uid}/>

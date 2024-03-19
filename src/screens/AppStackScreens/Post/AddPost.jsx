@@ -111,42 +111,42 @@ const AddPost = ({ navigation }) => {
     setBlur(false);
   };
   const handleCategorySave = (category, option, categoryText, optionText) => {
-    // Set the selected category and option
-    setSelectedCategory(category);
-    setSelectedOption(option);
+    const numericCategoryId = Number(category);
+    const numericOptionId = Number(option);
   
-    // Update the post state with new values
+
+    setSelectedCategory(numericCategoryId);
+    setSelectedOption(numericOptionId);
+  
     setPost({ 
       ...post,
       categoryText: categoryText,
       optionText: optionText,
-      categoryId: category, // Make sure this is the ID, not the entire object
-      optionId: option, // Same here, ensure it's the ID
+      categoryId: numericCategoryId, 
+      optionId: numericOptionId, 
     });
   
     closeModal();
   
-    // Check if option is selected
-    if (!option) {
-      showMessage({
-        message: 'Please select an option for the chosen category.',
-        type: 'warning',
-        duration: 3000,
-      });
-    }
+   
   };
-
+  
   const handleCategoryPickerSave = (categoryId, optionId, categoryText, optionText) => {
+    
+    const numericCategoryId = Number(categoryId);
+    const numericOptionId = Number(optionId);
+  
     setModalVisible(false);
-
+  
     setPost({
       ...post,
-      categoryId: categoryId || null,
-      optionId: optionId || null,
+      categoryId: numericCategoryId || null, // Ensure conversion to number
+      optionId: numericOptionId || null, 
       categoryText,
       optionText,
     });
   };
+  
 
   const uploadImage = async (imageUri, postId) => {
     const filename = `${postId}_${Date.now()}.jpg`; // Unique filename for each image
@@ -401,6 +401,7 @@ const AddPost = ({ navigation }) => {
           placeholder="Title"
           value={post.title}
           onChangeText={(text) => setPost({ ...post, title: text })}
+          placeholderTextColor={theme.gray}
         />
         <TextInput
           style={[styles.price]}
@@ -408,20 +409,16 @@ const AddPost = ({ navigation }) => {
           value={post.price}
           onChangeText={(text) => setPost({ ...post, price: text.replace(/[^0-9]/g, '') })}
           keyboardType="numeric"
+          placeholderTextColor={theme.gray}
         />
         <TextInput
           style={[styles.description]}
           placeholder="Description"
+          placeholderTextColor={theme.gray}
           value={post.description}
           onChangeText={(text) => setPost({ ...post, description: text })}
           multiline={true}
         />
-
-      {post.images.length > 0 && (
-        <View style={styles.progressBarContainer}>
-          <Progress.Bar progress={uploadProgress / 100} width={null} />
-        </View>
-      )}
       <View style={styles.postDetails}>
         {post.country && (
           <View style={styles.locationInfo}>

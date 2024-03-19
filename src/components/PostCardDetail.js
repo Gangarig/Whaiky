@@ -18,6 +18,8 @@ import ContractorCard from './ContractorCard';
 import TwoSelectButton from './Buttons/TwoSelectButton';
 import { showMessage } from 'react-native-flash-message';
 import { markPost, removeMarkedPost } from '../screens/AppStackScreens/Post/PostUtility';
+import Carousel from 'react-native-reanimated-carousel';
+import { Dimensions } from 'react-native';
 
 
 
@@ -31,7 +33,7 @@ const PostCardDetail = ({ navigation , post, saved }) => {
   const [dialog, setDialog] = useState(false);
   const theme = useTheme();
   const styles = getStyles(theme);
-
+  const { width } = Dimensions.get('window');
   
   
   useEffect(() => {
@@ -137,39 +139,47 @@ const PostCardDetail = ({ navigation , post, saved }) => {
       style={styles.container}
       contentContainerStyle={styles.scrollView}
     > 
-      <View style={styles.imageWrapper}>
-        {post.images.length > 0 && (
-          <>
-            <TouchableOpacity
-              style={styles.image}
-              onPress={openImageView}
-            >
-              <FastImage
-                source={{ uri: post.images[selectedImageIndex] }}
-                style={{ flex: 1 }}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
-      {post.images.length > 1 && (
-        <View style={styles.images}>
-          {post.images.map((image, index) => (
-            <TouchableOpacity key={index} onPress={() => selectImage(index)}>
-              <View 
-              style={selectedImageIndex === index ? styles.selectedCircle : styles.circle}
-              >
-              </View>
-            </TouchableOpacity>
-            
-          ))}
-        </View>
-      )}
       {post.images.length === 0 && (
       <View style={styles.noImage}>
        <FontAwesomeIcon style={styles.image} size={300} color={theme.gray} icon="fa-solid fa-image" />
       </View>
+      )}
+      {post.images.length >= 1 && (
+      <TouchableOpacity style={styles.carousal}
+        onPress={openImageView}
+        activeOpacity={0.9
+      }
+      >
+        <Carousel
+            loop
+            width={width}
+            height={300}
+            data={post.images}
+            renderItem={
+              ({ item }) => (
+                <FastImage
+                  source={{ uri: item }}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
+              )
+            }
+            onSnapToItem={(index) => setSelectedImageIndex(index)}
+          />
+          {post.images.length > 1 && (
+            <View style={styles.images}>
+              {post.images.map((image, index) => (
+                <TouchableOpacity key={index} onPress={() => selectImage(index)}>
+                  <View 
+                  style={selectedImageIndex === index ? styles.selectedCircle : styles.circle}
+                  >
+                  </View>
+                </TouchableOpacity>
+                
+              ))}
+            </View>
+          )}
+      </TouchableOpacity>
       )}
       <View style={styles.postInfo}>
         <View style={styles.postHeader}>

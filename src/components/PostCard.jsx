@@ -94,7 +94,6 @@ const getStyles = (theme) => {
   postCardContainer: {
     width: '100%',
     position: 'relative',
-    maxWidth: 180,
     backgroundColor: theme.querternary,
     borderRadius: 10,
     borderWidth: .5, 

@@ -37,14 +37,13 @@ const Welcome = ({ navigation }) => {
   
         Animated.timing(fadeAnim, {
           toValue: 1,
-          duration: 1000,
+          duration: 300,
           useNativeDriver: true,
         }).start();
       });
     };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
       <LinearGradient colors={['#9E41F0', '#01AD94']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container}>
         <TouchableOpacity style={styles.touchableArea} onPress={handleScreenTouch}>
           <Animated.View style={{ ...styles.content, opacity: fadeAnim }}>
@@ -109,7 +108,6 @@ const Welcome = ({ navigation }) => {
           </View>
         )}
       </LinearGradient>
-    </SafeAreaView>
   );
 };
 
@@ -130,10 +128,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   imageView: {
-    width: '100%', // Full width
-    height: '75%', // 70% of height
-    position: 'absolute', // Absolute positioning
-    top: 0, // Start from the top
+    width: '100%', 
+    height: '75%', 
+    position: 'absolute', 
+    top: 0,
 
   },
   image: {

@@ -111,21 +111,23 @@ const Login = ({ navigation }) => {
             <View style={styles.inputWrapper}>
             <Text style={[Global.titleSecondary, styles.label,]}>Email address</Text>
             <TextInput
-              style={[Global.input, styles.input,]}
+              style={[Global.input, styles.input,{color: '#000000'}]}
               placeholder="Email"
               onChangeText={(text) => setEmail(text)}
               value={email}
               autoCapitalize="none"
               onSubmitEditing={() => passwordInputRef.current.focus()}
               blurOnSubmit={false}
+              placeholderTextColor={'#090909'}
             />
             </View>
             <View style={styles.inputWrapper}>
             <Text style={[Global.titleSecondary, styles.label,]}>Password</Text>
             <TextInput
               ref={passwordInputRef}
-              style={[Global.input, styles.input,]}
+              style={[Global.input, styles.input,{color: '#000000'}]}
               placeholder="Password"
+              placeholderTextColor={'gray'}
               onChangeText={(text) => setPassword(text)}
               value={password}
               secureTextEntry
@@ -217,6 +219,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     gap: 12,
   },
+
 });
 
 export default Login;

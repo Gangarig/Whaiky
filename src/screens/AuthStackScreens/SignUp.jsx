@@ -26,6 +26,7 @@ const InputField = ({ label, value, onChangeText, secureTextEntry }) => (
       onChangeText={onChangeText}
       value={value}
       secureTextEntry={secureTextEntry}
+      placeholderTextColor={UserTheme.gray}
     />
   </View>
 );

@@ -159,6 +159,8 @@ const getStyles = (theme) => StyleSheet.create({
   postWrapper:{
     width: '50%',
     padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   sectionTitle: {
     fontSize: 16,

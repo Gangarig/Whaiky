@@ -104,21 +104,27 @@ const PersonalInfo = ({navigation}) => {
         <Text style={styles.inputLabel}>Full Name</Text>
         <TextInput
         onChangeText={(text)=>setData({...data, firstName: text})}
-        defaultValue={currentUser?.firstName  || 'Currently Empty'}
+        defaultValue={currentUser?.firstName }
+        placeholderTextColor={theme.gray}
         style={styles.input}
+        placeholder='First Name'
         >
         </TextInput>
         <TextInput 
         style={styles.input}
         onChangeText={(text)=>setData({...data, lastName: text})}
-        defaultValue={currentUser?.lastName || 'Currently Empty'}
+        defaultValue={currentUser?.lastName}
+        placeholderTextColor={theme.gray}
+        placeholder='Last Name'
         >
         </TextInput>
         <Text style={styles.inputLabel}>User Name</Text>
         <TextInput 
         style={styles.input}
         onChangeText={(text)=>setData({...data, displayName: text})}
-        defaultValue={currentUser?.displayName || 'Currently Empty'}
+        defaultValue={currentUser?.displayName}
+        placeholderTextColor={theme.gray}
+        placeholder='User Name'
         >
         </TextInput>
         <Text style={styles.inputLabel}>Email</Text>
@@ -126,12 +132,16 @@ const PersonalInfo = ({navigation}) => {
          style={styles.input}
          editable={false}
          defaultValue={currentUser?.email}
+         placeholderTextColor={theme.gray}
+         placeholder='Email Address'
          ></TextInput>
         <Text style={styles.inputLabel}>Phone Number</Text>
         <TextInput
          style={styles.input}
          editable={false}
-         defaultValue={currentUser?.phoneNumber || 'Currently Empty'}
+         defaultValue={currentUser?.phoneNumber}
+         placeholderTextColor={theme.gray}
+        placeholder='Phone Number'
          ></TextInput>
       </View> 
       <View style={styles.info}>

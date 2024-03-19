@@ -16,7 +16,7 @@ import { showMessage } from 'react-native-flash-message';
 const Search = ({ navigation }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
-  const { currentUser } = useAuth();
+  const { currentUser} = useAuth();
   const [active,setActive] = useState(true)
 
   const [blur, setBlur] = useState(false);
@@ -32,6 +32,8 @@ const Search = ({ navigation }) => {
   const [option, setOption] = useState('');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  
   const onRefresh = () => {
     setRefreshing(true);
     fetchPosts();
@@ -130,7 +132,7 @@ const Search = ({ navigation }) => {
               <TextInput
                 style={[styles.searchTextInput, { backgroundColor: theme.background, borderColor: theme.primary }]}
                 placeholder="Search"
-                placeholderTextColor={theme.textSecondary}
+                placeholderTextColor={theme.gray}
                 onChangeText={text => setSearchText(text)}
                 value={searchText}
               />
@@ -309,7 +311,7 @@ const getStyles = (theme) => StyleSheet.create({
     width: '50%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 5,
+    padding: 5,
   },
   loadingIndicator: {
     flex: 1,

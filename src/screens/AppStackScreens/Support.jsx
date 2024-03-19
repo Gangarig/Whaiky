@@ -70,6 +70,7 @@ const Support = ({navigation}) => {
       <TextInput
         style={styles.input}
         placeholder="Your Email"
+        placeholderTextColor={theme.gray}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -78,6 +79,7 @@ const Support = ({navigation}) => {
       <TextInput
         style={[styles.input, styles.messageBox]}
         placeholder="Your Message"
+        placeholderTextColor={theme.gray}
         value={message}
         onChangeText={setMessage}
         multiline={true}
@@ -97,6 +99,7 @@ const getStyles = theme => StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: theme.text,
   },
   infoText: {
     marginBottom: 20,

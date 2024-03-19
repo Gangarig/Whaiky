@@ -5,10 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { CommonActions } from '@react-navigation/native';
 import { useTheme } from '../../context/ThemeContext'
 import { shadowStyle } from '../../constant/Shadow';
+import { useAuth } from '../../context/AuthContext';
 
 const StackHeader = ({title,navigation,isHomeScreen}) => {
   const theme = useTheme();
   const styles = getStyles(theme);
+  const { currentUser } = useAuth();
   
   return (
     <View style={styles.container}>
@@ -27,7 +29,9 @@ const StackHeader = ({title,navigation,isHomeScreen}) => {
         {title}
       </GradientText>
       </TouchableOpacity>
-      <TouchableOpacity onPress={()=>navigation.navigate('Search')}>
+      <TouchableOpacity onPress={()=>{
+        navigation.navigate('Search')
+    }}>
       <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" size={20}  color={theme.secondary}/>
       </TouchableOpacity>
     </View>

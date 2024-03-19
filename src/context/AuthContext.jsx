@@ -16,6 +16,10 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [showTermsModal, setShowTermsModal] = useState(false); 
   const [showLoading, setShowLoading] = useState(false); 
+  const setLoadingState = (value) => {
+    setLoading(value); 
+  }
+
 
 
   useEffect(() => {
@@ -85,7 +89,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, loading, setCurrentUser, showTermsModal, handleAcceptTerms }}>
+    <AuthContext.Provider value={{ currentUser, loading,setLoadingState, setCurrentUser, showTermsModal, handleAcceptTerms }}>
       {showTermsModal && <TermsModal visible={showTermsModal} onAccept={handleAcceptTerms} onClose={() => handleDisagree()} />}
       {showLoading ? <Loading /> : children}
     </AuthContext.Provider>

@@ -11,6 +11,7 @@ import {AirbnbRating} from 'react-native-ratings';
 import { shadowStyle } from '../../../constant/Shadow'
 import auth from '@react-native-firebase/auth'
 import GradientText from '../../../components/GradientText'
+import { faStar } from '@fortawesome/free-regular-svg-icons'
 const ProfileStackBar = ({ navigation }) => {
     const theme = useTheme();
     const { currentUser } = useAuth();
@@ -104,7 +105,7 @@ const ProfileStackBar = ({ navigation }) => {
                 <BarItem item="MyPosts" icon='fa-solid fa-list' label="My Posts" />
                 <BarItem item="Contractors" icon='fa-solid fa-user-group' label="Contractors" />
                 <BarItem item="ProfileScreen" icon='fa-solid fa-gear' label="My Whaiky" />
-                <BarItem item="Marklist" icon='fa-regular fa-star' label="Marklist" />
+                <BarItem item="Marklist" icon={faStar} label="Marklist" />
             </View>
             {currentUser?.status === 'user' ? 
                 <TouchableOpacity onPress={()=>navigation.navigate('Services')} style={styles.contractorWrapper}>
