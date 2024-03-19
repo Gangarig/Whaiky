@@ -58,7 +58,7 @@ const PostCard = ({ post, onPress , saved }) => {
                 style={[styles.price]}>{post.price}$</Text>
               </View>
             </View>
-            {post.sale && (
+            {post?.sale && (
             <LinearGradient
                 colors={[theme.primary, theme.secondary]}
                 start={{ x: 0, y: 0 }}
@@ -94,6 +94,7 @@ const getStyles = (theme) => {
   postCardContainer: {
     width: '100%',
     position: 'relative',
+
     backgroundColor: theme.querternary,
     borderRadius: 10,
     borderWidth: .5, 

@@ -43,8 +43,8 @@
 
     const handleChoosePhoto = (imageNumber) => {
       ImageCropPicker.openPicker({
-        width: 300,
-        height: 400,
+        width: 1024,
+        height: 800,
         cropping: true,
       })
         .then((image) => {
@@ -350,12 +350,14 @@
         style={styles.input}
         placeholder={`${docType} Number`}
         value={docDetails.number}
+        placeholderTextColor={theme.gray}
         onChangeText={(text) => handleInputChange('number', text)}
         />
         <TextInput
         style={styles.input}
         placeholder="Full Name"
         value={docDetails.fullName}
+        placeholderTextColor={theme.gray}
         onChangeText={(text) => handleInputChange('fullName', text)}
         />
         <View style={styles.btnContainer}>

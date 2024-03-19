@@ -191,6 +191,7 @@ const Feedback = ({route,navigation}) => {
                                 <TextInput
                                   style={[styles.input]}
                                   placeholder="Write your feedback"
+                                  placeholderTextColor={theme.gray}
                                   multiline
                                   numberOfLines={10}
                                   value={comment}
@@ -312,6 +313,7 @@ const getStyles = (theme) => {
     },
     feedBackComment: {
       width: '70%',
+      color: theme.text,
     },
 
   });

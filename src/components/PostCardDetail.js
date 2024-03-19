@@ -20,7 +20,7 @@ import { showMessage } from 'react-native-flash-message';
 import { markPost, removeMarkedPost } from '../screens/AppStackScreens/Post/PostUtility';
 import Carousel from 'react-native-reanimated-carousel';
 import { Dimensions } from 'react-native';
-
+import LinearGradient from 'react-native-linear-gradient';
 
 
 
@@ -82,6 +82,7 @@ const PostCardDetail = ({ navigation , post, saved }) => {
       />
     );
   };
+
   const renderDottedLine = () => {
     const numberOfDots = 10; // Adjust the number of dots as needed
     return Array.from({ length: numberOfDots }).map((_, index) => (
@@ -131,6 +132,7 @@ const PostCardDetail = ({ navigation , post, saved }) => {
       });
     }
   }
+  console.log(post);
 
   
 
@@ -141,7 +143,7 @@ const PostCardDetail = ({ navigation , post, saved }) => {
     > 
       {post.images.length === 0 && (
       <View style={styles.noImage}>
-       <FontAwesomeIcon style={styles.image} size={300} color={theme.gray} icon="fa-solid fa-image" />
+        <FontAwesomeIcon style={styles.image} size={300} color={theme.gray} icon="fa-solid fa-image" />
       </View>
       )}
       {post.images.length >= 1 && (
@@ -181,6 +183,20 @@ const PostCardDetail = ({ navigation , post, saved }) => {
           )}
       </TouchableOpacity>
       )}
+      {post?.sale && (
+            <LinearGradient
+                colors={[theme.primary, theme.secondary]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1.2, y: 0 }}
+                style={[styles.sale]}
+              >
+              <Text style={styles.saleText}>SALE</Text>
+                <View style={{ flexDirection: 'column' }}>{renderDottedLine()}</View>
+                <View style={{ flexDirection: 'column' }}>
+                <Text style={styles.verticalText}>{post?.sale}</Text> 
+              </View>
+            </LinearGradient>
+            )}
       <View style={styles.postInfo}>
         <View style={styles.postHeader}>
           <View style={styles.postHeaderLeft}>
@@ -204,7 +220,6 @@ const PostCardDetail = ({ navigation , post, saved }) => {
         <View style={styles.postBody}>
           <Text style={[styles.postDescription,{color:theme.text}]}>{post.description}</Text>
         </View>
-
         {currentUser.uid === post.ownerId ? (
               <View style={styles.postEdit}>
                 <TwoSelectButton  
@@ -341,6 +356,7 @@ const getStyles = (theme) => {
   },
   postAddress: {
     paddingHorizontal: 3,
+    color: theme.text,
   },
   postHeaderRight: {
     flexDirection: 'column',
@@ -375,19 +391,19 @@ const getStyles = (theme) => {
   postTitle: {
     fontSize: 20,
     fontWeight: 'bold', 
-    color: theme.querternary,
+    color: theme.text,
     fontFamily: Fonts.querternary,
   },
   price: {
     fontSize: 19,
     fontWeight: 'bold',
-    color: theme.querternary,
+    color: theme.primary,
     fontFamily: Fonts.querternary,
   },
   salePrice: {
     fontSize: 19,
     fontWeight: 'bold',
-    color: theme.querternary,
+    color: theme.text,
     fontFamily: Fonts.querternary,
   },
   postDate: {
@@ -407,7 +423,7 @@ const getStyles = (theme) => {
   },
   sale:{
     position:'absolute',
-    top:285,
+    top:250,
     right:10,
     borderRadius:5,
     height:35,
@@ -417,7 +433,7 @@ const getStyles = (theme) => {
     flexDirection:'row',
     borderWidth:1,
     borderColor:theme.white,
-    zIndex:1,
+    zIndex:100,
   },
   saleText:{
     fontSize:18,
