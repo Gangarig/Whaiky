@@ -3,11 +3,14 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-nativ
 import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../../context/AuthContext';
 import { AirbnbRating } from 'react-native-ratings';
+import { useTheme } from '../../../../context/ThemeContext';
 
 const Reviews = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true); // Consider reviews loading initially
+  const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -19,12 +22,14 @@ const Reviews = ({ navigation }) => {
           .collection('feedbacks')
           .orderBy('timestamp', 'desc')
           .get();
-
         const fetchedReviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setReviews(fetchedReviews);
       } catch (error) {
         console.error('Error fetching reviews:', error);
-        // Optionally, handle the error state here (e.g., show a message)
+        showMessage({
+            message: "Failed to fetch reviews",
+            type: "danger",
+          });
       } finally {
         setLoading(false);
       }
@@ -46,7 +51,7 @@ const Reviews = ({ navigation }) => {
   if (reviews.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text>No reviews available.</Text>
+        <Text style={styles.reviewText}>No reviews available.</Text>
       </View>
     );
   }
@@ -95,7 +100,7 @@ const Reviews = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
@@ -111,17 +116,19 @@ const styles = StyleSheet.create({
   reviewCard: {
     marginBottom: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: theme.primary, 
     paddingBottom: 10,
   },
   reviewText: {
     marginBottom: 10,
     fontSize: 16,
+    color: theme.text,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: theme.text
   },
     header: {
         marginBottom: 20,

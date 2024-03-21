@@ -42,11 +42,7 @@
     const [open, setOpen] = useState(false) 
 
     const handleChoosePhoto = (imageNumber) => {
-      ImageCropPicker.openPicker({
-        width: 1024,
-        height: 800,
-        cropping: true,
-      })
+      ImageCropPicker.openPicker({})
         .then((image) => {
           if (imageNumber === 'front') {
             setImageFront(image);
@@ -492,6 +488,7 @@
       color: theme.text,
       fontFamily: Fonts.primary,
       fontSize: 14,
+      
     },
     btnContainer: {
       marginTop: 16,

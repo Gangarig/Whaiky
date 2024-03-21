@@ -92,9 +92,11 @@ const ContractorDetail = ({ navigation, route }) => {
         navigation.navigate('Chat');
     }
     const handleFeedBack = (uid) => {
+        console.log(uid);
+        console.log(currentUser?.uid);
         if(currentUser?.uid === uid ){
            if(currentUser?.status === 'contractor'){
-                navigation.navigate('Review');
+                navigation.navigate('Reviews');
             }else{
                 showMessage({
                     message: "User is not a contractor",

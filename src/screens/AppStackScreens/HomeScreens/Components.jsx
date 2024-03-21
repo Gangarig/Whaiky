@@ -10,6 +10,7 @@ const SearchBox = ({ searchTerm, setSearchTerm }) => {
             style={Global.input}
             onChangeText={(text) => setSearchTerm(text)}
             value={searchTerm}
+            placeholderTextColor={theme.gray}
           />
         </View>
       </View>

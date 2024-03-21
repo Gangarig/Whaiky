@@ -157,12 +157,14 @@ const Certificate = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Certificate Title"
+            placeholderTextColor={theme.gray}
             onChangeText={(text) => handleInputChange('title', text)}
             value={certificateDetails.title}
           />
           <TextInput
             style={styles.input}
             placeholder="Description"
+            placeholderTextColor={theme.gray}
             onChangeText={(text) => handleInputChange('description', text)}
             value={certificateDetails.description}
           />
@@ -228,6 +230,7 @@ const getStyles = (theme) => StyleSheet.create({
     color: theme.text,
     fontFamily: Fonts.primary,
     fontSize: 14,
+    color: theme.text,
   },
   btn: {
     marginTop: 16,

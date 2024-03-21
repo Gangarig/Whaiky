@@ -9,7 +9,7 @@ import { ChatContextProvider } from './src/context/ChatContext';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faSquareCheck } from '@fortawesome/free-solid-svg-icons/faSquareCheck'
-import {  faArrowRight, faArrowUp, faBars, faBolt, faCamera, faCar, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faClipboardList, faDeleteLeft, faDesktop, faDropletSlash, faEllipsisVertical, faEnvelopesBulk, faFire, faGear, faHouse, faIcons, faIdBadge, faIdCard, faImage, faLayerGroup, faList, faMagnifyingGlass, faMinus, faPaintRoller, faPaperPlane, faPaperclip, faPassport, faPerson, faScrewdriverWrench, faSeedling, faSprayCanSparkles, faSquareMinus, faTemperatureArrowUp, faTrash, faTruck, faUserGroup, faStar ,faX } from '@fortawesome/free-solid-svg-icons'
+import {  faArrowRight, faArrowUp, faBars, faBolt, faCamera, faCar, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faClipboardList, faDeleteLeft, faDesktop, faDropletSlash, faEllipsisVertical, faEnvelopesBulk, faFire, faGear, faHouse, faIcons, faIdBadge, faIdCard, faImage, faLayerGroup, faList, faMagnifyingGlass, faMinus, faPaintRoller, faPaperPlane, faPaperclip, faPassport, faPerson, faScrewdriverWrench, faSeedling, faSprayCanSparkles, faSquareMinus, faTemperatureArrowUp, faTrash, faTruck, faUserGroup, faStar ,faX, faStarHalfStroke } from '@fortawesome/free-solid-svg-icons'
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Test from './src/screens/Test';
 import { faMessage } from '@fortawesome/free-regular-svg-icons/faMessage'
@@ -20,6 +20,7 @@ import { faUser } from '@fortawesome/free-regular-svg-icons/faUser';
 import { ThemeProvider } from './src/context/ThemeContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import PhoneInput from './src/components/PhoneInput';
+import { MarkedPostsProvider } from './src/context/MarkedPostContext';
 library.add(
   fab, faAddressCard,faAddressBook,faFileLines,
   faSquareCheck,faMagnifyingGlass,faBars,
@@ -45,7 +46,7 @@ library.add(
   faImage,faIcons,faClipboardList,faUserGroup,faStar,
   faPassport,faIdBadge,faCar,faIdCard,faLayerGroup,
   faHouse,faFire,faBolt,faDropletSlash,faSeedling,faSprayCanSparkles,faPaintRoller,faTemperatureArrowUp,faTruck,faScrewdriverWrench,faPerson,faStar,
-  faSquareMinus,
+  faSquareMinus,faStarHalfStroke
   );
 
   LogBox.ignoreLogs([
@@ -58,6 +59,7 @@ export default function App() {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}> 
         <AuthProvider>
+        <MarkedPostsProvider>
         <ThemeProvider>   
             <ChatContextProvider>
               <FlashMessage position="top" style={{zIndex:9999}}/>
@@ -70,6 +72,7 @@ export default function App() {
               </SafeAreaView>
             </ChatContextProvider>
             </ThemeProvider>
+          </MarkedPostsProvider>
           </AuthProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>

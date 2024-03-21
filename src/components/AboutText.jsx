@@ -137,6 +137,7 @@ const AboutText = ({userUid}) => {
             placeholder="About Text"
             style={style.input}
             onChangeText={text => setText(text)}
+            placeholderTextColor={theme.gray}
             />
             <PrimaryButton text="Add About Text" onPress={() => handleAboutText()} />
             </View>}

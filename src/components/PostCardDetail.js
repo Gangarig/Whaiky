@@ -21,10 +21,11 @@ import { markPost, removeMarkedPost } from '../screens/AppStackScreens/Post/Post
 import Carousel from 'react-native-reanimated-carousel';
 import { Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useMarkedPosts } from '../context/MarkedPostContext';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 
-
-const PostCardDetail = ({ navigation , post, saved }) => {
+const PostCardDetail = ({ navigation , post }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isImageViewVisible, setImageViewVisible] = useState(false);
   const { currentUser } = useAuth();
@@ -34,6 +35,10 @@ const PostCardDetail = ({ navigation , post, saved }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
   const { width } = Dimensions.get('window');
+  const { markedPosts } = useMarkedPosts();
+  const saved = markedPosts.has(post?.postId);
+  
+
   
   
   useEffect(() => {
@@ -132,9 +137,6 @@ const PostCardDetail = ({ navigation , post, saved }) => {
       });
     }
   }
-  console.log(post);
-
-  
 
   return (
     <ScrollView
@@ -248,6 +250,7 @@ const PostCardDetail = ({ navigation , post, saved }) => {
               setSalePrice(numericText.substring(0, 2)); // Limit to two digits
             }}
             keyboardType="number-pad"
+            
           />
           </View>
           <Dialog.Button label="Cancel" onPress={()=>setDialog(false)} />
@@ -259,12 +262,18 @@ const PostCardDetail = ({ navigation , post, saved }) => {
         <TouchableOpacity style={styles.marklist} 
         onPress={()=>removeMarkedPost(post?.postId,currentUser?.uid)}
         >
-          <FontAwesomeIcon  icon="fa-solid fa-square-minus" color={theme.white} size={25} />
+          <FontAwesomeIcon  icon={faStar} 
+          color={theme.primary}
+          size={25} 
+          />
         </TouchableOpacity>
         ) : (
           <TouchableOpacity style={styles.marklist} 
           onPress={()=>markPost(post?.postId,currentUser?.uid)}>
-          <FontAwesomeIcon  icon="fa-solid fa-star" color={theme.white} size={25} />
+          <FontAwesomeIcon  icon={faStar} 
+          color={theme.white}
+          size={25} 
+          />
         </TouchableOpacity>  
         )}
       {renderImageViewer()}
@@ -391,7 +400,7 @@ const getStyles = (theme) => {
   postTitle: {
     fontSize: 20,
     fontWeight: 'bold', 
-    color: theme.text,
+    color: theme.primary,
     fontFamily: Fonts.querternary,
   },
   price: {
@@ -403,7 +412,7 @@ const getStyles = (theme) => {
   salePrice: {
     fontSize: 19,
     fontWeight: 'bold',
-    color: theme.text,
+    color: theme.primary,
     fontFamily: Fonts.querternary,
   },
   postDate: {
@@ -510,5 +519,9 @@ const getStyles = (theme) => {
     zIndex: 200,
     ...shadowStyle,
   },
+  carousal:{
+    borderBottomColor:theme.primary,
+    borderBottomWidth:.5,
+  }
 });
 }

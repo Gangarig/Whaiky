@@ -77,6 +77,7 @@ const Input = ({ onSend, chatId }) => {
             onSubmitEditing={handleTextSend}
             multiline={true}
             scrollEnabled={true}
+            placeholderTextColor={theme.gray}
           />
           {imageUrls.length > 0 && (
           <View style={styles.border}></View>

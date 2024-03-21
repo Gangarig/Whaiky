@@ -9,10 +9,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useAuth } from '../context/AuthContext';
 import TwoSelectButton from './Buttons/TwoSelectButton';
 import { markPost, removeMarkedPost } from '../screens/AppStackScreens/Post/PostUtility';
-const PostCard = ({ post, onPress , saved }) => {
+import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { useMarkedPosts } from '../context/MarkedPostContext';
+
+const PostCard = ({ post, onPress }) => {
   const { currentUser } = useAuth();
   const theme = useTheme();
   const styles = getStyles(theme);
+  const { markedPosts } = useMarkedPosts();
+  const saved = markedPosts.has(post?.postId);
+  
   const hasImages = post.images && post.images.length > 0;
   const gradientColors = currentUser && currentUser.status === 'contractor' 
   ? [theme.primary, theme.tertiary] 
@@ -76,12 +82,18 @@ const PostCard = ({ post, onPress , saved }) => {
         <TouchableOpacity style={styles.marklist} 
         onPress={()=>removeMarkedPost(post?.postId,currentUser?.uid)}
         >
-          <FontAwesomeIcon  icon="fa-solid fa-square-minus" color={theme.white} size={25} />
+          <FontAwesomeIcon  icon={faStar} 
+          color={theme.primary}
+          size={25} 
+          />
         </TouchableOpacity>
         ) : (
           <TouchableOpacity style={styles.marklist} 
           onPress={()=>markPost(post?.postId,currentUser?.uid)}>
-          <FontAwesomeIcon  icon="fa-solid fa-star" color={theme.white} size={25} />
+          <FontAwesomeIcon  icon={faStar} 
+          color={theme.white}
+          size={25} 
+          />
         </TouchableOpacity>  
         )}
       </LinearGradient>

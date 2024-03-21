@@ -103,6 +103,9 @@ const ProfileStackBar = ({ navigation }) => {
                     <BarItem item="Dashboard" icon='fa-solid fa-desktop' label="Dashboard" />
                 )}
                 <BarItem item="MyPosts" icon='fa-solid fa-list' label="My Posts" />
+                {currentUser && currentUser.status === 'contractor' &&  (
+                <BarItem item="Reviews" icon='fa-solid fa-star-half-stroke' label="Reviews" />
+                )}
                 <BarItem item="Contractors" icon='fa-solid fa-user-group' label="Contractors" />
                 <BarItem item="ProfileScreen" icon='fa-solid fa-gear' label="My Whaiky" />
                 <BarItem item="Marklist" icon={faStar} label="Marklist" />

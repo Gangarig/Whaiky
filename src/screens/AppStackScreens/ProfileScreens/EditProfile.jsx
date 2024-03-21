@@ -141,12 +141,14 @@ const PersonalInfo = ({ navigation }) => {
             value={userInfo.firstName || ''}
             onChangeText={(text) => setUserInfo({ ...userInfo, firstName: text })}
             style={styles.input}
+            placeholderTextColor={theme.gray}
           />
           <TextInput
             placeholder="Last Name"
             value={userInfo.lastName || ''}
             onChangeText={(text) => setUserInfo({ ...userInfo, lastName: text })}
             style={styles.input}
+            placeholderTextColor={theme.gray}
           />
           <Text style={[Global.titleSecondary,styles.left]}>User Name</Text>
           <TextInput
@@ -154,6 +156,7 @@ const PersonalInfo = ({ navigation }) => {
             value={userInfo.displayName || ''}
             onChangeText={(text) => setUserInfo({ ...userInfo, displayName: text })}
             style={styles.input}
+            placeholderTextColor={theme.gray}
           />
           <Text style={[Global.titleSecondary,styles.left]}>Email</Text>
           <TextInput
@@ -161,6 +164,7 @@ const PersonalInfo = ({ navigation }) => {
             value={userInfo.email || ''}
             editable={false}
             style={[styles.input]}
+            placeholderTextColor={theme.gray}
           />
           <Text style={[Global.titleSecondary,styles.left]}>Location</Text>
           {userLocation.country && userLocation.state && userLocation.city ? (
