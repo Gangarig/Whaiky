@@ -18,7 +18,7 @@ const PostCard = ({ post, onPress }) => {
   const styles = getStyles(theme);
   const { markedPosts } = useMarkedPosts();
   const saved = markedPosts.has(post?.postId);
-  
+
   const hasImages = post.images && post.images.length > 0;
   const gradientColors = currentUser && currentUser.status === 'contractor' 
   ? [theme.primary, theme.tertiary] 

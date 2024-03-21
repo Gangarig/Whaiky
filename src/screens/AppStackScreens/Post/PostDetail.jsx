@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import PostCardDetail from '../../../components/PostCardDetail';
 import { useTheme } from '../../../context/ThemeContext';
+import Loading from '../../../components/Loading';
 
 const PostDetail = ({ route, navigation }) => {
   const currentUser = useAuth(); 
@@ -32,7 +33,11 @@ const PostDetail = ({ route, navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-      {post ? <PostCardDetail navigation={navigation} post={post}/> : <Text>Loading...</Text>}
+      {post ? 
+      <PostCardDetail navigation={navigation} post={post}/> : 
+      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+        <Loading />
+      </View>}
       <View style={styles.padding}></View>
     </ScrollView>
   );
@@ -44,6 +49,7 @@ const PostDetail = ({ route, navigation }) => {
         flex: 1,
         backgroundColor: theme.background,
         position: 'relative',
+        minHeight:'100%'
       },
       padding: {
         height: 100,

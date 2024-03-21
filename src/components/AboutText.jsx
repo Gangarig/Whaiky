@@ -18,7 +18,7 @@ const AboutText = ({userUid}) => {
     const [text, setText] = useState('')
     useEffect(() => {
         fetchAboutText();
-    }, [])
+    }, [aboutText,text])
 
     const fetchAboutText = async () => {
         try {
@@ -194,7 +194,6 @@ const getStyles = theme => StyleSheet.create({
         justifyContent:'center',
         alignItems:'center',
         width:'100%',
-        paddingBottom: 100,
     }
 
 })

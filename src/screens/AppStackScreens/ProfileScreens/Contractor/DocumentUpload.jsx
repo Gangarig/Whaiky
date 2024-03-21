@@ -42,8 +42,22 @@
     const [open, setOpen] = useState(false) 
 
     const handleChoosePhoto = (imageNumber) => {
-      ImageCropPicker.openPicker({})
+      ImageCropPicker.openPicker({
+        compressImageMaxWidth: 1024,
+        compressImageMaxHeight: 1024,
+        compressImageQuality: 0.7, 
+      })
         .then((image) => {
+          const imageSizeInKB = image.size / 1024; // Convert bytes to KB
+          if (imageSizeInKB > 500) {
+            // If image is larger than 500KB
+            showMessage({
+              message: 'Image size should be under 500KB. Please select a smaller image.',
+              type: 'warning',
+            });
+            return; // Stop the function execution
+          }
+    
           if (imageNumber === 'front') {
             setImageFront(image);
           } else if (imageNumber === 'back') {
@@ -54,6 +68,7 @@
           console.log(err);
         });
     };
+    
 
     const uploadData = async () => {
       try {
@@ -488,7 +503,7 @@
       color: theme.text,
       fontFamily: Fonts.primary,
       fontSize: 14,
-      
+
     },
     btnContainer: {
       marginTop: 16,
